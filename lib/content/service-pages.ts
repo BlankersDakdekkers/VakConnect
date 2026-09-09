@@ -36,6 +36,12 @@ const defaultCostFactors = [
   "Regio, planning en eventuele spoed"
 ];
 
+const processSteps = [
+  "Beschrijf je klus, locatie en timing via /aanvraag.",
+  "VakConnect koppelt je aanvraag op basis van dienst en werkgebied.",
+  "Een passende aangesloten professional kan contact opnemen voor vervolg."
+];
+
 const serviceLinkTitles: Record<string, string> = {
   "badkamer": "Badkamer",
   "badkamer/complete-badkamer": "Complete badkamer",
