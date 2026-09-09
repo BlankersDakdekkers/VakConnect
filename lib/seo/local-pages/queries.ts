@@ -2,7 +2,7 @@ import "server-only";
 
 import { unstable_cache } from "next/cache";
 import { getServiceSubPage, serviceSubSlugs, type ServiceContentPageData } from "@/lib/content/service-pages";
-import { localServicePages } from "@/lib/content/local-service-pages";
+import { localServicePageConfigs, localServicePages } from "@/lib/content/local-service-pages";
 import { isSupabaseConfigured } from "@/lib/env";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { calculateLocalQualityScore, detectDuplicateRisk } from "@/lib/seo/local-pages/quality";
@@ -15,14 +15,16 @@ import {
   type DatabaseBackedLocalPage,
   type ResolvedPublicRoute,
   type SeoContentStatus,
+  type SeoCoverageStatus,
+  type SeoDuplicateRisk,
   type SeoLocalPage,
   type SeoLocalPageWithLocation,
   type SeoLocation,
 } from "@/lib/seo/types";
 import { getPublishedSeoLocations, getSeoLocations } from "@/lib/seo/locations/queries";
 
-function humanizeSlug(slug: string) {
-  return slug
+function humanizeSlug(value: string) {
+  return value
     .split("-")
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ");
@@ -33,10 +35,16 @@ const serviceNameMap: Record<string, string> = {
   loodgieter: "Loodgieter",
   schilder: "Schilder",
   elektricien: "Elektricien",
+  kozijnen: "Kozijnen specialist",
+  badkamer: "Badkamerspecialist",
+  isolatie: "Isolatiespecialist",
+  verbouwing: "Verbouwspecialist",
 };
 
 const subserviceMap = new Map(serviceSubSlugs.map((item) => [`${item.vakgebied}/${item.subdienst}`, humanizeSlug(item.subdienst)]));
 const fallbackByPath = new Map(localServicePages.map((page) => [page.canonicalPath, page]));
+const fallbackConfigByPath = new Map(localServicePageConfigs.map((config) => [config.canonicalPath, config]));
+let fallbackLocalPageCache: DatabaseBackedLocalPage[] | null = null;
 
 function rowToLocation(input: Record<string, unknown>): SeoLocation {
   return {
@@ -45,6 +53,8 @@ function rowToLocation(input: Record<string, unknown>): SeoLocation {
     name: String(input.name),
     province: String(input.province),
     region_label: (input.region_label as string | null) ?? null,
+    tier: (input.tier as "A" | "B" | "C") ?? "C",
+    content_profile: (input.content_profile ?? {}) as SeoLocation["content_profile"],
     intro_facts: (input.intro_facts ?? []) as SeoLocation["intro_facts"],
     local_characteristics: (input.local_characteristics ?? []) as SeoLocation["local_characteristics"],
     nearby_city_slugs: (input.nearby_city_slugs ?? []) as SeoLocation["nearby_city_slugs"],
@@ -59,9 +69,7 @@ function rowToLocation(input: Record<string, unknown>): SeoLocation {
 }
 
 function rowToLocalPage(input: Record<string, unknown>): SeoLocalPageWithLocation | null {
-  if (!input.location || typeof input.location !== "object") {
-    return null;
-  }
+  if (!input.location || typeof input.location !== "object") return null;
 
   return {
     id: String(input.id),
@@ -77,6 +85,9 @@ function rowToLocalPage(input: Record<string, unknown>): SeoLocalPageWithLocatio
     published: Boolean(input.published),
     indexable: Boolean(input.indexable),
     content_status: (input.content_status as SeoContentStatus) ?? "draft",
+    quality_score: Number(input.quality_score ?? 0),
+    duplicate_risk: (input.duplicate_risk as SeoDuplicateRisk) ?? "high",
+    coverage_status: (input.coverage_status as SeoCoverageStatus) ?? "none",
     created_at: String(input.created_at ?? ""),
     updated_at: String(input.updated_at ?? ""),
     location: rowToLocation(input.location as Record<string, unknown>),
@@ -114,8 +125,7 @@ function toPage(row: SeoLocalPageWithLocation, corpus: string[]): DatabaseBacked
     h1: fallback?.page.h1 ?? `${label} nodig? Vind een passende vakman via VakConnect`,
     intro,
     breadcrumbs:
-      fallback?.page.breadcrumbs ??
-      [
+      fallback?.page.breadcrumbs ?? [
         { label: "Home", href: "/" },
         { label: "Diensten", href: "/diensten" },
         { label: serviceName, href: `/${row.service_slug}` },
@@ -137,12 +147,7 @@ function toPage(row: SeoLocalPageWithLocation, corpus: string[]): DatabaseBacked
       },
   };
 
-  const duplicateRisk = detectDuplicateRisk({
-    intro: builtPage.intro,
-    sections: builtPage.sections,
-    existingCorpus: corpus,
-  });
-
+  const duplicateRisk = detectDuplicateRisk({ intro: builtPage.intro, sections: builtPage.sections, existingCorpus: corpus });
   const quality = calculateLocalQualityScore({
     canonicalPath: row.canonical_path,
     intro: builtPage.intro,
@@ -150,6 +155,7 @@ function toPage(row: SeoLocalPageWithLocation, corpus: string[]): DatabaseBacked
     faqsCount: builtPage.faqs.length,
     relatedLinksCount: builtPage.relatedLinks.length,
     duplicateRisk: duplicateRisk.level,
+    hasLocalContext: builtPage.sections.some((section) => /lokaal|woning|bereikbaarheid|planning/i.test(section.heading)),
   });
 
   return {
@@ -161,9 +167,11 @@ function toPage(row: SeoLocalPageWithLocation, corpus: string[]): DatabaseBacked
     published: row.published,
     indexable: row.indexable,
     canonicalPath: row.canonical_path,
-    qualityScore: quality.score,
+    qualityScore: Math.max(row.quality_score || 0, quality.score),
     qualityLabel: quality.label,
-    duplicateRisk: duplicateRisk.level,
+    duplicateRisk: row.duplicate_risk || duplicateRisk.level,
+    coverageStatus: row.coverage_status || "none",
+    updatedAt: row.updated_at,
     page: builtPage,
   };
 }
@@ -173,18 +181,13 @@ async function fetchDbLocalPages() {
   const { data, error } = await supabase
     .from("seo_local_pages")
     .select(
-      "id, service_slug, subservice_slug, location_id, canonical_path, local_intro, local_sections, faqs, related_local_links, related_service_links, published, indexable, content_status, created_at, updated_at, location:seo_locations(id, slug, name, province, region_label, intro_facts, local_characteristics, nearby_city_slugs, population_band, housing_notes, published, indexable, priority, created_at, updated_at)",
+      "id, service_slug, subservice_slug, location_id, canonical_path, local_intro, local_sections, faqs, related_local_links, related_service_links, published, indexable, content_status, quality_score, duplicate_risk, coverage_status, created_at, updated_at, location:seo_locations(id, slug, name, province, region_label, tier, content_profile, intro_facts, local_characteristics, nearby_city_slugs, population_band, housing_notes, published, indexable, priority, created_at, updated_at)",
     )
     .order("canonical_path", { ascending: true });
 
-  if (error) {
-    return [] as DatabaseBackedLocalPage[];
-  }
+  if (error) return [] as DatabaseBackedLocalPage[];
 
-  const rows = ((data ?? []) as Array<Record<string, unknown>>)
-    .map(rowToLocalPage)
-    .filter((row): row is SeoLocalPageWithLocation => Boolean(row));
-
+  const rows = ((data ?? []) as Array<Record<string, unknown>>).map(rowToLocalPage).filter((row): row is SeoLocalPageWithLocation => Boolean(row));
   const corpus = rows.map((row) => [coerceStringArray(row.local_intro).join(" "), JSON.stringify(row.local_sections)].join(" "));
   return rows.map((row) => toPage(row, corpus));
 }
@@ -193,8 +196,12 @@ const getCachedDbLocalPages = unstable_cache(fetchDbLocalPages, ["seo-local-page
 
 export async function getSeoLocalPages() {
   if (!isSupabaseConfigured()) {
+    if (fallbackLocalPageCache) {
+      return fallbackLocalPageCache;
+    }
+
     const corpus = localServicePages.map((page) => [page.page.intro.join(" "), JSON.stringify(page.page.sections)].join(" "));
-    return localServicePages.map((page) => {
+    fallbackLocalPageCache = localServicePages.map((page) => {
       const duplicateRisk = detectDuplicateRisk({ intro: page.page.intro, sections: page.page.sections, existingCorpus: corpus });
       const quality = calculateLocalQualityScore({
         canonicalPath: page.canonicalPath,
@@ -203,7 +210,10 @@ export async function getSeoLocalPages() {
         faqsCount: page.page.faqs.length,
         relatedLinksCount: page.page.relatedLinks.length,
         duplicateRisk: duplicateRisk.level,
+        hasLocalContext: page.page.sections.some((section) => /lokaal|woning|bereikbaarheid|planning/i.test(section.heading)),
       });
+      const config = fallbackConfigByPath.get(page.canonicalPath);
+
       return {
         id: `fallback-local-${page.canonicalPath}`,
         serviceSlug: page.serviceSlug,
@@ -216,9 +226,12 @@ export async function getSeoLocalPages() {
         qualityScore: quality.score,
         qualityLabel: quality.label,
         duplicateRisk: duplicateRisk.level,
+        coverageStatus: config?.tier === "A" ? "sufficient" : config?.tier === "B" ? "limited" : "none",
+        updatedAt: "",
         page: page.page,
       } satisfies DatabaseBackedLocalPage;
     });
+    return fallbackLocalPageCache;
   }
 
   return getCachedDbLocalPages();
@@ -247,9 +260,7 @@ export async function getIndexableSeoLocalRoutes() {
 
 export async function getSeoLocalStaticParams() {
   return (await getPublishedSeoLocalPages()).map((page) =>
-    page.subserviceSlug
-      ? { vakgebied: page.serviceSlug, slug: [page.subserviceSlug, page.citySlug] }
-      : { vakgebied: page.serviceSlug, slug: [page.citySlug] },
+    page.subserviceSlug ? { vakgebied: page.serviceSlug, slug: [page.subserviceSlug, page.citySlug] } : { vakgebied: page.serviceSlug, slug: [page.citySlug] },
   );
 }
 
@@ -281,40 +292,27 @@ export async function resolvePublicServiceRoute(vakgebied: string, slug: string[
 
   if (slug.length === 1) {
     const [secondSegment] = slug;
-    const localMainPage = pages.find(
-      (page) => page.serviceSlug === vakgebied && page.subserviceSlug === null && page.citySlug === secondSegment,
-    );
+    const localMainPage = pages.find((page) => page.serviceSlug === vakgebied && page.subserviceSlug === null && page.citySlug === secondSegment);
 
-    if (localMainPage) {
-      return { type: "local", localPage: localMainPage };
-    }
+    if (localMainPage) return { type: "local", localPage: localMainPage };
 
     const serviceSubPage = getServiceSubPage(vakgebied, secondSegment);
-    if (serviceSubPage) {
-      return { type: "service-sub", serviceSubPage };
-    }
+    if (serviceSubPage) return { type: "service-sub", serviceSubPage };
 
     return null;
   }
 
   if (slug.length === 2) {
     const [subdienst, stad] = slug;
-    const localSubPage = pages.find(
-      (page) => page.serviceSlug === vakgebied && page.subserviceSlug === subdienst && page.citySlug === stad,
-    );
-
-    if (localSubPage) {
-      return { type: "local", localPage: localSubPage };
-    }
+    const localSubPage = pages.find((page) => page.serviceSlug === vakgebied && page.subserviceSlug === subdienst && page.citySlug === stad);
+    if (localSubPage) return { type: "local", localPage: localSubPage };
   }
 
   return null;
 }
 
 export async function hasPublishedLocalMainPage(serviceSlug: string, citySlug: string) {
-  return (await getPublishedSeoLocalPages()).some(
-    (page) => page.serviceSlug === serviceSlug && page.subserviceSlug === null && page.citySlug === citySlug,
-  );
+  return (await getPublishedSeoLocalPages()).some((page) => page.serviceSlug === serviceSlug && page.subserviceSlug === null && page.citySlug === citySlug);
 }
 
 export async function getSeoLocalPageById(id: string) {
@@ -333,7 +331,15 @@ export async function getSeoLocalDashboardSummary() {
     { draft: 0, review: 0, approved: 0, published: 0 },
   );
 
-  const warnings = pages.filter((page) => page.qualityLabel === "onvoldoende" || page.duplicateRisk !== "low").length;
+  const byCoverage = pages.reduce<Record<SeoCoverageStatus, number>>(
+    (acc, page) => {
+      acc[page.coverageStatus] += 1;
+      return acc;
+    },
+    { none: 0, limited: 0, sufficient: 0 },
+  );
+
+  const warnings = pages.filter((page) => page.qualityLabel === "onvoldoende" || page.duplicateRisk !== "low" || page.coverageStatus === "none").length;
   const avg = pages.length ? Math.round(pages.reduce((sum, page) => sum + page.qualityScore, 0) / pages.length) : 0;
 
   return {
@@ -346,6 +352,9 @@ export async function getSeoLocalDashboardSummary() {
     published: pages.filter((page) => page.published).length,
     indexable: pages.filter((page) => page.indexable).length,
     nonIndexable: pages.filter((page) => !page.indexable).length,
+    coverageNone: byCoverage.none,
+    coverageLimited: byCoverage.limited,
+    coverageSufficient: byCoverage.sufficient,
     averageQualityScore: avg,
     warningPages: warnings,
   };
@@ -353,9 +362,7 @@ export async function getSeoLocalDashboardSummary() {
 
 export async function getSeoLocalPreviewModel(id: string) {
   const page = await getSeoLocalPageById(id);
-  if (!page) {
-    return null;
-  }
+  if (!page) return null;
 
   return {
     h1: page.page.h1,
@@ -372,4 +379,109 @@ export async function getSeoPageTextCorpus(excludeId?: string) {
   return pages
     .filter((page) => page.id !== excludeId)
     .map((page) => [page.page.intro.join(" "), page.page.sections.flatMap((section) => section.paragraphs).join(" ")].join(" "));
+}
+
+export async function getSeoLocalPagesAdminList(input: {
+  service?: string;
+  subservice?: string;
+  city?: string;
+  province?: string;
+  status?: string;
+  published?: string;
+  indexable?: string;
+  coverage?: string;
+  duplicate?: "any-warning" | "high" | "none" | "";
+  qualityLt?: number;
+  page?: number;
+  pageSize?: number;
+  sort?: "updated_desc" | "quality_asc" | "quality_desc";
+}) {
+  const page = Math.max(1, input.page ?? 1);
+  const pageSize = Math.max(10, Math.min(100, input.pageSize ?? 25));
+  const offset = (page - 1) * pageSize;
+
+  const filterFn = (item: DatabaseBackedLocalPage, locationsBySlug: Map<string, SeoLocation>) => {
+    const location = locationsBySlug.get(item.citySlug);
+    if (input.service && item.serviceSlug !== input.service) return false;
+    if (input.subservice && (item.subserviceSlug ?? "") !== input.subservice) return false;
+    if (input.city && item.citySlug !== input.city) return false;
+    if (input.province && location?.province !== input.province) return false;
+    if (input.status && item.contentStatus !== input.status) return false;
+    if (input.published === "true" && !item.published) return false;
+    if (input.published === "false" && item.published) return false;
+    if (input.indexable === "true" && !item.indexable) return false;
+    if (input.indexable === "false" && item.indexable) return false;
+    if (input.coverage && item.coverageStatus !== input.coverage) return false;
+    if (input.duplicate === "high" && item.duplicateRisk !== "high") return false;
+    if (input.duplicate === "any-warning" && item.duplicateRisk === "low") return false;
+    if (input.duplicate === "none" && item.duplicateRisk !== "low") return false;
+    if (typeof input.qualityLt === "number" && item.qualityScore >= input.qualityLt) return false;
+    return true;
+  };
+
+  const sortFn = (left: DatabaseBackedLocalPage, right: DatabaseBackedLocalPage) => {
+    if (input.sort === "quality_asc") return left.qualityScore - right.qualityScore;
+    if (input.sort === "quality_desc") return right.qualityScore - left.qualityScore;
+    return right.canonicalPath.localeCompare(left.canonicalPath);
+  };
+
+  if (!isSupabaseConfigured()) {
+    const [rows, locations] = await Promise.all([getSeoLocalPages(), getSeoLocations()]);
+    const locationBySlug = new Map(locations.map((item) => [item.slug, item]));
+    const filtered = rows.filter((row) => filterFn(row, locationBySlug)).sort(sortFn);
+    return {
+      rows: filtered.slice(offset, offset + pageSize).map((row) => ({ ...row, location: locationBySlug.get(row.citySlug) ?? null })),
+      total: filtered.length,
+      page,
+      pageSize,
+      totalPages: Math.max(1, Math.ceil(filtered.length / pageSize)),
+    };
+  }
+
+  const supabase = createAdminSupabaseClient();
+  let query = supabase
+    .from("seo_local_pages")
+    .select(
+      "id, service_slug, subservice_slug, location_id, canonical_path, local_intro, local_sections, faqs, related_local_links, related_service_links, published, indexable, content_status, quality_score, duplicate_risk, coverage_status, created_at, updated_at, location:seo_locations(id, slug, name, province, region_label, tier, content_profile, intro_facts, local_characteristics, nearby_city_slugs, population_band, housing_notes, published, indexable, priority, created_at, updated_at)",
+      { count: "exact" },
+    );
+
+  if (input.service) query = query.eq("service_slug", input.service);
+  if (input.subservice) query = query.eq("subservice_slug", input.subservice);
+  if (input.city) query = query.eq("location.slug", input.city);
+  if (input.province) query = query.eq("location.province", input.province);
+  if (input.status) query = query.eq("content_status", input.status);
+  if (input.published === "true") query = query.eq("published", true);
+  if (input.published === "false") query = query.eq("published", false);
+  if (input.indexable === "true") query = query.eq("indexable", true);
+  if (input.indexable === "false") query = query.eq("indexable", false);
+  if (input.coverage) query = query.eq("coverage_status", input.coverage);
+  if (input.duplicate === "high") query = query.eq("duplicate_risk", "high");
+  if (input.duplicate === "none") query = query.eq("duplicate_risk", "low");
+  if (input.duplicate === "any-warning") query = query.neq("duplicate_risk", "low");
+  if (typeof input.qualityLt === "number") query = query.lt("quality_score", input.qualityLt);
+
+  if (input.sort === "quality_asc") query = query.order("quality_score", { ascending: true });
+  else if (input.sort === "quality_desc") query = query.order("quality_score", { ascending: false });
+  else query = query.order("updated_at", { ascending: false }).order("canonical_path", { ascending: true });
+
+  const { data, count, error } = await query.range(offset, offset + pageSize - 1);
+  if (error) {
+    return { rows: [], total: 0, page, pageSize, totalPages: 1 };
+  }
+
+  const rawRows = ((data ?? []) as Array<Record<string, unknown>>).map(rowToLocalPage).filter((row): row is SeoLocalPageWithLocation => Boolean(row));
+  const corpus = rawRows.map((row) => [coerceStringArray(row.local_intro).join(" "), JSON.stringify(row.local_sections)].join(" "));
+  const mapped = rawRows.map((row) => {
+    const pageRow = toPage(row, corpus);
+    return { ...pageRow, location: row.location };
+  });
+
+  return {
+    rows: mapped,
+    total: count ?? 0,
+    page,
+    pageSize,
+    totalPages: Math.max(1, Math.ceil((count ?? 0) / pageSize)),
+  };
 }

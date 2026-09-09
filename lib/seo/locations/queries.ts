@@ -13,6 +13,8 @@ function toLocation(input: Record<string, unknown>): SeoLocation {
     name: String(input.name),
     province: String(input.province),
     region_label: (input.region_label as string | null) ?? null,
+    tier: (input.tier as "A" | "B" | "C") ?? "C",
+    content_profile: (input.content_profile ?? {}) as SeoLocation["content_profile"],
     intro_facts: (input.intro_facts ?? []) as SeoLocation["intro_facts"],
     local_characteristics: (input.local_characteristics ?? []) as SeoLocation["local_characteristics"],
     nearby_city_slugs: (input.nearby_city_slugs ?? []) as SeoLocation["nearby_city_slugs"],
@@ -30,7 +32,9 @@ async function fetchLocationsFromDb() {
   const supabase = createAdminSupabaseClient();
   const { data, error } = await supabase
     .from("seo_locations")
-    .select("id, slug, name, province, region_label, intro_facts, local_characteristics, nearby_city_slugs, population_band, housing_notes, published, indexable, priority, created_at, updated_at")
+    .select(
+      "id, slug, name, province, region_label, tier, content_profile, intro_facts, local_characteristics, nearby_city_slugs, population_band, housing_notes, published, indexable, priority, created_at, updated_at",
+    )
     .order("name", { ascending: true });
 
   if (error) {
@@ -42,7 +46,7 @@ async function fetchLocationsFromDb() {
 
 const getCachedLocations = unstable_cache(fetchLocationsFromDb, ["seo-locations-all"], { revalidate: 3600 });
 
-export async function getSeoLocations() {
+export async function getSeoLocations(): Promise<SeoLocation[]> {
   if (!isSupabaseConfigured()) {
     return allLocations.map((location, index) => ({
       id: `fallback-location-${index}`,
@@ -50,6 +54,8 @@ export async function getSeoLocations() {
       name: location.name,
       province: location.province,
       region_label: location.regionLabel,
+      tier: location.tier,
+      content_profile: location.contentProfile,
       intro_facts: location.introFacts,
       local_characteristics: location.localCharacteristics,
       nearby_city_slugs: location.nearbyCities,
@@ -67,22 +73,22 @@ export async function getSeoLocations() {
   return rows.length ? rows : [];
 }
 
-export async function getPublishedSeoLocations() {
+export async function getPublishedSeoLocations(): Promise<SeoLocation[]> {
   const locations = await getSeoLocations();
   return locations.filter((location) => location.published);
 }
 
-export async function getSeoLocationById(id: string) {
+export async function getSeoLocationById(id: string): Promise<SeoLocation | null> {
   const locations = await getSeoLocations();
   return locations.find((location) => location.id === id) ?? null;
 }
 
-export async function getSeoLocationBySlug(slug: string) {
+export async function getSeoLocationBySlug(slug: string): Promise<SeoLocation | null> {
   const locations = await getSeoLocations();
   return locations.find((location) => location.slug === slug) ?? null;
 }
 
-export async function getPublishedLocationsGroupedByProvince() {
+export async function getPublishedLocationsGroupedByProvince(): Promise<Array<[string, SeoLocation[]]>> {
   const locations = (await getPublishedSeoLocations()).sort((a, b) => a.name.localeCompare(b.name, "nl"));
 
   return Object.entries(

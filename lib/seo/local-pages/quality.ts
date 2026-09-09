@@ -8,6 +8,24 @@ function normalize(value: string) {
   return value.replace(/\s+/g, " ").trim().toLowerCase();
 }
 
+function tokenSet(value: string) {
+  return new Set(
+    normalize(value)
+      .split(/[^a-z0-9à-ÿ]+/i)
+      .filter((token) => token.length > 3),
+  );
+}
+
+function jaccard(left: Set<string>, right: Set<string>) {
+  const union = new Set([...left, ...right]);
+  if (!union.size) return 0;
+  let shared = 0;
+  for (const token of left) {
+    if (right.has(token)) shared += 1;
+  }
+  return shared / union.size;
+}
+
 export function detectDuplicateRisk(input: { intro: string[]; sections: ServiceSection[]; existingCorpus: string[] }) {
   const introText = normalize(input.intro.join(" "));
   const sectionText = normalize(
@@ -23,6 +41,28 @@ export function detectDuplicateRisk(input: { intro: string[]; sections: ServiceS
     return { level: "high" as const, reason: "Intro is exact gelijk aan bestaande pagina." };
   }
 
+  const introTokens = tokenSet(introText);
+  const nearIdenticalIntro = input.existingCorpus.some((item) => jaccard(introTokens, tokenSet(item)) > 0.9);
+  if (nearIdenticalIntro) {
+    return { level: "high" as const, reason: "Intro lijkt vrijwel identiek op bestaande content." };
+  }
+
+  const normalizedParagraphs = input.sections.flatMap((section) => section.paragraphs.map((paragraph) => normalize(paragraph)));
+  const duplicateParagraphs = normalizedParagraphs.filter(
+    (paragraph, index, values) => paragraph.length > 35 && values.findIndex((value) => value === paragraph) !== index,
+  );
+  if (duplicateParagraphs.length > 0) {
+    return { level: "high" as const, reason: "Exact duplicate paragrafen binnen de pagina gedetecteerd." };
+  }
+
+  const normalizedHeadings = input.sections.map((section) => normalize(section.heading));
+  const repeatedHeadings = normalizedHeadings.filter(
+    (heading, index, values) => heading.length > 0 && values.findIndex((value) => value === heading) !== index,
+  );
+  if (repeatedHeadings.length > 0) {
+    return { level: "medium" as const, reason: "Sectieheading herhaalt binnen dezelfde pagina." };
+  }
+
   const sectionChunks = new Set(sectionText.split(".").map((line) => normalize(line)).filter((line) => line.length > 35));
   let overlap = 0;
   for (const corpusItem of input.existingCorpus) {
@@ -35,7 +75,7 @@ export function detectDuplicateRisk(input: { intro: string[]; sections: ServiceS
   }
 
   if (overlap >= 4) {
-    return { level: "high" as const, reason: "Hoge overlap met bestaande teksten." };
+    return { level: "high" as const, reason: "Hoge overlap met bestaande teksten binnen hetzelfde vakgebied." };
   }
 
   if (overlap >= 2) {
@@ -52,6 +92,7 @@ export function calculateLocalQualityScore(input: {
   faqsCount: number;
   relatedLinksCount: number;
   duplicateRisk: "low" | "medium" | "high";
+  hasLocalContext?: boolean;
 }) {
   let score = 0;
 
@@ -67,6 +108,10 @@ export function calculateLocalQualityScore(input: {
     placeholderPatterns.some((pattern) => pattern.test(value)),
   );
   if (!hasPlaceholder) score += 15;
+  if (input.hasLocalContext ?? true) score += 10;
+
+  const uniqueIntroLines = new Set(input.intro.map((line) => normalize(line))).size;
+  if (uniqueIntroLines >= 2) score += 5;
 
   if (input.duplicateRisk === "medium") score -= 10;
   if (input.duplicateRisk === "high") score -= 30;

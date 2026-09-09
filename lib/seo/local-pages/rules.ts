@@ -1,5 +1,6 @@
 import { serviceSubSlugs } from "../../content/service-pages.ts";
 import type { ServiceFaq, ServiceSection } from "../../content/service-pages.ts";
+import type { SeoCoverageStatus, SeoDuplicateRisk } from "../types.ts";
 
 const canonicalRegex = /^\/[a-z0-9-]+\/[a-z0-9-]+(?:\/[a-z0-9-]+)?$/;
 
@@ -16,6 +17,9 @@ export function validatePublishSafety(input: {
   localIntro: string[];
   localSections: ServiceSection[];
   faqs: ServiceFaq[];
+  qualityScore?: number;
+  duplicateRisk?: SeoDuplicateRisk;
+  coverageStatus?: SeoCoverageStatus;
 }) {
   if (!input.localPublished) {
     return { ok: true } as const;
@@ -47,6 +51,18 @@ export function validatePublishSafety(input: {
 
   if (input.faqs.length < 1) {
     return { ok: false as const, reason: "Minimaal 1 FAQ vereist voor publicatie." };
+  }
+
+  if ((input.qualityScore ?? 0) < 55) {
+    return { ok: false as const, reason: "Kwaliteitsscore te laag om te publiceren." };
+  }
+
+  if (input.duplicateRisk === "high") {
+    return { ok: false as const, reason: "Publicatie geblokkeerd door hoge duplicate risk." };
+  }
+
+  if (input.coverageStatus === "none") {
+    return { ok: false as const, reason: "Publicatie geblokkeerd: geen coverage voor deze combinatie." };
   }
 
   return { ok: true } as const;

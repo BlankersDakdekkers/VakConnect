@@ -56,6 +56,13 @@ export default async function AdminSeoLocationDetailPage({
             <FormField id="population_band" label="Population band">
               <Input id="population_band" name="population_band" defaultValue={location.population_band ?? ""} />
             </FormField>
+            <FormField id="tier" label="Tier">
+              <select id="tier" name="tier" defaultValue={location.tier} className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm">
+                <option value="A">Tier A</option>
+                <option value="B">Tier B</option>
+                <option value="C">Tier C</option>
+              </select>
+            </FormField>
             <FormField id="priority" label="Priority (0-1)">
               <Input id="priority" name="priority" type="number" min="0" max="1" step="0.01" defaultValue={String(location.priority)} required />
             </FormField>
@@ -72,6 +79,9 @@ export default async function AdminSeoLocationDetailPage({
           </FormField>
           <FormField id="housing_notes" label="Housing notes">
             <Textarea id="housing_notes" name="housing_notes" rows={3} defaultValue={location.housing_notes ?? ""} />
+          </FormField>
+          <FormField id="content_profile" label="City content profile (JSON)">
+            <Textarea id="content_profile" name="content_profile" rows={6} defaultValue={JSON.stringify(location.content_profile, null, 2)} />
           </FormField>
 
           <div className="flex flex-wrap gap-6 text-sm font-medium">

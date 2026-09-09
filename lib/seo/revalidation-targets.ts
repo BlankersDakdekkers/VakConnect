@@ -2,11 +2,15 @@ import type { DatabaseBackedLocalPage } from "./types.ts";
 
 export function getRevalidationTargets(input: {
   locationSlug: string;
+  provinceSlug?: string;
   serviceSlug?: string;
   subserviceSlug?: string | null;
   existingPaths?: string[];
 }) {
   const set = new Set<string>(["/regios", "/admin/seo", "/admin/seo/locaties", "/admin/seo/lokaal", "/sitemap.xml"]);
+  if (input.provinceSlug) {
+    set.add(`/regios/${input.provinceSlug}`);
+  }
 
   if (input.serviceSlug) {
     set.add(`/${input.serviceSlug}/${input.locationSlug}`);

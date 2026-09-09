@@ -338,3 +338,71 @@ Per lokale pagina draait een eenvoudige niet-AI quality check:
 - duplicatierisico op tekstniveau
 
 Uitkomst wordt geclassificeerd als `onvoldoende`, `redelijk` of `goed` en gebruikt als publicatiewaarschuwing/blokkade.
+
+## Lokale SEO gecontroleerd opschalen (Prompt 8)
+
+### Stedenbestand, tiers en contentprofielen
+
+- `seo_locations` en `lib/content/locations.ts` bevatten nu 61 steden.
+- Iedere stad heeft:
+  - `tier` (`A|B|C`) voor interne prioritering
+  - `content_profile` voor veilige lokale variatie (geen hard claims of statistiekgedreven feiten)
+- Publieke output toont géén tierlabels.
+
+### Lokale service-ondersteuning
+
+- Alle 8 hoofdclusters ondersteunen lokale routes:
+  - `dakdekker`, `loodgieter`, `schilder`, `elektricien`
+  - `kozijnen`, `badkamer`, `isolatie`, `verbouwing`
+- Bestaande routevorm blijft ongewijzigd:
+  - `/{vakgebied}/{stad}`
+  - `/{vakgebied}/{subdienst}`
+  - `/{vakgebied}/{subdienst}/{stad}`
+
+### Gecontroleerde drafts i.p.v. cartesian product
+
+- Er wordt geen volledige `stad × vakgebied × subdienst` matrix gepubliceerd.
+- Prompt 8 dataset:
+  - 75 bestaande live-lokale routes blijven behouden
+  - 40 nieuwe live lokale hoofdpagina’s (nieuw voor extra clusters)
+  - 104 lokale hoofdpagina-drafts
+  - 63 lokale subdienst-drafts
+- Bulk create in admin zet records altijd op `draft` + `published=false` + `indexable=false`.
+
+### Coverage, quality, duplicate en publish gates
+
+- `seo_local_pages` bevat extra velden:
+  - `coverage_status` (`none|limited|sufficient`)
+  - `quality_score`
+  - `duplicate_risk`
+- Coverage wordt intern afgeleid uit bestaande service-, lead- en professional-service-area data.
+- Publicatieblokkades omvatten nu:
+  - locatie/page status
+  - indexable/content_status
+  - canonical validatie
+  - minimale contentdiepte
+  - quality-threshold
+  - duplicate risk high
+  - coverage `none`
+
+### Admin schaalbaarheid
+
+- `/admin/seo/lokaal` gebruikt paginering + server-side filter/sort parameters (`page`, `pageSize`, service, status, province, coverage, duplicate, quality threshold).
+- Bulk reviewstatusacties zijn veilig beperkt tot:
+  - `draft → review`
+  - `review → approved`
+- Geen bulk publish zonder extra handmatige gate.
+
+### Provinciehubs en interne linking
+
+- Publieke regio-architectuur:
+  - `/regios` (overzicht)
+  - `/regios/{provincie}` (hub per provincie)
+- Een provinciehub wordt alleen gerenderd bij voldoende gepubliceerde lokale pagina’s (minimale drempel in querylaag).
+- Hubs linken door naar relevante stad/servicecombinaties en ondersteunen schaalbare interne linking zonder linkspam.
+
+### Audit en sitemap scaling policy
+
+- `seo_audit_log` registreert status- en publishmutaties met actor/tijd.
+- `app/sitemap.ts` blijft filteren op live/indexeerbare records + geldige provinciehubs.
+- Zolang routeaantallen ruim onder limieten blijven, volstaat één sitemap; bij grotere groei kan worden opgeschaald naar sitemap-index met gesplitste bestanden.

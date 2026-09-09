@@ -19,6 +19,9 @@ export default async function AdminSeoDashboardPage() {
     ["Niet-indexeerbaar", summary.nonIndexable],
     ["Gem. quality", summary.averageQualityScore],
     ["Waarschuwingen", summary.warningPages],
+    ["Coverage geen", summary.coverageNone],
+    ["Coverage beperkt", summary.coverageLimited],
+    ["Coverage voldoende", summary.coverageSufficient],
   ];
 
   const warnings = pages

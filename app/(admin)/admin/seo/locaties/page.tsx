@@ -73,6 +73,13 @@ export default async function AdminSeoLocationsPage({
             <FormField id="population-band" label="Population band">
               <Input id="population-band" name="population_band" />
             </FormField>
+            <FormField id="tier" label="Tier">
+              <select id="tier" name="tier" defaultValue="C" className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm">
+                <option value="A">Tier A</option>
+                <option value="B">Tier B</option>
+                <option value="C">Tier C</option>
+              </select>
+            </FormField>
             <FormField id="priority" label="Priority (0-1)">
               <Input id="priority" name="priority" type="number" min="0" max="1" step="0.01" defaultValue="0.5" required />
             </FormField>
@@ -87,6 +94,27 @@ export default async function AdminSeoLocationsPage({
             </FormField>
             <FormField id="housing-notes" label="Housing notes">
               <Textarea id="housing-notes" name="housing_notes" rows={3} />
+            </FormField>
+            <FormField id="content-profile" label="City content profile (JSON)">
+              <Textarea
+                id="content-profile"
+                name="content_profile"
+                rows={6}
+                defaultValue={JSON.stringify(
+                  {
+                    urbanDensity: "gemiddeld",
+                    buildingEraMix: "gemengd",
+                    accessibilityNotes: "Benoem toegang en planning vooraf.",
+                    apartmentShareBand: "gemiddeld",
+                    renovationContext: "Woningmix vraagt contextspecifieke intake.",
+                    parkingLogistics: "Parkeer- en toegangssituatie vooraf delen helpt.",
+                    historicCore: false,
+                    suburbanExpansion: false,
+                  },
+                  null,
+                  2,
+                )}
+              />
             </FormField>
             <div className="flex flex-wrap gap-6 text-sm font-medium">
               <label className="flex items-center gap-3">
@@ -112,6 +140,7 @@ export default async function AdminSeoLocationsPage({
                   <th className="py-3">Provincie</th>
                   <th className="py-3">Published</th>
                   <th className="py-3">Indexable</th>
+                  <th className="py-3">Tier</th>
                   <th className="py-3">Priority</th>
                 </tr>
               </thead>
@@ -127,6 +156,7 @@ export default async function AdminSeoLocationsPage({
                     <td className="py-3">{location.province}</td>
                     <td className="py-3">{location.published ? "ja" : "nee"}</td>
                     <td className="py-3">{location.indexable ? "ja" : "nee"}</td>
+                    <td className="py-3">{location.tier}</td>
                     <td className="py-3">{location.priority}</td>
                   </tr>
                 ))}

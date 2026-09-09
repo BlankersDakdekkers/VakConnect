@@ -30,12 +30,25 @@ export default async function AdminSeoLocalPageDetail({
 
   const location = locations.find((item) => item.slug === page.citySlug);
   const locationId = location?.id ?? "";
+  const checklist = [
+    ["Locatie published", Boolean(location?.published)],
+    ["Pagina published", page.published],
+    ["Indexable", page.indexable],
+    ["Content status = published", page.contentStatus === "published"],
+    ["Quality ≥ 55", page.qualityScore >= 55],
+    ["Duplicate risk acceptabel", page.duplicateRisk !== "high"],
+    ["Coverage niet none", page.coverageStatus !== "none"],
+    ["Canonical geldig", /^\/[a-z0-9-]+\/[a-z0-9-]+(?:\/[a-z0-9-]+)?$/.test(page.canonicalPath)],
+    ["Intro aanwezig", page.page.intro.length > 0],
+    ["Minimaal 2 secties", page.page.sections.length >= 2],
+    ["Minimaal 1 FAQ", page.page.faqs.length >= 1],
+  ] as const;
 
   return (
     <div className="space-y-6">
       <PageHeader
         title={`Lokale pagina: ${page.canonicalPath}`}
-        description={`Quality ${page.qualityScore} (${page.qualityLabel}) · duplicate risk: ${page.duplicateRisk}`}
+        description={`Quality ${page.qualityScore} (${page.qualityLabel}) · duplicate risk: ${page.duplicateRisk} · coverage: ${page.coverageStatus}`}
         actions={
           <Link href={`/admin/seo/lokaal/${page.id}/preview`} className="rounded-full border px-4 py-2 text-sm font-medium">
             Preview
@@ -49,6 +62,17 @@ export default async function AdminSeoLocalPageDetail({
       </div>
       {success ? <p className="rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-success">{success}</p> : null}
       {error ? <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-danger">{error}</p> : null}
+
+      <Card className="space-y-4">
+        <h2 className="text-lg font-semibold tracking-tight">Publish preview checklist</h2>
+        <ul className="space-y-2 text-sm">
+          {checklist.map(([label, ok]) => (
+            <li key={label} className={ok ? "text-success" : "text-danger"}>
+              {ok ? "✓" : "✕"} {label}
+            </li>
+          ))}
+        </ul>
+      </Card>
 
       <Card className="space-y-4">
         <form action={upsertSeoLocalPageAction} className="space-y-4">
@@ -65,7 +89,7 @@ export default async function AdminSeoLocalPageDetail({
               <select id="location_id" name="location_id" defaultValue={locationId} className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm" required>
                 {locations.map((item) => (
                   <option key={item.id} value={item.id}>
-                    {item.name} ({item.slug})
+                    {item.name} ({item.slug}) · Tier {item.tier}
                   </option>
                 ))}
               </select>
