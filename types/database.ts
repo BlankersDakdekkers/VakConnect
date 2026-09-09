@@ -26,6 +26,7 @@ export type LeadUrgency = "normal" | "urgent";
 export type LeadPreferredTiming = "asap" | "few_weeks" | "one_to_three_months" | "later" | "unknown";
 export type LeadAssignmentStatus = "pending" | "viewed" | "accepted" | "rejected";
 export type ServiceQuestionType = "text" | "textarea" | "select" | "multiselect" | "radio" | "boolean" | "number";
+export type ContactSubmissionStatus = "new" | "read" | "handled" | "spam";
 
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
@@ -180,6 +181,18 @@ export interface LeadActivity {
   created_at: string;
 }
 
+export interface ContactSubmission {
+  id: string;
+  reason: "consument" | "vakman" | "algemeen";
+  name: string;
+  email: string;
+  phone: string | null;
+  message: string;
+  status: ContactSubmissionStatus;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -279,6 +292,11 @@ export interface Database {
         Row: LeadActivity;
         Insert: Partial<LeadActivity> & Pick<LeadActivity, "lead_id" | "activity_type">;
         Update: never;
+      };
+      contact_submissions: {
+        Row: ContactSubmission;
+        Insert: Partial<ContactSubmission> & Pick<ContactSubmission, "reason" | "name" | "email" | "message">;
+        Update: Partial<ContactSubmission>;
       };
     };
   };

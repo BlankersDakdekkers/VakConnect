@@ -20,3 +20,5 @@ export const serviceQuestionTypeValues = ["text", "textarea", "select", "multise
 export const allowedLeadImageTypes = ["image/jpeg", "image/png", "image/webp"] as const;
 export const maxLeadImageSizeBytes = 5 * 1024 * 1024;
 export const maxLeadImageCount = 5;
+export const contactReasonValues = ["consument", "vakman", "algemeen"] as const;
+export const contactSubmissionStatusValues = ["new", "read", "handled", "spam"] as const;
