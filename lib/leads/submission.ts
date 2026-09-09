@@ -1,4 +1,5 @@
 import "server-only";
+import { LeadSubmissionError } from "@/lib/leads/errors";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { buildLeadImagePath, leadImagesBucket, validateLeadImages } from "@/lib/storage/leads";
 import { leadSubmissionSchema } from "@/lib/validation/leads";
@@ -8,7 +9,11 @@ export async function createLeadSubmission(formData: FormData) {
     .getAll("images")
     .filter((entry): entry is File => entry instanceof File && entry.size > 0);
 
-  validateLeadImages(files);
+  try {
+    validateLeadImages(files);
+  } catch (error) {
+    throw new LeadSubmissionError(error instanceof Error ? error.message : "De geüploade afbeeldingen zijn ongeldig.", 400);
+  }
 
   const payload = leadSubmissionSchema.safeParse({
     serviceId: formData.get("serviceId"),
@@ -25,19 +30,23 @@ export async function createLeadSubmission(formData: FormData) {
   });
 
   if (!payload.success) {
-    throw new Error(payload.error.issues[0]?.message ?? "De aanvraaggegevens zijn ongeldig.");
+    throw new LeadSubmissionError(payload.error.issues[0]?.message ?? "De aanvraaggegevens zijn ongeldig.", 400);
   }
 
   const supabase = createAdminSupabaseClient();
-  const { data: service } = await supabase
+  const { data: service, error: serviceError } = await supabase
     .from("services")
     .select("id")
     .eq("id", payload.data.serviceId)
     .eq("active", true)
     .maybeSingle();
 
+  if (serviceError) {
+    throw new LeadSubmissionError("De aanvraag kon niet worden opgeslagen.", 500);
+  }
+
   if (!service) {
-    throw new Error("De gekozen dienst is niet beschikbaar.");
+    throw new LeadSubmissionError("De gekozen dienst is niet beschikbaar.", 400);
   }
 
   const { data: lead, error: leadError } = await supabase
@@ -62,7 +71,7 @@ export async function createLeadSubmission(formData: FormData) {
     .single();
 
   if (leadError || !lead) {
-    throw new Error("De aanvraag kon niet worden opgeslagen.");
+    throw new LeadSubmissionError("De aanvraag kon niet worden opgeslagen.", 500);
   }
 
   const uploadedPaths: string[] = [];
@@ -75,7 +84,7 @@ export async function createLeadSubmission(formData: FormData) {
         .upload(path, file, { contentType: file.type, upsert: false });
 
       if (uploadError) {
-        throw new Error("Een of meer afbeeldingen konden niet worden opgeslagen.");
+        throw new LeadSubmissionError("Een of meer afbeeldingen konden niet worden opgeslagen.", 500);
       }
 
       uploadedPaths.push(path);
@@ -87,7 +96,7 @@ export async function createLeadSubmission(formData: FormData) {
       });
 
       if (imageError) {
-        throw new Error("De afbeeldingsmetadata kon niet worden opgeslagen.");
+        throw new LeadSubmissionError("De afbeeldingsmetadata kon niet worden opgeslagen.", 500);
       }
     }
   } catch (error) {
@@ -95,7 +104,10 @@ export async function createLeadSubmission(formData: FormData) {
       await supabase.storage.from(leadImagesBucket).remove(uploadedPaths);
     }
     await supabase.from("leads").delete().eq("id", lead.id);
-    throw error;
+    if (error instanceof LeadSubmissionError) {
+      throw error;
+    }
+    throw new LeadSubmissionError("De aanvraag kon niet worden opgeslagen.", 500);
   }
 
   return { reference: lead.public_reference };

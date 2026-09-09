@@ -42,15 +42,45 @@ as $$
   select coalesce((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false);
 $$;
 
-create or replace function public.current_professional_id()
-returns uuid
-language sql
-stable
+create or replace function public.enforce_lead_assignment_update()
+returns trigger
+language plpgsql
 as $$
-  select p.id
-  from public.professionals p
-  where p.auth_user_id = auth.uid()
-  limit 1;
+begin
+  if public.is_admin() then
+    return new;
+  end if;
+
+  if new.professional_id <> old.professional_id then
+    raise exception 'Het professional_id veld kan niet worden gewijzigd.';
+  end if;
+
+  if new.lead_id <> old.lead_id then
+    raise exception 'Het lead_id veld kan niet worden gewijzigd.';
+  end if;
+
+  if old.status in ('accepted', 'rejected') and new.status <> old.status then
+    raise exception 'Een definitieve assignment status kan niet worden aangepast.';
+  end if;
+
+  if new.status not in ('viewed', 'accepted', 'rejected') then
+    raise exception 'Alleen viewed, accepted of rejected statusupdates zijn toegestaan.';
+  end if;
+
+  if new.status = 'accepted' and (new.accepted_at is null or new.rejected_at is not null) then
+    raise exception 'Accepted assignments moeten accepted_at hebben en rejected_at leeg laten.';
+  end if;
+
+  if new.status = 'rejected' and (new.rejected_at is null or new.accepted_at is not null) then
+    raise exception 'Rejected assignments moeten rejected_at hebben en accepted_at leeg laten.';
+  end if;
+
+  if new.status = 'viewed' and (new.accepted_at is not null or new.rejected_at is not null) then
+    raise exception 'Viewed assignments mogen geen accepted_at of rejected_at bevatten.';
+  end if;
+
+  return new;
+end;
 $$;
 
 create table public.professionals (
@@ -66,6 +96,17 @@ create table public.professionals (
   created_at timestamptz not null default timezone('utc', now()),
   updated_at timestamptz not null default timezone('utc', now())
 );
+
+create or replace function public.current_professional_id()
+returns uuid
+language sql
+stable
+as $$
+  select p.id
+  from public.professionals p
+  where p.auth_user_id = auth.uid()
+  limit 1;
+$$;
 
 create table public.services (
   id uuid primary key default gen_random_uuid(),
@@ -164,6 +205,10 @@ for each row execute function public.set_updated_at();
 create trigger set_leads_updated_at
 before update on public.leads
 for each row execute function public.set_updated_at();
+
+create trigger enforce_lead_assignments_update
+before update on public.lead_assignments
+for each row execute function public.enforce_lead_assignment_update();
 
 alter table public.professionals enable row level security;
 alter table public.services enable row level security;
@@ -268,7 +313,15 @@ create policy "professionals can update own assignments"
   on public.lead_assignments
   for update
   using (professional_id = public.current_professional_id())
-  with check (professional_id = public.current_professional_id());
+  with check (
+    professional_id = public.current_professional_id()
+    and status in ('viewed', 'accepted', 'rejected')
+    and (
+      (status = 'viewed' and accepted_at is null and rejected_at is null)
+      or (status = 'accepted' and accepted_at is not null and rejected_at is null)
+      or (status = 'rejected' and rejected_at is not null and accepted_at is null)
+    )
+  );
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values (
@@ -279,6 +332,8 @@ values (
   array['image/jpeg', 'image/png', 'image/webp']
 )
 on conflict (id) do nothing;
+
+alter table storage.objects enable row level security;
 
 create policy "admins manage lead image storage"
   on storage.objects
