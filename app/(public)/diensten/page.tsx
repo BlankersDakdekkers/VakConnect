@@ -6,6 +6,21 @@ import { buttonClassName } from "@/components/ui/button";
 import { buildPageMetadata } from "@/lib/config/site";
 import { getActiveServices } from "@/lib/services/queries";
 
+const serviceDetailRoutes: Record<string, string> = {
+  dakdekker: "/dakdekker",
+  schilder: "/schilder",
+  loodgieter: "/loodgieter",
+  elektricien: "/elektricien",
+  isolatie: "/isolatie",
+  "badkamer-verbouwen": "/badkamer",
+};
+
+const editorialClusters = [
+  { href: "/kozijnen", title: "Kozijnen", description: "Materiaalkeuze, vervanging en onderhoud voor ramen en deuren." },
+  { href: "/badkamer", title: "Badkamer", description: "Renovatie, sanitair, tegelwerk en complete badkameraanpak." },
+  { href: "/verbouwing", title: "Verbouwing", description: "Aanbouw, uitbouw, zolder en renovatie van woningen." },
+];
+
 export const metadata: Metadata = buildPageMetadata({
   title: "Diensten",
   description: "Bekijk welke diensten je via VakConnect kunt aanvragen en start direct je aanvraag.",
@@ -26,7 +41,7 @@ export default async function ServicesPage() {
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {services.map((service) => {
-          const hasDetailPage = service.slug === "dakdekker";
+          const detailHref = serviceDetailRoutes[service.slug];
           return (
             <Card key={service.id} className="space-y-3">
               <Badge>{service.category}</Badge>
@@ -34,13 +49,29 @@ export default async function ServicesPage() {
               <p className="text-sm text-muted-foreground">{service.description ?? "Beschikbaar voor intake en matching via VakConnect."}</p>
               <div className="flex gap-2">
                 <Link href="/aanvraag" className={buttonClassName({ variant: "primary", size: "sm" })}>Vind een vakman</Link>
-                {hasDetailPage ? (
-                  <Link href="/dakdekker" className={buttonClassName({ variant: "secondary", size: "sm" })}>Meer info</Link>
+                {detailHref ? (
+                  <Link href={detailHref} className={buttonClassName({ variant: "secondary", size: "sm" })}>Meer info</Link>
                 ) : null}
               </div>
             </Card>
           );
         })}
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-2xl font-semibold tracking-tight">Meer vakgebieden op VakConnect</h2>
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {editorialClusters.map((cluster) => (
+            <Card key={cluster.href} className="space-y-3">
+              <h3 className="text-xl font-semibold tracking-tight">{cluster.title}</h3>
+              <p className="text-sm text-muted-foreground">{cluster.description}</p>
+              <div className="flex gap-2">
+                <Link href={cluster.href} className={buttonClassName({ variant: "secondary", size: "sm" })}>Bekijk vakgebied</Link>
+                <Link href="/aanvraag" className={buttonClassName({ variant: "primary", size: "sm" })}>Plaats je aanvraag</Link>
+              </div>
+            </Card>
+          ))}
+        </div>
       </section>
     </div>
   );

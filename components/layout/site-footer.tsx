@@ -3,7 +3,7 @@ import Link from "next/link";
 export function SiteFooter() {
   return (
     <footer className="border-t bg-slate-950 text-slate-200">
-      <div className="container-shell grid gap-8 py-12 md:grid-cols-[1.2fr_1fr_1fr_1fr]">
+      <div className="container-shell grid gap-8 py-12 md:grid-cols-2 xl:grid-cols-[1.2fr_1fr_1fr_1fr_1fr]">
         <div className="space-y-3">
           <p className="text-lg font-semibold">VakConnect</p>
           <p className="max-w-sm text-sm text-slate-400">
@@ -26,6 +26,16 @@ export function SiteFooter() {
             <Link href="/aanmelden-vakman">Aanmelden vakman</Link>
             <Link href="/over-vakconnect">Over VakConnect</Link>
             <Link href="/contact">Contact</Link>
+          </div>
+        </div>
+        <div className="space-y-3 text-sm text-slate-400">
+          <p className="font-medium text-slate-100">Vakgebieden</p>
+          <div className="flex flex-col gap-2">
+            <Link href="/dakdekker">Dakdekker</Link>
+            <Link href="/schilder">Schilder</Link>
+            <Link href="/loodgieter">Loodgieter</Link>
+            <Link href="/elektricien">Elektricien</Link>
+            <Link href="/verbouwing">Verbouwing</Link>
           </div>
         </div>
         <div className="space-y-3 text-sm text-slate-400">
