@@ -4,15 +4,19 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { buttonClassName } from "@/components/ui/button";
 import { formatDate, formatPostalCode } from "@/lib/utils";
-import { getAdminDashboardStats, getAdminLeads } from "@/lib/leads/queries";
+import { getAdminAttributionSummary, getAdminDashboardStats, getAdminLeads } from "@/lib/leads/queries";
 
 export default async function AdminDashboardPage() {
-  const [stats, recentLeads] = await Promise.all([getAdminDashboardStats(), getAdminLeads(undefined, undefined)]);
+  const [stats, recentLeads, attributionSummary] = await Promise.all([
+    getAdminDashboardStats(),
+    getAdminLeads(undefined, undefined),
+    getAdminAttributionSummary(),
+  ]);
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Overzicht" description="Actuele status van leads en actieve vakmannen op basis van echte database-data." />
-      <div className="grid gap-4 md:grid-cols-3">
+      <PageHeader title="Overzicht" description="Actuele KPI’s, attribution en leadvoortgang op basis van echte database-data." />
+      <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-4">
         {stats.map((stat) => (
           <Card key={stat.label} className="space-y-2">
             <p className="text-sm text-muted-foreground">{stat.label}</p>
@@ -21,6 +25,29 @@ export default async function AdminDashboardPage() {
           </Card>
         ))}
       </div>
+      <Card className="space-y-4">
+        <PageHeader title="Attribution overzicht" description="Leads per source/medium" />
+        <div className="overflow-x-auto">
+          <table className="min-w-full text-left text-sm">
+            <thead className="text-muted-foreground">
+              <tr>
+                <th className="py-3">Source</th>
+                <th className="py-3">Medium</th>
+                <th className="py-3">Leads</th>
+              </tr>
+            </thead>
+            <tbody>
+              {attributionSummary.map((row) => (
+                <tr key={`${row.source}-${row.medium}`} className="border-t">
+                  <td className="py-4">{row.source}</td>
+                  <td className="py-4 text-muted-foreground">{row.medium}</td>
+                  <td className="py-4 font-medium">{row.count}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
       <Card className="space-y-4">
         <PageHeader
           title="Recente leads"

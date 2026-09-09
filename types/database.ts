@@ -1,5 +1,6 @@
 export type AppRole = "admin" | "professional";
 export type ProfessionalStatus = "pending" | "active" | "paused" | "suspended";
+export type ProfessionalVerificationStatus = "unverified" | "pending" | "verified" | "rejected";
 export type LeadStatus =
   | "new"
   | "qualified"
@@ -10,6 +11,17 @@ export type LeadStatus =
   | "won"
   | "lost"
   | "closed";
+export type LeadProgressStatus = "new" | "contacted" | "appointment_scheduled" | "quote_sent" | "won" | "lost";
+export type LeadActivityType =
+  | "lead_created"
+  | "lead_score_calculated"
+  | "lead_matches_refreshed"
+  | "lead_assigned"
+  | "assignment_viewed"
+  | "assignment_accepted"
+  | "assignment_rejected"
+  | "progress_updated"
+  | "loss_reason_recorded";
 export type LeadUrgency = "normal" | "urgent";
 export type LeadPreferredTiming = "asap" | "few_weeks" | "one_to_three_months" | "later" | "unknown";
 export type LeadAssignmentStatus = "pending" | "viewed" | "accepted" | "rejected";
@@ -37,7 +49,9 @@ export interface Professional {
   phone: string;
   kvk_number: string | null;
   website: string | null;
+  description: string | null;
   status: ProfessionalStatus;
+  verification_status: ProfessionalVerificationStatus;
   created_at: string;
   updated_at: string;
 }
@@ -61,6 +75,17 @@ export interface Lead {
   score_reasons: Json | null;
   status: LeadStatus;
   source: string | null;
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  utm_term: string | null;
+  utm_content: string | null;
+  landing_page: string | null;
+  referrer: string | null;
+  gclid: string | null;
+  fbclid: string | null;
+  first_touch_source: string | null;
+  first_touch_timestamp: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -123,10 +148,35 @@ export interface LeadAssignment {
   lead_id: string;
   professional_id: string;
   status: LeadAssignmentStatus;
+  progress_status: LeadProgressStatus;
+  loss_reason: string | null;
   assigned_at: string;
   viewed_at: string | null;
   accepted_at: string | null;
   rejected_at: string | null;
+  progress_updated_at: string | null;
+  created_at: string;
+}
+
+export interface AnalyticsEvent {
+  id: string;
+  event_name: string;
+  anonymous_session_id: string;
+  lead_id: string | null;
+  service_id: string | null;
+  metadata: Json | null;
+  created_at: string;
+}
+
+export interface LeadActivity {
+  id: string;
+  lead_id: string;
+  professional_id: string | null;
+  actor_user_id: string | null;
+  activity_type: LeadActivityType;
+  from_status: LeadProgressStatus | null;
+  to_status: LeadProgressStatus | null;
+  metadata: Json | null;
   created_at: string;
 }
 
@@ -218,6 +268,16 @@ export interface Database {
       lead_matches: {
         Row: LeadMatch;
         Insert: Partial<LeadMatch> & Pick<LeadMatch, "lead_id" | "professional_id" | "match_score">;
+        Update: never;
+      };
+      analytics_events: {
+        Row: AnalyticsEvent;
+        Insert: Partial<AnalyticsEvent> & Pick<AnalyticsEvent, "event_name" | "anonymous_session_id">;
+        Update: never;
+      };
+      lead_activity: {
+        Row: LeadActivity;
+        Insert: Partial<LeadActivity> & Pick<LeadActivity, "lead_id" | "activity_type">;
         Update: never;
       };
     };

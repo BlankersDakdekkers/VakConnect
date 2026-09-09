@@ -8,6 +8,9 @@ import { getActiveServiceQuestionDefinitions } from "@/lib/services/queries";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { buildLeadImagePath, leadImagesBucket, validateLeadImages } from "@/lib/storage/leads";
 import { leadSubmissionSchema } from "@/lib/validation/leads";
+import { addLeadActivity } from "@/lib/leads/activity";
+import { funnelEventNames } from "@/lib/analytics/events";
+import { linkAnonymousAnalyticsEventsToLead, storeAnalyticsEvent } from "@/lib/analytics/server";
 
 function getRawDynamicAnswers(formData: FormData, questions: ServiceQuestionDefinition[]) {
   return Object.fromEntries(
@@ -105,10 +108,42 @@ function buildLeadScoringInput(
   };
 }
 
+function toOptionalText(value: FormDataEntryValue | null, maxLength = 500) {
+  const trimmed = String(value ?? "").trim();
+  if (!trimmed) return null;
+  return trimmed.slice(0, maxLength);
+}
+
+function toOptionalTimestamp(value: FormDataEntryValue | null) {
+  const text = toOptionalText(value, 40);
+  if (!text) return null;
+
+  const date = new Date(text);
+  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+}
+
+function getAttributionFromFormData(formData: FormData) {
+  return {
+    utm_source: toOptionalText(formData.get("utm_source"), 120),
+    utm_medium: toOptionalText(formData.get("utm_medium"), 120),
+    utm_campaign: toOptionalText(formData.get("utm_campaign"), 120),
+    utm_term: toOptionalText(formData.get("utm_term"), 120),
+    utm_content: toOptionalText(formData.get("utm_content"), 120),
+    landing_page: toOptionalText(formData.get("landing_page"), 500),
+    referrer: toOptionalText(formData.get("referrer"), 500),
+    gclid: toOptionalText(formData.get("gclid"), 120),
+    fbclid: toOptionalText(formData.get("fbclid"), 120),
+    first_touch_source: toOptionalText(formData.get("first_touch_source"), 120),
+    first_touch_timestamp: toOptionalTimestamp(formData.get("first_touch_timestamp")),
+  };
+}
+
 export async function createLeadSubmission(formData: FormData) {
   const files = formData
     .getAll("images")
     .filter((entry): entry is File => entry instanceof File && entry.size > 0);
+  const anonymousSessionId = toOptionalText(formData.get("anonymousSessionId"), 120);
+  const attribution = getAttributionFromFormData(formData);
 
   try {
     validateLeadImages(files);
@@ -184,6 +219,7 @@ export async function createLeadSubmission(formData: FormData) {
       preferred_timing: payload.data.preferredTiming,
       status: "new",
       source: "website",
+      ...attribution,
     })
     .select("id, public_reference")
     .single();
@@ -195,6 +231,12 @@ export async function createLeadSubmission(formData: FormData) {
   const uploadedPaths: string[] = [];
 
   try {
+    await addLeadActivity({
+      leadId: lead.id,
+      activityType: "lead_created",
+      metadata: { source: attribution.utm_source ?? "website", step: "submitted" },
+    });
+
     for (const file of files) {
       const path = buildLeadImagePath(lead.id, file.type);
       const { error: uploadError } = await supabase.storage
@@ -241,14 +283,44 @@ export async function createLeadSubmission(formData: FormData) {
       throw new LeadSubmissionError("De leadscore kon niet worden opgeslagen.", 500);
     }
 
-    await refreshLeadMatchesForLead({
+    await addLeadActivity({
+      leadId: lead.id,
+      activityType: "lead_score_calculated",
+      metadata: { score: scoreResult.score },
+    });
+
+    const matches = await refreshLeadMatchesForLead({
       leadId: lead.id,
       serviceId: submissionPayload.data.serviceId,
       postalCode: submissionPayload.data.postalCode,
     });
+
+    await addLeadActivity({
+      leadId: lead.id,
+      activityType: "lead_matches_refreshed",
+      metadata: { match_count: matches.length },
+    });
+
+    if (anonymousSessionId) {
+      try {
+        await linkAnonymousAnalyticsEventsToLead(anonymousSessionId, lead.id);
+        await storeAnalyticsEvent({
+          eventName: funnelEventNames.leadSubmitted,
+          anonymousSessionId,
+          leadId: lead.id,
+          serviceId: submissionPayload.data.serviceId,
+          metadata: {
+            upload_count: files.length,
+            question_count: questions.length,
+          },
+        });
+      } catch (analyticsError) {
+        console.error("Lead analytics kon niet volledig worden opgeslagen", analyticsError);
+      }
+    }
   } catch (error) {
     if (uploadedPaths.length) {
-    await supabase.storage.from(leadImagesBucket).remove(uploadedPaths);
+      await supabase.storage.from(leadImagesBucket).remove(uploadedPaths);
     }
     await supabase.from("leads").delete().eq("id", lead.id);
     if (error instanceof LeadSubmissionError) {

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   assignmentStatusValues,
+  leadProgressStatusValues,
   leadStatusValues,
   leadUrgencyValues,
   preferredTimingValues,
@@ -42,6 +43,13 @@ export const assignmentCreationSchema = z.object({
 export const assignmentDecisionSchema = z.object({
   leadId: z.string().uuid(),
   decision: z.enum(["accepted", "rejected"]),
+  redirectTo: z.string().startsWith("/vakman"),
+});
+
+export const assignmentProgressUpdateSchema = z.object({
+  leadId: z.string().uuid(),
+  progressStatus: z.enum(leadProgressStatusValues),
+  lossReason: z.string().trim().max(120).optional().or(z.literal("")),
   redirectTo: z.string().startsWith("/vakman"),
 });
 

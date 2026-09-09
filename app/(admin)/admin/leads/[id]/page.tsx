@@ -35,8 +35,17 @@ function renderJsonReasons(reasons: unknown) {
     ));
 }
 
-export default async function AdminLeadDetailPage({ params }: Readonly<{ params: Promise<{ id: string }> }>) {
+export default async function AdminLeadDetailPage({
+  params,
+  searchParams,
+}: Readonly<{
+  params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}>) {
   const { id } = await params;
+  const query = await searchParams;
+  const success = typeof query.success === "string" ? query.success : undefined;
+  const error = typeof query.error === "string" ? query.error : undefined;
   const lead = await getAdminLeadDetail(id);
 
   if (!lead) {
@@ -66,15 +75,17 @@ export default async function AdminLeadDetailPage({ params }: Readonly<{ params:
 
   return (
     <div className="space-y-6">
+      {success ? <p className="rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-success">{success}</p> : null}
+      {error ? <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-danger">{error}</p> : null}
       <PageHeader
         eyebrow={lead.public_reference}
         title="Lead detail"
-        description="Bekijk aanvraag, intake, score en matching voor handmatige opvolging."
+        description="Leadinformatie, intake, score, attribution, matching, assignment en activity timeline."
       />
       <div className="grid gap-6 xl:grid-cols-[1.3fr_0.7fr]">
         <div className="space-y-6">
           <Card className="space-y-4">
-            <h2 className="text-lg font-semibold tracking-tight">Algemene leadinformatie</h2>
+            <h2 className="text-lg font-semibold tracking-tight">Leadinformatie</h2>
             <div className="grid gap-4 md:grid-cols-2">
               <div>
                 <p className="text-sm text-muted-foreground">Dienst</p>
@@ -83,35 +94,22 @@ export default async function AdminLeadDetailPage({ params }: Readonly<{ params:
                 <p className="text-sm text-muted-foreground">Aangemaakt op {formatDate(lead.created_at)}</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Leadscore</p>
-                <p className="mt-1 text-2xl font-semibold">{lead.lead_score ?? "—"}</p>
-                <div className="mt-2 flex flex-wrap gap-3">
-                  <StatusBadge value={lead.status} />
-                  <StatusBadge value={lead.urgency} />
-                  {lead.preferred_timing ? <StatusBadge value={lead.preferred_timing} /> : null}
-                </div>
+                <p className="text-sm text-muted-foreground">Klant</p>
+                <p className="mt-1 font-medium">{lead.first_name} {lead.last_name}</p>
+                <p className="text-sm text-muted-foreground">{lead.phone}</p>
+                <p className="text-sm text-muted-foreground">{lead.email}</p>
               </div>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <StatusBadge value={lead.status} />
+              <StatusBadge value={lead.urgency} />
+              {lead.preferred_timing ? <StatusBadge value={lead.preferred_timing} /> : null}
             </div>
             <p className="text-sm leading-7 text-muted-foreground">{lead.description}</p>
           </Card>
 
           <Card className="space-y-4">
-            <h2 className="text-lg font-semibold tracking-tight">Contactgegevens</h2>
-            <div className="grid gap-4 md:grid-cols-2">
-              <div>
-                <p className="text-sm text-muted-foreground">Naam</p>
-                <p className="mt-1 font-medium">{lead.first_name} {lead.last_name}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Contact</p>
-                <p className="mt-1 font-medium">{lead.phone}</p>
-                <p className="text-sm text-muted-foreground">{lead.email}</p>
-              </div>
-            </div>
-          </Card>
-
-          <Card className="space-y-4">
-            <h2 className="text-lg font-semibold tracking-tight">Intakevragen en antwoorden</h2>
+            <h2 className="text-lg font-semibold tracking-tight">Intake</h2>
             {lead.answers.length ? (
               <div className="space-y-3">
                 {lead.answers.map((answer) => (
@@ -124,6 +122,91 @@ export default async function AdminLeadDetailPage({ params }: Readonly<{ params:
             ) : (
               <EmptyState title="Geen extra intake-antwoorden" description="Voor deze lead zijn geen dynamische dienstvragen opgeslagen." />
             )}
+          </Card>
+
+          <Card className="space-y-4">
+            <h2 className="text-lg font-semibold tracking-tight">Score</h2>
+            <p className="text-3xl font-semibold">{lead.lead_score ?? "—"}</p>
+            {scoreReasons?.length ? <ul className="space-y-3 text-sm">{scoreReasons}</ul> : <EmptyState title="Geen scoringsuitleg" description="Voor deze lead zijn nog geen score reasons opgeslagen." />}
+          </Card>
+
+          <Card className="space-y-4">
+            <h2 className="text-lg font-semibold tracking-tight">Attribution</h2>
+            <dl className="grid gap-3 text-sm md:grid-cols-2">
+              <div><dt className="text-muted-foreground">Source</dt><dd>{lead.utm_source ?? lead.source ?? "direct"}</dd></div>
+              <div><dt className="text-muted-foreground">Medium</dt><dd>{lead.utm_medium ?? "—"}</dd></div>
+              <div><dt className="text-muted-foreground">Campaign</dt><dd>{lead.utm_campaign ?? "—"}</dd></div>
+              <div><dt className="text-muted-foreground">Term</dt><dd>{lead.utm_term ?? "—"}</dd></div>
+              <div><dt className="text-muted-foreground">Content</dt><dd>{lead.utm_content ?? "—"}</dd></div>
+              <div><dt className="text-muted-foreground">Landing page</dt><dd>{lead.landing_page ?? "—"}</dd></div>
+              <div><dt className="text-muted-foreground">Referrer</dt><dd>{lead.referrer ?? "—"}</dd></div>
+              <div><dt className="text-muted-foreground">GCLID / FBCLID</dt><dd>{lead.gclid ?? lead.fbclid ?? "—"}</dd></div>
+              <div><dt className="text-muted-foreground">First touch source</dt><dd>{lead.first_touch_source ?? "—"}</dd></div>
+              <div><dt className="text-muted-foreground">First touch time</dt><dd>{lead.first_touch_timestamp ? formatDate(lead.first_touch_timestamp) : "—"}</dd></div>
+            </dl>
+          </Card>
+
+          <Card className="space-y-4">
+            <h2 className="text-lg font-semibold tracking-tight">Matching</h2>
+            {matches.length ? (
+              <div className="space-y-3">
+                {matches.map((match) => (
+                  <div key={match.id} className="rounded-3xl bg-surface-muted p-4 text-sm">
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <p className="font-medium text-foreground">{match.companyName}</p>
+                        <p className="text-muted-foreground">{match.contactName} · {match.email}</p>
+                      </div>
+                      <p className="text-base font-semibold">{match.matchScore}/100</p>
+                    </div>
+                    {renderJsonReasons(match.reasons)?.length ? <ul className="mt-3 space-y-2">{renderJsonReasons(match.reasons)}</ul> : null}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">Er is nog geen actieve professional gevonden met een passend werkgebied.</p>
+            )}
+          </Card>
+
+          <Card className="space-y-4">
+            <h2 className="text-lg font-semibold tracking-tight">Assignment</h2>
+            {lead.assignments.length ? (
+              <div className="space-y-3">
+                {lead.assignments.map((assignment) => (
+                  <div key={assignment.id} className="rounded-3xl bg-surface-muted p-4">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div>
+                        <p className="font-medium">{assignment.professional?.company_name ?? "Onbekende vakman"}</p>
+                        <p className="text-sm text-muted-foreground">Toegewezen op {formatDate(assignment.assigned_at)}</p>
+                        {assignment.loss_reason ? <p className="text-sm text-muted-foreground">Verliesreden: {assignment.loss_reason}</p> : null}
+                      </div>
+                      <div className="flex gap-2">
+                        <StatusBadge value={assignment.status} />
+                        <StatusBadge value={assignment.progress_status} />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <EmptyState title="Nog geen toewijzingen" description="Deze lead is nog niet gekoppeld aan een vakman." />
+            )}
+          </Card>
+
+          <Card className="space-y-4">
+            <h2 className="text-lg font-semibold tracking-tight">Activity timeline</h2>
+            {lead.activity.length ? (
+              <div className="space-y-3">
+                {lead.activity.map((event) => (
+                  <div key={event.id} className="rounded-3xl bg-surface-muted p-4 text-sm">
+                    <p className="font-medium">{event.activityType}</p>
+                    <p className="text-muted-foreground">{formatDate(event.createdAt)}</p>
+                    {event.professional?.company_name ? <p className="text-muted-foreground">Vakman: {event.professional.company_name}</p> : null}
+                    {event.fromStatus || event.toStatus ? <p className="text-muted-foreground">{event.fromStatus ?? "—"} → {event.toStatus ?? "—"}</p> : null}
+                  </div>
+                ))}
+              </div>
+            ) : <EmptyState title="Nog geen activiteiten" description="Belangrijke leadacties verschijnen hier met timestamp." />}
           </Card>
 
           <Card className="space-y-4">
@@ -147,32 +230,6 @@ export default async function AdminLeadDetailPage({ params }: Readonly<{ params:
               <EmptyState title="Geen foto's toegevoegd" description="De consument heeft geen afbeeldingen meegestuurd." />
             )}
           </Card>
-
-          <Card className="space-y-4">
-            <h2 className="text-lg font-semibold tracking-tight">Leadscore redenen</h2>
-            {scoreReasons?.length ? <ul className="space-y-3 text-sm">{scoreReasons}</ul> : <EmptyState title="Geen scoringsuitleg" description="Voor deze lead zijn nog geen score reasons opgeslagen." />}
-          </Card>
-
-          <Card className="space-y-4">
-            <h2 className="text-lg font-semibold tracking-tight">Assignment history</h2>
-            {lead.assignments.length ? (
-              <div className="space-y-3">
-                {lead.assignments.map((assignment) => (
-                  <div key={assignment.id} className="rounded-3xl bg-surface-muted p-4">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <div>
-                        <p className="font-medium">{assignment.professional?.company_name ?? "Onbekende vakman"}</p>
-                        <p className="text-sm text-muted-foreground">Toegewezen op {formatDate(assignment.assigned_at)}</p>
-                      </div>
-                      <StatusBadge value={assignment.status} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <EmptyState title="Nog geen toewijzingen" description="Deze lead is nog niet gekoppeld aan een vakman." />
-            )}
-          </Card>
         </div>
 
         <div className="space-y-6">
@@ -192,28 +249,6 @@ export default async function AdminLeadDetailPage({ params }: Readonly<{ params:
               </FormField>
               <SubmitButton pendingLabel="Status wordt opgeslagen...">Status opslaan</SubmitButton>
             </form>
-          </Card>
-
-          <Card className="space-y-4">
-            <h2 className="text-lg font-semibold tracking-tight">Geschikte vakmannen</h2>
-            {matches.length ? (
-              <div className="space-y-3">
-                {matches.map((match) => (
-                  <div key={match.id} className="rounded-3xl bg-surface-muted p-4 text-sm">
-                    <div className="flex items-center justify-between gap-3">
-                      <div>
-                        <p className="font-medium text-foreground">{match.companyName}</p>
-                        <p className="text-muted-foreground">{match.contactName} · {match.email}</p>
-                      </div>
-                      <p className="text-base font-semibold">{match.matchScore}/100</p>
-                    </div>
-                    {renderJsonReasons(match.reasons)?.length ? <ul className="mt-3 space-y-2">{renderJsonReasons(match.reasons)}</ul> : null}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground">Er is nog geen actieve professional gevonden met een passend werkgebied.</p>
-            )}
           </Card>
 
           <Card className="space-y-4">
