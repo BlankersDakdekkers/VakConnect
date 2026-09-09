@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { FormField } from "@/components/ui/form-field";
@@ -63,9 +64,14 @@ export default async function AdminServicesPage({
                   <input type="hidden" name="service_id" value={service.id} />
                   <input type="hidden" name="active" value={String(!service.active)} />
                   <input type="hidden" name="redirect_to" value="/admin/diensten" />
-                  <SubmitButton variant="secondary" pendingLabel="Bijwerken...">
-                    {service.active ? "Deactiveren" : "Activeren"}
-                  </SubmitButton>
+                  <div className="flex flex-wrap gap-3">
+                    <Link href={`/admin/diensten/${service.id}`} className="rounded-full border px-4 py-2 text-sm font-medium">
+                      Intake beheren
+                    </Link>
+                    <SubmitButton variant="secondary" pendingLabel="Bijwerken...">
+                      {service.active ? "Deactiveren" : "Activeren"}
+                    </SubmitButton>
+                  </div>
                 </form>
               </div>
             ))}

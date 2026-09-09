@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -16,6 +17,9 @@ import {
   maxLeadImageCount,
   maxLeadImageSizeBytes,
   preferredTimingValues,
+  validateDynamicAnswers,
+  type DynamicAnswerValue,
+  type ServiceQuestionDefinition,
 } from "@/lib/validation";
 import { formatFileSize, formatPostalCode, normalizePostalCode } from "@/lib/utils";
 import type { Service } from "@/types/database";
@@ -39,6 +43,8 @@ type LeadDraft = {
   email: string;
 };
 
+type DynamicAnswerDraft = Record<string, string | string[] | boolean>;
+
 const initialDraft: LeadDraft = {
   serviceId: "",
   postalCode: "",
@@ -53,12 +59,54 @@ const initialDraft: LeadDraft = {
   email: "",
 };
 
-const stepTitles = ["Dienst", "Locatie", "Klus", "Foto's", "Contact", "Samenvatting"];
+const stepTitles = ["Dienst", "Dienstvragen", "Locatie", "Klus", "Foto's", "Contact", "Samenvatting"];
 
-export function LeadRequestForm({ services }: Readonly<{ services: Service[] }>) {
+function isDynamicAnswerFilled(value: DynamicAnswerValue | undefined) {
+  if (Array.isArray(value)) return value.length > 0;
+  if (typeof value === "boolean") return true;
+  if (typeof value === "number") return Number.isFinite(value);
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+function getQuestionDisplayValue(question: ServiceQuestionDefinition, value: DynamicAnswerValue | undefined) {
+  if (!isDynamicAnswerFilled(value)) {
+    return "Niet ingevuld";
+  }
+
+  if (question.type === "multiselect" && Array.isArray(value)) {
+    return value
+      .map((entry) => question.options.find((option) => option.value === entry)?.label ?? entry)
+      .join(", ");
+  }
+
+  if (question.type === "radio" || question.type === "select") {
+    return question.options.find((option) => option.value === value)?.label ?? String(value);
+  }
+
+  if (question.type === "boolean") {
+    return value ? "Ja" : "Nee";
+  }
+
+  return String(value);
+}
+
+function getStringAnswer(value: DynamicAnswerValue | undefined) {
+  return typeof value === "string" ? value : "";
+}
+
+function getArrayAnswer(value: DynamicAnswerValue | undefined) {
+  return Array.isArray(value) ? value : [];
+}
+
+export function LeadRequestForm({
+  services,
+}: Readonly<{
+  services: Array<Service & { questions: ServiceQuestionDefinition[] }>;
+}>) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
   const [draft, setDraft] = useState<LeadDraft>(initialDraft);
+  const [dynamicAnswers, setDynamicAnswers] = useState<DynamicAnswerDraft>({});
   const [images, setImages] = useState<File[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
@@ -68,6 +116,7 @@ export function LeadRequestForm({ services }: Readonly<{ services: Service[] }>)
     () => services.find((service) => service.id === draft.serviceId) ?? null,
     [draft.serviceId, services],
   );
+  const selectedQuestions = selectedService?.questions ?? [];
 
   function updateDraft<K extends keyof LeadDraft>(key: K, value: LeadDraft[K]) {
     setDraft((current) => ({ ...current, [key]: value }));
@@ -78,14 +127,50 @@ export function LeadRequestForm({ services }: Readonly<{ services: Service[] }>)
     });
   }
 
+  function updateDynamicAnswer(questionId: string, value: string | boolean) {
+    setDynamicAnswers((current) => ({ ...current, [questionId]: value }));
+    setErrors((current) => {
+      const next = { ...current };
+      delete next[questionId];
+      return next;
+    });
+  }
+
+  function toggleDynamicMultiSelect(questionId: string, value: string, checked: boolean) {
+    setDynamicAnswers((current) => {
+      const currentValues = Array.isArray(current[questionId]) ? current[questionId] : [];
+      const nextValues = checked
+        ? Array.from(new Set([...currentValues, value]))
+        : currentValues.filter((entry) => entry !== value);
+
+      return {
+        ...current,
+        [questionId]: nextValues,
+      };
+    });
+    setErrors((current) => {
+      const next = { ...current };
+      delete next[questionId];
+      return next;
+    });
+  }
+
   function validateStep(step = currentStep) {
     setFormError(null);
     let result;
 
-    if (step == 0) result = serviceStepSchema.safeParse(draft);
-    else if (step == 1) result = locationStepSchema.safeParse(draft);
-    else if (step == 2) result = detailsStepSchema.safeParse(draft);
-    else if (step == 3) {
+    if (step === 0) {
+      result = serviceStepSchema.safeParse(draft);
+    } else if (step === 1) {
+      result = validateDynamicAnswers(
+        selectedQuestions,
+        Object.fromEntries(selectedQuestions.map((question) => [question.id, dynamicAnswers[question.id]])),
+      );
+    } else if (step === 2) {
+      result = locationStepSchema.safeParse(draft);
+    } else if (step === 3) {
+      result = detailsStepSchema.safeParse(draft);
+    } else if (step === 4) {
       const nextErrors: Record<string, string> = {};
       if (images.length > maxLeadImageCount) {
         nextErrors.images = `Je kunt maximaal ${maxLeadImageCount} afbeeldingen uploaden.`;
@@ -98,7 +183,9 @@ export function LeadRequestForm({ services }: Readonly<{ services: Service[] }>)
       }
       setErrors((current) => ({ ...current, ...nextErrors }));
       return Object.keys(nextErrors).length === 0;
-    } else result = contactStepSchema.safeParse(draft);
+    } else {
+      result = contactStepSchema.safeParse(draft);
+    }
 
     if (!result?.success) {
       const nextErrors = Object.fromEntries(result.error.issues.map((issue) => [String(issue.path[0]), issue.message]));
@@ -130,8 +217,13 @@ export function LeadRequestForm({ services }: Readonly<{ services: Service[] }>)
   }
 
   async function handleSubmit() {
-    if (!validateStep(4)) {
-      setCurrentStep(4);
+    if (!validateStep(1)) {
+      setCurrentStep(1);
+      return;
+    }
+
+    if (!validateStep(5)) {
+      setCurrentStep(5);
       return;
     }
 
@@ -150,6 +242,23 @@ export function LeadRequestForm({ services }: Readonly<{ services: Service[] }>)
     body.set("lastName", draft.lastName);
     body.set("phone", draft.phone);
     body.set("email", draft.email);
+    selectedQuestions.forEach((question) => {
+      const answer = dynamicAnswers[question.id];
+
+      if (Array.isArray(answer)) {
+        answer.forEach((value) => body.append(`question:${question.id}`, value));
+        return;
+      }
+
+      if (typeof answer === "boolean") {
+        body.set(`question:${question.id}`, String(answer));
+        return;
+      }
+
+      if (typeof answer === "string" && answer.length) {
+        body.set(`question:${question.id}`, answer);
+      }
+    });
     images.forEach((image) => body.append("images", image));
 
     const response = await fetch("/api/leads", {
@@ -203,6 +312,140 @@ export function LeadRequestForm({ services }: Readonly<{ services: Service[] }>)
       ) : null}
 
       {currentStep === 1 ? (
+        selectedQuestions.length ? (
+          <div className="space-y-6">
+            {selectedQuestions.map((question) => (
+              <div key={question.id} className="space-y-3 rounded-3xl border p-5">
+                {question.type === "textarea" ? (
+                  <FormField
+                    id={question.id}
+                    label={`${question.question}${question.required ? " *" : ""}`}
+                    description={question.help_text ?? undefined}
+                    error={errors[question.id]}
+                  >
+                    <Textarea
+                      id={question.id}
+                      value={getStringAnswer(dynamicAnswers[question.id])}
+                      onChange={(event) => updateDynamicAnswer(question.id, event.target.value)}
+                    />
+                  </FormField>
+                ) : question.type === "select" ? (
+                  <FormField
+                    id={question.id}
+                    label={`${question.question}${question.required ? " *" : ""}`}
+                    description={question.help_text ?? undefined}
+                    error={errors[question.id]}
+                  >
+                    <Select
+                      id={question.id}
+                      value={getStringAnswer(dynamicAnswers[question.id])}
+                      onChange={(event) => updateDynamicAnswer(question.id, event.target.value)}
+                    >
+                      <option value="">Selecteer een optie</option>
+                      {question.options.map((option) => (
+                        <option key={option.id} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </FormField>
+                ) : question.type === "radio" ? (
+                  <FormField
+                    id={question.id}
+                    label={`${question.question}${question.required ? " *" : ""}`}
+                    description={question.help_text ?? undefined}
+                    error={errors[question.id]}
+                  >
+                    <div className="space-y-3">
+                      {question.options.map((option) => (
+                        <label key={option.id} className="flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm">
+                          <input
+                            type="radio"
+                            name={question.id}
+                            checked={dynamicAnswers[question.id] === option.value}
+                            onChange={() => updateDynamicAnswer(question.id, option.value)}
+                          />
+                          {option.label}
+                        </label>
+                      ))}
+                    </div>
+                  </FormField>
+                ) : question.type === "multiselect" ? (
+                  <FormField
+                    id={question.id}
+                    label={`${question.question}${question.required ? " *" : ""}`}
+                    description={question.help_text ?? undefined}
+                    error={errors[question.id]}
+                  >
+                    <div className="space-y-3">
+                      {question.options.map((option) => {
+                        const selectedValues = getArrayAnswer(dynamicAnswers[question.id]);
+                        return (
+                          <label key={option.id} className="flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm">
+                            <Checkbox
+                              checked={selectedValues.includes(option.value)}
+                              onChange={(event) => toggleDynamicMultiSelect(question.id, option.value, event.target.checked)}
+                            />
+                            {option.label}
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </FormField>
+                ) : question.type === "boolean" ? (
+                  <FormField
+                    id={question.id}
+                    label={`${question.question}${question.required ? " *" : ""}`}
+                    description={question.help_text ?? undefined}
+                    error={errors[question.id]}
+                  >
+                    <div className="grid gap-3 md:grid-cols-2">
+                      <label className="flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm">
+                        <input
+                          type="radio"
+                          name={question.id}
+                          checked={dynamicAnswers[question.id] === true}
+                          onChange={() => updateDynamicAnswer(question.id, true)}
+                        />
+                        Ja
+                      </label>
+                      <label className="flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm">
+                        <input
+                          type="radio"
+                          name={question.id}
+                          checked={dynamicAnswers[question.id] === false}
+                          onChange={() => updateDynamicAnswer(question.id, false)}
+                        />
+                        Nee
+                      </label>
+                    </div>
+                  </FormField>
+                ) : (
+                  <FormField
+                    id={question.id}
+                    label={`${question.question}${question.required ? " *" : ""}`}
+                    description={question.help_text ?? undefined}
+                    error={errors[question.id]}
+                  >
+                    <Input
+                      id={question.id}
+                      type={question.type === "number" ? "number" : "text"}
+                      value={getStringAnswer(dynamicAnswers[question.id])}
+                      onChange={(event) => updateDynamicAnswer(question.id, event.target.value)}
+                    />
+                  </FormField>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-3xl bg-surface-muted p-5 text-sm text-muted-foreground">
+            Voor deze dienst zijn nog geen extra intakevragen actief. Je kunt doorgaan naar de locatiegegevens.
+          </div>
+        )
+      ) : null}
+
+      {currentStep === 2 ? (
         <div className="grid gap-4 md:grid-cols-3">
           <FormField id="postalCode" label="Postcode" error={errors.postalCode}>
             <Input
@@ -225,7 +468,7 @@ export function LeadRequestForm({ services }: Readonly<{ services: Service[] }>)
         </div>
       ) : null}
 
-      {currentStep === 2 ? (
+      {currentStep === 3 ? (
         <div className="space-y-4">
           <FormField id="description" label="Omschrijf de klus" error={errors.description}>
             <Textarea
@@ -262,7 +505,7 @@ export function LeadRequestForm({ services }: Readonly<{ services: Service[] }>)
         </div>
       ) : null}
 
-      {currentStep === 3 ? (
+      {currentStep === 4 ? (
         <FormField
           id="images"
           label="Voeg foto's toe"
@@ -283,7 +526,7 @@ export function LeadRequestForm({ services }: Readonly<{ services: Service[] }>)
         </FormField>
       ) : null}
 
-      {currentStep === 4 ? (
+      {currentStep === 5 ? (
         <div className="grid gap-4 md:grid-cols-2">
           <FormField id="firstName" label="Voornaam" error={errors.firstName}>
             <Input id="firstName" value={draft.firstName} onChange={(event) => updateDraft("firstName", event.target.value)} />
@@ -300,7 +543,7 @@ export function LeadRequestForm({ services }: Readonly<{ services: Service[] }>)
         </div>
       ) : null}
 
-      {currentStep === 5 ? (
+      {currentStep === 6 ? (
         <div className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="rounded-3xl bg-surface-muted p-5">
@@ -315,6 +558,19 @@ export function LeadRequestForm({ services }: Readonly<{ services: Service[] }>)
               </p>
             </div>
           </div>
+          {selectedQuestions.length ? (
+            <div className="space-y-3 rounded-3xl bg-surface-muted p-5">
+              <p className="text-sm font-medium text-muted-foreground">Dienstvragen</p>
+              <ul className="space-y-3 text-sm">
+                {selectedQuestions.map((question) => (
+                  <li key={question.id}>
+                    <p className="font-medium text-foreground">{question.question}</p>
+                    <p className="text-muted-foreground">{getQuestionDisplayValue(question, dynamicAnswers[question.id])}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
           <div className="space-y-3 rounded-3xl bg-surface-muted p-5">
             <div className="flex items-center gap-3">
               <p className="text-sm font-medium text-muted-foreground">Urgentie</p>

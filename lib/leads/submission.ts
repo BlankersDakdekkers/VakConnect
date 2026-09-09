@@ -1,8 +1,109 @@
 import "server-only";
 import { LeadSubmissionError } from "@/lib/leads/errors";
+import { scoreLead } from "@/lib/leads/scoring";
+import { refreshLeadMatchesForLead } from "@/lib/matching";
+import type { DynamicAnswerValue, ServiceQuestionDefinition } from "@/lib/validation";
+import { createLeadSubmissionSchema } from "@/lib/validation/leads";
+import { getActiveServiceQuestionDefinitions } from "@/lib/services/queries";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { buildLeadImagePath, leadImagesBucket, validateLeadImages } from "@/lib/storage/leads";
 import { leadSubmissionSchema } from "@/lib/validation/leads";
+
+function getRawDynamicAnswers(formData: FormData, questions: ServiceQuestionDefinition[]) {
+  return Object.fromEntries(
+    questions.map((question) => {
+      const key = `question:${question.id}`;
+
+      if (question.type === "multiselect") {
+        return [question.id, formData.getAll(key)];
+      }
+
+      return [question.id, formData.get(key)];
+    }),
+  );
+}
+
+function isDynamicAnswerProvided(question: ServiceQuestionDefinition, answer: DynamicAnswerValue | undefined) {
+  if (question.type === "multiselect") {
+    return Array.isArray(answer) && answer.length > 0;
+  }
+
+  if (question.type === "boolean") {
+    return typeof answer === "boolean";
+  }
+
+  if (question.type === "number") {
+    return typeof answer === "number" && Number.isFinite(answer);
+  }
+
+  return typeof answer === "string" && answer.trim().length > 0;
+}
+
+function buildLeadAnswerRows(
+  leadId: string,
+  questions: ServiceQuestionDefinition[],
+  answers: Record<string, DynamicAnswerValue | undefined>,
+) {
+  return questions.flatMap<Record<string, DynamicAnswerValue | string>>((question) => {
+    const answer = answers[question.id];
+    if (!isDynamicAnswerProvided(question, answer)) {
+      return [];
+    }
+
+    if (question.type === "multiselect") {
+      return [{
+        lead_id: leadId,
+        question_id: question.id,
+        answer_json: answer as DynamicAnswerValue,
+      }];
+    }
+
+    if (question.type === "boolean") {
+      return [{
+        lead_id: leadId,
+        question_id: question.id,
+        answer_boolean: answer as DynamicAnswerValue,
+      }];
+    }
+
+    if (question.type === "number") {
+      return [{
+        lead_id: leadId,
+        question_id: question.id,
+        answer_number: answer as DynamicAnswerValue,
+      }];
+    }
+
+    return [{
+      lead_id: leadId,
+      question_id: question.id,
+      answer_text: answer as DynamicAnswerValue,
+    }];
+  });
+}
+
+function buildLeadScoringInput(
+  payload: ReturnType<typeof leadSubmissionSchema.parse>,
+  questions: ServiceQuestionDefinition[],
+  answers: Record<string, DynamicAnswerValue | undefined>,
+  imageCount: number,
+) {
+  const answeredQuestionCount = questions.filter((question) => isDynamicAnswerProvided(question, answers[question.id])).length;
+  const requiredQuestions = questions.filter((question) => question.required);
+  const requiredQuestionsAnswered = requiredQuestions.filter((question) => isDynamicAnswerProvided(question, answers[question.id])).length;
+
+  return {
+    contactFieldsCompleted: [payload.firstName, payload.lastName, payload.phone, payload.email].filter((value) => value.trim().length > 0).length,
+    addressFieldsCompleted: [payload.postalCode, payload.houseNumber].filter((value) => value.trim().length > 0).length,
+    descriptionLength: payload.description.trim().length,
+    imageCount,
+    requiredQuestionsCount: requiredQuestions.length,
+    requiredQuestionsAnswered,
+    answeredQuestionCount,
+    totalQuestionCount: questions.length,
+    preferredTimingProvided: payload.preferredTiming !== "unknown",
+  };
+}
 
 export async function createLeadSubmission(formData: FormData) {
   const files = formData
@@ -47,6 +148,23 @@ export async function createLeadSubmission(formData: FormData) {
 
   if (!service) {
     throw new LeadSubmissionError("De gekozen dienst is niet beschikbaar.", 400);
+  }
+
+  let questions: ServiceQuestionDefinition[] = [];
+
+  try {
+    questions = await getActiveServiceQuestionDefinitions(payload.data.serviceId);
+  } catch {
+    throw new LeadSubmissionError("De intakevragen konden niet worden geladen.", 500);
+  }
+
+  const submissionPayload = createLeadSubmissionSchema(questions).safeParse({
+    ...payload.data,
+    dynamicAnswers: getRawDynamicAnswers(formData, questions),
+  });
+
+  if (!submissionPayload.success) {
+    throw new LeadSubmissionError(submissionPayload.error.issues[0]?.message ?? "De intake-antwoorden zijn ongeldig.", 400);
   }
 
   const { data: lead, error: leadError } = await supabase
@@ -99,9 +217,38 @@ export async function createLeadSubmission(formData: FormData) {
         throw new LeadSubmissionError("De afbeeldingsmetadata kon niet worden opgeslagen.", 500);
       }
     }
+
+    const leadAnswers = buildLeadAnswerRows(lead.id, questions, submissionPayload.data.dynamicAnswers);
+
+    if (leadAnswers.length) {
+      const { error: answersError } = await supabase.from("lead_answers").insert(leadAnswers);
+      if (answersError) {
+        throw new LeadSubmissionError("De intake-antwoorden konden niet worden opgeslagen.", 500);
+      }
+    }
+
+    const scoreResult = scoreLead(buildLeadScoringInput(submissionPayload.data, questions, submissionPayload.data.dynamicAnswers, files.length));
+    const { error: scoreError } = await supabase
+      .from("leads")
+      .update({
+        lead_score: scoreResult.score,
+        score_reasons: scoreResult.reasons,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", lead.id);
+
+    if (scoreError) {
+      throw new LeadSubmissionError("De leadscore kon niet worden opgeslagen.", 500);
+    }
+
+    await refreshLeadMatchesForLead({
+      leadId: lead.id,
+      serviceId: submissionPayload.data.serviceId,
+      postalCode: submissionPayload.data.postalCode,
+    });
   } catch (error) {
     if (uploadedPaths.length) {
-      await supabase.storage.from(leadImagesBucket).remove(uploadedPaths);
+    await supabase.storage.from(leadImagesBucket).remove(uploadedPaths);
     }
     await supabase.from("leads").delete().eq("id", lead.id);
     if (error instanceof LeadSubmissionError) {

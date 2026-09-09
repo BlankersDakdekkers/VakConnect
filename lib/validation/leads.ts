@@ -4,8 +4,10 @@ import {
   leadStatusValues,
   leadUrgencyValues,
   preferredTimingValues,
-} from "@/lib/validation/constants";
-import { normalizePostalCode } from "@/lib/utils";
+} from "./constants.ts";
+import { normalizePostalCode } from "../utils.ts";
+import { buildDynamicAnswersSchema } from "./dynamic.ts";
+import type { ServiceQuestionDefinition } from "./dynamic.ts";
 
 export const leadSubmissionSchema = z.object({
   serviceId: z.string().uuid("Selecteer een geldige dienst."),
@@ -44,3 +46,9 @@ export const assignmentDecisionSchema = z.object({
 });
 
 export const assignmentStatusSchema = z.enum(assignmentStatusValues);
+
+export function createLeadSubmissionSchema(questions: ServiceQuestionDefinition[]) {
+  return leadSubmissionSchema.extend({
+    dynamicAnswers: buildDynamicAnswersSchema(questions),
+  });
+}
