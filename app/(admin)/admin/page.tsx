@@ -3,14 +3,17 @@ import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { buttonClassName } from "@/components/ui/button";
+import { formatCredits } from "@/lib/commercial/labels";
+import { getAdminCommercialStats } from "@/lib/commercial/queries";
 import { formatDate, formatPostalCode } from "@/lib/utils";
 import { getAdminAttributionSummary, getAdminDashboardStats, getAdminLeads } from "@/lib/leads/queries";
 
 export default async function AdminDashboardPage() {
-  const [stats, recentLeads, attributionSummary] = await Promise.all([
+  const [stats, recentLeads, attributionSummary, commercialStats] = await Promise.all([
     getAdminDashboardStats(),
     getAdminLeads(undefined, undefined),
     getAdminAttributionSummary(),
+    getAdminCommercialStats(),
   ]);
 
   return (
@@ -25,6 +28,35 @@ export default async function AdminDashboardPage() {
           </Card>
         ))}
       </div>
+      <Card className="space-y-4">
+        <PageHeader title="Commerciële KPI's" description="Leadverkoop, creditverbruik en refundverhouding." />
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <Card className="space-y-2">
+            <p className="text-sm text-muted-foreground">Lead purchases</p>
+            <p className="text-4xl font-semibold tracking-tight">{commercialStats.purchases}</p>
+          </Card>
+          <Card className="space-y-2">
+            <p className="text-sm text-muted-foreground">Credits besteed</p>
+            <p className="text-4xl font-semibold tracking-tight">{formatCredits(commercialStats.creditsSpent)}</p>
+          </Card>
+          <Card className="space-y-2">
+            <p className="text-sm text-muted-foreground">Refunds</p>
+            <p className="text-4xl font-semibold tracking-tight">{commercialStats.refunds}</p>
+          </Card>
+          <Card className="space-y-2">
+            <p className="text-sm text-muted-foreground">Gemiddelde leadprijs</p>
+            <p className="text-4xl font-semibold tracking-tight">{formatCredits(commercialStats.averageLeadPrice)}</p>
+          </Card>
+          <Card className="space-y-2">
+            <p className="text-sm text-muted-foreground">Shared purchases</p>
+            <p className="text-4xl font-semibold tracking-tight">{commercialStats.sharedPurchases}</p>
+          </Card>
+          <Card className="space-y-2">
+            <p className="text-sm text-muted-foreground">Exclusive purchases</p>
+            <p className="text-4xl font-semibold tracking-tight">{commercialStats.exclusivePurchases}</p>
+          </Card>
+        </div>
+      </Card>
       <Card className="space-y-4">
         <PageHeader title="Attribution overzicht" description="Leads per source/medium" />
         <div className="overflow-x-auto">

@@ -35,6 +35,7 @@ VakConnect is een Nederlandse lead marketplace in opbouw die consumenten koppelt
 - Adminbeheer per vakman voor diensten en postcode4-werkgebieden
 - Lead activity timeline en operationele leadprogressie
 - KPI-uitbreiding voor admin- en vakman-dashboard
+- Commerciële wallet-ledger, lead pricing, purchases, refunds en contact unlock
 
 ## Projectstructuur
 
@@ -126,6 +127,7 @@ De migraties bevatten:
 
 - tabellen voor leads, vakmannen, diensten, assignments en afbeeldingen
 - tabellen voor `service_questions`, `service_question_options`, `lead_answers` en `lead_matches`
+- tabellen voor `professional_wallets`, `wallet_transactions`, `lead_pricing_rules`, `lead_purchases` en `commercial_audit_log`
 - enums, constraints en indexen
 - triggers voor `updated_at`
 - generator voor `VC-XXXXXXXX` leadreferenties
@@ -174,6 +176,7 @@ Deze repository bevat geen echte testaccounts. Maak lokaal in Supabase zelf mini
 - Service role key blijft server-side en mag nooit in client bundles terechtkomen.
 - Leadopslag, statuswijzigingen, scoring en matchgeneratie gebeuren server-side.
 - RLS schermt persoonsgegevens, lead-antwoorden en matchdata af voor publiek en andere professionals.
+- Contactgegevens, afbeeldingen, intake-antwoorden en activity-data unlocken voor professionals pas na geldige purchase of geaccepteerde directe assignment.
 - Analytics events slaan uitsluitend niet-gevoelige metadata op (geen naam, e-mail, telefoon, adres, vrije tekst of foto's).
 - Uploads zijn beperkt op type, grootte en aantal.
 - De applicatie toont geen ruwe database-errors aan bezoekers.
@@ -186,6 +189,24 @@ Deze repository bevat geen echte testaccounts. Maak lokaal in Supabase zelf mini
 - `lib/leads/scoring` berekent per lead een score tussen 0 en 100 met configureerbare gewichten.
 - `lib/matching` genereert potentiële matches in `lead_matches`.
 - `lead_matches` zijn matchvoorstellen; `lead_assignments` zijn daadwerkelijk toegewezen leads.
+- `lead_purchases` is het commerciële koopmoment; `lead_assignments` is daarna de operationele relatie en contactunlock.
+
+## Commerciële leadverdeling en wallet (Prompt 9)
+
+- `wallet_transactions` is de enige financiële bron van waarheid; `professional_wallets.cached_balance` is alleen een herleidbare cache.
+- Bestaande transacties worden niet aangepast of verwijderd. Refunds, correcties en adminmutaties gebruiken altijd nieuwe ledgerregels.
+- `apply_wallet_transaction` lockt de wallet, controleert saldo, schrijft de transactie weg en werkt de cached balance transactioneel bij.
+- `purchase_lead` voert de volledige lead purchase atomair uit: eligibility-check, prijsresolutie, saldoverificatie, debit, purchase-record, assignment unlock en sales-status update.
+- Shared leads ondersteunen meerdere kopers tot `max_buyers`; exclusive leads forceren exact één koper.
+- `lead_pricing_rules` ondersteunt dienst-, subdienst-, leadtype- en scorebandregels met prioriteit en fallback.
+- `commercial_audit_log` registreert walletcredits/debits, purchases, refunds, pricing changes en commerciële leadwijzigingen.
+- Professionele routes:
+  - `/vakman/aanvragen` toont beschikbare, gekochte en gesloten leads zonder contactlek vóór unlock.
+  - `/vakman/credits` toont saldo, transacties, refunds en purchase history.
+- Adminroutes:
+  - `/admin/credits` voor creditbeheer via ledgertransacties.
+  - `/admin/lead-prijzen` voor prijsregelbeheer.
+  - `/admin/leads/[id]` bevat commerciële instellingen, purchases en refundactie.
 
 ## Aanvullende documentatie
 

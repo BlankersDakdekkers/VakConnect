@@ -16,6 +16,18 @@ export const preferredTimingValues = ["asap", "few_weeks", "one_to_three_months"
 export const assignmentStatusValues = ["pending", "viewed", "accepted", "rejected"] as const;
 export const leadProgressStatusValues = ["new", "contacted", "appointment_scheduled", "quote_sent", "won", "lost"] as const;
 export const leadLossReasonValues = ["prijs", "klant_niet_bereikbaar", "klant_koos_andere_partij", "klus_uitgesteld", "buiten_scope", "anders"] as const;
+export const leadCommercialTypeValues = ["shared", "exclusive"] as const;
+export const leadSalesStatusValues = ["unavailable", "available", "partially_sold", "sold_out", "closed"] as const;
+export const leadPurchaseStatusValues = ["purchased", "refunded", "cancelled"] as const;
+export const walletTransactionTypeValues = [
+  "credit_purchase",
+  "lead_purchase",
+  "refund",
+  "admin_credit",
+  "admin_debit",
+  "promotional_credit",
+  "correction",
+] as const;
 export const serviceQuestionTypeValues = ["text", "textarea", "select", "multiselect", "radio", "boolean", "number"] as const;
 export const allowedLeadImageTypes = ["image/jpeg", "image/png", "image/webp"] as const;
 export const maxLeadImageSizeBytes = 5 * 1024 * 1024;

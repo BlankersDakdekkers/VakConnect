@@ -21,6 +21,7 @@ export const metadata: Metadata = buildMetadata({
 const navigation = [
   { href: "/vakman", label: "Overzicht" },
   { href: "/vakman/aanvragen", label: "Aanvragen" },
+  { href: "/vakman/credits", label: "Credits" },
   { href: "/vakman/profiel", label: "Profiel" },
 ];
 
@@ -41,7 +42,7 @@ export default async function ProfessionalLayout({ children }: Readonly<{ childr
   return (
     <DashboardShell
       title={`Welkom ${user.professional.company_name}`}
-      subtitle="Bekijk alleen je eigen toegewezen leads"
+      subtitle="Bekijk je leadmarkt, credits en alleen je eigen vrijgegeven leads"
       navigation={navigation}
     >
       {children}

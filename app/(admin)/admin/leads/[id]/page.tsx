@@ -4,9 +4,13 @@ import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { FormField } from "@/components/ui/form-field";
 import { PageHeader } from "@/components/ui/page-header";
+import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { SubmitButton } from "@/components/ui/submit-button";
+import { formatCredits } from "@/lib/commercial/labels";
+import { getAdminLeadCommercialDetail } from "@/lib/commercial/queries";
+import { refundLeadPurchaseAction, updateLeadCommercialSettingsAction } from "@/lib/commercial/actions";
 import { assignLeadAction, updateLeadStatusAction } from "@/lib/leads/actions";
 import { getAdminLeadDetail } from "@/lib/leads/queries";
 import { findEligibleProfessionalsForLead } from "@/lib/matching";
@@ -46,7 +50,7 @@ export default async function AdminLeadDetailPage({
   const query = await searchParams;
   const success = typeof query.success === "string" ? query.success : undefined;
   const error = typeof query.error === "string" ? query.error : undefined;
-  const lead = await getAdminLeadDetail(id);
+  const [lead, commercial] = await Promise.all([getAdminLeadDetail(id), getAdminLeadCommercialDetail(id)]);
 
   if (!lead) {
     notFound();
@@ -230,6 +234,47 @@ export default async function AdminLeadDetailPage({
               <EmptyState title="Geen foto's toegevoegd" description="De consument heeft geen afbeeldingen meegestuurd." />
             )}
           </Card>
+
+          {commercial ? (
+            <Card className="space-y-4">
+              <h2 className="text-lg font-semibold tracking-tight">Commerciële aankopen</h2>
+              <div className="flex flex-wrap gap-3">
+                <StatusBadge value={commercial.commercialType} />
+                <StatusBadge value={commercial.salesStatus} />
+                <p className="rounded-full bg-surface-muted px-3 py-1 text-xs font-medium">
+                  Resolved prijs: {formatCredits(commercial.resolvedPriceCredits)}
+                </p>
+              </div>
+              {commercial.purchases.length ? (
+                <div className="space-y-4">
+                  {commercial.purchases.map((purchase) => (
+                    <div key={purchase.id} className="rounded-3xl bg-surface-muted p-4">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                          <p className="font-medium">{purchase.companyName}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {formatCredits(purchase.priceCredits)} · {formatDate(purchase.purchasedAt)}
+                          </p>
+                          {purchase.refundedAt ? <p className="text-sm text-muted-foreground">Refunded op {formatDate(purchase.refundedAt)}</p> : null}
+                        </div>
+                        <StatusBadge value={purchase.status} />
+                      </div>
+                      {purchase.status === "purchased" ? (
+                        <form action={refundLeadPurchaseAction} className="mt-3 space-y-3">
+                          <input type="hidden" name="purchase_id" value={purchase.id} />
+                          <input type="hidden" name="redirect_to" value={`/admin/leads/${lead.id}`} />
+                          <Input name="reason" placeholder="Refundreden" required />
+                          <SubmitButton variant="secondary" pendingLabel="Refund wordt verwerkt...">Volledige refund</SubmitButton>
+                        </form>
+                      ) : null}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <EmptyState title="Nog geen purchases" description="Commerciële aankopen en refunds verschijnen hier zodra een vakman een lead koopt." />
+              )}
+            </Card>
+          ) : null}
         </div>
 
         <div className="space-y-6">
@@ -269,6 +314,42 @@ export default async function AdminLeadDetailPage({
               <SubmitButton pendingLabel="Lead wordt toegewezen...">Toewijzen</SubmitButton>
             </form>
           </Card>
+
+          {commercial ? (
+            <Card className="space-y-4">
+              <h2 className="text-lg font-semibold tracking-tight">Commerciële instellingen</h2>
+              <form action={updateLeadCommercialSettingsAction} className="space-y-4">
+                <input type="hidden" name="lead_id" value={lead.id} />
+                <input type="hidden" name="redirect_to" value={`/admin/leads/${lead.id}`} />
+                <FormField id="subservice_slug" label="Subdienst slug">
+                  <Input id="subservice_slug" name="subservice_slug" defaultValue={commercial.subserviceSlug ?? ""} />
+                </FormField>
+                <FormField id="commercial_type" label="Commercial type">
+                  <Select id="commercial_type" name="commercial_type" defaultValue={commercial.commercialType}>
+                    <option value="shared">shared</option>
+                    <option value="exclusive">exclusive</option>
+                  </Select>
+                </FormField>
+                <FormField id="price_credits" label="Prijs override in credits">
+                  <Input id="price_credits" name="price_credits" type="number" min="1" defaultValue={commercial.priceCredits ?? ""} />
+                </FormField>
+                <FormField id="max_buyers" label="Max kopers">
+                  <Input id="max_buyers" name="max_buyers" type="number" min="1" defaultValue={commercial.maxBuyers} required />
+                </FormField>
+                <FormField id="sales_status" label="Sales status">
+                  <Select id="sales_status" name="sales_status" defaultValue={commercial.salesStatus}>
+                    <option value="available">available</option>
+                    <option value="partially_sold">partially_sold</option>
+                    <option value="sold_out">sold_out</option>
+                    <option value="unavailable">unavailable</option>
+                    <option value="closed">closed</option>
+                  </Select>
+                </FormField>
+                <p className="text-sm text-muted-foreground">Huidige kopers: {commercial.buyersCount}. Verlaag max buyers nooit onder dit aantal.</p>
+                <SubmitButton pendingLabel="Commerciële instellingen worden opgeslagen...">Opslaan</SubmitButton>
+              </form>
+            </Card>
+          ) : null}
         </div>
       </div>
     </div>
