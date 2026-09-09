@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ServiceContentPage } from "@/components/public/service-content-page";
 import { buildPageMetadata } from "@/lib/config/site";
-import { getLocalLinksForServiceMain } from "@/lib/content/local-service-pages";
+import { getLocalLinksForServiceMain } from "@/lib/seo/local-pages/queries";
 import { getServiceMainPage, serviceMainSlugs } from "@/lib/content/service-pages";
 
 export function generateStaticParams() {
@@ -33,7 +33,7 @@ export default async function ServiceMainPage({ params }: Readonly<{ params: Pro
     notFound();
   }
 
-  const localLinks = getLocalLinksForServiceMain(vakgebied);
+  const localLinks = await getLocalLinksForServiceMain(vakgebied);
   const relatedLinks = [...page.relatedLinks, ...localLinks].filter(
     (link, index, list) => list.findIndex((candidate) => candidate.href === link.href) === index,
   );

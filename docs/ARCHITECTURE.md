@@ -260,3 +260,81 @@ Deze routes gebruiken bestaande UI-bouwblokken (`Card`, `Button`, `FormField`, `
 2. Gebruik unieke inhoud per zoekintentie en link altijd door naar `/aanvraag`.
 3. Koppel nieuwe dienstpagina's aan `/diensten`, relevante categorie-overzichten en de sitemap.
 4. Houd alle commerciële/logistieke logica buiten contentroutes; gebruik bestaande query- en action-lagen.
+
+## Lokale SEO schaalfase (Prompt 7)
+
+### Database-driven model
+
+Lokale SEO-content wordt beheerd via twee tabellen:
+
+- `seo_locations`: city-masterdata met `published`, `indexable`, prioriteit en lokale contextvelden.
+- `seo_local_pages`: service-city records met `content_status` (`draft|review|approved|published`) en JSON-contentblokken.
+
+`seo_local_pages` heeft:
+
+- unieke combinatie op `service_slug + coalesce(subservice_slug,'') + location_id`
+- unieke `canonical_path`
+- publish/indexable flags plus statusworkflow
+
+### Publicatie- en indexatieregels
+
+Een lokale pagina is alleen sitemap/index-eligible wanneer alle voorwaarden gelden:
+
+1. locatie `published = true`
+2. pagina `published = true`
+3. pagina `indexable = true`
+4. `content_status = published`
+
+`draft` en `review` mogen niet indexeerbaar zijn. Bij onvoldoende content of ongeldige publish-state blokkeert server-side validatie publicatie.
+
+### Route-invariant en slug-collision
+
+Publieke routevorm blijft exact gelijk:
+
+- `/{vakgebied}/{stad}`
+- `/{vakgebied}/{subdienst}`
+- `/{vakgebied}/{subdienst}/{stad}`
+
+Architectuurinvariant: een city-slug mag niet gelijk zijn aan een subdienstslug binnen hetzelfde vakgebied. Overtreding blokkeert save/publish in admin.
+
+### Querylaag en cache
+
+Server-only querylagen centraliseren lokale SEO-data:
+
+- `lib/seo/locations/queries.ts`
+- `lib/seo/local-pages/queries.ts`
+
+Deze laag gebruikt DB-first data en gecontroleerde fallback naar bestaande Prompt 6 content wanneer Supabase niet geconfigureerd is.
+
+### Revalidatie
+
+Na SEO-mutaties worden gerichte paden gerevalideerd met `revalidatePath()`:
+
+- relevante lokale route(s)
+- `/regios`
+- `/admin/seo`, `/admin/seo/locaties`, `/admin/seo/lokaal`
+- `/sitemap.xml`
+
+### Admin/CMS-oppervlak
+
+Nieuwe beheerpaden:
+
+- `/admin/seo` (dashboard)
+- `/admin/seo/locaties` + detail
+- `/admin/seo/lokaal` + detail + preview
+
+Bulk create maakt alleen conceptrecords en genereert geen automatische SEO-teksten.
+
+### Kwaliteitsbewaking
+
+Per lokale pagina draait een eenvoudige niet-AI quality check:
+
+- intro aanwezig
+- voldoende secties
+- FAQ aanwezig
+- canonical geldig
+- related links aanwezig
+- placeholderdetectie
+- duplicatierisico op tekstniveau
+
+Uitkomst wordt geclassificeerd als `onvoldoende`, `redelijk` of `goed` en gebruikt als publicatiewaarschuwing/blokkade.

@@ -3,17 +3,13 @@ import Script from "next/script";
 import { notFound } from "next/navigation";
 import { ServiceContentPage } from "@/components/public/service-content-page";
 import { siteConfig, buildPageMetadata } from "@/lib/config/site";
-import {
-  getLocalLinksForServiceSub,
-  type LocalServicePage,
-} from "@/lib/content/local-service-pages";
-import { getPublicServiceStaticParams, resolvePublicServiceRoute } from "@/lib/content/local-routing";
+import { getLocalLinksForServiceSub, getSeoLocalStaticParams, resolvePublicServiceRoute } from "@/lib/seo/local-pages/queries";
 
-export function generateStaticParams() {
-  return getPublicServiceStaticParams();
+export async function generateStaticParams() {
+  return getSeoLocalStaticParams();
 }
 
-function buildLocalStructuredData(localPage: LocalServicePage) {
+function buildLocalStructuredData(localPage: { page: { breadcrumbs: Array<{ label: string; href?: string }>; faqs: Array<{ question: string; answer: string }> } }) {
   const breadcrumbList = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -45,14 +41,14 @@ export async function generateMetadata({
   params,
 }: Readonly<{ params: Promise<{ vakgebied: string; slug: string[] }> }>): Promise<Metadata> {
   const { vakgebied, slug } = await params;
-  const resolved = resolvePublicServiceRoute(vakgebied, slug);
+  const resolved = await resolvePublicServiceRoute(vakgebied, slug);
 
   if (!resolved) {
     return {};
   }
 
   if (resolved.type === "local") {
-    if (!resolved.localPage.published) {
+    if (!resolved.localPage.published || resolved.localPage.contentStatus !== "published") {
       return {};
     }
 
@@ -77,14 +73,19 @@ export default async function ServiceOrLocalPage({
   params,
 }: Readonly<{ params: Promise<{ vakgebied: string; slug: string[] }> }>) {
   const { vakgebied, slug } = await params;
-  const resolved = resolvePublicServiceRoute(vakgebied, slug);
+  const resolved = await resolvePublicServiceRoute(vakgebied, slug);
 
   if (!resolved) {
     notFound();
   }
 
   if (resolved.type === "local") {
-    if (!resolved.localPage.published) {
+    const hasRequiredContent =
+      resolved.localPage.page.intro.length > 0 &&
+      resolved.localPage.page.sections.length >= 2 &&
+      resolved.localPage.page.faqs.length > 0;
+
+    if (!resolved.localPage.published || resolved.localPage.contentStatus !== "published" || !hasRequiredContent) {
       notFound();
     }
 
@@ -92,14 +93,18 @@ export default async function ServiceOrLocalPage({
 
     return (
       <>
-        <Script id={`breadcrumb-${resolved.localPage.canonicalPath}`} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema.breadcrumbList) }} />
+        <Script
+          id={`breadcrumb-${resolved.localPage.canonicalPath}`}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema.breadcrumbList) }}
+        />
         <Script id={`faq-${resolved.localPage.canonicalPath}`} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema.faqSchema) }} />
         <ServiceContentPage page={resolved.localPage.page} />
       </>
     );
   }
 
-  const localLinks = getLocalLinksForServiceSub(vakgebied, slug[0]);
+  const localLinks = await getLocalLinksForServiceSub(vakgebied, slug[0]);
   const relatedLinks = [...resolved.serviceSubPage.relatedLinks, ...localLinks].filter(
     (link, index, list) => list.findIndex((candidate) => candidate.href === link.href) === index,
   );

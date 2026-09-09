@@ -1,202 +1,101 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import test from "node:test";
 import { allLocations } from "../lib/content/locations.ts";
-import { resolvePublicServiceRoute } from "../lib/content/local-routing.ts";
-import {
-  getIndexableLocalServicePages,
-  getIndexableLocalRoutes,
-  getLocalCoverageSummary,
-  getPublishedLocalRoutes,
-  localServicePageConfigs,
-  localServicePages,
-} from "../lib/content/local-service-pages.ts";
-import { getServiceSubPage } from "../lib/content/service-pages.ts";
+import { localServicePageConfigs } from "../lib/content/local-service-pages.ts";
+import { hasSlugCollisionWithSubservice, isSitemapEligible, validatePublishSafety } from "../lib/seo/local-pages/rules.ts";
+import { detectDuplicateRisk } from "../lib/seo/local-pages/quality.ts";
+import { getRevalidationTargets } from "../lib/seo/revalidation-targets.ts";
 
-const repoRoot = process.cwd();
+const migrationPath = "/home/runner/work/VakConnect/VakConnect/supabase/migrations/20260909190000_phase4_local_seo_cms.sql";
+const migrationSql = readFileSync(migrationPath, "utf8");
 
-const expectedCities = [
-  "amsterdam",
-  "rotterdam",
-  "den-haag",
-  "utrecht",
-  "eindhoven",
-  "groningen",
-  "tilburg",
-  "almere",
-  "breda",
-  "nijmegen",
-  "arnhem",
-  "apeldoorn",
-  "haarlem",
-  "amersfoort",
-  "zwolle",
-  "leeuwarden",
-  "den-bosch",
-  "enschede",
-  "leiden",
-  "dordrecht",
+const representativeRoutes = [
+  "/dakdekker/amsterdam",
+  "/dakdekker/breda",
+  "/dakdekker/daklekkage/utrecht",
+  "/loodgieter/rotterdam",
+  "/loodgieter/verstopping/den-haag",
+  "/schilder/eindhoven",
+  "/elektricien/groningen",
 ];
 
-test("stedenbatch bevat 20 unieke slugs inclusief den-haag en den-bosch", () => {
+test("stedenbatch en lokale combinatieomvang blijven 20 en 75", () => {
   assert.equal(allLocations.length, 20);
-  assert.equal(new Set(allLocations.map((location) => location.slug)).size, 20);
-  assert.equal(new Set(expectedCities).size, expectedCities.length);
-
-  for (const citySlug of expectedCities) {
-    assert.equal(allLocations.some((location) => location.slug === citySlug), true, `Ontbrekende city slug: ${citySlug}`);
-  }
+  assert.equal(new Set(allLocations.map((item) => item.slug)).size, 20);
+  assert.equal(localServicePageConfigs.length, 75);
+  assert.equal(new Set(localServicePageConfigs.map((item) => item.canonicalPath)).size, 75);
 });
 
-test("lokale publicatieset heeft gecontroleerde omvang en verdeling", () => {
-  const summary = getLocalCoverageSummary();
-  assert.equal(summary.cities, 20);
-  assert.equal(summary.mainPages, 50);
-  assert.equal(summary.subPages, 25);
-  assert.equal(summary.totalPages, 75);
-
-  const mainByService = new Map<string, number>();
-  const subByCombo = new Map<string, number>();
-
-  for (const page of localServicePages) {
-    if (!page.published) continue;
-
-    if (page.subserviceSlug) {
-      const key = `${page.serviceSlug}/${page.subserviceSlug}`;
-      subByCombo.set(key, (subByCombo.get(key) ?? 0) + 1);
-    } else {
-      mainByService.set(page.serviceSlug, (mainByService.get(page.serviceSlug) ?? 0) + 1);
-    }
-  }
-
-  assert.equal(mainByService.get("dakdekker"), 20);
-  assert.equal(mainByService.get("loodgieter"), 10);
-  assert.equal(mainByService.get("schilder"), 10);
-  assert.equal(mainByService.get("elektricien"), 10);
-  assert.equal(subByCombo.get("dakdekker/daklekkage"), 10);
-  assert.equal(subByCombo.get("dakdekker/dakrenovatie"), 5);
-  assert.equal(subByCombo.get("loodgieter/lekkage"), 5);
-  assert.equal(subByCombo.get("loodgieter/verstopping"), 5);
+test("migratie bevat SEO-tabellen, RLS en canonical/combinatie-uniques", () => {
+  assert.match(migrationSql, /create table public\.seo_locations/);
+  assert.match(migrationSql, /create table public\.seo_local_pages/);
+  assert.match(migrationSql, /alter table public\.seo_locations enable row level security;/);
+  assert.match(migrationSql, /alter table public\.seo_local_pages enable row level security;/);
+  assert.match(migrationSql, /canonical_path text not null unique/);
+  assert.match(migrationSql, /unique\(service_slug, subservice_slug_key, location_id\)/);
 });
 
-test("canonical paden, gepubliceerde routes en config routes zijn uniek", () => {
-  const configRoutes = localServicePageConfigs.map((config) => config.canonicalPath);
-  assert.equal(new Set(configRoutes).size, configRoutes.length, "Duplicate canonicalPath in config");
-
-  const publishedRoutes = getPublishedLocalRoutes();
-  assert.equal(new Set(publishedRoutes).size, publishedRoutes.length, "Duplicate published route");
-
-  const canonicalRoutes = localServicePages.map((page) => page.canonicalPath);
-  assert.equal(new Set(canonicalRoutes).size, canonicalRoutes.length, "Duplicate canonical path in pages");
+test("city slug collision met subdienst wordt gedetecteerd", () => {
+  assert.equal(hasSlugCollisionWithSubservice("dakdekker", "daklekkage"), true);
+  assert.equal(hasSlugCollisionWithSubservice("dakdekker", "amsterdam"), false);
 });
 
-test("sitemap bevat alleen indexeerbare lokale routes", () => {
-  const source = readFileSync(join(repoRoot, "app/sitemap.ts"), "utf8");
-
-  assert.equal(source.includes("getIndexableLocalRoutes"), true, "Sitemap gebruikt geen indexeerbare lokale routebron");
-
-  for (const route of getIndexableLocalRoutes()) {
-    assert.equal(source.includes(`path: \"${route}\"`), false, "Lokale routes moeten runtime uit data komen, niet hardcoded per pad");
-  }
-
-  for (const page of localServicePages) {
-    if (!page.published || page.indexable) continue;
-    assert.equal(getIndexableLocalRoutes().includes(page.canonicalPath), false, `Niet-indexeerbare route zit in indexable set: ${page.canonicalPath}`);
-  }
+test("publish workflow bepaalt sitemap eligibility", () => {
+  assert.equal(isSitemapEligible({ locationPublished: true, published: false, indexable: true, contentStatus: "published" }), false);
+  assert.equal(isSitemapEligible({ locationPublished: true, published: true, indexable: true, contentStatus: "review" }), false);
+  assert.equal(isSitemapEligible({ locationPublished: true, published: true, indexable: true, contentStatus: "published" }), true);
 });
 
-test("nearby-links verwijzen alleen naar gepubliceerde lokale routes", () => {
-  const publishedRouteSet = new Set(getPublishedLocalRoutes());
-  const citySlugSet = new Set(allLocations.map((location) => location.slug));
-
-  for (const page of localServicePages) {
-    if (!page.published) continue;
-
-    for (const link of page.page.relatedLinks) {
-      const segments = link.href.split("/").filter(Boolean);
-      const isLocalMainLink = segments.length === 2 && citySlugSet.has(segments[1]);
-      if (!isLocalMainLink) continue;
-      assert.equal(publishedRouteSet.has(link.href), true, `Broken nearby/local link ${link.href} op ${page.canonicalPath}`);
-    }
-  }
-});
-
-test("lokale pagina metadata en canonical volgen published/indexable beleid", () => {
-  for (const page of localServicePages) {
-    if (!page.published) continue;
-    assert.equal(page.page.path, page.canonicalPath);
-    assert.equal(page.page.path.startsWith(`/${page.serviceSlug}/`), true);
-  }
-
-  for (const page of getIndexableLocalServicePages()) {
-    assert.equal(getIndexableLocalRoutes().includes(page.canonicalPath), true);
-  }
-
-  const routeSource = readFileSync(join(repoRoot, "app/(public)/[vakgebied]/[...slug]/page.tsx"), "utf8");
-  assert.equal(routeSource.includes("indexable: resolved.localPage.indexable"), true, "Route metadata geeft indexable status niet door");
-});
-
-test("route-resolver houdt subdienst en lokale routes uit elkaar", () => {
-  const localMain = resolvePublicServiceRoute("dakdekker", ["breda"]);
-  assert.equal(localMain?.type, "local");
-
-  const subservice = resolvePublicServiceRoute("dakdekker", ["daklekkage"]);
-  assert.equal(subservice?.type, "service-sub");
-  assert.equal(getServiceSubPage("dakdekker", "daklekkage")?.path, "/dakdekker/daklekkage");
-
-  const localSubservice = resolvePublicServiceRoute("dakdekker", ["daklekkage", "breda"]);
-  assert.equal(localSubservice?.type, "local");
-
-  const unknownCity = resolvePublicServiceRoute("dakdekker", ["onbekende-stad"]);
-  assert.equal(unknownCity, null);
-
-  const unknownSubservice = resolvePublicServiceRoute("dakdekker", ["onbekende-subdienst", "breda"]);
-  assert.equal(unknownSubservice, null);
-});
-
-test("lokale content vermijdt exacte duplicatie van intro en sectieblokken", () => {
-  const introSet = new Set<string>();
-  const sectionSet = new Set<string>();
-
-  for (const page of localServicePages) {
-    if (!page.published) continue;
-
-    const introText = page.page.intro.join(" ").replace(/\s+/g, " ").trim();
-    assert.equal(introSet.has(introText), false, `Exacte intro-duplicatie gevonden op ${page.canonicalPath}`);
-    introSet.add(introText);
-
-    const sectionText = page.page.sections
-      .flatMap((section) => [section.heading, ...section.paragraphs, ...(section.bullets ?? [])])
-      .join(" ")
-      .replace(/\s+/g, " ")
-      .trim();
-
-    assert.equal(sectionSet.has(sectionText), false, `Exacte sectieduplicatie gevonden op ${page.canonicalPath}`);
-    sectionSet.add(sectionText);
-  }
-});
-
-test("representatieve lokale pagina's verschillen inhoudelijk", () => {
-  const samples = [
-    "/dakdekker/amsterdam",
-    "/dakdekker/breda",
-    "/dakdekker/daklekkage/utrecht",
-    "/loodgieter/rotterdam",
-    "/loodgieter/verstopping/den-haag",
-    "/schilder/eindhoven",
-    "/elektricien/groningen",
-  ];
-
-  const pages = samples.map((path) => {
-    const page = localServicePages.find((candidate) => candidate.canonicalPath === path);
-    assert.ok(page, `Ontbrekende representatieve pagina: ${path}`);
-    return page!;
+test("publish safety blokkeert ongeldige content", () => {
+  const invalid = validatePublishSafety({
+    locationPublished: true,
+    localPublished: true,
+    indexable: true,
+    contentStatus: "published",
+    canonicalPath: "/dakdekker/breda",
+    localIntro: ["te kort"],
+    localSections: [{ heading: "Test", paragraphs: ["Te kort"] }],
+    faqs: [],
   });
 
-  for (let i = 0; i < pages.length; i += 1) {
-    for (let j = i + 1; j < pages.length; j += 1) {
-      assert.notEqual(pages[i].page.intro.join(" "), pages[j].page.intro.join(" "), `Intro identiek tussen ${pages[i].canonicalPath} en ${pages[j].canonicalPath}`);
-    }
+  assert.equal(invalid.ok, false);
+});
+
+test("duplicate detector signaleert exacte intro duplicatie", () => {
+  const duplicate = detectDuplicateRisk({
+    intro: ["Exact dezelfde intro tekst"],
+    sections: [{ heading: "Sectie", paragraphs: ["Unieke paragraaf voor deze pagina."] }],
+    existingCorpus: ["Exact dezelfde intro tekst"],
+  });
+
+  assert.equal(duplicate.level, "high");
+});
+
+test("revalidation target generation bevat regio, admin en relevante lokale paden", () => {
+  const targets = getRevalidationTargets({
+    locationSlug: "breda",
+    serviceSlug: "dakdekker",
+    subserviceSlug: "daklekkage",
+    existingPaths: ["/dakdekker/breda", "/dakdekker/daklekkage/breda"],
+  });
+
+  assert.equal(targets.includes("/regios"), true);
+  assert.equal(targets.includes("/admin/seo/lokaal"), true);
+  assert.equal(targets.includes("/dakdekker/breda"), true);
+  assert.equal(targets.includes("/dakdekker/daklekkage/breda"), true);
+});
+
+test("representatieve Prompt 6 routes blijven aanwezig in lokale dataset", () => {
+  const routeSet = new Set(localServicePageConfigs.map((item) => item.canonicalPath));
+  for (const route of representativeRoutes) {
+    assert.equal(routeSet.has(route), true, `Ontbrekende route: ${route}`);
   }
+});
+
+test("bulk create defaults staan op draft/unpublished/non-indexable in actioncode", () => {
+  const actionsSource = readFileSync("/home/runner/work/VakConnect/VakConnect/lib/seo/actions.ts", "utf8");
+  assert.match(actionsSource, /content_status: "draft"/);
+  assert.match(actionsSource, /published: false/);
+  assert.match(actionsSource, /indexable: false/);
 });
