@@ -4,6 +4,7 @@ import { buttonClassName } from "@/components/ui/button";
 const navigation = [
   { href: "/hoe-werkt-het", label: "Hoe het werkt" },
   { href: "/diensten", label: "Diensten" },
+  { href: "/regios", label: "Regio's" },
   { href: "/kosten", label: "Kosten" },
   { href: "/voor-vakmannen", label: "Voor vakmannen" },
   { href: "/contact", label: "Contact" },
