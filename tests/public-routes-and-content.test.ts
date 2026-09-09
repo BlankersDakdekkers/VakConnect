@@ -4,7 +4,7 @@ import { join } from "node:path";
 import test from "node:test";
 import { getEditorialClusters, getServiceDetailHref } from "../lib/content/service-cards.ts";
 import { getAllServicePages, serviceMainPages, serviceSubPages, getAllServiceRoutes } from "../lib/content/service-pages.ts";
-import { getIndexableLocalRoutes } from "../lib/content/local-service-pages.ts";
+import { getIndexableSeoLocalRoutes } from "../lib/seo/local-pages/queries.ts";
 import { publicContactSchema, publicProfessionalApplicationSchema } from "../lib/validation/public.ts";
 
 const repoRoot = process.cwd();
@@ -238,15 +238,15 @@ test("sitemap bevat publieke routes en geen protected routes", () => {
   }
 
   assert.equal(sitemapSource.includes("getAllServiceRoutes"), true, "Sitemap gebruikt service route generatie niet");
-  assert.equal(sitemapSource.includes("getIndexableLocalRoutes"), true, "Sitemap gebruikt lokale route filtering niet");
+  assert.equal(sitemapSource.includes("getIndexableSeoLocalRoutes"), true, "Sitemap gebruikt lokale route filtering niet");
 
   for (const blocked of ["/admin", "/vakman", "/login"]) {
     assert.equal(sitemapSource.includes(`path: "${blocked}"`), false, `Protected route in sitemap: ${blocked}`);
   }
 });
 
-test("lokale indexeerbare routes zijn uniek en in sitemap opgenomen", () => {
-  const localRoutes = getIndexableLocalRoutes();
+test("lokale indexeerbare routes zijn uniek en in sitemap opgenomen", async () => {
+  const localRoutes = await getIndexableSeoLocalRoutes();
   assert.ok(localRoutes.length > 0, "Lokale routes ontbreken");
   assert.equal(new Set(localRoutes).size, localRoutes.length, "Duplicate lokale routes gevonden");
 });

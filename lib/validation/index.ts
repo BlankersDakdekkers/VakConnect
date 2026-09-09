@@ -5,3 +5,4 @@ export * from "./professionals.ts";
 export * from "./services.ts";
 
 export * from "./public.ts";
+export * from "./seo.ts";

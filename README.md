@@ -108,6 +108,8 @@ Plaats nooit echte secrets in de repository.
    - `supabase/migrations/20260909124500_initial_vakconnect_schema.sql`
    - `supabase/migrations/20260909133000_phase2_dynamic_intake.sql`
    - `supabase/migrations/20260909152000_phase3_analytics_operations.sql`
+   - `supabase/migrations/20260909170000_contact_submissions_hotfix.sql`
+   - `supabase/migrations/20260909190000_phase4_local_seo_cms.sql`
 4. Controleer in **Storage** dat de private bucket `lead-images` bestaat.
 5. Voeg indien nodig handmatig admingebruikers toe in Supabase Auth en zet hun `app_metadata.role` op `admin`.
 
@@ -261,3 +263,30 @@ Er wordt in deze route geen automatische login of privilege-escalatie uitgevoerd
 3. Link de pagina vanuit `/diensten` en relevante categoriepagina's
 4. Voeg de route toe aan `app/sitemap.ts`
 5. Houd content gescheiden van lead-, matching- en authlogica
+
+
+## Lokale SEO beheerlaag (Prompt 7)
+
+Lokale SEO is nu database-driven via Supabase in plaats van uitsluitend codeconfig:
+
+- `seo_locations` beheert steden, provincie/regio context, publish/indexable en prioriteit
+- `seo_local_pages` beheert service-stad/subservice-stad combinaties inclusief contentstatus
+- contentworkflow: `draft` → `review` → `approved` → `published`
+- alleen `published + indexable + content_status=published` én gepubliceerde locatie komen in sitemap
+- slug-collision invariant: city-slug mag niet conflicteren met subdienstslug binnen hetzelfde vakgebied
+- adminroutes:
+  - `/admin/seo`
+  - `/admin/seo/locaties`
+  - `/admin/seo/locaties/[id]`
+  - `/admin/seo/lokaal`
+  - `/admin/seo/lokaal/[id]`
+  - `/admin/seo/lokaal/[id]/preview`
+- bulk create maakt uitsluitend drafts (`published=false`, `indexable=false`, geen auto-content)
+- publicatie gebruikt server-side publish-safety checks, quality score en duplicate-protectie
+- gerichte revalidatie gebruikt `revalidatePath()` voor lokale routepaden, `/regios`, admin-overzichten en sitemap
+
+Lokale URL-structuur blijft ongewijzigd:
+
+- `/{vakgebied}/{stad}`
+- `/{vakgebied}/{subdienst}`
+- `/{vakgebied}/{subdienst}/{stad}`

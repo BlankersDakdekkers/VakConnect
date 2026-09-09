@@ -27,6 +27,7 @@ export type LeadPreferredTiming = "asap" | "few_weeks" | "one_to_three_months" |
 export type LeadAssignmentStatus = "pending" | "viewed" | "accepted" | "rejected";
 export type ServiceQuestionType = "text" | "textarea" | "select" | "multiselect" | "radio" | "boolean" | "number";
 export type ContactSubmissionStatus = "new" | "read" | "handled" | "spam";
+export type SeoContentStatus = "draft" | "review" | "approved" | "published";
 
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
@@ -181,6 +182,43 @@ export interface LeadActivity {
   created_at: string;
 }
 
+
+export interface SeoLocation {
+  id: string;
+  slug: string;
+  name: string;
+  province: string;
+  region_label: string | null;
+  intro_facts: Json;
+  local_characteristics: Json;
+  nearby_city_slugs: Json;
+  population_band: string | null;
+  housing_notes: string | null;
+  published: boolean;
+  indexable: boolean;
+  priority: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SeoLocalPage {
+  id: string;
+  service_slug: string;
+  subservice_slug: string | null;
+  location_id: string;
+  canonical_path: string;
+  local_intro: Json;
+  local_sections: Json;
+  faqs: Json;
+  related_local_links: Json;
+  related_service_links: Json;
+  published: boolean;
+  indexable: boolean;
+  content_status: SeoContentStatus;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface ContactSubmission {
   id: string;
   reason: "consument" | "vakman" | "algemeen";
@@ -297,6 +335,16 @@ export interface Database {
         Row: ContactSubmission;
         Insert: Partial<ContactSubmission> & Pick<ContactSubmission, "reason" | "name" | "email" | "message">;
         Update: Partial<ContactSubmission>;
+      };
+      seo_locations: {
+        Row: SeoLocation;
+        Insert: Partial<SeoLocation> & Pick<SeoLocation, "slug" | "name" | "province">;
+        Update: Partial<SeoLocation>;
+      };
+      seo_local_pages: {
+        Row: SeoLocalPage;
+        Insert: Partial<SeoLocalPage> & Pick<SeoLocalPage, "service_slug" | "location_id" | "canonical_path">;
+        Update: Partial<SeoLocalPage>;
       };
     };
   };

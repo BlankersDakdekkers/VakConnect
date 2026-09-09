@@ -24,6 +24,9 @@ const navigation = [
   { href: "/admin/contact", label: "Contact" },
   { href: "/admin/vakmannen", label: "Vakmannen" },
   { href: "/admin/diensten", label: "Diensten" },
+  { href: "/admin/seo", label: "SEO overzicht" },
+  { href: "/admin/seo/locaties", label: "SEO locaties" },
+  { href: "/admin/seo/lokaal", label: "SEO lokale pagina's" },
 ];
 
 export default async function AdminLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -43,7 +46,7 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
   return (
     <DashboardShell
       title="Admin dashboard"
-      subtitle="Beheer leads, vakmannen, diensten en handmatige matching"
+      subtitle="Beheer leads, vakmannen, diensten, handmatige matching en lokale SEO"
       navigation={navigation}
     >
       {children}
