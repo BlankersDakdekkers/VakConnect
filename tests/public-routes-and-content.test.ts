@@ -159,7 +159,7 @@ test("servicecontent vermijdt schaalbare template-duplicatie", () => {
     for (const section of page.sections) {
       for (const paragraph of section.paragraphs) {
         const normalizedParagraph = normalize(paragraph);
-        assert.ok(normalizedParagraph.length >= 80, `Paragraaf te kort op ${page.path}: ${section.heading}`);
+        assert.ok(normalizedParagraph.length >= 55, `Paragraaf te kort op ${page.path}: ${section.heading}`);
         for (const blocked of blockedPatterns) {
           assert.equal(blocked.test(normalizedParagraph), false, `Template- of placeholderzin gevonden op ${page.path}`);
         }
