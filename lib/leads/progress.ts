@@ -1,5 +1,5 @@
-import { leadLossReasonValues, leadProgressStatusValues } from "@/lib/validation";
-import type { LeadProgressStatus } from "@/types/database";
+import { leadLossReasonValues, leadProgressStatusValues } from "../validation/constants.ts";
+import type { LeadProgressStatus } from "../../types/database.ts";
 
 export const leadProgressTransitions: Record<LeadProgressStatus, LeadProgressStatus[]> = {
   new: ["contacted"],

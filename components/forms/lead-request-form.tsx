@@ -114,11 +114,9 @@ export function LeadRequestForm({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [attribution, setAttribution] = useState(() => getClientAttributionSnapshot());
+  const [attribution] = useState(() => getClientAttributionSnapshot());
 
   useEffect(() => {
-    const snapshot = getClientAttributionSnapshot();
-    setAttribution(snapshot);
     void trackFunnelEvent(funnelEventNames.leadFunnelStarted, { step: 1 });
   }, []);
 

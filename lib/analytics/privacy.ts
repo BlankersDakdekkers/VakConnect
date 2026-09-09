@@ -1,4 +1,4 @@
-import type { Json } from "@/types/database";
+import type { Json } from "../../types/database.ts";
 
 const forbiddenMetadataKeyPatterns = [
   /name/i,
