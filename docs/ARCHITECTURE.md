@@ -37,6 +37,7 @@ Belangrijke keuzes:
 - `lead_answers` houdt dienstspecifieke intake generiek buiten de `leads`-tabel.
 - `lead_matches` bewaart potentiële geschikte vakmannen; `lead_purchases` bewaart commerciële aankopen; `lead_assignments` bewaart daadwerkelijke operationele leadrelaties.
 - `wallet_transactions` is een immutable ledger; `professional_wallets.cached_balance` is alleen een transactioneel bijgewerkte cache.
+- Nieuwe wallets starten op `0` credits; eventuele testcredits worden alleen via expliciete seed- of admintransacties toegevoegd.
 - `leads` bewaart commerciële verkoopstatus via `commercial_type`, `price_credits`, `max_buyers`, `buyers_count`, `sales_status` en optionele `subservice_slug`.
 - `postal_code_prefix` gebruikt een viercijferige MVP-regiobasis voor matching.
 - `created_at` en `updated_at` zijn standaard aanwezig waar mutaties relevant zijn.
@@ -64,7 +65,7 @@ RLS is geactiveerd op alle relevante domeintabellen.
 - Professionals kunnen assignments niet creëren; alleen admins of server-side service-role logica kunnen toewijzen.
 - Prijsresolutie, walletdebits, refunds en lead purchases gebeuren via centrale server-side / SQL functies; client-submitted prijzen worden genegeerd.
 
-Admin-mutaties verlopen in de applicatie server-side via de service role key nadat de admin-rol eerst is gevalideerd.
+Admin-mutaties verlopen server-side na een admin-sessiecheck. De admin-RPC's gebruiken de ingelogde admin-identiteit voor auditvelden; service-role EXECUTE blijft alleen open voor interne onderhoudspaden zoals sales-state refresh en backend reconciliatie.
 
 ## Lead lifecycle
 
@@ -118,9 +119,13 @@ Iedere match bevat `professional_id`, `match_score` en `reasons`. In de commerci
 
 - `apply_wallet_transaction(...)` lockt eerst de walletrow (`FOR UPDATE`), leest het saldo, valideert credits, schrijft een immutable transactie en werkt pas daarna `cached_balance` bij.
 - Positieve bedragen verhogen credits; negatieve bedragen verlagen credits; `amount = 0` is verboden.
+- Het transactietype dwingt het teken af: `lead_purchase` en `admin_debit` zijn negatief, `refund`/`admin_credit`/`promotional_credit`/`credit_purchase` positief en alleen `correction` mag beide kanten op.
 - `lead_pricing_rules` ondersteunt prioriteitsvolgorde, dienst-/subdienstfilters, scorebanden en aparte multipliers voor shared/exclusive leads.
 - `resolve_lead_price(...)` bepaalt de authoritative prijs server-side en gebruikt alleen een lead-level override of een centrale fallback wanneer geen actieve regel matcht.
 - `commercial_audit_log` registreert walletcredits/debits, lead purchases, refunds, pricing changes en commerciële leadwijzigingen.
+- `purchase_lead(...)` bindt idempotency keys aan één professional én één lead; hergebruik op een andere lead geeft `IDEMPOTENCY_KEY_CONFLICT`.
+- Een refunded purchase kan niet opnieuw worden gekocht; compensatie verloopt uitsluitend via de refundtransactie en niet via mutatie van historische debits.
+- `get_wallet_reconciliation(...)` en admin-overzichten controleren afwijkingen tussen `cached_balance` en de som van het immutable ledger zonder automatische correctie.
 
 ## Storage-aanpak
 

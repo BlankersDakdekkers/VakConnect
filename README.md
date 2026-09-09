@@ -194,12 +194,16 @@ Deze repository bevat geen echte testaccounts. Maak lokaal in Supabase zelf mini
 ## Commerciële leadverdeling en wallet (Prompt 9)
 
 - `wallet_transactions` is de enige financiële bron van waarheid; `professional_wallets.cached_balance` is alleen een herleidbare cache.
+- Nieuwe wallets starten in productie op `0` credits; startcredits horen alleen thuis in expliciete dev/test-seeds.
 - Bestaande transacties worden niet aangepast of verwijderd. Refunds, correcties en adminmutaties gebruiken altijd nieuwe ledgerregels.
-- `apply_wallet_transaction` lockt de wallet, controleert saldo, schrijft de transactie weg en werkt de cached balance transactioneel bij.
+- `apply_wallet_transaction` lockt de wallet, controleert saldo, valideert transactieteken per transactietype, schrijft de transactie weg en werkt de cached balance transactioneel bij.
 - `purchase_lead` voert de volledige lead purchase atomair uit: eligibility-check, prijsresolutie, saldoverificatie, debit, purchase-record, assignment unlock en sales-status update.
+- Idempotency keys zijn aan exact één `(professional, lead)` gebonden; hergebruik op een andere lead geeft `IDEMPOTENCY_KEY_CONFLICT`.
+- Een terugbetaalde purchase kan in deze fase niet opnieuw worden gekocht; refunds blijven zichtbaar als aparte positieve ledgerregels.
 - Shared leads ondersteunen meerdere kopers tot `max_buyers`; exclusive leads forceren exact één koper.
 - `lead_pricing_rules` ondersteunt dienst-, subdienst-, leadtype- en scorebandregels met prioriteit en fallback.
-- `commercial_audit_log` registreert walletcredits/debits, purchases, refunds, pricing changes en commerciële leadwijzigingen.
+- `commercial_audit_log` registreert walletcredits/debits, purchases, refunds, pricing changes en commerciële leadwijzigingen; interne helper-RPC's staan niet publiek open.
+- Admins kunnen walletafwijkingen controleren via ledger-reconciliatie (`cached_balance` versus `SUM(wallet_transactions.amount)`), zonder stille autocorrectie.
 - Professionele routes:
   - `/vakman/aanvragen` toont beschikbare, gekochte en gesloten leads zonder contactlek vóór unlock.
   - `/vakman/credits` toont saldo, transacties, refunds en purchase history.
