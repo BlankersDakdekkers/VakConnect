@@ -2,12 +2,30 @@ import "server-only";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { createSignedLeadImageUrls } from "@/lib/storage/leads";
-import type { Json, LeadStatus, Professional, Service, ServiceQuestionOption } from "@/types/database";
+import { addLeadActivity } from "@/lib/leads/activity";
+import { calculateAcceptanceRate, calculateWinRate } from "@/lib/leads/kpi";
+import type { Json, LeadActivityType, LeadProgressStatus, LeadStatus, Professional, Service, ServiceQuestionOption } from "@/types/database";
 
 export interface DashboardStat {
   label: string;
   value: number;
   description: string;
+}
+
+export interface AdminAttributionSummaryRow {
+  source: string;
+  medium: string;
+  count: number;
+}
+
+export interface LeadActivityView {
+  id: string;
+  activityType: LeadActivityType;
+  fromStatus: LeadProgressStatus | null;
+  toStatus: LeadProgressStatus | null;
+  metadata: Json | null;
+  createdAt: string;
+  professional: Pick<Professional, "id" | "company_name"> | null;
 }
 
 export interface AdminLeadListItem {
@@ -74,6 +92,18 @@ export interface AdminLeadDetail {
   house_number: string;
   house_number_addition: string | null;
   city: string | null;
+  source: string | null;
+  utm_source: string | null;
+  utm_medium: string | null;
+  utm_campaign: string | null;
+  utm_term: string | null;
+  utm_content: string | null;
+  landing_page: string | null;
+  referrer: string | null;
+  gclid: string | null;
+  fbclid: string | null;
+  first_touch_source: string | null;
+  first_touch_timestamp: string | null;
   created_at: string;
   lead_score: number | null;
   score_reasons: Json | null;
@@ -84,17 +114,21 @@ export interface AdminLeadDetail {
   assignments: Array<{
     id: string;
     status: string;
+    progress_status: LeadProgressStatus;
+    loss_reason: string | null;
     assigned_at: string;
     viewed_at: string | null;
     accepted_at: string | null;
     rejected_at: string | null;
     professional: Pick<Professional, "id" | "company_name" | "contact_name" | "status"> | null;
   }>;
+  activity: LeadActivityView[];
 }
 
 export interface ProfessionalAssignmentListItem {
   id: string;
   status: string;
+  progress_status: LeadProgressStatus;
   assigned_at: string;
   viewed_at: string | null;
   lead: {
@@ -104,6 +138,7 @@ export interface ProfessionalAssignmentListItem {
     city: string | null;
     urgency: string;
     created_at: string;
+    lead_score: number | null;
     service: Pick<Service, "name" | "slug"> | null;
   };
 }
@@ -111,10 +146,12 @@ export interface ProfessionalAssignmentListItem {
 export interface ProfessionalLeadDetail {
   assignmentId: string;
   assignmentStatus: string;
+  assignmentProgressStatus: LeadProgressStatus;
   assignedAt: string;
   viewedAt: string | null;
   acceptedAt: string | null;
   rejectedAt: string | null;
+  lossReason: string | null;
   lead: AdminLeadDetail;
 }
 
@@ -215,19 +252,104 @@ function mapLeadImages(images: Array<{ storage_path: string; mime_type: string |
   }));
 }
 
+function mapActivityRows(rows: Array<Record<string, unknown>>) {
+  return rows
+    .map((row) => ({
+      id: String(row.id),
+      activityType: row.activity_type as LeadActivityType,
+      fromStatus: (row.from_status as LeadProgressStatus | null) ?? null,
+      toStatus: (row.to_status as LeadProgressStatus | null) ?? null,
+      metadata: (row.metadata as Json | null) ?? null,
+      createdAt: String(row.created_at),
+      professional: (firstOf(row.professional as Pick<Professional, "id" | "company_name"> | Array<Pick<Professional, "id" | "company_name">>) ?? null) as
+        | Pick<Professional, "id" | "company_name">
+        | null,
+    }))
+    .sort((left, right) => new Date(left.createdAt).getTime() - new Date(right.createdAt).getTime());
+}
+
 export async function getAdminDashboardStats() {
   const supabase = createAdminSupabaseClient();
-  const [{ count: newLeads }, { count: activeProfessionals }, { count: assignedLeads }] = await Promise.all([
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  const sevenDaysAgo = new Date(Date.now() - (7 * 24 * 60 * 60 * 1000)).toISOString();
+
+  const [
+    leadsToday,
+    leadsLast7Days,
+    newLeads,
+    qualifiedLeads,
+    assignedLeads,
+    acceptedLeads,
+    wonLeads,
+    activeProfessionals,
+    rejectedAssignments,
+    lostLeads,
+    scoreRows,
+  ] = await Promise.all([
+    supabase.from("leads").select("id", { count: "exact", head: true }).gte("created_at", startOfToday.toISOString()),
+    supabase.from("leads").select("id", { count: "exact", head: true }).gte("created_at", sevenDaysAgo),
     supabase.from("leads").select("id", { count: "exact", head: true }).eq("status", "new"),
+    supabase.from("leads").select("id", { count: "exact", head: true }).eq("status", "qualified"),
+    supabase.from("lead_assignments").select("id", { count: "exact", head: true }),
+    supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("status", "accepted"),
+    supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("progress_status", "won"),
     supabase.from("professionals").select("id", { count: "exact", head: true }).eq("status", "active"),
-    supabase.from("leads").select("id", { count: "exact", head: true }).eq("status", "assigned"),
+    supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("status", "rejected"),
+    supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("progress_status", "lost"),
+    supabase.from("leads").select("lead_score").not("lead_score", "is", null),
   ]);
 
+  const scores = (scoreRows.data ?? []).map((row) => Number(row.lead_score)).filter((value) => Number.isFinite(value));
+  const averageLeadScore = scores.length ? Number((scores.reduce((sum, value) => sum + value, 0) / scores.length).toFixed(1)) : 0;
+  const acceptanceRate = calculateAcceptanceRate(acceptedLeads.count ?? 0, rejectedAssignments.count ?? 0);
+  const winRate = calculateWinRate(wonLeads.count ?? 0, lostLeads.count ?? 0);
+
   return [
-    { label: "Nieuwe leads", value: newLeads ?? 0, description: "Aanvragen die nog beoordeling nodig hebben." },
-    { label: "Actieve vakmannen", value: activeProfessionals ?? 0, description: "Beschikbaar voor matching en toewijzing." },
-    { label: "Toegewezen leads", value: assignedLeads ?? 0, description: "Leads die op dit moment bij een vakman liggen." },
+    { label: "Leads vandaag", value: leadsToday.count ?? 0, description: "Nieuwe aanvragen sinds 00:00." },
+    { label: "Leads afgelopen 7 dagen", value: leadsLast7Days.count ?? 0, description: "Volume in de afgelopen week." },
+    { label: "Nieuwe leads", value: newLeads.count ?? 0, description: "Leads die nog niet zijn opgevolgd." },
+    { label: "Qualified leads", value: qualifiedLeads.count ?? 0, description: "Leads met status qualified." },
+    { label: "Toegewezen leads", value: assignedLeads.count ?? 0, description: "Aantal gemaakte assignments." },
+    { label: "Geaccepteerde leads", value: acceptedLeads.count ?? 0, description: "Assignments geaccepteerd door vakmannen." },
+    { label: "Gewonnen leads", value: wonLeads.count ?? 0, description: "Assignments met progress-status won." },
+    { label: "Actieve vakmannen", value: activeProfessionals.count ?? 0, description: "Vakmannen met status active." },
+    { label: "Gemiddelde leadscore", value: averageLeadScore, description: "Gemiddelde van alle beschikbare leadscores." },
+    { label: "Acceptatiepercentage", value: acceptanceRate, description: "Geaccepteerd t.o.v. geaccepteerd + afgewezen." },
+    { label: "Winrate", value: winRate, description: "Gewonnen t.o.v. gewonnen + verloren." },
   ] as DashboardStat[];
+}
+
+export async function getAdminAttributionSummary() {
+  const supabase = createAdminSupabaseClient();
+  const { data, error } = await supabase.from("leads").select("source, utm_source, utm_medium");
+
+  if (error) {
+    throw new Error("Attributiongegevens konden niet worden geladen.");
+  }
+
+  const rows = (data ?? []) as Array<{ source: string | null; utm_source: string | null; utm_medium: string | null }>;
+  const summary = new Map<string, AdminAttributionSummaryRow>();
+
+  for (const row of rows) {
+    const source = row.utm_source ?? row.source ?? "direct";
+    const medium = row.utm_medium ?? "unknown";
+    const key = `${source}::${medium}`;
+
+    const existing = summary.get(key);
+    if (existing) {
+      existing.count += 1;
+      continue;
+    }
+
+    summary.set(key, {
+      source,
+      medium,
+      count: 1,
+    });
+  }
+
+  return Array.from(summary.values()).sort((left, right) => right.count - left.count || left.source.localeCompare(right.source));
 }
 
 export async function getAdminLeads(search?: string, status?: string) {
@@ -290,6 +412,18 @@ export async function getAdminLeadDetail(id: string) {
         house_number,
         house_number_addition,
         city,
+        source,
+        utm_source,
+        utm_medium,
+        utm_campaign,
+        utm_term,
+        utm_content,
+        landing_page,
+        referrer,
+        gclid,
+        fbclid,
+        first_touch_source,
+        first_touch_timestamp,
         created_at,
         lead_score,
         score_reasons,
@@ -322,11 +456,22 @@ export async function getAdminLeadDetail(id: string) {
         lead_assignments(
           id,
           status,
+          progress_status,
+          loss_reason,
           assigned_at,
           viewed_at,
           accepted_at,
           rejected_at,
           professional:professionals(id, company_name, contact_name, status)
+        ),
+        lead_activity(
+          id,
+          activity_type,
+          from_status,
+          to_status,
+          metadata,
+          created_at,
+          professional:professionals(id, company_name)
         )
       `,
     )
@@ -360,6 +505,18 @@ export async function getAdminLeadDetail(id: string) {
     house_number: String(data.house_number),
     house_number_addition: (data.house_number_addition as string | null) ?? null,
     city: (data.city as string | null) ?? null,
+    source: (data.source as string | null) ?? null,
+    utm_source: (data.utm_source as string | null) ?? null,
+    utm_medium: (data.utm_medium as string | null) ?? null,
+    utm_campaign: (data.utm_campaign as string | null) ?? null,
+    utm_term: (data.utm_term as string | null) ?? null,
+    utm_content: (data.utm_content as string | null) ?? null,
+    landing_page: (data.landing_page as string | null) ?? null,
+    referrer: (data.referrer as string | null) ?? null,
+    gclid: (data.gclid as string | null) ?? null,
+    fbclid: (data.fbclid as string | null) ?? null,
+    first_touch_source: (data.first_touch_source as string | null) ?? null,
+    first_touch_timestamp: (data.first_touch_timestamp as string | null) ?? null,
     created_at: String(data.created_at),
     lead_score: typeof data.lead_score === "number" ? data.lead_score : data.lead_score === null ? null : Number(data.lead_score),
     score_reasons: (data.score_reasons as Json | null) ?? null,
@@ -370,6 +527,8 @@ export async function getAdminLeadDetail(id: string) {
     assignments: assignments.map((assignment) => ({
       id: String(assignment.id),
       status: String(assignment.status),
+      progress_status: assignment.progress_status as LeadProgressStatus,
+      loss_reason: (assignment.loss_reason as string | null) ?? null,
       assigned_at: String(assignment.assigned_at),
       viewed_at: (assignment.viewed_at as string | null) ?? null,
       accepted_at: (assignment.accepted_at as string | null) ?? null,
@@ -378,21 +537,50 @@ export async function getAdminLeadDetail(id: string) {
         assignment.professional as Pick<Professional, "id" | "company_name" | "contact_name" | "status"> | Array<Pick<Professional, "id" | "company_name" | "contact_name" | "status">>,
       ) ?? null) as Pick<Professional, "id" | "company_name" | "contact_name" | "status"> | null,
     })),
+    activity: mapActivityRows((data.lead_activity ?? []) as Array<Record<string, unknown>>),
   } as AdminLeadDetail;
 }
 
 export async function getProfessionalDashboardStats(professionalId: string) {
   const supabase = await createServerSupabaseClient();
-  const [{ count: pending }, { count: accepted }, { count: rejected }] = await Promise.all([
+  const [
+    newAssignments,
+    accepted,
+    contacted,
+    appointments,
+    quotes,
+    won,
+    lost,
+    rejected,
+  ] = await Promise.all([
     supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("professional_id", professionalId).in("status", ["pending", "viewed"]),
     supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("professional_id", professionalId).eq("status", "accepted"),
+    supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("professional_id", professionalId).eq("progress_status", "contacted"),
+    supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("professional_id", professionalId).eq("progress_status", "appointment_scheduled"),
+    supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("professional_id", professionalId).eq("progress_status", "quote_sent"),
+    supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("professional_id", professionalId).eq("progress_status", "won"),
+    supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("professional_id", professionalId).eq("progress_status", "lost"),
     supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("professional_id", professionalId).eq("status", "rejected"),
   ]);
 
   return [
-    { label: "Nieuwe toewijzingen", value: pending ?? 0, description: "Nog te beoordelen aanvragen." },
-    { label: "Geaccepteerd", value: accepted ?? 0, description: "Aanvragen die je hebt geaccepteerd." },
-    { label: "Afgewezen", value: rejected ?? 0, description: "Aanvragen die je hebt geweigerd." },
+    { label: "Nieuwe assignments", value: newAssignments.count ?? 0, description: "Nog te beoordelen aanvragen." },
+    { label: "Geaccepteerd", value: accepted.count ?? 0, description: "Geaccepteerde leads." },
+    { label: "Contact opgenomen", value: contacted.count ?? 0, description: "Leads met eerste klantcontact." },
+    { label: "Afspraken", value: appointments.count ?? 0, description: "Geplande afspraken." },
+    { label: "Offertes", value: quotes.count ?? 0, description: "Uitgebrachte offertes." },
+    { label: "Gewonnen", value: won.count ?? 0, description: "Leads met gewonnen opdracht." },
+    { label: "Verloren", value: lost.count ?? 0, description: "Leads met verloren opdracht." },
+    {
+      label: "Acceptatiepercentage",
+      value: calculateAcceptanceRate(accepted.count ?? 0, rejected.count ?? 0),
+      description: "Geaccepteerd t.o.v. geaccepteerd + afgewezen.",
+    },
+    {
+      label: "Winrate",
+      value: calculateWinRate(won.count ?? 0, lost.count ?? 0),
+      description: "Gewonnen t.o.v. gewonnen + verloren.",
+    },
   ] as DashboardStat[];
 }
 
@@ -401,7 +589,7 @@ export async function getProfessionalAssignments(professionalId: string) {
   const { data, error } = await supabase
     .from("lead_assignments")
     .select(
-      "id, status, assigned_at, viewed_at, lead:leads(id, public_reference, postal_code, city, urgency, created_at, service:services(name, slug))",
+      "id, status, progress_status, assigned_at, viewed_at, lead:leads(id, public_reference, postal_code, city, urgency, created_at, lead_score, service:services(name, slug))",
     )
     .eq("professional_id", professionalId)
     .order("assigned_at", { ascending: false });
@@ -419,6 +607,7 @@ export async function getProfessionalAssignments(professionalId: string) {
     return [{
       id: String(assignment.id),
       status: String(assignment.status),
+      progress_status: assignment.progress_status as LeadProgressStatus,
       assigned_at: String(assignment.assigned_at),
       viewed_at: (assignment.viewed_at as string | null) ?? null,
       lead: {
@@ -428,6 +617,7 @@ export async function getProfessionalAssignments(professionalId: string) {
         city: (lead.city as string | null) ?? null,
         urgency: String(lead.urgency),
         created_at: String(lead.created_at),
+        lead_score: typeof lead.lead_score === "number" ? lead.lead_score : lead.lead_score === null ? null : Number(lead.lead_score),
         service: (firstOf(lead.service as Pick<Service, "name" | "slug"> | Array<Pick<Service, "name" | "slug">>) ?? null) as
           | Pick<Service, "name" | "slug">
           | null,
@@ -436,14 +626,17 @@ export async function getProfessionalAssignments(professionalId: string) {
   });
 }
 
-export async function getProfessionalLeadDetail(leadId: string, professionalId: string) {
+export async function getProfessionalLeadDetail(leadId: string, professionalId: string, actorUserId?: string) {
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from("lead_assignments")
     .select(
       `
         id,
+        lead_id,
         status,
+        progress_status,
+        loss_reason,
         assigned_at,
         viewed_at,
         accepted_at,
@@ -463,6 +656,18 @@ export async function getProfessionalLeadDetail(leadId: string, professionalId: 
           house_number,
           house_number_addition,
           city,
+          source,
+          utm_source,
+          utm_medium,
+          utm_campaign,
+          utm_term,
+          utm_content,
+          landing_page,
+          referrer,
+          gclid,
+          fbclid,
+          first_touch_source,
+          first_touch_timestamp,
           created_at,
           lead_score,
           score_reasons,
@@ -485,6 +690,15 @@ export async function getProfessionalLeadDetail(leadId: string, professionalId: 
               sort_order,
               service_question_options(id, question_id, label, value, sort_order, active, created_at)
             )
+          ),
+          lead_activity(
+            id,
+            activity_type,
+            from_status,
+            to_status,
+            metadata,
+            created_at,
+            professional:professionals(id, company_name)
           )
         )
       `,
@@ -508,6 +722,13 @@ export async function getProfessionalLeadDetail(leadId: string, professionalId: 
       .update({ viewed_at: new Date().toISOString(), status: "viewed" })
       .eq("id", data.id)
       .eq("professional_id", professionalId);
+
+    await addLeadActivity({
+      leadId: String(data.lead_id),
+      professionalId,
+      actorUserId: actorUserId ?? null,
+      activityType: "assignment_viewed",
+    });
   }
 
   const images = (lead.lead_images ?? []) as Array<{ storage_path: string; mime_type: string | null; file_size: number | null }>;
@@ -516,10 +737,12 @@ export async function getProfessionalLeadDetail(leadId: string, professionalId: 
   return {
     assignmentId: String(data.id),
     assignmentStatus: String(data.status),
+    assignmentProgressStatus: data.progress_status as LeadProgressStatus,
     assignedAt: String(data.assigned_at),
     viewedAt: (data.viewed_at as string | null) ?? null,
     acceptedAt: (data.accepted_at as string | null) ?? null,
     rejectedAt: (data.rejected_at as string | null) ?? null,
+    lossReason: (data.loss_reason as string | null) ?? null,
     lead: {
       id: String(lead.id),
       public_reference: String(lead.public_reference),
@@ -535,6 +758,18 @@ export async function getProfessionalLeadDetail(leadId: string, professionalId: 
       house_number: String(lead.house_number),
       house_number_addition: (lead.house_number_addition as string | null) ?? null,
       city: (lead.city as string | null) ?? null,
+      source: (lead.source as string | null) ?? null,
+      utm_source: (lead.utm_source as string | null) ?? null,
+      utm_medium: (lead.utm_medium as string | null) ?? null,
+      utm_campaign: (lead.utm_campaign as string | null) ?? null,
+      utm_term: (lead.utm_term as string | null) ?? null,
+      utm_content: (lead.utm_content as string | null) ?? null,
+      landing_page: (lead.landing_page as string | null) ?? null,
+      referrer: (lead.referrer as string | null) ?? null,
+      gclid: (lead.gclid as string | null) ?? null,
+      fbclid: (lead.fbclid as string | null) ?? null,
+      first_touch_source: (lead.first_touch_source as string | null) ?? null,
+      first_touch_timestamp: (lead.first_touch_timestamp as string | null) ?? null,
       created_at: String(lead.created_at),
       lead_score: typeof lead.lead_score === "number" ? lead.lead_score : lead.lead_score === null ? null : Number(lead.lead_score),
       score_reasons: (lead.score_reasons as Json | null) ?? null,
@@ -543,6 +778,7 @@ export async function getProfessionalLeadDetail(leadId: string, professionalId: 
       answers: mapLeadAnswerRows((lead.lead_answers ?? []) as Array<Record<string, unknown>>),
       matches: [],
       assignments: [],
+      activity: mapActivityRows((lead.lead_activity ?? []) as Array<Record<string, unknown>>),
     },
   } as ProfessionalLeadDetail;
 }

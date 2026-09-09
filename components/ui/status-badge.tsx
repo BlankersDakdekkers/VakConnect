@@ -18,6 +18,11 @@ const variantClasses: Record<string, string> = {
   lost: "border-border bg-slate-100 text-slate-700",
   closed: "border-border bg-slate-100 text-slate-700",
   inactive: "border-border bg-slate-100 text-slate-700",
+  contacted: "border-sky-200 bg-sky-50 text-sky-700",
+  appointment_scheduled: "border-indigo-200 bg-indigo-50 text-indigo-700",
+  quote_sent: "border-violet-200 bg-violet-50 text-violet-700",
+  verified: "border-success/20 bg-success/10 text-success",
+  unverified: "border-border bg-slate-100 text-slate-700",
 };
 
 export function StatusBadge({ value }: Readonly<{ value: string }>) {

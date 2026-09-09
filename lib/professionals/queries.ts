@@ -8,7 +8,21 @@ export interface ProfessionalListItem extends Professional {
 }
 
 export interface ProfessionalDetail extends ProfessionalListItem {
-  services: Service[];
+  serviceLinks: Array<{
+    id: string;
+    active: boolean;
+    service: Service;
+  }>;
+  areaLinks: Array<{
+    id: string;
+    postalCodePrefix: string;
+  }>;
+  stats: {
+    assignmentsTotal: number;
+    assignmentsAccepted: number;
+    assignmentsWon: number;
+    assignmentsLost: number;
+  };
 }
 
 function firstOf<T>(value: T | T[] | null | undefined) {
@@ -27,14 +41,17 @@ const baseSelection = `
   phone,
   kvk_number,
   website,
+  description,
   status,
+  verification_status,
   created_at,
   updated_at,
   professional_services(
+    id,
     active,
     service:services(id, name, slug, category, description, active, created_at, updated_at)
   ),
-  professional_service_areas(postal_code_prefix)
+  professional_service_areas(id, postal_code_prefix)
 `;
 
 export async function getAdminProfessionals() {
@@ -58,7 +75,9 @@ export async function getAdminProfessionals() {
       phone: String(item.phone),
       kvk_number: (item.kvk_number as string | null) ?? null,
       website: (item.website as string | null) ?? null,
+      description: (item.description as string | null) ?? null,
       status: item.status as Professional["status"],
+      verification_status: item.verification_status as Professional["verification_status"],
       created_at: String(item.created_at),
       updated_at: String(item.updated_at),
       serviceNames: serviceLinks.flatMap((serviceLink) => {
@@ -83,10 +102,26 @@ export async function getAdminProfessionalDetail(id: string) {
   }
 
   const serviceLinks = (data.professional_services ?? []) as Array<Record<string, unknown>>;
-  const areas = (data.professional_service_areas ?? []) as Array<{ postal_code_prefix: string }>;
-  const services = serviceLinks.flatMap((serviceLink) => {
+  const areas = (data.professional_service_areas ?? []) as Array<{ id: string; postal_code_prefix: string }>;
+
+  const [totalAssignments, acceptedAssignments, wonAssignments, lostAssignments] = await Promise.all([
+    supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("professional_id", id),
+    supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("professional_id", id).eq("status", "accepted"),
+    supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("professional_id", id).eq("progress_status", "won"),
+    supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("professional_id", id).eq("progress_status", "lost"),
+  ]);
+
+  const mappedServiceLinks = serviceLinks.flatMap((serviceLink) => {
     const service = firstOf(serviceLink.service as Service | Service[]);
-    return service && serviceLink.active ? [service] : [];
+    if (!service) {
+      return [];
+    }
+
+    return [{
+      id: String(serviceLink.id),
+      active: Boolean(serviceLink.active),
+      service,
+    }];
   });
 
   return {
@@ -98,12 +133,23 @@ export async function getAdminProfessionalDetail(id: string) {
     phone: String(data.phone),
     kvk_number: (data.kvk_number as string | null) ?? null,
     website: (data.website as string | null) ?? null,
+    description: (data.description as string | null) ?? null,
     status: data.status as Professional["status"],
+    verification_status: data.verification_status as Professional["verification_status"],
     created_at: String(data.created_at),
     updated_at: String(data.updated_at),
-    serviceNames: services.map((service) => service.name),
+    serviceNames: mappedServiceLinks.filter((link) => link.active).map((link) => link.service.name),
     postalCodePrefixes: areas.map((area) => area.postal_code_prefix),
-    services,
+    serviceLinks: mappedServiceLinks.sort((left, right) => left.service.name.localeCompare(right.service.name)),
+    areaLinks: areas
+      .map((area) => ({ id: String(area.id), postalCodePrefix: area.postal_code_prefix }))
+      .sort((left, right) => left.postalCodePrefix.localeCompare(right.postalCodePrefix)),
+    stats: {
+      assignmentsTotal: totalAssignments.count ?? 0,
+      assignmentsAccepted: acceptedAssignments.count ?? 0,
+      assignmentsWon: wonAssignments.count ?? 0,
+      assignmentsLost: lostAssignments.count ?? 0,
+    },
   } as ProfessionalDetail;
 }
 

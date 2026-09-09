@@ -26,7 +26,7 @@ VakConnect is opgezet als een Next.js App Router applicatie met TypeScript stric
 
 ## Databaseconcepten
 
-De basis bestaat uit de tabellen `professionals`, `services`, `service_questions`, `service_question_options`, `professional_services`, `professional_service_areas`, `leads`, `lead_answers`, `lead_images`, `lead_matches` en `lead_assignments`.
+De basis bestaat uit de tabellen `professionals`, `services`, `service_questions`, `service_question_options`, `professional_services`, `professional_service_areas`, `leads`, `lead_answers`, `lead_images`, `lead_matches`, `lead_assignments`, `analytics_events` en `lead_activity`.
 
 Belangrijke keuzes:
 
@@ -122,3 +122,44 @@ De huidige structuur is voorbereid op:
 - notificaties en workflow-automatisering
 - SEO-uitbreidingen zoals dienst- en locatiepagina's
 - admin tooling voor kwalificatie, rapportage en lifecycle-automatisering
+
+
+## Attribution model (fase 3)
+
+- Last-touch attribution wordt opgeslagen op `leads` met `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`, `landing_page`, `referrer`, `gclid` en `fbclid`.
+- First-touch basis wordt opgeslagen via `first_touch_source` en `first_touch_timestamp`.
+- `source` blijft bestaan voor backwards compatibility met bestaande businesslogica.
+- Attribution wordt client-side verzameld en server-side gevalideerd/opgeslagen bij lead submission.
+
+## Analytics events en privacy
+
+- Funnel-events zijn centraal gedefinieerd in `lib/analytics/events.ts`.
+- `app/api/analytics/events` accepteert alleen whitelisted eventnamen en anonieme sessie-id's.
+- `analytics_events` bevat alleen niet-gevoelige metadata (zoals stapnummer, dienst-id, upload-aantal).
+- Verboden in events: naam, e-mail, telefoon, volledig adres, vrije omschrijving, foto's en andere PII.
+- `lib/analytics/providers.ts` biedt een provider-abstractie zodat GA4/Plausible/PostHog/Meta later gekoppeld kunnen worden zonder domeinlogica te herschrijven.
+
+## Professional onboarding en beheer
+
+- `professionals` bevat onboardingvelden inclusief `description` en `verification_status` (`unverified`, `pending`, `verified`, `rejected`).
+- Admin beheert op `/admin/vakmannen/[id]` de secties: bedrijfsgegevens, accountstatus, verificatie, diensten, werkgebieden en statistieken.
+- Services blijven data-driven via `professional_services`; werkgebieden via `professional_service_areas` met postcode4-validatie.
+
+## Professional self-service autorisatie
+
+- `/vakman/profiel` laat professionals alleen veilige profielvelden muteren: `contact_name`, `phone`, `website`, `description`.
+- `status`, `verification_status`, `auth_user_id` en admin-only koppelingen blijven server-side beschermd.
+- Autorisatie gebeurt dubbel: server-side checks in actions én database policies/triggers in Supabase.
+
+## Progress lifecycle en lead activity
+
+- Assignmentstatus (pending/viewed/accepted/rejected) blijft apart van operationele progressie.
+- Operationele voortgang gebruikt `lead_progress_status`: `new`, `contacted`, `appointment_scheduled`, `quote_sent`, `won`, `lost`.
+- `lead_activity` registreert statuswissels en sleutelacties als tijdlijn voor admin en professional.
+- Validatie van progress-transities gebeurt server-side en in de database-trigger.
+
+## KPI-berekening
+
+- Admin dashboard toont volume, lifecycle-statussen, leadkwaliteit en ratio's (acceptatiepercentage/winrate) op basis van echte databasewaarden.
+- Professional dashboard toont uitsluitend eigen KPI's uit eigen assignments en progressiestatussen.
+- Attribution KPI toont leads per source/medium op basis van opgeslagen leadattributie.

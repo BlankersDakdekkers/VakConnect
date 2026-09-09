@@ -29,6 +29,12 @@ VakConnect is een Nederlandse lead marketplace in opbouw die consumenten koppelt
 - Vakman-dashboard voor eigen toegewezen aanvragen
 - Matchingmodule met `lead_matches` op basis van dienst + postcodeprefix
 - Supabase migraties met RLS-beleid, storage-bucket en dynamische intake-tabellen
+- Lead attribution (UTM, landing page, referrer, first-touch)
+- Interne funnel analytics-events zonder PII
+- Professional onboarding uitgebreid met verificatiestatus en omschrijving
+- Adminbeheer per vakman voor diensten en postcode4-werkgebieden
+- Lead activity timeline en operationele leadprogressie
+- KPI-uitbreiding voor admin- en vakman-dashboard
 
 ## Projectstructuur
 
@@ -101,6 +107,7 @@ Plaats nooit echte secrets in de repository.
 
    - `supabase/migrations/20260909124500_initial_vakconnect_schema.sql`
    - `supabase/migrations/20260909133000_phase2_dynamic_intake.sql`
+   - `supabase/migrations/20260909152000_phase3_analytics_operations.sql`
 4. Controleer in **Storage** dat de private bucket `lead-images` bestaat.
 5. Voeg indien nodig handmatig admingebruikers toe in Supabase Auth en zet hun `app_metadata.role` op `admin`.
 
@@ -165,6 +172,7 @@ Deze repository bevat geen echte testaccounts. Maak lokaal in Supabase zelf mini
 - Service role key blijft server-side en mag nooit in client bundles terechtkomen.
 - Leadopslag, statuswijzigingen, scoring en matchgeneratie gebeuren server-side.
 - RLS schermt persoonsgegevens, lead-antwoorden en matchdata af voor publiek en andere professionals.
+- Analytics events slaan uitsluitend niet-gevoelige metadata op (geen naam, e-mail, telefoon, adres, vrije tekst of foto's).
 - Uploads zijn beperkt op type, grootte en aantal.
 - De applicatie toont geen ruwe database-errors aan bezoekers.
 - Plaats geen persoonsgegevens in analytics of logs.
@@ -180,3 +188,16 @@ Deze repository bevat geen echte testaccounts. Maak lokaal in Supabase zelf mini
 ## Aanvullende documentatie
 
 - `docs/ARCHITECTURE.md`
+
+## Attribution en analytics (fase 3)
+
+- `leads` bevat last-touch UTM velden plus `first_touch_source` en `first_touch_timestamp`.
+- `lib/analytics/attribution` normaliseert queryparameters en bewaart attribution over funnelstappen.
+- `analytics_events` koppelt anonieme sessies aan funnel-events met privacy-sanitization.
+- `lead_submitted` wordt server-side gelogd en bestaande sessie-events worden aan `lead_id` gekoppeld.
+
+## Lead operatie en lifecycle (fase 3)
+
+- `lead_assignments` bevat naast assignmentstatus nu `progress_status`, `progress_updated_at` en optionele `loss_reason`.
+- `lead_activity` bewaart traceerbare status- en opvolgacties met timestamps.
+- Professional flow ondersteunt stappen: `contacted`, `appointment_scheduled`, `quote_sent`, `won`, `lost`.

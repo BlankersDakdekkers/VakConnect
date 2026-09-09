@@ -13,7 +13,7 @@ export default async function ProfessionalAssignmentsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Mijn aanvragen" description="Alleen leads met een geldige toewijzing aan jouw professional-account zijn zichtbaar." />
+      <PageHeader title="Mijn aanvragen" description="Scan snel dienst, locatie, urgentie, score, status en toegewezen datum." />
       {assignments.length ? (
         <Card className="overflow-x-auto">
           <table className="min-w-full text-left text-sm">
@@ -23,8 +23,10 @@ export default async function ProfessionalAssignmentsPage() {
                 <th className="py-3">Dienst</th>
                 <th className="py-3">Locatie</th>
                 <th className="py-3">Urgentie</th>
-                <th className="py-3">Status</th>
-                <th className="py-3">Datum</th>
+                <th className="py-3">Leadscore</th>
+                <th className="py-3">Assignment</th>
+                <th className="py-3">Progress</th>
+                <th className="py-3">Toegewezen</th>
               </tr>
             </thead>
             <tbody>
@@ -38,7 +40,9 @@ export default async function ProfessionalAssignmentsPage() {
                   <td className="py-4">{assignment.lead.service?.name ?? "Onbekend"}</td>
                   <td className="py-4">{assignment.lead.city ?? formatPostalCode(assignment.lead.postal_code)}</td>
                   <td className="py-4"><StatusBadge value={assignment.lead.urgency} /></td>
+                  <td className="py-4">{assignment.lead.lead_score ?? "—"}</td>
                   <td className="py-4"><StatusBadge value={assignment.status} /></td>
+                  <td className="py-4"><StatusBadge value={assignment.progress_status} /></td>
                   <td className="py-4 text-muted-foreground">{formatDate(assignment.assigned_at)}</td>
                 </tr>
               ))}

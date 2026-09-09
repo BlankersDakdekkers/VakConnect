@@ -11,9 +11,9 @@ export default async function ProfessionalDashboardPage() {
     <div className="space-y-6">
       <PageHeader
         title="Overzicht"
-        description="Alleen jouw toegewezen aanvragen zijn zichtbaar op basis van server-side autorisatie en RLS."
+        description="Jouw KPI’s op basis van eigen assignments en leadprogressie."
       />
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {stats.map((stat) => (
           <Card key={stat.label} className="space-y-2">
             <p className="text-sm text-muted-foreground">{stat.label}</p>

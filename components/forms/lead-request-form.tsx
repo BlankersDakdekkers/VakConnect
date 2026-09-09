@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,9 @@ import {
 } from "@/lib/validation";
 import { formatFileSize, formatPostalCode, normalizePostalCode } from "@/lib/utils";
 import type { Service } from "@/types/database";
+import { getClientAttributionSnapshot, trackFunnelEvent } from "@/lib/analytics/client";
+import { funnelEventNames } from "@/lib/analytics/events";
+import { getOrCreateAnonymousSessionId } from "@/lib/analytics/session";
 
 const serviceStepSchema = leadSubmissionSchema.pick({ serviceId: true });
 const locationStepSchema = leadSubmissionSchema.pick({ postalCode: true, houseNumber: true, houseNumberAddition: true });
@@ -111,6 +114,11 @@ export function LeadRequestForm({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [attribution] = useState(() => getClientAttributionSnapshot());
+
+  useEffect(() => {
+    void trackFunnelEvent(funnelEventNames.leadFunnelStarted, { step: 1 });
+  }, []);
 
   const selectedService = useMemo(
     () => services.find((service) => service.id === draft.serviceId) ?? null,
@@ -198,6 +206,27 @@ export function LeadRequestForm({
 
   function handleNext() {
     if (!validateStep()) return;
+
+    if (currentStep === 0) {
+      void trackFunnelEvent(funnelEventNames.serviceSelected, { service_id: draft.serviceId });
+    }
+    if (currentStep === 1) {
+      const answeredCount = selectedQuestions.filter((question) => isDynamicAnswerFilled(dynamicAnswers[question.id])).length;
+      void trackFunnelEvent(funnelEventNames.dynamicQuestionsCompleted, {
+        question_count: selectedQuestions.length,
+        answered_count: answeredCount,
+      });
+    }
+    if (currentStep === 2) {
+      void trackFunnelEvent(funnelEventNames.locationCompleted, { step: 3 });
+    }
+    if (currentStep === 4) {
+      void trackFunnelEvent(funnelEventNames.mediaStepCompleted, { upload_count: images.length });
+    }
+    if (currentStep === 5) {
+      void trackFunnelEvent(funnelEventNames.contactCompleted, { step: 6 });
+    }
+
     setCurrentStep((step) => Math.min(step + 1, stepTitles.length - 1));
   }
 
@@ -242,6 +271,14 @@ export function LeadRequestForm({
     body.set("lastName", draft.lastName);
     body.set("phone", draft.phone);
     body.set("email", draft.email);
+    body.set("anonymousSessionId", getOrCreateAnonymousSessionId());
+
+    const attributionEntries = Object.entries(attribution) as Array<[string, string | null]>;
+    attributionEntries.forEach(([key, value]) => {
+      if (value) {
+        body.set(key, value);
+      }
+    });
     selectedQuestions.forEach((question) => {
       const answer = dynamicAnswers[question.id];
 
