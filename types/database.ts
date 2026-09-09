@@ -13,6 +13,7 @@ export type LeadStatus =
 export type LeadUrgency = "normal" | "urgent";
 export type LeadPreferredTiming = "asap" | "few_weeks" | "one_to_three_months" | "later" | "unknown";
 export type LeadAssignmentStatus = "pending" | "viewed" | "accepted" | "rejected";
+export type ServiceQuestionType = "text" | "textarea" | "select" | "multiselect" | "radio" | "boolean" | "number";
 
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
@@ -56,10 +57,56 @@ export interface Lead {
   description: string;
   urgency: LeadUrgency;
   preferred_timing: LeadPreferredTiming | null;
+  lead_score: number | null;
+  score_reasons: Json | null;
   status: LeadStatus;
   source: string | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface ServiceQuestion {
+  id: string;
+  service_id: string;
+  question: string;
+  slug: string;
+  type: ServiceQuestionType;
+  help_text: string | null;
+  required: boolean;
+  active: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ServiceQuestionOption {
+  id: string;
+  question_id: string;
+  label: string;
+  value: string;
+  sort_order: number;
+  active: boolean;
+  created_at: string;
+}
+
+export interface LeadAnswer {
+  id: string;
+  lead_id: string;
+  question_id: string;
+  answer_text: string | null;
+  answer_number: number | null;
+  answer_boolean: boolean | null;
+  answer_json: Json | null;
+  created_at: string;
+}
+
+export interface LeadMatch {
+  id: string;
+  lead_id: string;
+  professional_id: string;
+  match_score: number;
+  reasons: Json | null;
+  created_at: string;
 }
 
 export interface LeadImage {
@@ -95,6 +142,16 @@ export interface Database {
         Row: Service;
         Insert: Partial<Service> & Pick<Service, "name" | "slug" | "category">;
         Update: Partial<Service>;
+      };
+      service_questions: {
+        Row: ServiceQuestion;
+        Insert: Partial<ServiceQuestion> & Pick<ServiceQuestion, "service_id" | "question" | "slug" | "type">;
+        Update: Partial<ServiceQuestion>;
+      };
+      service_question_options: {
+        Row: ServiceQuestionOption;
+        Insert: Partial<ServiceQuestionOption> & Pick<ServiceQuestionOption, "question_id" | "label" | "value">;
+        Update: Partial<ServiceQuestionOption>;
       };
       professional_services: {
         Row: {
@@ -148,10 +205,20 @@ export interface Database {
         Insert: Omit<LeadImage, "id" | "created_at">;
         Update: never;
       };
+      lead_answers: {
+        Row: LeadAnswer;
+        Insert: Partial<LeadAnswer> & Pick<LeadAnswer, "lead_id" | "question_id">;
+        Update: never;
+      };
       lead_assignments: {
         Row: LeadAssignment;
         Insert: Partial<LeadAssignment> & Pick<LeadAssignment, "lead_id" | "professional_id">;
         Update: Partial<LeadAssignment>;
+      };
+      lead_matches: {
+        Row: LeadMatch;
+        Insert: Partial<LeadMatch> & Pick<LeadMatch, "lead_id" | "professional_id" | "match_score">;
+        Update: never;
       };
     };
   };
