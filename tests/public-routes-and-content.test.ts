@@ -142,6 +142,52 @@ test("servicepagina's hebben voldoende inhoudelijke diepgang en niet-thin hoofdc
   }
 });
 
+test("servicecontent vermijdt schaalbare template-duplicatie", () => {
+  const pages = [...Object.values(serviceMainPages), ...Object.values(serviceSubPages)];
+  const normalize = (value: string) => value.replace(/\s+/g, " ").trim();
+  const allParagraphs = new Map<string, number>();
+  const blockedPatterns = [
+    /Voor .* telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten\./i,
+    /in de dynamische wereld van/i,
+    /van a tot z/i,
+    /wij begrijpen dat/i,
+    /dé oplossing voor/i,
+  ];
+
+  for (const page of pages) {
+    const pageSentences = new Map<string, number>();
+    for (const section of page.sections) {
+      for (const paragraph of section.paragraphs) {
+        const normalizedParagraph = normalize(paragraph);
+        assert.ok(normalizedParagraph.length >= 80, `Paragraaf te kort op ${page.path}: ${section.heading}`);
+        for (const blocked of blockedPatterns) {
+          assert.equal(blocked.test(normalizedParagraph), false, `Template- of placeholderzin gevonden op ${page.path}`);
+        }
+
+        const paragraphCount = (allParagraphs.get(normalizedParagraph) ?? 0) + 1;
+        allParagraphs.set(normalizedParagraph, paragraphCount);
+
+        const sentences = normalizedParagraph
+          .split(/[.!?]+/)
+          .map((sentence) => sentence.trim())
+          .filter((sentence) => sentence.length >= 20);
+
+        for (const sentence of sentences) {
+          const count = (pageSentences.get(sentence) ?? 0) + 1;
+          pageSentences.set(sentence, count);
+        }
+      }
+    }
+
+    for (const [sentence, count] of pageSentences.entries()) {
+      assert.ok(count <= 1, `Zelfde zin herhaald binnen pagina ${page.path}: "${sentence}"`);
+    }
+  }
+
+  const repeatedParagraphs = [...allParagraphs.entries()].filter(([, count]) => count > 1);
+  assert.equal(repeatedParagraphs.length, 0, "Exacte paragraafduplicatie over servicepagina's gevonden");
+});
+
 test("servicepagina canonical paths zijn uniek en routepaden bevatten geen duplicaten", () => {
   const pages = getAllServicePages();
   const paths = pages.map((page) => page.path);
