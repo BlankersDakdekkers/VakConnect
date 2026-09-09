@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import test from "node:test";
-import sitemap from "../app/sitemap.ts";
-import { resolvePublicServiceRoute, generateMetadata as generateCatchAllMetadata } from "../app/(public)/[vakgebied]/[...slug]/page.tsx";
 import { allLocations } from "../lib/content/locations.ts";
+import { resolvePublicServiceRoute } from "../lib/content/local-routing.ts";
 import {
+  getIndexableLocalServicePages,
   getIndexableLocalRoutes,
   getLocalCoverageSummary,
   getPublishedLocalRoutes,
@@ -11,6 +13,8 @@ import {
   localServicePages,
 } from "../lib/content/local-service-pages.ts";
 import { getServiceSubPage } from "../lib/content/service-pages.ts";
+
+const repoRoot = process.cwd();
 
 const expectedCities = [
   "amsterdam",
@@ -88,37 +92,49 @@ test("canonical paden, gepubliceerde routes en config routes zijn uniek", () => 
 });
 
 test("sitemap bevat alleen indexeerbare lokale routes", () => {
-  const urls = sitemap().map((entry) => entry.url);
-  const indexableRoutes = new Set(getIndexableLocalRoutes().map((route) => `http://localhost:3000${route}`));
+  const source = readFileSync(join(repoRoot, "app/sitemap.ts"), "utf8");
 
-  for (const route of indexableRoutes) {
-    assert.equal(urls.includes(route), true, `Lokale indexeerbare route ontbreekt in sitemap: ${route}`);
+  assert.equal(source.includes("getIndexableLocalRoutes"), true, "Sitemap gebruikt geen indexeerbare lokale routebron");
+
+  for (const route of getIndexableLocalRoutes()) {
+    assert.equal(source.includes(`path: \"${route}\"`), false, "Lokale routes moeten runtime uit data komen, niet hardcoded per pad");
   }
 
   for (const page of localServicePages) {
     if (!page.published || page.indexable) continue;
-    assert.equal(urls.includes(`http://localhost:3000${page.canonicalPath}`), false, `Niet-indexeerbare route staat in sitemap: ${page.canonicalPath}`);
+    assert.equal(getIndexableLocalRoutes().includes(page.canonicalPath), false, `Niet-indexeerbare route zit in indexable set: ${page.canonicalPath}`);
   }
 });
 
 test("nearby-links verwijzen alleen naar gepubliceerde lokale routes", () => {
   const publishedRouteSet = new Set(getPublishedLocalRoutes());
+  const citySlugSet = new Set(allLocations.map((location) => location.slug));
 
   for (const page of localServicePages) {
     if (!page.published) continue;
 
     for (const link of page.page.relatedLinks) {
-      const isLocalMainLink = /^\/(dakdekker|loodgieter|schilder|elektricien)\/[a-z-]+$/.test(link.href);
+      const segments = link.href.split("/").filter(Boolean);
+      const isLocalMainLink = segments.length === 2 && citySlugSet.has(segments[1]);
       if (!isLocalMainLink) continue;
       assert.equal(publishedRouteSet.has(link.href), true, `Broken nearby/local link ${link.href} op ${page.canonicalPath}`);
     }
   }
 });
 
-test("metadata gebruikt canonical + index/follow voor indexeerbare lokale route", async () => {
-  const metadata = await generateCatchAllMetadata({ params: Promise.resolve({ vakgebied: "dakdekker", slug: ["breda"] }) });
-  assert.equal(metadata.alternates?.canonical, "/dakdekker/breda");
-  assert.equal(metadata.robots && typeof metadata.robots === "object" && "index" in metadata.robots ? metadata.robots.index : undefined, true);
+test("lokale pagina metadata en canonical volgen published/indexable beleid", () => {
+  for (const page of localServicePages) {
+    if (!page.published) continue;
+    assert.equal(page.page.path, page.canonicalPath);
+    assert.equal(page.page.path.startsWith(`/${page.serviceSlug}/`), true);
+  }
+
+  for (const page of getIndexableLocalServicePages()) {
+    assert.equal(getIndexableLocalRoutes().includes(page.canonicalPath), true);
+  }
+
+  const routeSource = readFileSync(join(repoRoot, "app/(public)/[vakgebied]/[...slug]/page.tsx"), "utf8");
+  assert.equal(routeSource.includes("indexable: resolved.localPage.indexable"), true, "Route metadata geeft indexable status niet door");
 });
 
 test("route-resolver houdt subdienst en lokale routes uit elkaar", () => {

@@ -13,7 +13,7 @@ export type LocationContent = {
   housingNotes?: string;
 };
 
-const locations = {
+const locations: Record<string, LocationContent> = {
   amsterdam: {
     slug: "amsterdam",
     name: "Amsterdam",
@@ -395,7 +395,7 @@ const locations = {
     priority: 0.71,
     populationBand: "middelgrote stad",
   },
-} satisfies Record<string, LocationContent>;
+};
 
 export const allLocations = Object.values(locations);
 export const locationSlugs = allLocations.map((location) => location.slug);

@@ -4,46 +4,13 @@ import { notFound } from "next/navigation";
 import { ServiceContentPage } from "@/components/public/service-content-page";
 import { siteConfig, buildPageMetadata } from "@/lib/config/site";
 import {
-  getLocalMainPage,
-  getLocalSubservicePage,
-  getLocalStaticParams,
   getLocalLinksForServiceSub,
   type LocalServicePage,
 } from "@/lib/content/local-service-pages";
-import { getServiceSubPage, serviceSubSlugs } from "@/lib/content/service-pages";
+import { getPublicServiceStaticParams, resolvePublicServiceRoute } from "@/lib/content/local-routing";
 
 export function generateStaticParams() {
-  const serviceParams = serviceSubSlugs.map(({ vakgebied, subdienst }) => ({ vakgebied, slug: [subdienst] }));
-  return [...serviceParams, ...getLocalStaticParams()];
-}
-
-export function resolvePublicServiceRoute(vakgebied: string, slug: string[]) {
-  if (slug.length === 1) {
-    const [secondSegment] = slug;
-    const localMainPage = getLocalMainPage(vakgebied, secondSegment);
-
-    if (localMainPage) {
-      return { type: "local" as const, localPage: localMainPage };
-    }
-
-    const serviceSubPage = getServiceSubPage(vakgebied, secondSegment);
-    if (serviceSubPage) {
-      return { type: "service-sub" as const, serviceSubPage };
-    }
-
-    return null;
-  }
-
-  if (slug.length === 2) {
-    const [subdienst, stad] = slug;
-    const localSubPage = getLocalSubservicePage(vakgebied, subdienst, stad);
-
-    if (localSubPage) {
-      return { type: "local" as const, localPage: localSubPage };
-    }
-  }
-
-  return null;
+  return getPublicServiceStaticParams();
 }
 
 function buildLocalStructuredData(localPage: LocalServicePage) {

@@ -14,7 +14,7 @@ export function SiteFooter() {
           <p className="font-medium text-slate-100">Consumenten</p>
           <div className="flex flex-col gap-2">
             <Link href="/diensten">Diensten</Link>
-            <Link href="/regios">Regio's</Link>
+            <Link href="/regios">Regio&apos;s</Link>
             <Link href="/hoe-werkt-het">Hoe het werkt</Link>
             <Link href="/aanvraag">Aanvraag starten</Link>
             <Link href="/kosten">Kosten</Link>

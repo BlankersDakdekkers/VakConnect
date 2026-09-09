@@ -1,5 +1,5 @@
-import type { ServiceContentPageData, ServiceFaq, ServiceLink, ServiceSection } from "@/lib/content/service-pages";
-import { getLocation, getPublishedLocations } from "@/lib/content/locations";
+import type { ServiceContentPageData, ServiceFaq, ServiceLink, ServiceSection } from "./service-pages.ts";
+import { getLocation, getPublishedLocations } from "./locations.ts";
 
 export type LocalServiceSlug = "dakdekker" | "loodgieter" | "schilder" | "elektricien";
 
@@ -439,7 +439,7 @@ const localSubserviceConfigs: LocalPageConfig[] = [
   ...priorityCityBatch.map((citySlug) => buildSubConfig("dakdekker", "daklekkage", citySlug)),
   ...topFiveCities.map((citySlug) => buildSubConfig("dakdekker", "dakrenovatie", citySlug)),
   ...topFiveCities.map((citySlug) => buildSubConfig("loodgieter", "lekkage", citySlug)),
-  ...["groningen", "breda", "tilburg", "nijmegen", "arnhem"].map((citySlug) => buildSubConfig("loodgieter", "verstopping", citySlug)),
+  ...["den-haag", "groningen", "breda", "tilburg", "nijmegen"].map((citySlug) => buildSubConfig("loodgieter", "verstopping", citySlug)),
 ];
 
 export const localServicePageConfigs = [...localMainConfigs, ...localSubserviceConfigs];
