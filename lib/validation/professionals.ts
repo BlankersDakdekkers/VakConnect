@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { professionalStatusValues } from "@/lib/validation/constants";
+import { professionalStatusValues } from "./constants.ts";
 
 export const professionalCreationSchema = z.object({
   companyName: z.string().trim().min(2, "Bedrijfsnaam is verplicht.").max(120),

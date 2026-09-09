@@ -46,6 +46,23 @@ export default async function ProfessionalLeadDetailPage({ params }: Readonly<{ 
             <p className="text-sm text-muted-foreground">Klant: {assignment.lead.first_name} {assignment.lead.last_name} · {assignment.lead.phone} · {assignment.lead.email}</p>
             <p className="text-sm text-muted-foreground">Toegewezen op {formatDate(assignment.assignedAt)}</p>
           </Card>
+
+          <Card className="space-y-4">
+            <h2 className="text-lg font-semibold tracking-tight">Intake-antwoorden</h2>
+            {assignment.lead.answers.length ? (
+              <div className="space-y-3">
+                {assignment.lead.answers.map((answer) => (
+                  <div key={answer.id} className="rounded-3xl bg-surface-muted p-4">
+                    <p className="font-medium">{answer.question.question}</p>
+                    <p className="mt-2 text-sm text-muted-foreground">{answer.displayValue}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <EmptyState title="Geen extra intake-antwoorden" description="Voor deze lead zijn geen dynamische intake-antwoorden opgeslagen." />
+            )}
+          </Card>
+
           <Card className="space-y-4">
             <h2 className="text-lg font-semibold tracking-tight">Foto’s</h2>
             {assignment.lead.images.length ? (

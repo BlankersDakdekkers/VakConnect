@@ -1,11 +1,11 @@
 import { SetupRequired } from "@/components/setup-required";
 import { LeadRequestForm } from "@/components/forms/lead-request-form";
 import { PageHeader } from "@/components/ui/page-header";
-import { getActiveServices } from "@/lib/services/queries";
+import { getActiveServicesWithQuestions } from "@/lib/services/queries";
 import { isSupabaseConfigured } from "@/lib/env";
 
 export default async function RequestPage() {
-  const services = await getActiveServices();
+  const services = await getActiveServicesWithQuestions();
 
   return (
     <div className="container-shell space-y-8 py-12">

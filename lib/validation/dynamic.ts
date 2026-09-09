@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { serviceQuestionTypeValues } from "@/lib/validation/constants";
-import type { ServiceQuestion, ServiceQuestionOption, ServiceQuestionType } from "@/types/database";
-import { normalizePostalCode } from "@/lib/utils";
+import { serviceQuestionTypeValues } from "./constants.ts";
+import type { ServiceQuestion, ServiceQuestionOption, ServiceQuestionType } from "../../types/database.ts";
+import { normalizePostalCode } from "../utils.ts";
 
 export interface ServiceQuestionDefinition extends ServiceQuestion {
   options: ServiceQuestionOption[];
@@ -88,6 +88,9 @@ export const matchingInputSchema = z.object({
     professionalId: z.string().uuid(),
     status: z.enum(["pending", "active", "paused", "suspended"]),
     companyName: z.string().min(1),
+    contactName: z.string().min(1),
+    email: z.email(),
+    phone: z.string().min(1),
     serviceLinks: z.array(z.object({
       serviceId: z.string().uuid(),
       active: z.boolean(),
@@ -106,9 +109,10 @@ function createQuestionAnswerSchema(question: ServiceQuestionDefinition) {
   switch (question.type) {
     case "text":
     case "textarea":
-      return z.string().trim().min(question.required ? 1 : 0, "Deze vraag is verplicht.").max(4000)
-        .transform((value) => value.trim())
-        .refine((value) => question.required ? value.length > 0 : true, "Deze vraag is verplicht.");
+      return z.preprocess(
+        (value) => (value === null || value === undefined ? "" : value),
+        z.string().trim().max(4000).refine((value) => (question.required ? value.length > 0 : true), "Deze vraag is verplicht."),
+      );
     case "number":
       return z.preprocess((value) => {
         if (value === "" || value === null || value === undefined) return undefined;
@@ -125,12 +129,16 @@ function createQuestionAnswerSchema(question: ServiceQuestionDefinition) {
         if (value === "true") return true;
         if (value === "false") return false;
         return value;
-      }, question.required ? z.boolean("Kies een antwoord.") : z.boolean().optional());
+      }, question.required ? z.boolean({ error: "Kies een antwoord." }) : z.boolean().optional());
     case "select":
     case "radio":
-      return z.string().trim()
-        .refine((value) => (question.required ? value.length > 0 : true), "Deze vraag is verplicht.")
-        .refine((value) => (value.length === 0 && !question.required) || validOptions.includes(value), "Kies een geldige optie.");
+      return z.preprocess(
+        (value) => (value === null || value === undefined ? "" : value),
+        z.string()
+          .trim()
+          .refine((value) => (question.required ? value.length > 0 : true), "Deze vraag is verplicht.")
+          .refine((value) => (value.length === 0 && !question.required) || validOptions.includes(value), "Kies een geldige optie."),
+      );
     case "multiselect":
       return z.preprocess((value) => {
         if (value === null || value === undefined || value === "") return [];

@@ -1,6 +1,6 @@
 # VakConnect
 
-VakConnect is een Nederlandse lead marketplace in opbouw die consumenten koppelt aan geschikte lokale vakmensen. Deze repository bevat de eerste schaalbare MVP-basis met publieke aanvraagflow, protected dashboards, Supabase Auth, private file uploads en Row Level Security.
+VakConnect is een Nederlandse lead marketplace in opbouw die consumenten koppelt aan geschikte lokale vakmensen. Deze repository bevat een schaalbare basis met publieke aanvraagflow, dynamische intakevragen per dienst, lead scoring, matchingvoorstellen, protected dashboards, private file uploads en Row Level Security.
 
 ## Stack
 
@@ -18,13 +18,17 @@ VakConnect is een Nederlandse lead marketplace in opbouw die consumenten koppelt
 
 - Professionele homepage met SEO-basis
 - Multi-step consumentenfunnel op `/aanvraag`
+- Dynamische intake-engine met dienstspecifieke vragen en opties
 - Server-side leadopslag via `/api/leads`
+- Generieke opslag van lead-antwoorden in `lead_answers`
+- Lead scoring met uitlegbare `score_reasons`
 - Private afbeeldingopslag in Supabase Storage
 - Publieke bedankpagina met niet-herleidbare leadreferentie
 - Admin-dashboard voor leads, vakmannen en diensten
+- Adminbeheer voor intakevragen per dienst via `/admin/diensten/[id]`
 - Vakman-dashboard voor eigen toegewezen aanvragen
-- Handmatige matchingmodule op basis van dienst + postcodeprefix
-- Supabase migratie met RLS-beleid en storage-bucket
+- Matchingmodule met `lead_matches` op basis van dienst + postcodeprefix
+- Supabase migraties met RLS-beleid, storage-bucket en dynamische intake-tabellen
 
 ## Projectstructuur
 
@@ -93,7 +97,10 @@ Plaats nooit echte secrets in de repository.
 
 1. Maak een Supabase project aan.
 2. Zet in **Authentication > Providers** minimaal email/password aan.
-3. Voer de migratie uit uit `supabase/migrations/20260909124500_initial_vakconnect_schema.sql`.
+3. Voer de migraties uit uit:
+
+   - `supabase/migrations/20260909124500_initial_vakconnect_schema.sql`
+   - `supabase/migrations/20260909133000_phase2_dynamic_intake.sql`
 4. Controleer in **Storage** dat de private bucket `lead-images` bestaat.
 5. Voeg indien nodig handmatig admingebruikers toe in Supabase Auth en zet hun `app_metadata.role` op `admin`.
 
@@ -106,15 +113,17 @@ Professionals worden via het admin-dashboard aangemaakt. Daarbij wordt een Supab
 
 ## Database migrations
 
-De eerste migratie bevat:
+De migraties bevatten:
 
 - tabellen voor leads, vakmannen, diensten, assignments en afbeeldingen
+- tabellen voor `service_questions`, `service_question_options`, `lead_answers` en `lead_matches`
 - enums, constraints en indexen
 - triggers voor `updated_at`
 - generator voor `VC-XXXXXXXX` leadreferenties
+- leadscorevelden `lead_score` en `score_reasons`
 - RLS policies voor publiek, admin en professional
 - private Supabase Storage bucket voor leadafbeeldingen
-- initiële seeddata voor diensten
+- initiële seeddata voor diensten en voorbeeldvragen voor `Dakdekker`
 
 ## Supabase Storage setup
 
@@ -154,11 +163,19 @@ Deze repository bevat geen echte testaccounts. Maak lokaal in Supabase zelf mini
 ## Security aandachtspunten
 
 - Service role key blijft server-side en mag nooit in client bundles terechtkomen.
-- Leadopslag, statuswijzigingen en toewijzingen gebeuren server-side.
-- RLS schermt persoonsgegevens af voor publiek en andere professionals.
+- Leadopslag, statuswijzigingen, scoring en matchgeneratie gebeuren server-side.
+- RLS schermt persoonsgegevens, lead-antwoorden en matchdata af voor publiek en andere professionals.
 - Uploads zijn beperkt op type, grootte en aantal.
 - De applicatie toont geen ruwe database-errors aan bezoekers.
 - Plaats geen persoonsgegevens in analytics of logs.
+
+## Dynamische intake en matching
+
+- Diensten beheren hun eigen actieve intakevragen via `service_questions` en `service_question_options`.
+- Publieke bezoekers lezen alleen actieve vragen en opties; antwoorden worden uitsluitend server-side opgeslagen in `lead_answers`.
+- `lib/leads/scoring` berekent per lead een score tussen 0 en 100 met configureerbare gewichten.
+- `lib/matching` genereert potentiële matches in `lead_matches`.
+- `lead_matches` zijn matchvoorstellen; `lead_assignments` zijn daadwerkelijk toegewezen leads.
 
 ## Aanvullende documentatie
 

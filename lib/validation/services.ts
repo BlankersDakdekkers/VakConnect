@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { serviceQuestionInputSchema, serviceQuestionOptionInputSchema } from "@/lib/validation/dynamic";
+import { serviceQuestionInputSchema, serviceQuestionOptionInputSchema } from "./dynamic.ts";
 
 export const serviceInputSchema = z.object({
   name: z.string().trim().min(2, "Naam is verplicht.").max(120),
@@ -30,6 +30,16 @@ export const serviceQuestionOptionToggleSchema = z.object({
   optionId: z.string().uuid(),
   active: z.boolean(),
   redirectTo: z.string().startsWith("/admin"),
+});
+
+export const serviceQuestionMutationSchema = serviceQuestionInputSchema.extend({
+  questionId: z.string().uuid().optional().or(z.literal("")),
+  redirectTo: z.string().startsWith("/admin/diensten/"),
+});
+
+export const serviceQuestionOptionMutationSchema = serviceQuestionOptionInputSchema.extend({
+  optionId: z.string().uuid().optional().or(z.literal("")),
+  redirectTo: z.string().startsWith("/admin/diensten/"),
 });
 
 export { serviceQuestionInputSchema, serviceQuestionOptionInputSchema };

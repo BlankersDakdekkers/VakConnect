@@ -2,7 +2,7 @@ import "server-only";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { createSignedLeadImageUrls } from "@/lib/storage/leads";
-import type { LeadStatus, Professional, Service } from "@/types/database";
+import type { Json, LeadStatus, Professional, Service, ServiceQuestionOption } from "@/types/database";
 
 export interface DashboardStat {
   label: string;
@@ -20,6 +20,7 @@ export interface AdminLeadListItem {
   created_at: string;
   first_name: string;
   last_name: string;
+  lead_score: number | null;
   service: Pick<Service, "name" | "slug"> | null;
 }
 
@@ -28,6 +29,34 @@ export interface LeadImageView {
   url: string | null;
   mimeType: string | null;
   fileSize: number | null;
+}
+
+export interface LeadAnswerView {
+  id: string;
+  question: {
+    id: string;
+    question: string;
+    slug: string;
+    type: string;
+    required: boolean;
+    sortOrder: number;
+    helpText: string | null;
+  };
+  rawValue: string | number | boolean | string[] | null;
+  displayValue: string;
+  createdAt: string;
+}
+
+export interface LeadMatchView {
+  id: string;
+  professionalId: string;
+  companyName: string;
+  contactName: string;
+  email: string;
+  phone: string;
+  status: string;
+  matchScore: number;
+  reasons: Json | null;
 }
 
 export interface AdminLeadDetail {
@@ -46,8 +75,12 @@ export interface AdminLeadDetail {
   house_number_addition: string | null;
   city: string | null;
   created_at: string;
+  lead_score: number | null;
+  score_reasons: Json | null;
   service: Service | null;
   images: LeadImageView[];
+  answers: LeadAnswerView[];
+  matches: LeadMatchView[];
   assignments: Array<{
     id: string;
     status: string;
@@ -92,6 +125,96 @@ function firstOf<T>(value: T | T[] | null | undefined) {
   return value ?? null;
 }
 
+function getOptionLabel(value: string, options: ServiceQuestionOption[]) {
+  return options.find((option) => option.value === value)?.label ?? value;
+}
+
+function mapLeadAnswerRows(rows: Array<Record<string, unknown>>) {
+  return rows
+    .map((row) => {
+      const questionRow = firstOf(row.question as Record<string, unknown> | Array<Record<string, unknown>>);
+      if (!questionRow) {
+        return null;
+      }
+
+      const options = ((questionRow.service_question_options ?? []) as ServiceQuestionOption[])
+        .filter((option) => option.active)
+        .sort((left, right) => left.sort_order - right.sort_order || left.label.localeCompare(right.label));
+      const type = String(questionRow.type);
+      const answerJson = row.answer_json as Json | null;
+      let rawValue: LeadAnswerView["rawValue"] = null;
+      let displayValue = "—";
+
+      if (type === "multiselect") {
+        const values = Array.isArray(answerJson) ? answerJson.filter((value): value is string => typeof value === "string") : [];
+        rawValue = values;
+        displayValue = values.length ? values.map((value) => getOptionLabel(value, options)).join(", ") : "—";
+      } else if (type === "number") {
+        rawValue = typeof row.answer_number === "number" ? row.answer_number : row.answer_number === null ? null : Number(row.answer_number);
+        displayValue = rawValue === null ? "—" : String(rawValue);
+      } else if (type === "boolean") {
+        rawValue = typeof row.answer_boolean === "boolean" ? row.answer_boolean : null;
+        displayValue = rawValue === null ? "—" : rawValue ? "Ja" : "Nee";
+      } else {
+        rawValue = (row.answer_text as string | null) ?? null;
+        displayValue = typeof rawValue === "string" && rawValue.length
+          ? (type === "select" || type === "radio" ? getOptionLabel(rawValue, options) : rawValue)
+          : "—";
+      }
+
+      return {
+        id: String(row.id),
+        question: {
+          id: String(questionRow.id),
+          question: String(questionRow.question),
+          slug: String(questionRow.slug),
+          type,
+          required: Boolean(questionRow.required),
+          sortOrder: Number(questionRow.sort_order),
+          helpText: (questionRow.help_text as string | null) ?? null,
+        },
+        rawValue,
+        displayValue,
+        createdAt: String(row.created_at),
+      } satisfies LeadAnswerView;
+    })
+    .filter((row): row is LeadAnswerView => row !== null)
+    .sort((left, right) => left.question.sortOrder - right.question.sortOrder || left.question.question.localeCompare(right.question.question));
+}
+
+function mapLeadMatchRows(rows: Array<Record<string, unknown>>) {
+  return rows
+    .map((row) => {
+      const professional = firstOf(row.professional as Record<string, unknown> | Array<Record<string, unknown>>);
+      if (!professional) {
+        return null;
+      }
+
+      return {
+        id: String(row.id),
+        professionalId: String(professional.id),
+        companyName: String(professional.company_name),
+        contactName: String(professional.contact_name),
+        email: String(professional.email),
+        phone: String(professional.phone),
+        status: String(professional.status),
+        matchScore: Number(row.match_score),
+        reasons: (row.reasons as Json | null) ?? null,
+      } satisfies LeadMatchView;
+    })
+    .filter((row): row is LeadMatchView => row !== null)
+    .sort((left, right) => right.matchScore - left.matchScore || left.companyName.localeCompare(right.companyName));
+}
+
+function mapLeadImages(images: Array<{ storage_path: string; mime_type: string | null; file_size: number | null }>, signedImages: Array<{ path: string; url: string | null }>) {
+  return images.map((image) => ({
+    path: image.storage_path,
+    url: signedImages.find((signedImage) => signedImage.path === image.storage_path)?.url ?? null,
+    mimeType: image.mime_type,
+    fileSize: image.file_size,
+  }));
+}
+
 export async function getAdminDashboardStats() {
   const supabase = createAdminSupabaseClient();
   const [{ count: newLeads }, { count: activeProfessionals }, { count: assignedLeads }] = await Promise.all([
@@ -102,7 +225,7 @@ export async function getAdminDashboardStats() {
 
   return [
     { label: "Nieuwe leads", value: newLeads ?? 0, description: "Aanvragen die nog beoordeling nodig hebben." },
-    { label: "Actieve vakmannen", value: activeProfessionals ?? 0, description: "Beschikbaar voor handmatige matching." },
+    { label: "Actieve vakmannen", value: activeProfessionals ?? 0, description: "Beschikbaar voor matching en toewijzing." },
     { label: "Toegewezen leads", value: assignedLeads ?? 0, description: "Leads die op dit moment bij een vakman liggen." },
   ] as DashboardStat[];
 }
@@ -111,7 +234,7 @@ export async function getAdminLeads(search?: string, status?: string) {
   const supabase = createAdminSupabaseClient();
   let query = supabase
     .from("leads")
-    .select("id, public_reference, status, urgency, postal_code, city, created_at, first_name, last_name, service:services(name, slug)")
+    .select("id, public_reference, status, urgency, postal_code, city, created_at, first_name, last_name, lead_score, service:services(name, slug)")
     .order("created_at", { ascending: false });
 
   if (status) {
@@ -140,6 +263,7 @@ export async function getAdminLeads(search?: string, status?: string) {
     created_at: String(item.created_at),
     first_name: String(item.first_name),
     last_name: String(item.last_name),
+    lead_score: typeof item.lead_score === "number" ? item.lead_score : item.lead_score === null ? null : Number(item.lead_score),
     service: (firstOf(item.service as Pick<Service, "name" | "slug"> | Pick<Service, "name" | "slug">[]) ?? null) as
       | Pick<Service, "name" | "slug">
       | null,
@@ -167,8 +291,34 @@ export async function getAdminLeadDetail(id: string) {
         house_number_addition,
         city,
         created_at,
+        lead_score,
+        score_reasons,
         service:services(id, name, slug, category, description, active, created_at, updated_at),
         lead_images(id, storage_path, mime_type, file_size, created_at),
+        lead_answers(
+          id,
+          answer_text,
+          answer_number,
+          answer_boolean,
+          answer_json,
+          created_at,
+          question:service_questions(
+            id,
+            question,
+            slug,
+            type,
+            help_text,
+            required,
+            sort_order,
+            service_question_options(id, question_id, label, value, sort_order, active, created_at)
+          )
+        ),
+        lead_matches(
+          id,
+          match_score,
+          reasons,
+          professional:professionals(id, company_name, contact_name, email, phone, status)
+        ),
         lead_assignments(
           id,
           status,
@@ -211,13 +361,12 @@ export async function getAdminLeadDetail(id: string) {
     house_number_addition: (data.house_number_addition as string | null) ?? null,
     city: (data.city as string | null) ?? null,
     created_at: String(data.created_at),
+    lead_score: typeof data.lead_score === "number" ? data.lead_score : data.lead_score === null ? null : Number(data.lead_score),
+    score_reasons: (data.score_reasons as Json | null) ?? null,
     service: (firstOf(data.service as Service | Service[]) ?? null) as Service | null,
-    images: images.map((image) => ({
-      path: image.storage_path,
-      url: signedImages.find((signedImage) => signedImage.path === image.storage_path)?.url ?? null,
-      mimeType: image.mime_type,
-      fileSize: image.file_size,
-    })),
+    images: mapLeadImages(images, signedImages),
+    answers: mapLeadAnswerRows((data.lead_answers ?? []) as Array<Record<string, unknown>>),
+    matches: mapLeadMatchRows((data.lead_matches ?? []) as Array<Record<string, unknown>>),
     assignments: assignments.map((assignment) => ({
       id: String(assignment.id),
       status: String(assignment.status),
@@ -315,8 +464,28 @@ export async function getProfessionalLeadDetail(leadId: string, professionalId: 
           house_number_addition,
           city,
           created_at,
+          lead_score,
+          score_reasons,
           service:services(id, name, slug, category, description, active, created_at, updated_at),
-          lead_images(id, storage_path, mime_type, file_size, created_at)
+          lead_images(id, storage_path, mime_type, file_size, created_at),
+          lead_answers(
+            id,
+            answer_text,
+            answer_number,
+            answer_boolean,
+            answer_json,
+            created_at,
+            question:service_questions(
+              id,
+              question,
+              slug,
+              type,
+              help_text,
+              required,
+              sort_order,
+              service_question_options(id, question_id, label, value, sort_order, active, created_at)
+            )
+          )
         )
       `,
     )
@@ -367,13 +536,12 @@ export async function getProfessionalLeadDetail(leadId: string, professionalId: 
       house_number_addition: (lead.house_number_addition as string | null) ?? null,
       city: (lead.city as string | null) ?? null,
       created_at: String(lead.created_at),
+      lead_score: typeof lead.lead_score === "number" ? lead.lead_score : lead.lead_score === null ? null : Number(lead.lead_score),
+      score_reasons: (lead.score_reasons as Json | null) ?? null,
       service: (firstOf(lead.service as Service | Service[]) ?? null) as Service | null,
-      images: images.map((image) => ({
-        path: image.storage_path,
-        url: signedImages.find((signedImage) => signedImage.path === image.storage_path)?.url ?? null,
-        mimeType: image.mime_type,
-        fileSize: image.file_size,
-      })),
+      images: mapLeadImages(images, signedImages),
+      answers: mapLeadAnswerRows((lead.lead_answers ?? []) as Array<Record<string, unknown>>),
+      matches: [],
       assignments: [],
     },
   } as ProfessionalLeadDetail;
