@@ -42,6 +42,7 @@ export function buildPageMetadata(input: {
   description: string;
   path: string;
   keywords?: string[];
+  indexable?: boolean;
 }): Metadata {
   return buildMetadata({
     title: input.title,
@@ -57,6 +58,7 @@ export function buildPageMetadata(input: {
       locale: "nl_NL",
       type: "website",
     },
+    robots: input.indexable === false ? { index: false, follow: true } : { index: true, follow: true },
     keywords: input.keywords,
   });
 }

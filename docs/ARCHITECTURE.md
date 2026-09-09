@@ -201,6 +201,53 @@ Deze routes gebruiken bestaande UI-bouwblokken (`Card`, `Button`, `FormField`, `
 - `app/robots.ts` staat publieke routes toe en blokkeert `/admin`, `/vakman` en `/login`.
 - Contentpagina's houden één duidelijke H1 en semantische H2/H3 voor crawlbaarheid en leesbaarheid.
 
+## Lokale SEO-model (Prompt 6)
+
+- `lib/content/locations.ts` is de centrale bron voor stedendata met:
+  - `slug`, `name`, `province`, `regionLabel`
+  - `introFacts`, `localCharacteristics`, `nearbyCities`
+  - `published`, `indexable`, `priority`
+  - optioneel `populationBand` en `housingNotes`
+- `lib/content/local-service-pages.ts` beheert publicatie van lokale pagina’s met expliciete combinaties per dienst/stad (en beperkte subdienstpilot).
+- De combinatieconfig bevat per pagina o.a. `canonicalPath`, `localIntro`, `localSections`, FAQ en interne links.
+- Het model voorkomt massale autogeneratie: alleen expliciet geconfigureerde combinaties worden gepubliceerd of geïndexeerd.
+
+## Lokale routearchitectuur
+
+- Hoofdservice blijft op `/{vakgebied}` via `app/(public)/[vakgebied]/page.tsx`.
+- Diepere routes worden centraal afgehandeld via `app/(public)/[vakgebied]/[...slug]/page.tsx`:
+  - `/{vakgebied}/{stad}` → lokale hoofdpagina
+  - `/{vakgebied}/{subdienst}` → bestaande subdienstpagina
+  - `/{vakgebied}/{subdienst}/{stad}` → lokale subdienstpagina
+- Deze resolver voorkomt routeconflicten tussen stadslug en subdienstslug en bewaart bestaande service-URL’s.
+
+## Canonical, indexatie en robots
+
+- Metadata loopt via `buildPageMetadata`.
+- Lokale pagina’s krijgen self-referencing canonical (`canonicalPath` uit config).
+- `indexable: false` forceert `robots: noindex,follow`; `indexable: true` geeft `index,follow`.
+- `published: false` routes worden niet gerenderd.
+
+## Sitemaplogica lokaal
+
+- `app/sitemap.ts` combineert:
+  - vaste publieke routes
+  - bestaande service-routes
+  - lokale routes uit `getIndexableLocalRoutes()`
+- Alleen routes met `published && indexable` komen in de sitemap.
+- Duplicaten worden gefilterd voordat XML-output wordt opgebouwd.
+
+## Interne linking lokaal
+
+- Vakgebiedpagina’s tonen extra links naar lokale stadsroutes (alleen gepubliceerde combinaties).
+- Subdienstpagina’s linken naar beschikbare lokale subdienstroutes.
+- Lokale pagina’s linken terug naar:
+  - vakgebiedhoofdpagina
+  - parent subdienst (voor lokale subdienstpagina’s)
+  - lokale hoofdpagina van dezelfde stad
+  - nearby cities (alleen als doelroute gepubliceerd is)
+- `/regios` is een publieke hub met overzicht van gepubliceerde steden.
+
 ## Publieke formulieren
 
 - `lib/public/actions.ts` bevat server actions voor contact en vakman-aanmelding.

@@ -233,6 +233,27 @@ Er wordt in deze route geen automatische login of privilege-escalatie uitgevoerd
 - `app/sitemap.ts` bevat de complete publieke kernroutes
 - `app/robots.ts` laat publieke routes indexeren en blokkeert dashboard/login-routes
 
+## Lokale SEO-architectuur (Prompt 6)
+
+- Centrale stedendata staat in `lib/content/locations.ts` (slug, naam, provincie, regio-label, lokale context, nearby cities, published/indexable, prioriteit).
+- Lokale combinaties staan expliciet in `lib/content/local-service-pages.ts`; er wordt **geen** cartesian product van alle diensten × steden gebouwd.
+- Lokale routes:
+  - hoofdpagina: `/{vakgebied}/{stad}`
+  - subdienst + stad: `/{vakgebied}/{subdienst}/{stad}`
+- Route-resolutie gebeurt in `app/(public)/[vakgebied]/[...slug]/page.tsx` en voorkomt regressie op bestaande subdienstroutes zoals `/dakdekker/daklekkage`.
+- `published = false` geeft geen publieke route; `published = true` + `indexable = false` geeft werkende route met `noindex,follow`.
+- Canonical is altijd self-referencing via `buildPageMetadata` met routepad uit contentconfig.
+- Sitemap bevat alleen lokale routes die zowel `published` als `indexable` zijn.
+- `/regios` biedt een index van gepubliceerde steden en links alleen naar bestaande lokale pagina’s.
+
+## Veilig nieuwe steden/combinaties toevoegen
+
+1. Voeg of wijzig stadgegevens in `lib/content/locations.ts`.
+2. Voeg specifieke combinaties toe in `lib/content/local-service-pages.ts` met `published` en `indexable` flags.
+3. Controleer nearby-links, canonical path en related links op geldige bestaande routes.
+4. Draai `npm run test` om duplicatie-, route- en sitemapcontroles te valideren.
+5. Zet pas daarna nieuwe combinaties op `indexable: true`.
+
 ## Nieuwe dienstpagina's toevoegen
 
 1. Maak een nieuwe route onder `app/(public)/<dienst>/page.tsx`
