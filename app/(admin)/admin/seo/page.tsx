@@ -9,7 +9,7 @@ export default async function AdminSeoDashboardPage() {
 
   const stats = [
     ["Locaties", summary.totalLocations],
-    ["Lokale pagina's", summary.totalLocalPages],
+    ["Lokale pagina&apos;s", summary.totalLocalPages],
     ["Draft", summary.drafts],
     ["In review", summary.review],
     ["Approved", summary.approved],
@@ -37,7 +37,7 @@ export default async function AdminSeoDashboardPage() {
               Locaties
             </Link>
             <Link href="/admin/seo/lokaal" className={buttonClassName({ variant: "secondary", size: "sm" })}>
-              Lokale pagina's
+              Lokale pagina&apos;s
             </Link>
           </div>
         }
@@ -53,7 +53,7 @@ export default async function AdminSeoDashboardPage() {
       </div>
 
       <Card className="space-y-4">
-        <h2 className="text-lg font-semibold tracking-tight">Pagina's met waarschuwing</h2>
+        <h2 className="text-lg font-semibold tracking-tight">Pagina&apos;s met waarschuwing</h2>
         <div className="overflow-x-auto">
           <table className="min-w-full text-left text-sm">
             <thead className="text-muted-foreground">

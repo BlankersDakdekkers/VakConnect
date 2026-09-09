@@ -1,5 +1,5 @@
-import { serviceSubSlugs } from "@/lib/content/service-pages";
-import type { ServiceFaq, ServiceSection } from "@/lib/content/service-pages";
+import { serviceSubSlugs } from "../../content/service-pages.ts";
+import type { ServiceFaq, ServiceSection } from "../../content/service-pages.ts";
 
 const canonicalRegex = /^\/[a-z0-9-]+\/[a-z0-9-]+(?:\/[a-z0-9-]+)?$/;
 

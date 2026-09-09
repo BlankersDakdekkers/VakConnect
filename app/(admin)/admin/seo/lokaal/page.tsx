@@ -48,7 +48,7 @@ export default async function AdminSeoLocalPagesPage({
 
   return (
     <div className="space-y-6">
-      <PageHeader title="SEO lokale pagina's" description="Beheer lokale combinaties, statusworkflow en indexatie." />
+      <PageHeader title="SEO lokale pagina&apos;s" description="Beheer lokale combinaties, statusworkflow en indexatie." />
       {success ? <p className="rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-success">{success}</p> : null}
       {error ? <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-danger">{error}</p> : null}
 
@@ -126,7 +126,7 @@ export default async function AdminSeoLocalPagesPage({
 
       <Card className="space-y-4">
         <h2 className="text-lg font-semibold tracking-tight">Bulk draft create</h2>
-        <p className="text-sm text-muted-foreground">Maak veilig meerdere conceptpagina's aan zonder auto-publicatie of auto-content.</p>
+        <p className="text-sm text-muted-foreground">Maak veilig meerdere conceptpagina&apos;s aan zonder auto-publicatie of auto-content.</p>
         <form action={bulkCreateSeoLocalDraftsAction} className="grid gap-4 md:grid-cols-4">
           <input type="hidden" name="redirect_to" value="/admin/seo/lokaal" />
           <FormField id="bulk-service" label="Vakgebied">

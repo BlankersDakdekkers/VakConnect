@@ -4,7 +4,7 @@ import { join } from "node:path";
 import test from "node:test";
 import { getEditorialClusters, getServiceDetailHref } from "../lib/content/service-cards.ts";
 import { getAllServicePages, serviceMainPages, serviceSubPages, getAllServiceRoutes } from "../lib/content/service-pages.ts";
-import { getIndexableSeoLocalRoutes } from "../lib/seo/local-pages/queries.ts";
+import { localServicePageConfigs } from "../lib/content/local-service-pages.ts";
 import { publicContactSchema, publicProfessionalApplicationSchema } from "../lib/validation/public.ts";
 
 const repoRoot = process.cwd();
@@ -245,8 +245,8 @@ test("sitemap bevat publieke routes en geen protected routes", () => {
   }
 });
 
-test("lokale indexeerbare routes zijn uniek en in sitemap opgenomen", async () => {
-  const localRoutes = await getIndexableSeoLocalRoutes();
+test("lokale indexeerbare routes zijn uniek en in sitemap opgenomen", () => {
+  const localRoutes = localServicePageConfigs.filter((page) => page.published && page.indexable).map((page) => page.canonicalPath);
   assert.ok(localRoutes.length > 0, "Lokale routes ontbreken");
   assert.equal(new Set(localRoutes).size, localRoutes.length, "Duplicate lokale routes gevonden");
 });

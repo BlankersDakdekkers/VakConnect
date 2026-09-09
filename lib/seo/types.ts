@@ -1,5 +1,5 @@
-import type { ServiceContentPageData, ServiceFaq, ServiceLink, ServiceSection } from "@/lib/content/service-pages";
-import type { Json } from "@/types/database";
+import type { ServiceContentPageData, ServiceFaq, ServiceLink, ServiceSection } from "../content/service-pages.ts";
+import type { Json } from "../../types/database.ts";
 
 export const seoContentStatusValues = ["draft", "review", "approved", "published"] as const;
 export type SeoContentStatus = (typeof seoContentStatusValues)[number];

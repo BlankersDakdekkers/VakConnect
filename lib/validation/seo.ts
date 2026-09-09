@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { seoContentStatusValues } from "@/lib/seo/types";
+import { seoContentStatusValues } from "../seo/types.ts";
 
 const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const canonicalRegex = /^\/[a-z0-9-]+\/[a-z0-9-]+(?:\/[a-z0-9-]+)?$/;

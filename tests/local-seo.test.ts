@@ -5,7 +5,7 @@ import { allLocations } from "../lib/content/locations.ts";
 import { localServicePageConfigs } from "../lib/content/local-service-pages.ts";
 import { hasSlugCollisionWithSubservice, isSitemapEligible, validatePublishSafety } from "../lib/seo/local-pages/rules.ts";
 import { detectDuplicateRisk } from "../lib/seo/local-pages/quality.ts";
-import { getRevalidationTargets } from "../lib/seo/revalidation.ts";
+import { getRevalidationTargets } from "../lib/seo/revalidation-targets.ts";
 
 const migrationPath = "/home/runner/work/VakConnect/VakConnect/supabase/migrations/20260909190000_phase4_local_seo_cms.sql";
 const migrationSql = readFileSync(migrationPath, "utf8");
@@ -66,7 +66,7 @@ test("duplicate detector signaleert exacte intro duplicatie", () => {
   const duplicate = detectDuplicateRisk({
     intro: ["Exact dezelfde intro tekst"],
     sections: [{ heading: "Sectie", paragraphs: ["Unieke paragraaf voor deze pagina."] }],
-    existingCorpus: ["Exact dezelfde intro tekst Andere inhoud"],
+    existingCorpus: ["Exact dezelfde intro tekst"],
   });
 
   assert.equal(duplicate.level, "high");

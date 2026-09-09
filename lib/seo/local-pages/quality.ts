@@ -1,6 +1,8 @@
-import type { ServiceSection } from "@/lib/content/service-pages";
+import type { ServiceSection } from "../../content/service-pages.ts";
 
 const placeholderPatterns = [/\blorem\b/i, /\btodo\b/i, /\bn\.t\.b\b/i, /\bvul\s+in\b/i, /\bplaceholder\b/i];
+
+export type QualityLabel = "onvoldoende" | "redelijk" | "goed";
 
 function normalize(value: string) {
   return value.replace(/\s+/g, " ").trim().toLowerCase();
@@ -70,7 +72,7 @@ export function calculateLocalQualityScore(input: {
   if (input.duplicateRisk === "high") score -= 30;
 
   const clamped = Math.max(0, Math.min(100, score));
-  const label = clamped < 55 ? "onvoldoende" : clamped < 80 ? "redelijk" : "goed";
+  const label: QualityLabel = clamped < 55 ? "onvoldoende" : clamped < 80 ? "redelijk" : "goed";
 
   return {
     score: clamped,

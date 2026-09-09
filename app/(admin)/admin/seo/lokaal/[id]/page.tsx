@@ -44,7 +44,7 @@ export default async function AdminSeoLocalPageDetail({
       />
       <div className="flex items-center gap-4 text-sm">
         <Link href="/admin/seo/lokaal" className="text-primary hover:underline">
-          ← Terug naar lokale pagina's
+          ← Terug naar lokale pagina&apos;s
         </Link>
       </div>
       {success ? <p className="rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-success">{success}</p> : null}
