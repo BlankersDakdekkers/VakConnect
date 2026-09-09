@@ -1,4 +1,4 @@
-import { getPostalCodePrefix } from "@/lib/utils";
+import { getPostalCodePrefix } from "../utils.ts";
 import type { ProfessionalStatus } from "@/types/database";
 
 export interface MatchCandidate {

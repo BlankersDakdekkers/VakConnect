@@ -5,6 +5,8 @@ import { requireProfessionalUser } from "@/lib/auth/helpers";
 import { buildMetadata } from "@/lib/config/site";
 import { isSupabaseConfigured } from "@/lib/env";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = buildMetadata({
   title: "Vakman dashboard",
   robots: {

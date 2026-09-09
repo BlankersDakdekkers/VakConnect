@@ -5,6 +5,8 @@ import { buildMetadata } from "@/lib/config/site";
 import { isSupabaseConfigured } from "@/lib/env";
 import { requireAdminUser } from "@/lib/auth/helpers";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = buildMetadata({
   title: "Admin dashboard",
   robots: {

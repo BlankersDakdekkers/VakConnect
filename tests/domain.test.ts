@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { isProfessionalEligibleForLead } from "../lib/matching/eligibility";
-import { formatPostalCode, getPostalCodePrefix, normalizePostalCode } from "../lib/utils";
+import { isProfessionalEligibleForLead } from "../lib/matching/eligibility.ts";
+import { formatPostalCode, getPostalCodePrefix, normalizePostalCode } from "../lib/utils.ts";
 
 test("normalizePostalCode removes spaces and uppercases", () => {
   assert.equal(normalizePostalCode("4811 ab"), "4811AB");

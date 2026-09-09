@@ -83,7 +83,7 @@ export default async function HomePage() {
               </div>
               <div className="rounded-3xl bg-white/5 p-5">
                 <p className="text-sm text-slate-300">Veilige opslag</p>
-                <p className="mt-2 text-lg font-semibold">Leads en foto's in Supabase</p>
+                <p className="mt-2 text-lg font-semibold">Leads en foto’s in Supabase</p>
               </div>
             </div>
           </Card>

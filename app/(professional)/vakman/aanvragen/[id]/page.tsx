@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -46,13 +47,13 @@ export default async function ProfessionalLeadDetailPage({ params }: Readonly<{ 
             <p className="text-sm text-muted-foreground">Toegewezen op {formatDate(assignment.assignedAt)}</p>
           </Card>
           <Card className="space-y-4">
-            <h2 className="text-lg font-semibold tracking-tight">Foto's</h2>
+            <h2 className="text-lg font-semibold tracking-tight">Foto’s</h2>
             {assignment.lead.images.length ? (
               <div className="grid gap-4 md:grid-cols-2">
                 {assignment.lead.images.map((image) => (
                   <a key={image.path} href={image.url ?? "#"} target="_blank" rel="noreferrer" className="overflow-hidden rounded-3xl border bg-surface-muted">
                     {image.url ? (
-                      <img src={image.url} alt="Lead upload" className="h-56 w-full object-cover" />
+                      <Image src={image.url} alt="Lead upload" width={960} height={720} unoptimized className="h-56 w-full object-cover" />
                     ) : (
                       <div className="flex h-56 items-center justify-center text-sm text-muted-foreground">Geen preview beschikbaar</div>
                     )}

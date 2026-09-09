@@ -324,7 +324,7 @@ export function LeadRequestForm({ services }: Readonly<{ services: Service[] }>)
             <p className="text-sm text-muted-foreground">
               Contact: {draft.firstName} {draft.lastName} · {draft.phone} · {draft.email}
             </p>
-            <p className="text-sm text-muted-foreground">Foto's toegevoegd: {images.length}</p>
+            <p className="text-sm text-muted-foreground">Foto’s toegevoegd: {images.length}</p>
           </div>
         </div>
       ) : null}
