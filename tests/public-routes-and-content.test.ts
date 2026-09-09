@@ -17,6 +17,7 @@ const requiredRouteFiles = [
   "app/(public)/[vakgebied]/page.tsx",
   "app/(public)/[vakgebied]/[...slug]/page.tsx",
   "app/(public)/regios/page.tsx",
+  "app/(public)/regios/[provincie]/page.tsx",
   "app/(public)/kosten/page.tsx",
   "app/(public)/over-vakconnect/page.tsx",
   "app/(public)/contact/page.tsx",

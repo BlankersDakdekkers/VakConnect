@@ -10,6 +10,28 @@ export const seoLocationInputSchema = z.object({
   slug: z.string().trim().regex(slugRegex, "Slug moet uit kleine letters, cijfers en koppeltekens bestaan."),
   province: z.string().trim().min(2, "Provincie is verplicht.").max(120),
   regionLabel: z.string().trim().max(120).optional().or(z.literal("")),
+  tier: z.enum(["A", "B", "C"]).default("C"),
+  contentProfile: z
+    .object({
+      urbanDensity: z.enum(["hoog", "gemiddeld", "lager"]),
+      buildingEraMix: z.enum(["historische-kern-mix", "naoorlogse-mix", "nieuwbouw-groei", "gemengd"]),
+      accessibilityNotes: z.string().trim().min(10).max(240),
+      apartmentShareBand: z.enum(["hoog", "gemiddeld", "lager"]),
+      renovationContext: z.string().trim().min(10).max(240),
+      parkingLogistics: z.string().trim().min(10).max(240),
+      historicCore: z.boolean(),
+      suburbanExpansion: z.boolean(),
+    })
+    .default({
+      urbanDensity: "gemiddeld",
+      buildingEraMix: "gemengd",
+      accessibilityNotes: "Bereikbaarheid verschilt per wijk; benoem toegang en planning vooraf.",
+      apartmentShareBand: "gemiddeld",
+      renovationContext: "Woningvoorraad is gemengd; beschrijf de huidige situatie concreet.",
+      parkingLogistics: "Parkeer- en toegangssituatie vooraf benoemen helpt de uitvoering.",
+      historicCore: false,
+      suburbanExpansion: false,
+    }),
   introFacts: z.array(z.string().trim().min(10)).min(2, "Minimaal 2 intro facts vereist."),
   localCharacteristics: z.array(z.string().trim().min(10)).min(2, "Minimaal 2 lokale kenmerken vereist."),
   nearbyCitySlugs: z.array(z.string().trim().regex(slugRegex)).max(12),
@@ -69,6 +91,24 @@ export const seoLocalPageInputSchema = z
 export const seoBulkCreateSchema = z.object({
   serviceSlug: z.string().trim().regex(slugRegex),
   subserviceSlug: z.string().trim().regex(slugRegex).optional().or(z.literal("")),
-  citySlugs: z.array(z.string().trim().regex(slugRegex)).min(1),
+  citySlugs: z.array(z.string().trim().regex(slugRegex)).default([]),
+  province: z.string().trim().max(120).optional().or(z.literal("")),
+  tier: z.enum(["A", "B", "C"]).optional(),
+  onlyWithCoverage: z.boolean().optional().default(false),
+  redirectTo: z.string().startsWith("/admin/seo/lokaal"),
+}).superRefine((value, ctx) => {
+  if (!value.citySlugs.length && !value.province && !value.tier) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["citySlugs"],
+      message: "Selecteer minimaal steden of gebruik provincie/tier filter.",
+    });
+  }
+});
+
+export const seoBulkStatusSchema = z.object({
+  ids: z.array(z.string().uuid()).min(1),
+  fromStatus: z.enum(["draft", "review"]),
+  toStatus: z.enum(["review", "approved"]),
   redirectTo: z.string().startsWith("/admin/seo/lokaal"),
 });

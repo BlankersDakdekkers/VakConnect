@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { siteConfig } from "@/lib/config/site";
 import { getAllServiceRoutes } from "@/lib/content/service-pages";
 import { getIndexableSeoLocalRoutes } from "@/lib/seo/local-pages/queries";
+import { getPublishedProvinceHubs } from "@/lib/seo/province-hubs";
 
 const baseRoutes: Array<{ path: string; priority: number; changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"] }> = [
   { path: "/", priority: 1, changeFrequency: "weekly" },
@@ -24,13 +25,24 @@ const serviceRoutes = getAllServiceRoutes().map((path) => ({
 }));
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const localRoutes = (await getIndexableSeoLocalRoutes()).map((path) => ({
+  const [localRoutes, provinceHubRoutes] = await Promise.all([
+    getIndexableSeoLocalRoutes(),
+    getPublishedProvinceHubs(),
+  ]);
+
+  const mappedLocalRoutes = localRoutes.map((path) => ({
     path,
     priority: path.split("/").length > 3 ? 0.73 : 0.8,
     changeFrequency: "weekly" as const,
   }));
 
-  const publicRoutes = [...baseRoutes, ...serviceRoutes, ...localRoutes].filter(
+  const mappedProvinceRoutes = provinceHubRoutes.map((hub) => ({
+    path: `/regios/${hub.slug}`,
+    priority: 0.76,
+    changeFrequency: "weekly" as const,
+  }));
+
+  const publicRoutes = [...baseRoutes, ...serviceRoutes, ...mappedLocalRoutes, ...mappedProvinceRoutes].filter(
     (route, index, routes) => routes.findIndex((candidate) => candidate.path === route.path) === index,
   );
 

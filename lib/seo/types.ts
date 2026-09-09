@@ -3,6 +3,10 @@ import type { Json } from "../../types/database.ts";
 
 export const seoContentStatusValues = ["draft", "review", "approved", "published"] as const;
 export type SeoContentStatus = (typeof seoContentStatusValues)[number];
+export const seoCoverageStatusValues = ["none", "limited", "sufficient"] as const;
+export type SeoCoverageStatus = (typeof seoCoverageStatusValues)[number];
+export const seoDuplicateRiskValues = ["low", "medium", "high"] as const;
+export type SeoDuplicateRisk = (typeof seoDuplicateRiskValues)[number];
 
 export type SeoLocation = {
   id: string;
@@ -10,6 +14,8 @@ export type SeoLocation = {
   name: string;
   province: string;
   region_label: string | null;
+  tier: "A" | "B" | "C";
+  content_profile: Json;
   intro_facts: Json;
   local_characteristics: Json;
   nearby_city_slugs: Json;
@@ -36,6 +42,9 @@ export type SeoLocalPage = {
   published: boolean;
   indexable: boolean;
   content_status: SeoContentStatus;
+  quality_score: number;
+  duplicate_risk: SeoDuplicateRisk;
+  coverage_status: SeoCoverageStatus;
   created_at: string;
   updated_at: string;
 };
@@ -59,7 +68,9 @@ export type DatabaseBackedLocalPage = {
   canonicalPath: string;
   qualityScore: number;
   qualityLabel: "onvoldoende" | "redelijk" | "goed";
-  duplicateRisk: "low" | "medium" | "high";
+  duplicateRisk: SeoDuplicateRisk;
+  coverageStatus: SeoCoverageStatus;
+  updatedAt: string;
   page: ServiceContentPageData;
 };
 

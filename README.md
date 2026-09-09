@@ -290,3 +290,30 @@ Lokale URL-structuur blijft ongewijzigd:
 - `/{vakgebied}/{stad}`
 - `/{vakgebied}/{subdienst}`
 - `/{vakgebied}/{subdienst}/{stad}`
+
+## Lokale SEO schaalfase (Prompt 8)
+
+- stedenbestand opgeschaald naar 61 Nederlandse steden met `tier` (`A|B|C`) en city content profile (`urbanDensity`, `buildingEraMix`, `accessibilityNotes`, `apartmentShareBand`, `renovationContext`, `parkingLogistics`, `historicCore`, `suburbanExpansion`).
+- lokale SEO ondersteunt nu alle 8 hoofdclusters: `dakdekker`, `loodgieter`, `schilder`, `elektricien`, `kozijnen`, `badkamer`, `isolatie`, `verbouwing`.
+- gecontroleerde schaalset:
+  - bestaande 75 live-routes blijven intact
+  - +40 nieuwe live lokale hoofdpagina’s (tier-A prioriteit, nieuw voor de 4 extra clusters)
+  - +104 lokale hoofdpagina-drafts
+  - +63 lokale subdienst-drafts
+- bulk draft create in `/admin/seo/lokaal` ondersteunt:
+  - vakgebied + optionele subdienst
+  - provincie/tier/city-selectie
+  - “alleen locaties met coverage”
+  - vaste defaults: `content_status=draft`, `published=false`, `indexable=false`
+- coverage indicator per lokale combinatie (`none|limited|sufficient`) wordt intern bepaald met bestaande service/lead/service-area data en meegenomen in publish gates.
+- publish gates blokkeren op:
+  - ongeldige canonical
+  - onvoldoende content
+  - quality < threshold
+  - duplicate risk `high`
+  - coverage `none`
+- duplicate detectie controleert nu ook near-identical intros, exacte paragraafduplica­tie en heading-herhaling.
+- `/admin/seo/lokaal` gebruikt server-side filters + paginering (`page`, `pageSize`) en veilige bulkstatusacties (`draft→review`, `review→approved`).
+- audit trail in `seo_audit_log` logt status/publish mutaties (record, actor, actie, vorige/nieuwe status, timestamp).
+- provinciehubs beschikbaar via `/regios/{provincie}` met minimale dekkingsdrempel; sitemap neemt alleen gepubliceerde/indexeerbare routes én geldige provinciehubs op.
+- geen auto-AI generatie: drafts starten leeg en vragen redactionele invulling.

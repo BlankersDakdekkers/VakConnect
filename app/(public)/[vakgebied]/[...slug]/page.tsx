@@ -85,7 +85,7 @@ export default async function ServiceOrLocalPage({
       resolved.localPage.page.sections.length >= 2 &&
       resolved.localPage.page.faqs.length > 0;
 
-    if (!resolved.localPage.published || resolved.localPage.contentStatus !== "published" || !hasRequiredContent) {
+    if (!resolved.localPage.published || !resolved.localPage.indexable || resolved.localPage.contentStatus !== "published" || !hasRequiredContent) {
       notFound();
     }
 
