@@ -75,9 +75,9 @@ const rawServiceMainPages = {
       {
         "heading": "Wanneer je een dakdekker nodig hebt",
         "paragraphs": [
-          "Bezoekers op deze pagina zoeken meestal duidelijkheid over de stap tussen eerste klacht en een haalbare oplossing. Voor dakdekker telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "In de praktijk zien we dat aanvragen vaak starten vanuit concrete situaties zoals actieve daklekkage, periodiek onderhoud bij ouder dak en stormschade aan pannen of nok. Een duidelijke omschrijving van de huidige toestand helpt om sneller een passende specialist te koppelen.",
-          "Beschrijf daarom niet alleen het probleem, maar ook de impact op gebruik, comfort en planning. Dat maakt je aanvraag inhoudelijk sterker en beter vergelijkbaar voor aangesloten vakmensen."
+          "Wanneer je een dakdekker nodig hebt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer je een dakdekker nodig hebt tellen factoren zoals actieve daklekkage, periodiek onderhoud bij ouder dak, stormschade aan pannen of nok en voorbereiding op renovatie of verkoop mee, omdat ze de omvang en aanpak van dakwerk rond dakdekker concreet maken.",
+          "Voor wanneer je een dakdekker nodig hebt beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "actieve daklekkage",
@@ -89,9 +89,9 @@ const rawServiceMainPages = {
       {
         "heading": "Hoe een dakbeoordeling meestal start",
         "paragraphs": [
-          "Bij dakdekker-klussen is een goede diagnose vaak bepalend voor het vervolg. Zonder heldere beoordeling bestaat de kans dat alleen het symptoom wordt aangepakt. Voor dakdekker telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Een specialist kijkt doorgaans naar samenhang tussen zichtbare schade, onderliggende oorzaak en bereikbaarheid van de werklocatie.",
-          "Via VakConnect kun je vooraf relevante context delen, zodat de eerste beoordeling direct specifieker wordt."
+          "Hoe een dakbeoordeling meestal start: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij hoe een dakbeoordeling meestal start tellen factoren zoals verschil tussen hellend dak en plat dak bij diagnose, controle van aansluitingen rond schoorsteen, dakkapel en goten, beoordeling van dakbedekking, onderlagen en bevestigingen en veilig werken op hoogte met geschikte bereikbaarheid mee, omdat ze de omvang en aanpak van dakwerk rond dakdekker concreet maken.",
+          "Voor hoe een dakbeoordeling meestal start beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "verschil tussen hellend dak en plat dak bij diagnose",
@@ -103,9 +103,9 @@ const rawServiceMainPages = {
       {
         "heading": "Repareren, deels renoveren of volledig vernieuwen",
         "paragraphs": [
-          "Niet elke situatie vraagt meteen om de grootste ingreep. Vaak is de beste keuze afhankelijk van staat, doel en planning van de woning. Voor dakdekker telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Wanneer meerdere onderdelen tegelijk aandacht vragen, kan een gefaseerde aanpak logisch zijn. In andere gevallen bespaart één integrale ingreep juist tijd en afstemming.",
-          "Door je prioriteiten in de aanvraag te benoemen, kan een professional beter meedenken over een haalbare route."
+          "Repareren, deels renoveren of volledig vernieuwen: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij repareren, deels renoveren of volledig vernieuwen tellen factoren zoals lokale reparatie als de rest van het dak nog in goede staat is, deelrenovatie bij slijtage in één dakvlak, volledige renovatie bij structurele veroudering en combineren met isolatie wanneer de opbouw toch open gaat mee, omdat ze de omvang en aanpak van dakwerk rond dakdekker concreet maken.",
+          "Voor repareren, deels renoveren of volledig vernieuwen beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "lokale reparatie als de rest van het dak nog in goede staat is",
@@ -117,42 +117,42 @@ const rawServiceMainPages = {
       {
         "heading": "Voorbereiding van je aanvraag",
         "paragraphs": [
-          "Goede voorbereiding voorkomt onduidelijkheid in de eerste contactfase. Denk aan foto’s, afmetingen, eerdere reparaties en gewenste timing. Voor dakdekker telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Geef ook aan of de klus samenhangt met andere werkzaamheden, zoals renovatie, isolatie of installatiewerk. Dat beïnvloedt vaak de volgorde van uitvoering.",
-          "Hoe concreter je startinformatie, hoe kleiner de kans op misverstanden over scope en verwachtingen."
+          "Voorbereiding van je aanvraag: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij voorbereiding van je aanvraag tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond dakdekker concreet maken.",
+          "Voor voorbereiding van je aanvraag beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Uitvoering op hoogte en bereikbaarheid",
         "paragraphs": [
-          "Naast techniek spelen bereikbaarheid, veiligheid en logistiek een grote rol. Zeker bij woningen in stedelijke gebieden of op grotere hoogte kan dit de planning beïnvloeden. Voor dakdekker telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Ook de afstemming met bewoners, levertijden van materiaal en weersomstandigheden kan verschil maken in doorlooptijd.",
-          "Door deze randvoorwaarden vroeg te benoemen, wordt de aanpak realistischer en voorspelbaarder."
+          "Uitvoering op hoogte en bereikbaarheid: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij uitvoering op hoogte en bereikbaarheid tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond dakdekker concreet maken.",
+          "Voor uitvoering op hoogte en bereikbaarheid beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Combinaties met isolatie en afwatering",
         "paragraphs": [
-          "Veel klussen staan niet op zichzelf. Een slimme combinatie met aanverwant werk kan dubbel werk beperken en de planning verbeteren. Voor dakdekker telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Bijvoorbeeld: dakwerk met isolatie, badkamerrenovatie met leidingaanpassingen, of kozijnvervanging met schilderonderhoud.",
-          "Noem in je aanvraag altijd welke nevenwerkzaamheden je overweegt, zodat een specialist daarop kan anticiperen."
+          "Combinaties met isolatie en afwatering: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij combinaties met isolatie en afwatering tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond dakdekker concreet maken.",
+          "Voor combinaties met isolatie en afwatering beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Wanneer uitstel extra risico geeft",
         "paragraphs": [
-          "Uitstel is niet altijd direct een ramp, maar bij terugkerende klachten neemt het risico op extra herstelwerk meestal toe. Voor dakdekker telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Dat geldt vooral wanneer vocht, veiligheid of gebruiksbeperkingen al merkbaar zijn.",
-          "Als je twijfelt, is een inhoudelijke aanvraag via VakConnect vaak de snelste route naar duidelijke vervolgstappen voor dakdekker-werk."
+          "Wanneer uitstel extra risico geeft: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij wanneer uitstel extra risico geeft tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond dakdekker concreet maken.",
+          "Voor wanneer uitstel extra risico geeft beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "type": "warning"
       },
       {
         "heading": "Informatie die jouw aanvraag sterker maakt",
         "paragraphs": [
-          "Sterke aanvragen zijn concreet, compleet en realistisch in planning. Ze beschrijven zowel het probleem als de gewenste uitkomst. Voor dakdekker telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Noem wat al bekend is, wat nog onzeker is en welke keuzes je open wilt laten voor advies.",
-          "Daarmee vergroot je de kans op een passende match en een efficiënter eerste contactmoment."
+          "Informatie die jouw aanvraag sterker maakt: Een zorgvuldige beoordeling van dit onderdeel maakt offertes beter vergelijkbaar en realistischer.",
+          "Bij informatie die jouw aanvraag sterker maakt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond dakdekker concreet maken.",
+          "Voor informatie die jouw aanvraag sterker maakt beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -226,7 +226,7 @@ const rawServiceMainPages = {
     ],
     "cta": {
       "title": "Vind een passende dakdekker voor jouw klus",
-      "description": "Beschrijf je dakdekker-klus duidelijk via /aanvraag. VakConnect gebruikt die informatie om je te koppelen aan een passende specialist in jouw regio.",
+      "description": "Beschrijf je dakdekker-klus op /aanvraag met duidelijke informatie over situatie, bereikbaarheid en planning voor een gerichte koppeling.",
       "label": "Vraag een passende dakdekker aan",
       "secondaryLabel": "Bekijk hoe VakConnect werkt",
       "secondaryHref": "/hoe-werkt-het"
@@ -265,9 +265,9 @@ const rawServiceMainPages = {
       {
         "heading": "Wanneer schilderwerk onderhoud vraagt",
         "paragraphs": [
-          "Wie op deze pagina komt zoekt vaak houvast: wat moet nu gebeuren, wat kan wachten en welke voorbereiding voorkomt gedoe tijdens uitvoering. Voor schilder telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "In de praktijk zien we dat aanvragen vaak starten vanuit concrete situaties zoals periodiek buitenschilderwerk, opfrissen van binnenschilderwerk en herstel van bladderende of krijtende lagen. Een duidelijke omschrijving van de huidige toestand helpt om sneller een passende specialist te koppelen.",
-          "Beschrijf daarom niet alleen het probleem, maar ook de impact op gebruik, comfort en planning. Dat maakt je aanvraag inhoudelijk sterker en beter vergelijkbaar voor aangesloten vakmensen."
+          "Wanneer schilderwerk onderhoud vraagt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer schilderwerk onderhoud vraagt tellen factoren zoals periodiek buitenschilderwerk, opfrissen van binnenschilderwerk, herstel van bladderende of krijtende lagen en combinatie met kozijnonderhoud of renovatie mee, omdat ze de omvang en aanpak van schilderwerk rond schilder concreet maken.",
+          "Voor wanneer schilderwerk onderhoud vraagt beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "periodiek buitenschilderwerk",
@@ -279,9 +279,9 @@ const rawServiceMainPages = {
       {
         "heading": "Wat een schilder beoordeelt vóór uitvoering",
         "paragraphs": [
-          "Bij schilder-klussen is een goede diagnose vaak bepalend voor het vervolg. Zonder heldere beoordeling bestaat de kans dat alleen het symptoom wordt aangepakt. Voor schilder telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Een specialist kijkt doorgaans naar samenhang tussen zichtbare schade, onderliggende oorzaak en bereikbaarheid van de werklocatie.",
-          "Via VakConnect kun je vooraf relevante context delen, zodat de eerste beoordeling direct specifieker wordt."
+          "Wat een schilder beoordeelt vóór uitvoering: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij wat een schilder beoordeelt vóór uitvoering tellen factoren zoals staat van de ondergrond bepaalt het eindresultaat, vochtbelasting en zonzijde beïnvloeden de verfkeuze, voorbehandeling (reinigen, schuren, plamuren) is bepalend voor hechting en afplakken, ventilatie en droogtijd sturen de planning mee, omdat ze de omvang en aanpak van schilderwerk rond schilder concreet maken.",
+          "Voor wat een schilder beoordeelt vóór uitvoering beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "staat van de ondergrond bepaalt het eindresultaat",
@@ -293,9 +293,9 @@ const rawServiceMainPages = {
       {
         "heading": "Keuzes in verfopbouw en afwerking",
         "paragraphs": [
-          "Niet elke situatie vraagt meteen om de grootste ingreep. Vaak is de beste keuze afhankelijk van staat, doel en planning van de woning. Voor schilder telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Wanneer meerdere onderdelen tegelijk aandacht vragen, kan een gefaseerde aanpak logisch zijn. In andere gevallen bespaart één integrale ingreep juist tijd en afstemming.",
-          "Door je prioriteiten in de aanvraag te benoemen, kan een professional beter meedenken over een haalbare route."
+          "Keuzes in verfopbouw en afwerking: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij keuzes in verfopbouw en afwerking tellen factoren zoals binnenwerk gefaseerd per ruimte, buitenwerk per gevelzijde of in één onderhoudsronde, alleen opfrissen of inclusief herstel van houtschade en combinatie met deuren-, trap- of kozijnwerk mee, omdat ze de omvang en aanpak van schilderwerk rond schilder concreet maken.",
+          "Voor keuzes in verfopbouw en afwerking beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "binnenwerk gefaseerd per ruimte",
@@ -307,42 +307,42 @@ const rawServiceMainPages = {
       {
         "heading": "Binnenwerk, buitenwerk of een combinatie",
         "paragraphs": [
-          "Goede voorbereiding voorkomt onduidelijkheid in de eerste contactfase. Denk aan foto’s, afmetingen, eerdere reparaties en gewenste timing. Voor schilder telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Geef ook aan of de klus samenhangt met andere werkzaamheden, zoals renovatie, isolatie of installatiewerk. Dat beïnvloedt vaak de volgorde van uitvoering.",
-          "Hoe concreter je startinformatie, hoe kleiner de kans op misverstanden over scope en verwachtingen."
+          "Binnenwerk, buitenwerk of een combinatie: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij binnenwerk, buitenwerk of een combinatie tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van schilderwerk rond schilder concreet maken.",
+          "Voor binnenwerk, buitenwerk of een combinatie beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Voorbereiding in huis of aan de gevel",
         "paragraphs": [
-          "Naast techniek spelen bereikbaarheid, veiligheid en logistiek een grote rol. Zeker bij woningen in stedelijke gebieden of op grotere hoogte kan dit de planning beïnvloeden. Voor schilder telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Ook de afstemming met bewoners, levertijden van materiaal en weersomstandigheden kan verschil maken in doorlooptijd.",
-          "Door deze randvoorwaarden vroeg te benoemen, wordt de aanpak realistischer en voorspelbaarder."
+          "Voorbereiding in huis of aan de gevel: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij voorbereiding in huis of aan de gevel tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van schilderwerk rond schilder concreet maken.",
+          "Voor voorbereiding in huis of aan de gevel beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Planning rond droogtijd en seizoen",
         "paragraphs": [
-          "Veel klussen staan niet op zichzelf. Een slimme combinatie met aanverwant werk kan dubbel werk beperken en de planning verbeteren. Voor schilder telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Bijvoorbeeld: dakwerk met isolatie, badkamerrenovatie met leidingaanpassingen, of kozijnvervanging met schilderonderhoud.",
-          "Noem in je aanvraag altijd welke nevenwerkzaamheden je overweegt, zodat een specialist daarop kan anticiperen."
+          "Planning rond droogtijd en seizoen: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij planning rond droogtijd en seizoen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van schilderwerk rond schilder concreet maken.",
+          "Voor planning rond droogtijd en seizoen beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Wat uitstel doet met ondergrond en herstelwerk",
         "paragraphs": [
-          "Uitstel is niet altijd direct een ramp, maar bij terugkerende klachten neemt het risico op extra herstelwerk meestal toe. Voor schilder telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Dat geldt vooral wanneer vocht, veiligheid of gebruiksbeperkingen al merkbaar zijn.",
-          "Als je twijfelt, is een inhoudelijke aanvraag via VakConnect vaak de snelste route naar duidelijke vervolgstappen voor schilder-werk."
+          "Wat uitstel doet met ondergrond en herstelwerk: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij wat uitstel doet met ondergrond en herstelwerk tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van schilderwerk rond schilder concreet maken.",
+          "Voor wat uitstel doet met ondergrond en herstelwerk beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ],
         "type": "warning"
       },
       {
         "heading": "Hoe je een inhoudelijk sterke aanvraag opstelt",
         "paragraphs": [
-          "Sterke aanvragen zijn concreet, compleet en realistisch in planning. Ze beschrijven zowel het probleem als de gewenste uitkomst. Voor schilder telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Noem wat al bekend is, wat nog onzeker is en welke keuzes je open wilt laten voor advies.",
-          "Daarmee vergroot je de kans op een passende match en een efficiënter eerste contactmoment."
+          "Hoe je een inhoudelijk sterke aanvraag opstelt: Een zorgvuldige beoordeling van dit onderdeel maakt offertes beter vergelijkbaar en realistischer.",
+          "Bij hoe je een inhoudelijk sterke aanvraag opstelt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van schilderwerk rond schilder concreet maken.",
+          "Voor hoe je een inhoudelijk sterke aanvraag opstelt beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -411,7 +411,7 @@ const rawServiceMainPages = {
     ],
     "cta": {
       "title": "Vind een passende schilder voor jouw klus",
-      "description": "Beschrijf je schilder-klus duidelijk via /aanvraag. VakConnect gebruikt die informatie om je te koppelen aan een passende specialist in jouw regio.",
+      "description": "Beschrijf je schilder-klus op /aanvraag met duidelijke informatie over situatie, bereikbaarheid en planning voor een gerichte koppeling.",
       "label": "Vind een passende schilder",
       "secondaryLabel": "Bekijk hoe VakConnect werkt",
       "secondaryHref": "/hoe-werkt-het"
@@ -450,9 +450,9 @@ const rawServiceMainPages = {
       {
         "heading": "Welke situaties om een loodgieter vragen",
         "paragraphs": [
-          "Bezoekers willen meestal snel weten hoe ernstig het probleem is en welke gegevens nodig zijn om geen tijd te verliezen. Voor loodgieter telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "In de praktijk zien we dat aanvragen vaak starten vanuit concrete situaties zoals lekkage bij leiding of aansluiting, terugkerende verstopping en aanpassen van water- of afvoertraject. Een duidelijke omschrijving van de huidige toestand helpt om sneller een passende specialist te koppelen.",
-          "Beschrijf daarom niet alleen het probleem, maar ook de impact op gebruik, comfort en planning. Dat maakt je aanvraag inhoudelijk sterker en beter vergelijkbaar voor aangesloten vakmensen."
+          "Welke situaties om een loodgieter vragen: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij welke situaties om een loodgieter vragen tellen factoren zoals lekkage bij leiding of aansluiting, terugkerende verstopping, aanpassen van water- of afvoertraject en sanitair vervangen of verplaatsen mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond loodgieter concreet maken.",
+          "Voor welke situaties om een loodgieter vragen beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "lekkage bij leiding of aansluiting",
@@ -464,9 +464,9 @@ const rawServiceMainPages = {
       {
         "heading": "Hoe lekkage en verstopping worden beoordeeld",
         "paragraphs": [
-          "Bij loodgieter-klussen is een goede diagnose vaak bepalend voor het vervolg. Zonder heldere beoordeling bestaat de kans dat alleen het symptoom wordt aangepakt. Voor loodgieter telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Een specialist kijkt doorgaans naar samenhang tussen zichtbare schade, onderliggende oorzaak en bereikbaarheid van de werklocatie.",
-          "Via VakConnect kun je vooraf relevante context delen, zodat de eerste beoordeling direct specifieker wordt."
+          "Hoe lekkage en verstopping worden beoordeeld: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij hoe lekkage en verstopping worden beoordeeld tellen factoren zoals lokaliseren van lekpunten vóór herstel, oorzaak van verstoppingen in toestel of leidingtraject, combinatie van water, afvoer en ventilatie in natte ruimtes en bereikbaarheid van leidingen achter wanden, vloer of kruipruimte mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond loodgieter concreet maken.",
+          "Voor hoe lekkage en verstopping worden beoordeeld beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "lokaliseren van lekpunten vóór herstel",
@@ -478,9 +478,9 @@ const rawServiceMainPages = {
       {
         "heading": "Keuzes in herstel versus vervanging",
         "paragraphs": [
-          "Niet elke situatie vraagt meteen om de grootste ingreep. Vaak is de beste keuze afhankelijk van staat, doel en planning van de woning. Voor loodgieter telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Wanneer meerdere onderdelen tegelijk aandacht vragen, kan een gefaseerde aanpak logisch zijn. In andere gevallen bespaart één integrale ingreep juist tijd en afstemming.",
-          "Door je prioriteiten in de aanvraag te benoemen, kan een professional beter meedenken over een haalbare route."
+          "Keuzes in herstel versus vervanging: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij keuzes in herstel versus vervanging tellen factoren zoals noodmaatregel gevolgd door definitief herstel, deelvervanging of compleet leidingdeel vernieuwen, uitvoering tijdens bewoonde situatie of renovatiefase en combineren met badkamerrenovatie of keukenverbouwing mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond loodgieter concreet maken.",
+          "Voor keuzes in herstel versus vervanging beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "noodmaatregel gevolgd door definitief herstel",
@@ -492,42 +492,42 @@ const rawServiceMainPages = {
       {
         "heading": "Leidingroutes, bereikbaarheid en voorbereiding",
         "paragraphs": [
-          "Goede voorbereiding voorkomt onduidelijkheid in de eerste contactfase. Denk aan foto’s, afmetingen, eerdere reparaties en gewenste timing. Voor loodgieter telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Geef ook aan of de klus samenhangt met andere werkzaamheden, zoals renovatie, isolatie of installatiewerk. Dat beïnvloedt vaak de volgorde van uitvoering.",
-          "Hoe concreter je startinformatie, hoe kleiner de kans op misverstanden over scope en verwachtingen."
+          "Leidingroutes, bereikbaarheid en voorbereiding: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij leidingroutes, bereikbaarheid en voorbereiding tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond loodgieter concreet maken.",
+          "Voor leidingroutes, bereikbaarheid en voorbereiding beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Combinatie met badkamer- of keukenwerk",
         "paragraphs": [
-          "Naast techniek spelen bereikbaarheid, veiligheid en logistiek een grote rol. Zeker bij woningen in stedelijke gebieden of op grotere hoogte kan dit de planning beïnvloeden. Voor loodgieter telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Ook de afstemming met bewoners, levertijden van materiaal en weersomstandigheden kan verschil maken in doorlooptijd.",
-          "Door deze randvoorwaarden vroeg te benoemen, wordt de aanpak realistischer en voorspelbaarder."
+          "Combinatie met badkamer- of keukenwerk: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij combinatie met badkamer- of keukenwerk tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond loodgieter concreet maken.",
+          "Voor combinatie met badkamer- of keukenwerk beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Planning bij spoed en niet-spoed",
         "paragraphs": [
-          "Veel klussen staan niet op zichzelf. Een slimme combinatie met aanverwant werk kan dubbel werk beperken en de planning verbeteren. Voor loodgieter telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Bijvoorbeeld: dakwerk met isolatie, badkamerrenovatie met leidingaanpassingen, of kozijnvervanging met schilderonderhoud.",
-          "Noem in je aanvraag altijd welke nevenwerkzaamheden je overweegt, zodat een specialist daarop kan anticiperen."
+          "Planning bij spoed en niet-spoed: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij planning bij spoed en niet-spoed tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond loodgieter concreet maken.",
+          "Voor planning bij spoed en niet-spoed beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Risico’s van wachten bij waterproblemen",
         "paragraphs": [
-          "Uitstel is niet altijd direct een ramp, maar bij terugkerende klachten neemt het risico op extra herstelwerk meestal toe. Voor loodgieter telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Dat geldt vooral wanneer vocht, veiligheid of gebruiksbeperkingen al merkbaar zijn.",
-          "Als je twijfelt, is een inhoudelijke aanvraag via VakConnect vaak de snelste route naar duidelijke vervolgstappen voor loodgieter-werk."
+          "Risico’s van wachten bij waterproblemen: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij risico’s van wachten bij waterproblemen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond loodgieter concreet maken.",
+          "Voor risico’s van wachten bij waterproblemen beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "type": "warning"
       },
       {
         "heading": "Wat je in je aanvraag moet opnemen",
         "paragraphs": [
-          "Sterke aanvragen zijn concreet, compleet en realistisch in planning. Ze beschrijven zowel het probleem als de gewenste uitkomst. Voor loodgieter telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Noem wat al bekend is, wat nog onzeker is en welke keuzes je open wilt laten voor advies.",
-          "Daarmee vergroot je de kans op een passende match en een efficiënter eerste contactmoment."
+          "Wat je in je aanvraag moet opnemen: Een zorgvuldige beoordeling van dit onderdeel maakt offertes beter vergelijkbaar en realistischer.",
+          "Bij wat je in je aanvraag moet opnemen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond loodgieter concreet maken.",
+          "Voor wat je in je aanvraag moet opnemen beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -596,7 +596,7 @@ const rawServiceMainPages = {
     ],
     "cta": {
       "title": "Vind een passende loodgieter voor jouw klus",
-      "description": "Beschrijf je loodgieter-klus duidelijk via /aanvraag. VakConnect gebruikt die informatie om je te koppelen aan een passende specialist in jouw regio.",
+      "description": "Beschrijf je loodgieter-klus op /aanvraag met duidelijke informatie over situatie, bereikbaarheid en planning voor een gerichte koppeling.",
       "label": "Plaats je loodgieter-aanvraag",
       "secondaryLabel": "Bekijk hoe VakConnect werkt",
       "secondaryHref": "/hoe-werkt-het"
@@ -635,9 +635,9 @@ const rawServiceMainPages = {
       {
         "heading": "Wanneer een elektricien nodig is",
         "paragraphs": [
-          "Op deze pagina zoekt men vooral duidelijkheid over veiligheid, haalbaarheid en de omvang van de klus zonder zelf aan de installatie te sleutelen. Voor elektricien telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "In de praktijk zien we dat aanvragen vaak starten vanuit concrete situaties zoals uitvallende groepen of storingen, uitbreiden van stopcontacten en lichtpunten en voorbereiding op zwaardere apparatuur. Een duidelijke omschrijving van de huidige toestand helpt om sneller een passende specialist te koppelen.",
-          "Beschrijf daarom niet alleen het probleem, maar ook de impact op gebruik, comfort en planning. Dat maakt je aanvraag inhoudelijk sterker en beter vergelijkbaar voor aangesloten vakmensen."
+          "Wanneer een elektricien nodig is: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer een elektricien nodig is tellen factoren zoals uitvallende groepen of storingen, uitbreiden van stopcontacten en lichtpunten, voorbereiding op zwaardere apparatuur en vervangen of moderniseren van groepenkast mee, omdat ze de omvang en aanpak van elektrotechniek rond elektricien concreet maken.",
+          "Voor wanneer een elektricien nodig is beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "uitvallende groepen of storingen",
@@ -649,9 +649,9 @@ const rawServiceMainPages = {
       {
         "heading": "Veilige beoordeling van installatie en belasting",
         "paragraphs": [
-          "Bij elektricien-klussen is een goede diagnose vaak bepalend voor het vervolg. Zonder heldere beoordeling bestaat de kans dat alleen het symptoom wordt aangepakt. Voor elektricien telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Een specialist kijkt doorgaans naar samenhang tussen zichtbare schade, onderliggende oorzaak en bereikbaarheid van de werklocatie.",
-          "Via VakConnect kun je vooraf relevante context delen, zodat de eerste beoordeling direct specifieker wordt."
+          "Veilige beoordeling van installatie en belasting: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij veilige beoordeling van installatie en belasting tellen factoren zoals belasting en verdeling per groep, kwaliteit en ouderdom van bestaande bekabeling, verschil tussen 1-fase en 3-fase toepassingen en inspectie van beveiliging en aardingsvoorzieningen mee, omdat ze de omvang en aanpak van elektrotechniek rond elektricien concreet maken.",
+          "Voor veilige beoordeling van installatie en belasting beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "belasting en verdeling per groep",
@@ -663,9 +663,9 @@ const rawServiceMainPages = {
       {
         "heading": "Uitbreiden of vervangen: hoe kies je",
         "paragraphs": [
-          "Niet elke situatie vraagt meteen om de grootste ingreep. Vaak is de beste keuze afhankelijk van staat, doel en planning van de woning. Voor elektricien telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Wanneer meerdere onderdelen tegelijk aandacht vragen, kan een gefaseerde aanpak logisch zijn. In andere gevallen bespaart één integrale ingreep juist tijd en afstemming.",
-          "Door je prioriteiten in de aanvraag te benoemen, kan een professional beter meedenken over een haalbare route."
+          "Uitbreiden of vervangen: hoe kies je: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij uitbreiden of vervangen: hoe kies je tellen factoren zoals uitbreiden van bestaande kast of volledig vervangen, gefaseerde uitvoering per ruimte, combinatie met keuken- of zolderverbouwing en extra capaciteit reserveren voor toekomstige apparatuur mee, omdat ze de omvang en aanpak van elektrotechniek rond elektricien concreet maken.",
+          "Voor uitbreiden of vervangen: hoe kies je beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "uitbreiden van bestaande kast of volledig vervangen",
@@ -677,42 +677,42 @@ const rawServiceMainPages = {
       {
         "heading": "Aansluitpunten, groepen en toekomstig gebruik",
         "paragraphs": [
-          "Goede voorbereiding voorkomt onduidelijkheid in de eerste contactfase. Denk aan foto’s, afmetingen, eerdere reparaties en gewenste timing. Voor elektricien telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Geef ook aan of de klus samenhangt met andere werkzaamheden, zoals renovatie, isolatie of installatiewerk. Dat beïnvloedt vaak de volgorde van uitvoering.",
-          "Hoe concreter je startinformatie, hoe kleiner de kans op misverstanden over scope en verwachtingen."
+          "Aansluitpunten, groepen en toekomstig gebruik: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij aansluitpunten, groepen en toekomstig gebruik tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van elektrotechniek rond elektricien concreet maken.",
+          "Voor aansluitpunten, groepen en toekomstig gebruik beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Planning met stroomonderbreking en bereikbaarheid",
         "paragraphs": [
-          "Naast techniek spelen bereikbaarheid, veiligheid en logistiek een grote rol. Zeker bij woningen in stedelijke gebieden of op grotere hoogte kan dit de planning beïnvloeden. Voor elektricien telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Ook de afstemming met bewoners, levertijden van materiaal en weersomstandigheden kan verschil maken in doorlooptijd.",
-          "Door deze randvoorwaarden vroeg te benoemen, wordt de aanpak realistischer en voorspelbaarder."
+          "Planning met stroomonderbreking en bereikbaarheid: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij planning met stroomonderbreking en bereikbaarheid tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van elektrotechniek rond elektricien concreet maken.",
+          "Voor planning met stroomonderbreking en bereikbaarheid beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Combinatie met verbouwing en renovatie",
         "paragraphs": [
-          "Veel klussen staan niet op zichzelf. Een slimme combinatie met aanverwant werk kan dubbel werk beperken en de planning verbeteren. Voor elektricien telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Bijvoorbeeld: dakwerk met isolatie, badkamerrenovatie met leidingaanpassingen, of kozijnvervanging met schilderonderhoud.",
-          "Noem in je aanvraag altijd welke nevenwerkzaamheden je overweegt, zodat een specialist daarop kan anticiperen."
+          "Combinatie met verbouwing en renovatie: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij combinatie met verbouwing en renovatie tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van elektrotechniek rond elektricien concreet maken.",
+          "Voor combinatie met verbouwing en renovatie beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Waarom uitstel bij elektra onwenselijk is",
         "paragraphs": [
-          "Uitstel is niet altijd direct een ramp, maar bij terugkerende klachten neemt het risico op extra herstelwerk meestal toe. Voor elektricien telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Dat geldt vooral wanneer vocht, veiligheid of gebruiksbeperkingen al merkbaar zijn.",
-          "Als je twijfelt, is een inhoudelijke aanvraag via VakConnect vaak de snelste route naar duidelijke vervolgstappen voor elektricien-werk."
+          "Waarom uitstel bij elektra onwenselijk is: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij waarom uitstel bij elektra onwenselijk is tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van elektrotechniek rond elektricien concreet maken.",
+          "Voor waarom uitstel bij elektra onwenselijk is beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ],
         "type": "warning"
       },
       {
         "heading": "Welke intake-informatie cruciaal is",
         "paragraphs": [
-          "Sterke aanvragen zijn concreet, compleet en realistisch in planning. Ze beschrijven zowel het probleem als de gewenste uitkomst. Voor elektricien telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Noem wat al bekend is, wat nog onzeker is en welke keuzes je open wilt laten voor advies.",
-          "Daarmee vergroot je de kans op een passende match en een efficiënter eerste contactmoment."
+          "Welke intake-informatie cruciaal is: Een zorgvuldige beoordeling van dit onderdeel maakt offertes beter vergelijkbaar en realistischer.",
+          "Bij welke intake-informatie cruciaal is tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van elektrotechniek rond elektricien concreet maken.",
+          "Voor welke intake-informatie cruciaal is beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -781,7 +781,7 @@ const rawServiceMainPages = {
     ],
     "cta": {
       "title": "Vind een passende elektricien voor jouw klus",
-      "description": "Beschrijf je elektricien-klus duidelijk via /aanvraag. VakConnect gebruikt die informatie om je te koppelen aan een passende specialist in jouw regio.",
+      "description": "Beschrijf je elektricien-klus op /aanvraag met duidelijke informatie over situatie, bereikbaarheid en planning voor een gerichte koppeling.",
       "label": "Vind een passende elektricien",
       "secondaryLabel": "Bekijk hoe VakConnect werkt",
       "secondaryHref": "/hoe-werkt-het"
@@ -820,9 +820,9 @@ const rawServiceMainPages = {
       {
         "heading": "Wanneer kozijnproblemen om actie vragen",
         "paragraphs": [
-          "Mensen op deze pagina willen meestal afwegen of onderhoud nog zinvol is of dat vervanging beter past bij comfort en planning. Voor kozijnen telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "In de praktijk zien we dat aanvragen vaak starten vanuit concrete situaties zoals tocht of condens rond ramen, verouderde kozijnen met onderhoudsachterstand en combineren van kozijnwerk met HR-glas. Een duidelijke omschrijving van de huidige toestand helpt om sneller een passende specialist te koppelen.",
-          "Beschrijf daarom niet alleen het probleem, maar ook de impact op gebruik, comfort en planning. Dat maakt je aanvraag inhoudelijk sterker en beter vergelijkbaar voor aangesloten vakmensen."
+          "Wanneer kozijnproblemen om actie vragen: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer kozijnproblemen om actie vragen tellen factoren zoals tocht of condens rond ramen, verouderde kozijnen met onderhoudsachterstand, combineren van kozijnwerk met HR-glas en vernieuwen van ramen en deuren bij renovatie mee, omdat ze de omvang en aanpak van kozijnwerk rond kozijnen concreet maken.",
+          "Voor wanneer kozijnproblemen om actie vragen beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "tocht of condens rond ramen",
@@ -834,9 +834,9 @@ const rawServiceMainPages = {
       {
         "heading": "Technische beoordeling van kozijn en aansluiting",
         "paragraphs": [
-          "Bij kozijnen-klussen is een goede diagnose vaak bepalend voor het vervolg. Zonder heldere beoordeling bestaat de kans dat alleen het symptoom wordt aangepakt. Voor kozijnen telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Een specialist kijkt doorgaans naar samenhang tussen zichtbare schade, onderliggende oorzaak en bereikbaarheid van de werklocatie.",
-          "Via VakConnect kun je vooraf relevante context delen, zodat de eerste beoordeling direct specifieker wordt."
+          "Technische beoordeling van kozijn en aansluiting: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij technische beoordeling van kozijn en aansluiting tellen factoren zoals maatvoering en inmeting zijn bepalend voor pasvorm, aansluitdetails rond gevel en isolatieschil, hang- en sluitwerk voor gebruiksgemak en materiaalgedrag bij temperatuur en vocht mee, omdat ze de omvang en aanpak van kozijnwerk rond kozijnen concreet maken.",
+          "Voor technische beoordeling van kozijn en aansluiting beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "maatvoering en inmeting zijn bepalend voor pasvorm",
@@ -848,9 +848,9 @@ const rawServiceMainPages = {
       {
         "heading": "Herstellen, vervangen of faseren",
         "paragraphs": [
-          "Niet elke situatie vraagt meteen om de grootste ingreep. Vaak is de beste keuze afhankelijk van staat, doel en planning van de woning. Voor kozijnen telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Wanneer meerdere onderdelen tegelijk aandacht vragen, kan een gefaseerde aanpak logisch zijn. In andere gevallen bespaart één integrale ingreep juist tijd en afstemming.",
-          "Door je prioriteiten in de aanvraag te benoemen, kan een professional beter meedenken over een haalbare route."
+          "Herstellen, vervangen of faseren: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij herstellen, vervangen of faseren tellen factoren zoals kunststof, hout of aluminium afhankelijk van wensen, per verdieping vervangen of in één project, herstel van delen versus volledige vervanging en combinatie met schilderwerk bij houten kozijnen mee, omdat ze de omvang en aanpak van kozijnwerk rond kozijnen concreet maken.",
+          "Voor herstellen, vervangen of faseren beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "kunststof, hout of aluminium afhankelijk van wensen",
@@ -862,42 +862,42 @@ const rawServiceMainPages = {
       {
         "heading": "Materiaalkeuze: kunststof, hout of aluminium",
         "paragraphs": [
-          "Goede voorbereiding voorkomt onduidelijkheid in de eerste contactfase. Denk aan foto’s, afmetingen, eerdere reparaties en gewenste timing. Voor kozijnen telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Geef ook aan of de klus samenhangt met andere werkzaamheden, zoals renovatie, isolatie of installatiewerk. Dat beïnvloedt vaak de volgorde van uitvoering.",
-          "Hoe concreter je startinformatie, hoe kleiner de kans op misverstanden over scope en verwachtingen."
+          "Materiaalkeuze: kunststof, hout of aluminium: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij materiaalkeuze: kunststof, hout of aluminium tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van kozijnwerk rond kozijnen concreet maken.",
+          "Voor materiaalkeuze: kunststof, hout of aluminium beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Combineren met glas en afwerking",
         "paragraphs": [
-          "Naast techniek spelen bereikbaarheid, veiligheid en logistiek een grote rol. Zeker bij woningen in stedelijke gebieden of op grotere hoogte kan dit de planning beïnvloeden. Voor kozijnen telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Ook de afstemming met bewoners, levertijden van materiaal en weersomstandigheden kan verschil maken in doorlooptijd.",
-          "Door deze randvoorwaarden vroeg te benoemen, wordt de aanpak realistischer en voorspelbaarder."
+          "Combineren met glas en afwerking: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij combineren met glas en afwerking tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van kozijnwerk rond kozijnen concreet maken.",
+          "Voor combineren met glas en afwerking beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Planning en bereikbaarheid van montage",
         "paragraphs": [
-          "Veel klussen staan niet op zichzelf. Een slimme combinatie met aanverwant werk kan dubbel werk beperken en de planning verbeteren. Voor kozijnen telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Bijvoorbeeld: dakwerk met isolatie, badkamerrenovatie met leidingaanpassingen, of kozijnvervanging met schilderonderhoud.",
-          "Noem in je aanvraag altijd welke nevenwerkzaamheden je overweegt, zodat een specialist daarop kan anticiperen."
+          "Planning en bereikbaarheid van montage: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij planning en bereikbaarheid van montage tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van kozijnwerk rond kozijnen concreet maken.",
+          "Voor planning en bereikbaarheid van montage beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Uitstel en oplopende onderhoudsdruk",
         "paragraphs": [
-          "Uitstel is niet altijd direct een ramp, maar bij terugkerende klachten neemt het risico op extra herstelwerk meestal toe. Voor kozijnen telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Dat geldt vooral wanneer vocht, veiligheid of gebruiksbeperkingen al merkbaar zijn.",
-          "Als je twijfelt, is een inhoudelijke aanvraag via VakConnect vaak de snelste route naar duidelijke vervolgstappen voor kozijnen-werk."
+          "Uitstel en oplopende onderhoudsdruk: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij uitstel en oplopende onderhoudsdruk tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van kozijnwerk rond kozijnen concreet maken.",
+          "Voor uitstel en oplopende onderhoudsdruk beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ],
         "type": "warning"
       },
       {
         "heading": "Hoe je je kozijnvraag helder aanvraagt",
         "paragraphs": [
-          "Sterke aanvragen zijn concreet, compleet en realistisch in planning. Ze beschrijven zowel het probleem als de gewenste uitkomst. Voor kozijnen telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Noem wat al bekend is, wat nog onzeker is en welke keuzes je open wilt laten voor advies.",
-          "Daarmee vergroot je de kans op een passende match en een efficiënter eerste contactmoment."
+          "Hoe je je kozijnvraag helder aanvraagt: Een zorgvuldige beoordeling van dit onderdeel maakt offertes beter vergelijkbaar en realistischer.",
+          "Bij hoe je je kozijnvraag helder aanvraagt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van kozijnwerk rond kozijnen concreet maken.",
+          "Voor hoe je je kozijnvraag helder aanvraagt beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -966,7 +966,7 @@ const rawServiceMainPages = {
     ],
     "cta": {
       "title": "Vind een passende kozijnen voor jouw klus",
-      "description": "Beschrijf je kozijnen-klus duidelijk via /aanvraag. VakConnect gebruikt die informatie om je te koppelen aan een passende specialist in jouw regio.",
+      "description": "Beschrijf je kozijnen-klus op /aanvraag met duidelijke informatie over situatie, bereikbaarheid en planning voor een gerichte koppeling.",
       "label": "Start je kozijnen-aanvraag",
       "secondaryLabel": "Bekijk hoe VakConnect werkt",
       "secondaryHref": "/hoe-werkt-het"
@@ -1005,9 +1005,9 @@ const rawServiceMainPages = {
       {
         "heading": "Wanneer een badkamerproject start",
         "paragraphs": [
-          "Deze pagina wordt vaak bezocht door mensen die willen weten hoe ze een badkamerklus goed opzetten voordat ze keuzes vastleggen. Voor badkamer telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "In de praktijk zien we dat aanvragen vaak starten vanuit concrete situaties zoals gedeeltelijke opfrisbeurt, complete badkamerrenovatie en ombouwen naar inloopdouche. Een duidelijke omschrijving van de huidige toestand helpt om sneller een passende specialist te koppelen.",
-          "Beschrijf daarom niet alleen het probleem, maar ook de impact op gebruik, comfort en planning. Dat maakt je aanvraag inhoudelijk sterker en beter vergelijkbaar voor aangesloten vakmensen."
+          "Wanneer een badkamerproject start: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer een badkamerproject start tellen factoren zoals gedeeltelijke opfrisbeurt, complete badkamerrenovatie, ombouwen naar inloopdouche en combineren van sanitair, tegelwerk en ventilatie mee, omdat ze de omvang en aanpak van badkamerwerk rond badkamer concreet maken.",
+          "Voor wanneer een badkamerproject start beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "gedeeltelijke opfrisbeurt",
@@ -1019,9 +1019,9 @@ const rawServiceMainPages = {
       {
         "heading": "Techniek eerst: water, afvoer, elektra en ventilatie",
         "paragraphs": [
-          "Bij badkamer-klussen is een goede diagnose vaak bepalend voor het vervolg. Zonder heldere beoordeling bestaat de kans dat alleen het symptoom wordt aangepakt. Voor badkamer telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Een specialist kijkt doorgaans naar samenhang tussen zichtbare schade, onderliggende oorzaak en bereikbaarheid van de werklocatie.",
-          "Via VakConnect kun je vooraf relevante context delen, zodat de eerste beoordeling direct specifieker wordt."
+          "Techniek eerst: water, afvoer, elektra en ventilatie: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij techniek eerst: water, afvoer, elektra en ventilatie tellen factoren zoals water- en afvoerpunten bepalen de speelruimte, elektra en verlichting vragen vroegtijdige afstemming, ventilatie is essentieel in natte ruimtes en tegel- en kitdetails bepalen onderhoud en levensduur mee, omdat ze de omvang en aanpak van badkamerwerk rond badkamer concreet maken.",
+          "Voor techniek eerst: water, afvoer, elektra en ventilatie beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "water- en afvoerpunten bepalen de speelruimte",
@@ -1033,9 +1033,9 @@ const rawServiceMainPages = {
       {
         "heading": "Indeling en scope: deelrenovatie of totaal",
         "paragraphs": [
-          "Niet elke situatie vraagt meteen om de grootste ingreep. Vaak is de beste keuze afhankelijk van staat, doel en planning van de woning. Voor badkamer telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Wanneer meerdere onderdelen tegelijk aandacht vragen, kan een gefaseerde aanpak logisch zijn. In andere gevallen bespaart één integrale ingreep juist tijd en afstemming.",
-          "Door je prioriteiten in de aanvraag te benoemen, kan een professional beter meedenken over een haalbare route."
+          "Indeling en scope: deelrenovatie of totaal: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij indeling en scope: deelrenovatie of totaal tellen factoren zoals renovatie in één keer of gefaseerd, bestaande indeling houden of aanpassen, standaard sanitair of maatwerkoplossingen en combinatie met leidingwerk en elektra-upgrades mee, omdat ze de omvang en aanpak van badkamerwerk rond badkamer concreet maken.",
+          "Voor indeling en scope: deelrenovatie of totaal beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "renovatie in één keer of gefaseerd",
@@ -1047,42 +1047,42 @@ const rawServiceMainPages = {
       {
         "heading": "Voorbereiding vóór sloop en opbouw",
         "paragraphs": [
-          "Goede voorbereiding voorkomt onduidelijkheid in de eerste contactfase. Denk aan foto’s, afmetingen, eerdere reparaties en gewenste timing. Voor badkamer telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Geef ook aan of de klus samenhangt met andere werkzaamheden, zoals renovatie, isolatie of installatiewerk. Dat beïnvloedt vaak de volgorde van uitvoering.",
-          "Hoe concreter je startinformatie, hoe kleiner de kans op misverstanden over scope en verwachtingen."
+          "Voorbereiding vóór sloop en opbouw: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij voorbereiding vóór sloop en opbouw tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van badkamerwerk rond badkamer concreet maken.",
+          "Voor voorbereiding vóór sloop en opbouw beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Samenloop tussen disciplines",
         "paragraphs": [
-          "Naast techniek spelen bereikbaarheid, veiligheid en logistiek een grote rol. Zeker bij woningen in stedelijke gebieden of op grotere hoogte kan dit de planning beïnvloeden. Voor badkamer telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Ook de afstemming met bewoners, levertijden van materiaal en weersomstandigheden kan verschil maken in doorlooptijd.",
-          "Door deze randvoorwaarden vroeg te benoemen, wordt de aanpak realistischer en voorspelbaarder."
+          "Samenloop tussen disciplines: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij samenloop tussen disciplines tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van badkamerwerk rond badkamer concreet maken.",
+          "Voor samenloop tussen disciplines beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Planning van ruwbouw naar afwerking",
         "paragraphs": [
-          "Veel klussen staan niet op zichzelf. Een slimme combinatie met aanverwant werk kan dubbel werk beperken en de planning verbeteren. Voor badkamer telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Bijvoorbeeld: dakwerk met isolatie, badkamerrenovatie met leidingaanpassingen, of kozijnvervanging met schilderonderhoud.",
-          "Noem in je aanvraag altijd welke nevenwerkzaamheden je overweegt, zodat een specialist daarop kan anticiperen."
+          "Planning van ruwbouw naar afwerking: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij planning van ruwbouw naar afwerking tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van badkamerwerk rond badkamer concreet maken.",
+          "Voor planning van ruwbouw naar afwerking beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Wat uitstel doet bij vocht en slijtage",
         "paragraphs": [
-          "Uitstel is niet altijd direct een ramp, maar bij terugkerende klachten neemt het risico op extra herstelwerk meestal toe. Voor badkamer telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Dat geldt vooral wanneer vocht, veiligheid of gebruiksbeperkingen al merkbaar zijn.",
-          "Als je twijfelt, is een inhoudelijke aanvraag via VakConnect vaak de snelste route naar duidelijke vervolgstappen voor badkamer-werk."
+          "Wat uitstel doet bij vocht en slijtage: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij wat uitstel doet bij vocht en slijtage tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van badkamerwerk rond badkamer concreet maken.",
+          "Voor wat uitstel doet bij vocht en slijtage beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "type": "warning"
       },
       {
         "heading": "Welke aanvraaginformatie het verschil maakt",
         "paragraphs": [
-          "Sterke aanvragen zijn concreet, compleet en realistisch in planning. Ze beschrijven zowel het probleem als de gewenste uitkomst. Voor badkamer telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Noem wat al bekend is, wat nog onzeker is en welke keuzes je open wilt laten voor advies.",
-          "Daarmee vergroot je de kans op een passende match en een efficiënter eerste contactmoment."
+          "Welke aanvraaginformatie het verschil maakt: Een zorgvuldige beoordeling van dit onderdeel maakt offertes beter vergelijkbaar en realistischer.",
+          "Bij welke aanvraaginformatie het verschil maakt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van badkamerwerk rond badkamer concreet maken.",
+          "Voor welke aanvraaginformatie het verschil maakt beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -1156,7 +1156,7 @@ const rawServiceMainPages = {
     ],
     "cta": {
       "title": "Vind een passende badkamer voor jouw klus",
-      "description": "Beschrijf je badkamer-klus duidelijk via /aanvraag. VakConnect gebruikt die informatie om je te koppelen aan een passende specialist in jouw regio.",
+      "description": "Beschrijf je badkamer-klus op /aanvraag met duidelijke informatie over situatie, bereikbaarheid en planning voor een gerichte koppeling.",
       "label": "Beschrijf je badkamerklus",
       "secondaryLabel": "Bekijk hoe VakConnect werkt",
       "secondaryHref": "/hoe-werkt-het"
@@ -1195,9 +1195,9 @@ const rawServiceMainPages = {
       {
         "heading": "Wanneer isolatie prioriteit krijgt",
         "paragraphs": [
-          "Bezoekers zoeken hier meestal een realistisch beeld van wat in hun woningtype technisch haalbaar en logisch is. Voor isolatie telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "In de praktijk zien we dat aanvragen vaak starten vanuit concrete situaties zoals koud aanvoelende ruimtes, hoge energievraag ondanks normaal gebruik en renovatie waarbij bouwdelen open gaan. Een duidelijke omschrijving van de huidige toestand helpt om sneller een passende specialist te koppelen.",
-          "Beschrijf daarom niet alleen het probleem, maar ook de impact op gebruik, comfort en planning. Dat maakt je aanvraag inhoudelijk sterker en beter vergelijkbaar voor aangesloten vakmensen."
+          "Wanneer isolatie prioriteit krijgt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer isolatie prioriteit krijgt tellen factoren zoals koud aanvoelende ruimtes, hoge energievraag ondanks normaal gebruik, renovatie waarbij bouwdelen open gaan en stapsgewijs verduurzamen per woningdeel mee, omdat ze de omvang en aanpak van isolatiewerk rond isolatie concreet maken.",
+          "Voor wanneer isolatie prioriteit krijgt beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "koud aanvoelende ruimtes",
@@ -1209,9 +1209,9 @@ const rawServiceMainPages = {
       {
         "heading": "Eerste beoordeling van bouwdeel en vochtgedrag",
         "paragraphs": [
-          "Bij isolatie-klussen is een goede diagnose vaak bepalend voor het vervolg. Zonder heldere beoordeling bestaat de kans dat alleen het symptoom wordt aangepakt. Voor isolatie telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Een specialist kijkt doorgaans naar samenhang tussen zichtbare schade, onderliggende oorzaak en bereikbaarheid van de werklocatie.",
-          "Via VakConnect kun je vooraf relevante context delen, zodat de eerste beoordeling direct specifieker wordt."
+          "Eerste beoordeling van bouwdeel en vochtgedrag: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij eerste beoordeling van bouwdeel en vochtgedrag tellen factoren zoals elk bouwdeel vraagt een andere isolatiestrategie, vochtgedrag en ventilatie moeten worden meegewogen, aansluitingen en koudebruggen bepalen het eindresultaat en bestaande constructie begrenst soms de materiaalkeuze mee, omdat ze de omvang en aanpak van isolatiewerk rond isolatie concreet maken.",
+          "Voor eerste beoordeling van bouwdeel en vochtgedrag beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "elk bouwdeel vraagt een andere isolatiestrategie",
@@ -1223,9 +1223,9 @@ const rawServiceMainPages = {
       {
         "heading": "Keuzes in methode en materiaal",
         "paragraphs": [
-          "Niet elke situatie vraagt meteen om de grootste ingreep. Vaak is de beste keuze afhankelijk van staat, doel en planning van de woning. Voor isolatie telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Wanneer meerdere onderdelen tegelijk aandacht vragen, kan een gefaseerde aanpak logisch zijn. In andere gevallen bespaart één integrale ingreep juist tijd en afstemming.",
-          "Door je prioriteiten in de aanvraag te benoemen, kan een professional beter meedenken over een haalbare route."
+          "Keuzes in methode en materiaal: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij keuzes in methode en materiaal tellen factoren zoals starten met grootste warmteverlies, isoleren per deel of gecombineerd project, binnen- of buitenzijde afhankelijk van bouwsituatie en combinatie met kozijnen of dakwerk mee, omdat ze de omvang en aanpak van isolatiewerk rond isolatie concreet maken.",
+          "Voor keuzes in methode en materiaal beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "starten met grootste warmteverlies",
@@ -1237,42 +1237,42 @@ const rawServiceMainPages = {
       {
         "heading": "Stapsgewijs verbeteren of integraal aanpakken",
         "paragraphs": [
-          "Goede voorbereiding voorkomt onduidelijkheid in de eerste contactfase. Denk aan foto’s, afmetingen, eerdere reparaties en gewenste timing. Voor isolatie telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Geef ook aan of de klus samenhangt met andere werkzaamheden, zoals renovatie, isolatie of installatiewerk. Dat beïnvloedt vaak de volgorde van uitvoering.",
-          "Hoe concreter je startinformatie, hoe kleiner de kans op misverstanden over scope en verwachtingen."
+          "Stapsgewijs verbeteren of integraal aanpakken: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij stapsgewijs verbeteren of integraal aanpakken tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van isolatiewerk rond isolatie concreet maken.",
+          "Voor stapsgewijs verbeteren of integraal aanpakken beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Combinatie met dak, gevel of kozijnen",
         "paragraphs": [
-          "Naast techniek spelen bereikbaarheid, veiligheid en logistiek een grote rol. Zeker bij woningen in stedelijke gebieden of op grotere hoogte kan dit de planning beïnvloeden. Voor isolatie telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Ook de afstemming met bewoners, levertijden van materiaal en weersomstandigheden kan verschil maken in doorlooptijd.",
-          "Door deze randvoorwaarden vroeg te benoemen, wordt de aanpak realistischer en voorspelbaarder."
+          "Combinatie met dak, gevel of kozijnen: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij combinatie met dak, gevel of kozijnen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van isolatiewerk rond isolatie concreet maken.",
+          "Voor combinatie met dak, gevel of kozijnen beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Planning en uitvoeringsmoment",
         "paragraphs": [
-          "Veel klussen staan niet op zichzelf. Een slimme combinatie met aanverwant werk kan dubbel werk beperken en de planning verbeteren. Voor isolatie telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Bijvoorbeeld: dakwerk met isolatie, badkamerrenovatie met leidingaanpassingen, of kozijnvervanging met schilderonderhoud.",
-          "Noem in je aanvraag altijd welke nevenwerkzaamheden je overweegt, zodat een specialist daarop kan anticiperen."
+          "Planning en uitvoeringsmoment: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij planning en uitvoeringsmoment tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van isolatiewerk rond isolatie concreet maken.",
+          "Voor planning en uitvoeringsmoment beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Wat uitstel betekent voor comfort en verbruik",
         "paragraphs": [
-          "Uitstel is niet altijd direct een ramp, maar bij terugkerende klachten neemt het risico op extra herstelwerk meestal toe. Voor isolatie telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Dat geldt vooral wanneer vocht, veiligheid of gebruiksbeperkingen al merkbaar zijn.",
-          "Als je twijfelt, is een inhoudelijke aanvraag via VakConnect vaak de snelste route naar duidelijke vervolgstappen voor isolatie-werk."
+          "Wat uitstel betekent voor comfort en verbruik: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij wat uitstel betekent voor comfort en verbruik tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van isolatiewerk rond isolatie concreet maken.",
+          "Voor wat uitstel betekent voor comfort en verbruik beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ],
         "type": "warning"
       },
       {
         "heading": "Inhoud die je aanvraag sterker maakt",
         "paragraphs": [
-          "Sterke aanvragen zijn concreet, compleet en realistisch in planning. Ze beschrijven zowel het probleem als de gewenste uitkomst. Voor isolatie telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Noem wat al bekend is, wat nog onzeker is en welke keuzes je open wilt laten voor advies.",
-          "Daarmee vergroot je de kans op een passende match en een efficiënter eerste contactmoment."
+          "Inhoud die je aanvraag sterker maakt: Een zorgvuldige beoordeling van dit onderdeel maakt offertes beter vergelijkbaar en realistischer.",
+          "Bij inhoud die je aanvraag sterker maakt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van isolatiewerk rond isolatie concreet maken.",
+          "Voor inhoud die je aanvraag sterker maakt beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -1341,7 +1341,7 @@ const rawServiceMainPages = {
     ],
     "cta": {
       "title": "Vind een passende isolatie voor jouw klus",
-      "description": "Beschrijf je isolatie-klus duidelijk via /aanvraag. VakConnect gebruikt die informatie om je te koppelen aan een passende specialist in jouw regio.",
+      "description": "Beschrijf je isolatie-klus op /aanvraag met duidelijke informatie over situatie, bereikbaarheid en planning voor een gerichte koppeling.",
       "label": "Vind een isolatiespecialist",
       "secondaryLabel": "Bekijk hoe VakConnect werkt",
       "secondaryHref": "/hoe-werkt-het"
@@ -1380,9 +1380,9 @@ const rawServiceMainPages = {
       {
         "heading": "Wanneer verbouwen logisch wordt",
         "paragraphs": [
-          "Wie deze pagina bezoekt wil vooral weten hoe een verbouwing praktisch en technisch goed wordt voorbereid. Voor verbouwing telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "In de praktijk zien we dat aanvragen vaak starten vanuit concrete situaties zoals ruimtegebrek oplossen, verouderde woningdelen vernieuwen en keuken of zolder functioneel herindelen. Een duidelijke omschrijving van de huidige toestand helpt om sneller een passende specialist te koppelen.",
-          "Beschrijf daarom niet alleen het probleem, maar ook de impact op gebruik, comfort en planning. Dat maakt je aanvraag inhoudelijk sterker en beter vergelijkbaar voor aangesloten vakmensen."
+          "Wanneer verbouwen logisch wordt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer verbouwen logisch wordt tellen factoren zoals ruimtegebrek oplossen, verouderde woningdelen vernieuwen, keuken of zolder functioneel herindelen en renovatie combineren met verduurzaming mee, omdat ze de omvang en aanpak van verbouwwerk rond verbouwing concreet maken.",
+          "Voor wanneer verbouwen logisch wordt beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "ruimtegebrek oplossen",
@@ -1394,9 +1394,9 @@ const rawServiceMainPages = {
       {
         "heading": "Haalbaarheid en technische randvoorwaarden",
         "paragraphs": [
-          "Bij verbouwing-klussen is een goede diagnose vaak bepalend voor het vervolg. Zonder heldere beoordeling bestaat de kans dat alleen het symptoom wordt aangepakt. Voor verbouwing telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Een specialist kijkt doorgaans naar samenhang tussen zichtbare schade, onderliggende oorzaak en bereikbaarheid van de werklocatie.",
-          "Via VakConnect kun je vooraf relevante context delen, zodat de eerste beoordeling direct specifieker wordt."
+          "Haalbaarheid en technische randvoorwaarden: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij haalbaarheid en technische randvoorwaarden tellen factoren zoals volgorde van disciplines bepaalt voortgang, constructieve ingrepen vragen aanvullende beoordeling, installatiewerk en afbouw moeten op elkaar aansluiten en bereikbaarheid en logistiek op locatie sturen de planning mee, omdat ze de omvang en aanpak van verbouwwerk rond verbouwing concreet maken.",
+          "Voor haalbaarheid en technische randvoorwaarden beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "volgorde van disciplines bepaalt voortgang",
@@ -1408,9 +1408,9 @@ const rawServiceMainPages = {
       {
         "heading": "Scope en fasering bepalen",
         "paragraphs": [
-          "Niet elke situatie vraagt meteen om de grootste ingreep. Vaak is de beste keuze afhankelijk van staat, doel en planning van de woning. Voor verbouwing telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Wanneer meerdere onderdelen tegelijk aandacht vragen, kan een gefaseerde aanpak logisch zijn. In andere gevallen bespaart één integrale ingreep juist tijd en afstemming.",
-          "Door je prioriteiten in de aanvraag te benoemen, kan een professional beter meedenken over een haalbare route."
+          "Scope en fasering bepalen: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij scope en fasering bepalen tellen factoren zoals deelverbouwing of totaalrenovatie, gefaseerd werken per ruimte, combineren met isolatie en kozijnwerk en tijdelijke maatregelen tijdens bewoonde verbouwing mee, omdat ze de omvang en aanpak van verbouwwerk rond verbouwing concreet maken.",
+          "Voor scope en fasering bepalen beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "deelverbouwing of totaalrenovatie",
@@ -1422,42 +1422,42 @@ const rawServiceMainPages = {
       {
         "heading": "Combinatie met installaties en afwerking",
         "paragraphs": [
-          "Goede voorbereiding voorkomt onduidelijkheid in de eerste contactfase. Denk aan foto’s, afmetingen, eerdere reparaties en gewenste timing. Voor verbouwing telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Geef ook aan of de klus samenhangt met andere werkzaamheden, zoals renovatie, isolatie of installatiewerk. Dat beïnvloedt vaak de volgorde van uitvoering.",
-          "Hoe concreter je startinformatie, hoe kleiner de kans op misverstanden over scope en verwachtingen."
+          "Combinatie met installaties en afwerking: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij combinatie met installaties en afwerking tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van verbouwwerk rond verbouwing concreet maken.",
+          "Voor combinatie met installaties en afwerking beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Planning in een bewoonde woning",
         "paragraphs": [
-          "Naast techniek spelen bereikbaarheid, veiligheid en logistiek een grote rol. Zeker bij woningen in stedelijke gebieden of op grotere hoogte kan dit de planning beïnvloeden. Voor verbouwing telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Ook de afstemming met bewoners, levertijden van materiaal en weersomstandigheden kan verschil maken in doorlooptijd.",
-          "Door deze randvoorwaarden vroeg te benoemen, wordt de aanpak realistischer en voorspelbaarder."
+          "Planning in een bewoonde woning: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij planning in een bewoonde woning tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van verbouwwerk rond verbouwing concreet maken.",
+          "Voor planning in een bewoonde woning beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Risico’s en onvoorziene punten",
         "paragraphs": [
-          "Veel klussen staan niet op zichzelf. Een slimme combinatie met aanverwant werk kan dubbel werk beperken en de planning verbeteren. Voor verbouwing telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Bijvoorbeeld: dakwerk met isolatie, badkamerrenovatie met leidingaanpassingen, of kozijnvervanging met schilderonderhoud.",
-          "Noem in je aanvraag altijd welke nevenwerkzaamheden je overweegt, zodat een specialist daarop kan anticiperen."
+          "Risico’s en onvoorziene punten: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij risico’s en onvoorziene punten tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van verbouwwerk rond verbouwing concreet maken.",
+          "Voor risico’s en onvoorziene punten beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Wanneer aanvullende beoordeling nodig is",
         "paragraphs": [
-          "Uitstel is niet altijd direct een ramp, maar bij terugkerende klachten neemt het risico op extra herstelwerk meestal toe. Voor verbouwing telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Dat geldt vooral wanneer vocht, veiligheid of gebruiksbeperkingen al merkbaar zijn.",
-          "Als je twijfelt, is een inhoudelijke aanvraag via VakConnect vaak de snelste route naar duidelijke vervolgstappen voor verbouwing-werk."
+          "Wanneer aanvullende beoordeling nodig is: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij wanneer aanvullende beoordeling nodig is tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van verbouwwerk rond verbouwing concreet maken.",
+          "Voor wanneer aanvullende beoordeling nodig is beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ],
         "type": "warning"
       },
       {
         "heading": "Welke projectdetails je aanvraag compleet maken",
         "paragraphs": [
-          "Sterke aanvragen zijn concreet, compleet en realistisch in planning. Ze beschrijven zowel het probleem als de gewenste uitkomst. Voor verbouwing telt vooral dat oorzaak en vervolg logisch op elkaar aansluiten.",
-          "Noem wat al bekend is, wat nog onzeker is en welke keuzes je open wilt laten voor advies.",
-          "Daarmee vergroot je de kans op een passende match en een efficiënter eerste contactmoment."
+          "Welke projectdetails je aanvraag compleet maken: Een zorgvuldige beoordeling van dit onderdeel maakt offertes beter vergelijkbaar en realistischer.",
+          "Bij welke projectdetails je aanvraag compleet maken tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van verbouwwerk rond verbouwing concreet maken.",
+          "Voor welke projectdetails je aanvraag compleet maken beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -1526,7 +1526,7 @@ const rawServiceMainPages = {
     ],
     "cta": {
       "title": "Vind een passende verbouwing voor jouw klus",
-      "description": "Beschrijf je verbouwing-klus duidelijk via /aanvraag. VakConnect gebruikt die informatie om je te koppelen aan een passende specialist in jouw regio.",
+      "description": "Beschrijf je verbouwing-klus op /aanvraag met duidelijke informatie over situatie, bereikbaarheid en planning voor een gerichte koppeling.",
       "label": "Start je verbouwingsaanvraag",
       "secondaryLabel": "Bekijk hoe VakConnect werkt",
       "secondaryHref": "/hoe-werkt-het"
@@ -1572,16 +1572,17 @@ const rawServiceSubPages = {
       {
         "heading": "Waar komt daklekkage vaak vandaan?",
         "paragraphs": [
-          "Bezoekers willen snel weten waar lekkage vandaan komt, hoe urgent de situatie is en welke informatie een vakman nodig heeft.",
-          "Bij daklekkage draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van daklekkage op comfort, veiligheid of planning benoemt, kan een dakdekker sneller prioriteiten bepalen."
+          "Waar komt daklekkage vaak vandaan?: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij waar komt daklekkage vaak vandaan? tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond daklekkage concreet maken.",
+          "Voor waar komt daklekkage vaak vandaan? beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Signalen die vaak wijzen op dakproblemen — daklekkage",
         "paragraphs": [
-          "Signalen bij daklekkage beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van daklekkage te noteren, maak je je aanvraag concreter."
+          "Signalen die vaak wijzen op dakproblemen — daklekkage: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij signalen die vaak wijzen op dakproblemen — daklekkage tellen factoren zoals donkere plekken op plafond of zoldervloer, waterdruppels bij langdurige regen, muffe geur of nat isolatiemateriaal en vochtsporen rond schoorsteen, dakkapel of doorvoeren mee, omdat ze de omvang en aanpak van dakwerk rond daklekkage concreet maken.",
+          "Voor signalen die vaak wijzen op dakproblemen — daklekkage beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "donkere plekken op plafond of zoldervloer",
@@ -1593,8 +1594,9 @@ const rawServiceSubPages = {
       {
         "heading": "Waardoor dit probleem meestal ontstaat — daklekkage",
         "paragraphs": [
-          "De oorzaak van daklekkage ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij daklekkage helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Waardoor dit probleem meestal ontstaat — daklekkage: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij waardoor dit probleem meestal ontstaat — daklekkage tellen factoren zoals beschadigde pannen of scheuren in dakbedekking, versleten lood- of kitdetails bij aansluitingen, verstopte afvoer op platte daken en windbelasting waardoor details zijn losgekomen mee, omdat ze de omvang en aanpak van dakwerk rond daklekkage concreet maken.",
+          "Voor waardoor dit probleem meestal ontstaat — daklekkage beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "beschadigde pannen of scheuren in dakbedekking",
@@ -1606,9 +1608,9 @@ const rawServiceSubPages = {
       {
         "heading": "Wat een dakdekker meestal eerst controleert (daklekkage) — daklekkage",
         "paragraphs": [
-          "Een dakdekker pakt daklekkage meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij daklekkage voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor daklekkage direct scherper maken."
+          "Wat een dakdekker meestal eerst controleert (daklekkage) — daklekkage: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij wat een dakdekker meestal eerst controleert (daklekkage) — daklekkage tellen factoren zoals de bron lokaliseren met inspectie van dakvlak en details, inschatten of noodherstel nodig is om directe schade te beperken, definitief herstel plannen op basis van oorzaak en controleren of onderliggende constructie droog en stabiel blijft mee, omdat ze de omvang en aanpak van dakwerk rond daklekkage concreet maken.",
+          "Voor wat een dakdekker meestal eerst controleert (daklekkage) — daklekkage beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "de bron lokaliseren met inspectie van dakvlak en details",
@@ -1620,8 +1622,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in herstel: lokaal, deels of breder — daklekkage",
         "paragraphs": [
-          "Bij daklekkage zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor daklekkage logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in herstel: lokaal, deels of breder — daklekkage: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in herstel: lokaal, deels of breder — daklekkage tellen factoren zoals noodmaatregel bij actieve lekkage versus planmatig definitief herstel, lokale reparatie of grotere aanpak bij brede slijtage en combinatie met dakinspectie of renovatie als meerdere zwakke punten zichtbaar zijn mee, omdat ze de omvang en aanpak van dakwerk rond daklekkage concreet maken.",
+          "Voor keuzes in herstel: lokaal, deels of breder — daklekkage beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "noodmaatregel bij actieve lekkage versus planmatig definitief herstel",
@@ -1632,25 +1635,26 @@ const rawServiceSubPages = {
       {
         "heading": "Welke informatie je in je aanvraag moet zetten — daklekkage",
         "paragraphs": [
-          "Een sterke aanvraag voor daklekkage bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als daklekkage samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van daklekkage en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke informatie je in je aanvraag moet zetten — daklekkage: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke informatie je in je aanvraag moet zetten — daklekkage tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond daklekkage concreet maken.",
+          "Voor welke informatie je in je aanvraag moet zetten — daklekkage beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Gevolgen van uitstel en wanneer sneller handelen verstandig is — daklekkage",
         "paragraphs": [
-          "Uitstel bij daklekkage kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer daklekkage terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om daklekkage tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Gevolgen van uitstel en wanneer sneller handelen verstandig is — daklekkage: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij gevolgen van uitstel en wanneer sneller handelen verstandig is — daklekkage tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond daklekkage concreet maken.",
+          "Voor gevolgen van uitstel en wanneer sneller handelen verstandig is — daklekkage beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "type": "warning"
       },
       {
         "heading": "Planning, bereikbaarheid en afstemming op locatie — daklekkage",
         "paragraphs": [
-          "De planning van daklekkage wordt vaak bepaald door bereikbaarheid, voorbereiding en afhankelijkheid van andere disciplines.",
-          "Als je voor daklekkage vooraf duidelijk bent over gewenste timing en flexibiliteit, kan de specialist realistischer plannen."
+          "Planning, bereikbaarheid en afstemming op locatie — daklekkage: Een zorgvuldige beoordeling van dit onderdeel maakt offertes beter vergelijkbaar en realistischer.",
+          "Bij planning, bereikbaarheid en afstemming op locatie — daklekkage tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond daklekkage concreet maken.",
+          "Voor planning, bereikbaarheid en afstemming op locatie — daklekkage beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -1713,7 +1717,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je daklekkage-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over daklekkage, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende dakdekker.",
+      "description": "Plaats je aanvraag op /aanvraag met details over daklekkage, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Plaats je aanvraag voor daklekkage",
       "secondaryLabel": "Terug naar dakdekker",
       "secondaryHref": "/dakdekker"
@@ -1756,16 +1760,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer renovatie logischer is dan blijven repareren",
         "paragraphs": [
-          "Deze zoekintentie draait om de keuze tussen doorgaan met repareren of een grotere renovatiestap zetten.",
-          "Bij dakrenovatie draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van dakrenovatie op comfort, veiligheid of planning benoemt, kan een dakdekker sneller prioriteiten bepalen."
+          "Wanneer renovatie logischer is dan blijven repareren: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer renovatie logischer is dan blijven repareren tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond dakrenovatie concreet maken.",
+          "Voor wanneer renovatie logischer is dan blijven repareren beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Signalen die vaak wijzen op dakproblemen — dakrenovatie",
         "paragraphs": [
-          "Signalen bij dakrenovatie beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van dakrenovatie te noteren, maak je je aanvraag concreter."
+          "Signalen die vaak wijzen op dakproblemen — dakrenovatie: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij signalen die vaak wijzen op dakproblemen — dakrenovatie tellen factoren zoals terugkerende lekkages op meerdere plekken, zichtbare veroudering van dakmateriaal, oplopende onderhoudsfrequentie en comfortverlies door koude of vochtproblemen mee, omdat ze de omvang en aanpak van dakwerk rond dakrenovatie concreet maken.",
+          "Voor signalen die vaak wijzen op dakproblemen — dakrenovatie beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "terugkerende lekkages op meerdere plekken",
@@ -1777,8 +1782,9 @@ const rawServiceSubPages = {
       {
         "heading": "Waardoor dit probleem meestal ontstaat — dakrenovatie",
         "paragraphs": [
-          "De oorzaak van dakrenovatie ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij dakrenovatie helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Waardoor dit probleem meestal ontstaat — dakrenovatie: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij waardoor dit probleem meestal ontstaat — dakrenovatie tellen factoren zoals einde technische levensduur van materiaal, achterstallig onderhoud en onvoldoende kwaliteit van oudere details mee, omdat ze de omvang en aanpak van dakwerk rond dakrenovatie concreet maken.",
+          "Voor waardoor dit probleem meestal ontstaat — dakrenovatie beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "einde technische levensduur van materiaal",
@@ -1789,9 +1795,9 @@ const rawServiceSubPages = {
       {
         "heading": "Wat een dakdekker meestal eerst controleert (dakrenovatie) — dakrenovatie",
         "paragraphs": [
-          "Een dakdekker pakt dakrenovatie meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij dakrenovatie voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor dakrenovatie direct scherper maken."
+          "Wat een dakdekker meestal eerst controleert (dakrenovatie) — dakrenovatie: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij wat een dakdekker meestal eerst controleert (dakrenovatie) — dakrenovatie tellen factoren zoals staat van dakopbouw integraal beoordelen, scenario’s vergelijken: herstel, deelrenovatie of volledig vernieuwen, planning afstemmen op bereikbaarheid en seizoen en uitvoering combineren met verbeteringen zoals isolatie mee, omdat ze de omvang en aanpak van dakwerk rond dakrenovatie concreet maken.",
+          "Voor wat een dakdekker meestal eerst controleert (dakrenovatie) — dakrenovatie beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "staat van dakopbouw integraal beoordelen",
@@ -1803,8 +1809,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in herstel: lokaal, deels of breder — dakrenovatie",
         "paragraphs": [
-          "Bij dakrenovatie zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor dakrenovatie logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in herstel: lokaal, deels of breder — dakrenovatie: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in herstel: lokaal, deels of breder — dakrenovatie tellen factoren zoals gefaseerde renovatie bij beperkte scope, volledige renovatie bij structurele problemen en combineren met isolatie en afwateringsverbetering mee, omdat ze de omvang en aanpak van dakwerk rond dakrenovatie concreet maken.",
+          "Voor keuzes in herstel: lokaal, deels of breder — dakrenovatie beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "gefaseerde renovatie bij beperkte scope",
@@ -1815,25 +1822,26 @@ const rawServiceSubPages = {
       {
         "heading": "Welke informatie je in je aanvraag moet zetten — dakrenovatie",
         "paragraphs": [
-          "Een sterke aanvraag voor dakrenovatie bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als dakrenovatie samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van dakrenovatie en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke informatie je in je aanvraag moet zetten — dakrenovatie: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke informatie je in je aanvraag moet zetten — dakrenovatie tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond dakrenovatie concreet maken.",
+          "Voor welke informatie je in je aanvraag moet zetten — dakrenovatie beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Gevolgen van uitstel en wanneer sneller handelen verstandig is — dakrenovatie",
         "paragraphs": [
-          "Uitstel bij dakrenovatie kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer dakrenovatie terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om dakrenovatie tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Gevolgen van uitstel en wanneer sneller handelen verstandig is — dakrenovatie: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij gevolgen van uitstel en wanneer sneller handelen verstandig is — dakrenovatie tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond dakrenovatie concreet maken.",
+          "Voor gevolgen van uitstel en wanneer sneller handelen verstandig is — dakrenovatie beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "type": "warning"
       },
       {
         "heading": "Planning, bereikbaarheid en afstemming op locatie — dakrenovatie",
         "paragraphs": [
-          "De planning van dakrenovatie wordt vaak bepaald door bereikbaarheid, voorbereiding en afhankelijkheid van andere disciplines.",
-          "Als je voor dakrenovatie vooraf duidelijk bent over gewenste timing en flexibiliteit, kan de specialist realistischer plannen."
+          "Planning, bereikbaarheid en afstemming op locatie — dakrenovatie: Een zorgvuldige beoordeling van dit onderdeel maakt offertes beter vergelijkbaar en realistischer.",
+          "Bij planning, bereikbaarheid en afstemming op locatie — dakrenovatie tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond dakrenovatie concreet maken.",
+          "Voor planning, bereikbaarheid en afstemming op locatie — dakrenovatie beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -1896,7 +1904,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je dakrenovatie-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over dakrenovatie, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende dakdekker.",
+      "description": "Plaats je aanvraag op /aanvraag met details over dakrenovatie, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Vraag een specialist voor dakrenovatie",
       "secondaryLabel": "Terug naar dakdekker",
       "secondaryHref": "/dakdekker"
@@ -1939,16 +1947,17 @@ const rawServiceSubPages = {
       {
         "heading": "Losse pannen vervangen of een groter vlak aanpakken",
         "paragraphs": [
-          "Bezoekers zoeken vooral verschil tussen incidenteel pannen vervangen en bredere vervanging van een dakvlak.",
-          "Bij dakpannen vervangen draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van dakpannen vervangen op comfort, veiligheid of planning benoemt, kan een dakdekker sneller prioriteiten bepalen."
+          "Losse pannen vervangen of een groter vlak aanpakken: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij losse pannen vervangen of een groter vlak aanpakken tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond dakpannen vervangen concreet maken.",
+          "Voor losse pannen vervangen of een groter vlak aanpakken beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Signalen die vaak wijzen op dakproblemen — dakpannen vervangen",
         "paragraphs": [
-          "Signalen bij dakpannen vervangen beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van dakpannen vervangen te noteren, maak je je aanvraag concreter."
+          "Signalen die vaak wijzen op dakproblemen — dakpannen vervangen: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij signalen die vaak wijzen op dakproblemen — dakpannen vervangen tellen factoren zoals gebroken of verschoven pannen, zichtbare poreuze pannen, vochtsporen onder dakvlak en regelmatige stormschade op dezelfde zones mee, omdat ze de omvang en aanpak van dakwerk rond dakpannen vervangen concreet maken.",
+          "Voor signalen die vaak wijzen op dakproblemen — dakpannen vervangen beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "gebroken of verschoven pannen",
@@ -1960,8 +1969,9 @@ const rawServiceSubPages = {
       {
         "heading": "Waardoor dit probleem meestal ontstaat — dakpannen vervangen",
         "paragraphs": [
-          "De oorzaak van dakpannen vervangen ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij dakpannen vervangen helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Waardoor dit probleem meestal ontstaat — dakpannen vervangen: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij waardoor dit probleem meestal ontstaat — dakpannen vervangen tellen factoren zoals ouderdom en weersinvloed, bevestigingsproblemen bij nok of randen en lokale belasting door wind mee, omdat ze de omvang en aanpak van dakwerk rond dakpannen vervangen concreet maken.",
+          "Voor waardoor dit probleem meestal ontstaat — dakpannen vervangen beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "ouderdom en weersinvloed",
@@ -1972,9 +1982,9 @@ const rawServiceSubPages = {
       {
         "heading": "Wat een dakdekker meestal eerst controleert (dakpannen vervangen) — dakpannen vervangen",
         "paragraphs": [
-          "Een dakdekker pakt dakpannen vervangen meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij dakpannen vervangen voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor dakpannen vervangen direct scherper maken."
+          "Wat een dakdekker meestal eerst controleert (dakpannen vervangen) — dakpannen vervangen: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij wat een dakdekker meestal eerst controleert (dakpannen vervangen) — dakpannen vervangen tellen factoren zoals inspectie van complete rij en aansluitingen, vervanging van losse pannen of grotere vlakken, controle op onderliggende laag en nokdetails en nazicht op waterdichtheid na herstel mee, omdat ze de omvang en aanpak van dakwerk rond dakpannen vervangen concreet maken.",
+          "Voor wat een dakdekker meestal eerst controleert (dakpannen vervangen) — dakpannen vervangen beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "inspectie van complete rij en aansluitingen",
@@ -1986,8 +1996,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in herstel: lokaal, deels of breder — dakpannen vervangen",
         "paragraphs": [
-          "Bij dakpannen vervangen zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor dakpannen vervangen logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in herstel: lokaal, deels of breder — dakpannen vervangen: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in herstel: lokaal, deels of breder — dakpannen vervangen tellen factoren zoals deelherstel met kleurverschil accepteren of bredere vervanging kiezen, combinatie met nokvorstherstel en planning direct na stormperiode of als onderhoudsproject mee, omdat ze de omvang en aanpak van dakwerk rond dakpannen vervangen concreet maken.",
+          "Voor keuzes in herstel: lokaal, deels of breder — dakpannen vervangen beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "deelherstel met kleurverschil accepteren of bredere vervanging kiezen",
@@ -1998,25 +2009,26 @@ const rawServiceSubPages = {
       {
         "heading": "Welke informatie je in je aanvraag moet zetten — dakpannen vervangen",
         "paragraphs": [
-          "Een sterke aanvraag voor dakpannen vervangen bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als dakpannen vervangen samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van dakpannen vervangen en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke informatie je in je aanvraag moet zetten — dakpannen vervangen: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke informatie je in je aanvraag moet zetten — dakpannen vervangen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond dakpannen vervangen concreet maken.",
+          "Voor welke informatie je in je aanvraag moet zetten — dakpannen vervangen beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Gevolgen van uitstel en wanneer sneller handelen verstandig is — dakpannen vervangen",
         "paragraphs": [
-          "Uitstel bij dakpannen vervangen kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer dakpannen vervangen terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om dakpannen vervangen tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Gevolgen van uitstel en wanneer sneller handelen verstandig is — dakpannen vervangen: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij gevolgen van uitstel en wanneer sneller handelen verstandig is — dakpannen vervangen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond dakpannen vervangen concreet maken.",
+          "Voor gevolgen van uitstel en wanneer sneller handelen verstandig is — dakpannen vervangen beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "type": "warning"
       },
       {
         "heading": "Planning, bereikbaarheid en afstemming op locatie — dakpannen vervangen",
         "paragraphs": [
-          "De planning van dakpannen vervangen wordt vaak bepaald door bereikbaarheid, voorbereiding en afhankelijkheid van andere disciplines.",
-          "Als je voor dakpannen vervangen vooraf duidelijk bent over gewenste timing en flexibiliteit, kan de specialist realistischer plannen."
+          "Planning, bereikbaarheid en afstemming op locatie — dakpannen vervangen: Een zorgvuldige beoordeling van dit onderdeel maakt offertes beter vergelijkbaar en realistischer.",
+          "Bij planning, bereikbaarheid en afstemming op locatie — dakpannen vervangen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond dakpannen vervangen concreet maken.",
+          "Voor planning, bereikbaarheid en afstemming op locatie — dakpannen vervangen beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -2074,7 +2086,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je dakpannen vervangen-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over dakpannen vervangen, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende dakdekker.",
+      "description": "Plaats je aanvraag op /aanvraag met details over dakpannen vervangen, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Start je aanvraag voor dakpannen",
       "secondaryLabel": "Terug naar dakdekker",
       "secondaryHref": "/dakdekker"
@@ -2117,16 +2129,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer plat dak in beeld komt",
         "paragraphs": [
-          "Zoekers willen vooral weten hoe je problemen op een plat dak herkent en wanneer lokaal herstel nog volstaat.",
-          "Bij plat dak draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van plat dak op comfort, veiligheid of planning benoemt, kan een dakdekker sneller prioriteiten bepalen."
+          "Wanneer plat dak in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer plat dak in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond plat dak concreet maken.",
+          "Voor wanneer plat dak in beeld komt beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Signalen die vaak wijzen op dakproblemen — plat dak",
         "paragraphs": [
-          "Signalen bij plat dak beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van plat dak te noteren, maak je je aanvraag concreter."
+          "Signalen die vaak wijzen op dakproblemen — plat dak: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij signalen die vaak wijzen op dakproblemen — plat dak tellen factoren zoals plassen die lang blijven staan, blazen of scheuren in daklaag, lekkage na regen en losse randen bij opstanden mee, omdat ze de omvang en aanpak van dakwerk rond plat dak concreet maken.",
+          "Voor signalen die vaak wijzen op dakproblemen — plat dak beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "plassen die lang blijven staan",
@@ -2138,8 +2151,9 @@ const rawServiceSubPages = {
       {
         "heading": "Waardoor dit probleem meestal ontstaat — plat dak",
         "paragraphs": [
-          "De oorzaak van plat dak ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij plat dak helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Waardoor dit probleem meestal ontstaat — plat dak: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij waardoor dit probleem meestal ontstaat — plat dak tellen factoren zoals verouderde dakbedekking, beperkte afwatering en zwakke aansluitdetails mee, omdat ze de omvang en aanpak van dakwerk rond plat dak concreet maken.",
+          "Voor waardoor dit probleem meestal ontstaat — plat dak beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "verouderde dakbedekking",
@@ -2150,9 +2164,9 @@ const rawServiceSubPages = {
       {
         "heading": "Wat een dakdekker meestal eerst controleert (plat dak) — plat dak",
         "paragraphs": [
-          "Een dakdekker pakt plat dak meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij plat dak voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor plat dak direct scherper maken."
+          "Wat een dakdekker meestal eerst controleert (plat dak) — plat dak: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij wat een dakdekker meestal eerst controleert (plat dak) — plat dak tellen factoren zoals visuele inspectie van daklaag en naden, controle van afschot en afvoer, lokaal herstel of deelvernieuwing en advies over onderhoudsinterval mee, omdat ze de omvang en aanpak van dakwerk rond plat dak concreet maken.",
+          "Voor wat een dakdekker meestal eerst controleert (plat dak) — plat dak beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "visuele inspectie van daklaag en naden",
@@ -2164,8 +2178,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in herstel: lokaal, deels of breder — plat dak",
         "paragraphs": [
-          "Bij plat dak zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor plat dak logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in herstel: lokaal, deels of breder — plat dak: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in herstel: lokaal, deels of breder — plat dak tellen factoren zoals repareren van detail of groter oppervlak vernieuwen, materiaalkeuze passend bij bestaande opbouw en combineren met dakgoot- of afvoerwerk mee, omdat ze de omvang en aanpak van dakwerk rond plat dak concreet maken.",
+          "Voor keuzes in herstel: lokaal, deels of breder — plat dak beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "repareren van detail of groter oppervlak vernieuwen",
@@ -2176,17 +2191,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke informatie je in je aanvraag moet zetten — plat dak",
         "paragraphs": [
-          "Een sterke aanvraag voor plat dak bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als plat dak samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van plat dak en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke informatie je in je aanvraag moet zetten — plat dak: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke informatie je in je aanvraag moet zetten — plat dak tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond plat dak concreet maken.",
+          "Voor welke informatie je in je aanvraag moet zetten — plat dak beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Gevolgen van uitstel en wanneer sneller handelen verstandig is — plat dak",
         "paragraphs": [
-          "Uitstel bij plat dak kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer plat dak terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om plat dak tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Gevolgen van uitstel en wanneer sneller handelen verstandig is — plat dak: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij gevolgen van uitstel en wanneer sneller handelen verstandig is — plat dak tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond plat dak concreet maken.",
+          "Voor gevolgen van uitstel en wanneer sneller handelen verstandig is — plat dak beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -2240,7 +2255,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je plat dak-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over plat dak, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende dakdekker.",
+      "description": "Plaats je aanvraag op /aanvraag met details over plat dak, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Vraag hulp voor je platte dak",
       "secondaryLabel": "Terug naar dakdekker",
       "secondaryHref": "/dakdekker"
@@ -2283,16 +2298,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer schoorsteen in beeld komt",
         "paragraphs": [
-          "Deze pagina wordt bezocht door mensen die twijfelen of het probleem in metselwerk, aansluiting of dakdetail zit.",
-          "Bij schoorsteen draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van schoorsteen op comfort, veiligheid of planning benoemt, kan een dakdekker sneller prioriteiten bepalen."
+          "Wanneer schoorsteen in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer schoorsteen in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond schoorsteen concreet maken.",
+          "Voor wanneer schoorsteen in beeld komt beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Signalen die vaak wijzen op dakproblemen — schoorsteen",
         "paragraphs": [
-          "Signalen bij schoorsteen beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van schoorsteen te noteren, maak je je aanvraag concreter."
+          "Signalen die vaak wijzen op dakproblemen — schoorsteen: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij signalen die vaak wijzen op dakproblemen — schoorsteen tellen factoren zoals vocht rond schoorsteen, scheuren in voegwerk, losse loodstroken en afbrokkelende delen mee, omdat ze de omvang en aanpak van dakwerk rond schoorsteen concreet maken.",
+          "Voor signalen die vaak wijzen op dakproblemen — schoorsteen beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "vocht rond schoorsteen",
@@ -2304,8 +2320,9 @@ const rawServiceSubPages = {
       {
         "heading": "Waardoor dit probleem meestal ontstaat — schoorsteen",
         "paragraphs": [
-          "De oorzaak van schoorsteen ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij schoorsteen helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Waardoor dit probleem meestal ontstaat — schoorsteen: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij waardoor dit probleem meestal ontstaat — schoorsteen tellen factoren zoals verouderde voegen, versleten aansluiting met dak en vorstschade mee, omdat ze de omvang en aanpak van dakwerk rond schoorsteen concreet maken.",
+          "Voor waardoor dit probleem meestal ontstaat — schoorsteen beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "verouderde voegen",
@@ -2316,9 +2333,9 @@ const rawServiceSubPages = {
       {
         "heading": "Wat een dakdekker meestal eerst controleert (schoorsteen) — schoorsteen",
         "paragraphs": [
-          "Een dakdekker pakt schoorsteen meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij schoorsteen voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor schoorsteen direct scherper maken."
+          "Wat een dakdekker meestal eerst controleert (schoorsteen) — schoorsteen: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij wat een dakdekker meestal eerst controleert (schoorsteen) — schoorsteen tellen factoren zoals inspectie van metselwerk en looddetails, herstellen of vervangen van aansluitstroken, opnieuw voegen waar nodig en controle op waterdichte aansluiting met dakvlak mee, omdat ze de omvang en aanpak van dakwerk rond schoorsteen concreet maken.",
+          "Voor wat een dakdekker meestal eerst controleert (schoorsteen) — schoorsteen beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "inspectie van metselwerk en looddetails",
@@ -2330,8 +2347,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in herstel: lokaal, deels of breder — schoorsteen",
         "paragraphs": [
-          "Bij schoorsteen zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor schoorsteen logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in herstel: lokaal, deels of breder — schoorsteen: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in herstel: lokaal, deels of breder — schoorsteen tellen factoren zoals alleen voegwerk of compleet detailherstel, combinatie met daklekkage-onderzoek en preventieve inspectie bij ouder metselwerk mee, omdat ze de omvang en aanpak van dakwerk rond schoorsteen concreet maken.",
+          "Voor keuzes in herstel: lokaal, deels of breder — schoorsteen beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "alleen voegwerk of compleet detailherstel",
@@ -2342,17 +2360,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke informatie je in je aanvraag moet zetten — schoorsteen",
         "paragraphs": [
-          "Een sterke aanvraag voor schoorsteen bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als schoorsteen samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van schoorsteen en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke informatie je in je aanvraag moet zetten — schoorsteen: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke informatie je in je aanvraag moet zetten — schoorsteen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond schoorsteen concreet maken.",
+          "Voor welke informatie je in je aanvraag moet zetten — schoorsteen beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Gevolgen van uitstel en wanneer sneller handelen verstandig is — schoorsteen",
         "paragraphs": [
-          "Uitstel bij schoorsteen kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer schoorsteen terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om schoorsteen tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Gevolgen van uitstel en wanneer sneller handelen verstandig is — schoorsteen: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij gevolgen van uitstel en wanneer sneller handelen verstandig is — schoorsteen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond schoorsteen concreet maken.",
+          "Voor gevolgen van uitstel en wanneer sneller handelen verstandig is — schoorsteen beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -2405,7 +2423,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je schoorsteen-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over schoorsteen, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende dakdekker.",
+      "description": "Plaats je aanvraag op /aanvraag met details over schoorsteen, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Vraag schoorsteenhulp aan",
       "secondaryLabel": "Terug naar dakdekker",
       "secondaryHref": "/dakdekker"
@@ -2448,16 +2466,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer nokvorsten in beeld komt",
         "paragraphs": [
-          "Zoekers willen weten of lokaal herstel volstaat of dat de volledige noklijn aandacht vraagt.",
-          "Bij nokvorsten draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van nokvorsten op comfort, veiligheid of planning benoemt, kan een dakdekker sneller prioriteiten bepalen."
+          "Wanneer nokvorsten in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer nokvorsten in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond nokvorsten concreet maken.",
+          "Voor wanneer nokvorsten in beeld komt beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Signalen die vaak wijzen op dakproblemen — nokvorsten",
         "paragraphs": [
-          "Signalen bij nokvorsten beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van nokvorsten te noteren, maak je je aanvraag concreter."
+          "Signalen die vaak wijzen op dakproblemen — nokvorsten: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij signalen die vaak wijzen op dakproblemen — nokvorsten tellen factoren zoals scheef liggende nokdelen, scheuren in bevestiging en vochtsporen bij nok mee, omdat ze de omvang en aanpak van dakwerk rond nokvorsten concreet maken.",
+          "Voor signalen die vaak wijzen op dakproblemen — nokvorsten beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "scheef liggende nokdelen",
@@ -2468,8 +2487,9 @@ const rawServiceSubPages = {
       {
         "heading": "Waardoor dit probleem meestal ontstaat — nokvorsten",
         "paragraphs": [
-          "De oorzaak van nokvorsten ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij nokvorsten helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Waardoor dit probleem meestal ontstaat — nokvorsten: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij waardoor dit probleem meestal ontstaat — nokvorsten tellen factoren zoals ouderdom van mortel of bevestiging, stormbelasting en werking van dakconstructie mee, omdat ze de omvang en aanpak van dakwerk rond nokvorsten concreet maken.",
+          "Voor waardoor dit probleem meestal ontstaat — nokvorsten beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "ouderdom van mortel of bevestiging",
@@ -2480,9 +2500,9 @@ const rawServiceSubPages = {
       {
         "heading": "Wat een dakdekker meestal eerst controleert (nokvorsten) — nokvorsten",
         "paragraphs": [
-          "Een dakdekker pakt nokvorsten meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij nokvorsten voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor nokvorsten direct scherper maken."
+          "Wat een dakdekker meestal eerst controleert (nokvorsten) — nokvorsten: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij wat een dakdekker meestal eerst controleert (nokvorsten) — nokvorsten tellen factoren zoals controle van de hele noklijn, lokale reparatie of vernieuwen van delen en verbeteren van bevestiging en afdichting mee, omdat ze de omvang en aanpak van dakwerk rond nokvorsten concreet maken.",
+          "Voor wat een dakdekker meestal eerst controleert (nokvorsten) — nokvorsten beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "controle van de hele noklijn",
@@ -2493,8 +2513,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in herstel: lokaal, deels of breder — nokvorsten",
         "paragraphs": [
-          "Bij nokvorsten zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor nokvorsten logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in herstel: lokaal, deels of breder — nokvorsten: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in herstel: lokaal, deels of breder — nokvorsten tellen factoren zoals traditionele mortel of droog noksysteem en plaatselijk herstel of complete nokaanpak mee, omdat ze de omvang en aanpak van dakwerk rond nokvorsten concreet maken.",
+          "Voor keuzes in herstel: lokaal, deels of breder — nokvorsten beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "traditionele mortel of droog noksysteem",
@@ -2504,17 +2525,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke informatie je in je aanvraag moet zetten — nokvorsten",
         "paragraphs": [
-          "Een sterke aanvraag voor nokvorsten bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als nokvorsten samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van nokvorsten en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke informatie je in je aanvraag moet zetten — nokvorsten: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke informatie je in je aanvraag moet zetten — nokvorsten tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond nokvorsten concreet maken.",
+          "Voor welke informatie je in je aanvraag moet zetten — nokvorsten beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Gevolgen van uitstel en wanneer sneller handelen verstandig is — nokvorsten",
         "paragraphs": [
-          "Uitstel bij nokvorsten kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer nokvorsten terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om nokvorsten tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Gevolgen van uitstel en wanneer sneller handelen verstandig is — nokvorsten: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij gevolgen van uitstel en wanneer sneller handelen verstandig is — nokvorsten tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond nokvorsten concreet maken.",
+          "Voor gevolgen van uitstel en wanneer sneller handelen verstandig is — nokvorsten beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -2567,7 +2588,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je nokvorsten-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over nokvorsten, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende dakdekker.",
+      "description": "Plaats je aanvraag op /aanvraag met details over nokvorsten, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Plaats je nokvorsten-aanvraag",
       "secondaryLabel": "Terug naar dakdekker",
       "secondaryHref": "/dakdekker"
@@ -2610,16 +2631,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer dakgoot in beeld komt",
         "paragraphs": [
-          "De bezoeker zoekt hier vooral oorzaak en aanpak van overlopende goten en lekkage langs gevels.",
-          "Bij dakgoot draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van dakgoot op comfort, veiligheid of planning benoemt, kan een dakdekker sneller prioriteiten bepalen."
+          "Wanneer dakgoot in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer dakgoot in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond dakgoot concreet maken.",
+          "Voor wanneer dakgoot in beeld komt beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Signalen die vaak wijzen op dakproblemen — dakgoot",
         "paragraphs": [
-          "Signalen bij dakgoot beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van dakgoot te noteren, maak je je aanvraag concreter."
+          "Signalen die vaak wijzen op dakproblemen — dakgoot: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij signalen die vaak wijzen op dakproblemen — dakgoot tellen factoren zoals overlopende goot bij normale regen, natte gevelstroken en doorhangende delen mee, omdat ze de omvang en aanpak van dakwerk rond dakgoot concreet maken.",
+          "Voor signalen die vaak wijzen op dakproblemen — dakgoot beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "overlopende goot bij normale regen",
@@ -2630,8 +2652,9 @@ const rawServiceSubPages = {
       {
         "heading": "Waardoor dit probleem meestal ontstaat — dakgoot",
         "paragraphs": [
-          "De oorzaak van dakgoot ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij dakgoot helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Waardoor dit probleem meestal ontstaat — dakgoot: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij waardoor dit probleem meestal ontstaat — dakgoot tellen factoren zoals verstopping, slijtage van verbindingen en onvoldoende afschot mee, omdat ze de omvang en aanpak van dakwerk rond dakgoot concreet maken.",
+          "Voor waardoor dit probleem meestal ontstaat — dakgoot beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "verstopping",
@@ -2642,9 +2665,9 @@ const rawServiceSubPages = {
       {
         "heading": "Wat een dakdekker meestal eerst controleert (dakgoot) — dakgoot",
         "paragraphs": [
-          "Een dakdekker pakt dakgoot meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij dakgoot voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor dakgoot direct scherper maken."
+          "Wat een dakdekker meestal eerst controleert (dakgoot) — dakgoot: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij wat een dakdekker meestal eerst controleert (dakgoot) — dakgoot tellen factoren zoals goottraject inspecteren en reinigen, naden herstellen of delen vervangen en afvoer en afschot verbeteren mee, omdat ze de omvang en aanpak van dakwerk rond dakgoot concreet maken.",
+          "Voor wat een dakdekker meestal eerst controleert (dakgoot) — dakgoot beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "goottraject inspecteren en reinigen",
@@ -2655,8 +2678,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in herstel: lokaal, deels of breder — dakgoot",
         "paragraphs": [
-          "Bij dakgoot zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor dakgoot logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in herstel: lokaal, deels of breder — dakgoot: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in herstel: lokaal, deels of breder — dakgoot tellen factoren zoals onderhoud vs vervanging, materiaalkeuze afgestemd op woningtype en combinatie met afvoercontrole mee, omdat ze de omvang en aanpak van dakwerk rond dakgoot concreet maken.",
+          "Voor keuzes in herstel: lokaal, deels of breder — dakgoot beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "onderhoud vs vervanging",
@@ -2667,17 +2691,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke informatie je in je aanvraag moet zetten — dakgoot",
         "paragraphs": [
-          "Een sterke aanvraag voor dakgoot bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als dakgoot samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van dakgoot en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke informatie je in je aanvraag moet zetten — dakgoot: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke informatie je in je aanvraag moet zetten — dakgoot tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond dakgoot concreet maken.",
+          "Voor welke informatie je in je aanvraag moet zetten — dakgoot beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Gevolgen van uitstel en wanneer sneller handelen verstandig is — dakgoot",
         "paragraphs": [
-          "Uitstel bij dakgoot kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer dakgoot terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om dakgoot tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Gevolgen van uitstel en wanneer sneller handelen verstandig is — dakgoot: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij gevolgen van uitstel en wanneer sneller handelen verstandig is — dakgoot tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond dakgoot concreet maken.",
+          "Voor gevolgen van uitstel en wanneer sneller handelen verstandig is — dakgoot beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -2730,7 +2754,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je dakgoot-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over dakgoot, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende dakdekker.",
+      "description": "Plaats je aanvraag op /aanvraag met details over dakgoot, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Vraag hulp voor dakgootwerk",
       "secondaryLabel": "Terug naar dakdekker",
       "secondaryHref": "/dakdekker"
@@ -2773,16 +2797,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer dakkapel in beeld komt",
         "paragraphs": [
-          "Bezoekers willen weten of de klacht uit dakdetail, bekleding of kozijnaansluiting komt.",
-          "Bij dakkapel draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van dakkapel op comfort, veiligheid of planning benoemt, kan een dakdekker sneller prioriteiten bepalen."
+          "Wanneer dakkapel in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer dakkapel in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond dakkapel concreet maken.",
+          "Voor wanneer dakkapel in beeld komt beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Signalen die vaak wijzen op dakproblemen — dakkapel",
         "paragraphs": [
-          "Signalen bij dakkapel beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van dakkapel te noteren, maak je je aanvraag concreter."
+          "Signalen die vaak wijzen op dakproblemen — dakkapel: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij signalen die vaak wijzen op dakproblemen — dakkapel tellen factoren zoals vochtsporen bij zijwang, tocht of kieren en scheuren in bekleding mee, omdat ze de omvang en aanpak van dakwerk rond dakkapel concreet maken.",
+          "Voor signalen die vaak wijzen op dakproblemen — dakkapel beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "vochtsporen bij zijwang",
@@ -2793,8 +2818,9 @@ const rawServiceSubPages = {
       {
         "heading": "Waardoor dit probleem meestal ontstaat — dakkapel",
         "paragraphs": [
-          "De oorzaak van dakkapel ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij dakkapel helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Waardoor dit probleem meestal ontstaat — dakkapel: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij waardoor dit probleem meestal ontstaat — dakkapel tellen factoren zoals versleten afdichting, slechte afwatering en ouderdom van bekleding mee, omdat ze de omvang en aanpak van dakwerk rond dakkapel concreet maken.",
+          "Voor waardoor dit probleem meestal ontstaat — dakkapel beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "versleten afdichting",
@@ -2805,9 +2831,9 @@ const rawServiceSubPages = {
       {
         "heading": "Wat een dakdekker meestal eerst controleert (dakkapel) — dakkapel",
         "paragraphs": [
-          "Een dakdekker pakt dakkapel meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij dakkapel voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor dakkapel direct scherper maken."
+          "Wat een dakdekker meestal eerst controleert (dakkapel) — dakkapel: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij wat een dakdekker meestal eerst controleert (dakkapel) — dakkapel tellen factoren zoals details rond aansluitingen controleren, afdichting en bekleding herstellen en nazicht van kozijn- en dakovergang mee, omdat ze de omvang en aanpak van dakwerk rond dakkapel concreet maken.",
+          "Voor wat een dakdekker meestal eerst controleert (dakkapel) — dakkapel beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "details rond aansluitingen controleren",
@@ -2818,8 +2844,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in herstel: lokaal, deels of breder — dakkapel",
         "paragraphs": [
-          "Bij dakkapel zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor dakkapel logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in herstel: lokaal, deels of breder — dakkapel: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in herstel: lokaal, deels of breder — dakkapel tellen factoren zoals lokaal herstel of bredere renovatie en combinatie met kozijnwerk of schilderwerk mee, omdat ze de omvang en aanpak van dakwerk rond dakkapel concreet maken.",
+          "Voor keuzes in herstel: lokaal, deels of breder — dakkapel beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "lokaal herstel of bredere renovatie",
@@ -2829,17 +2856,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke informatie je in je aanvraag moet zetten — dakkapel",
         "paragraphs": [
-          "Een sterke aanvraag voor dakkapel bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als dakkapel samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van dakkapel en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke informatie je in je aanvraag moet zetten — dakkapel: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke informatie je in je aanvraag moet zetten — dakkapel tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond dakkapel concreet maken.",
+          "Voor welke informatie je in je aanvraag moet zetten — dakkapel beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Gevolgen van uitstel en wanneer sneller handelen verstandig is — dakkapel",
         "paragraphs": [
-          "Uitstel bij dakkapel kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer dakkapel terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om dakkapel tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Gevolgen van uitstel en wanneer sneller handelen verstandig is — dakkapel: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij gevolgen van uitstel en wanneer sneller handelen verstandig is — dakkapel tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond dakkapel concreet maken.",
+          "Voor gevolgen van uitstel en wanneer sneller handelen verstandig is — dakkapel beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -2892,7 +2919,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je dakkapel-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over dakkapel, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende dakdekker.",
+      "description": "Plaats je aanvraag op /aanvraag met details over dakkapel, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Start je dakkapel-aanvraag",
       "secondaryLabel": "Terug naar dakdekker",
       "secondaryHref": "/dakdekker"
@@ -2935,16 +2962,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer dakinspectie in beeld komt",
         "paragraphs": [
-          "Deze pagina wordt gebruikt door bezoekers die preventief willen beoordelen in plaats van wachten op schade.",
-          "Bij dakinspectie draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van dakinspectie op comfort, veiligheid of planning benoemt, kan een dakdekker sneller prioriteiten bepalen."
+          "Wanneer dakinspectie in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer dakinspectie in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond dakinspectie concreet maken.",
+          "Voor wanneer dakinspectie in beeld komt beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Signalen die vaak wijzen op dakproblemen — dakinspectie",
         "paragraphs": [
-          "Signalen bij dakinspectie beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van dakinspectie te noteren, maak je je aanvraag concreter."
+          "Signalen die vaak wijzen op dakproblemen — dakinspectie: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij signalen die vaak wijzen op dakproblemen — dakinspectie tellen factoren zoals ouder dak zonder recente controle, onverklaarde vochtsporen en controlebehoefte na storm mee, omdat ze de omvang en aanpak van dakwerk rond dakinspectie concreet maken.",
+          "Voor signalen die vaak wijzen op dakproblemen — dakinspectie beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "ouder dak zonder recente controle",
@@ -2955,8 +2983,9 @@ const rawServiceSubPages = {
       {
         "heading": "Waardoor dit probleem meestal ontstaat — dakinspectie",
         "paragraphs": [
-          "De oorzaak van dakinspectie ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij dakinspectie helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Waardoor dit probleem meestal ontstaat — dakinspectie: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij waardoor dit probleem meestal ontstaat — dakinspectie tellen factoren zoals normale veroudering, verborgen schade en onvoldoende periodiek onderhoud mee, omdat ze de omvang en aanpak van dakwerk rond dakinspectie concreet maken.",
+          "Voor waardoor dit probleem meestal ontstaat — dakinspectie beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "normale veroudering",
@@ -2967,9 +2996,9 @@ const rawServiceSubPages = {
       {
         "heading": "Wat een dakdekker meestal eerst controleert (dakinspectie) — dakinspectie",
         "paragraphs": [
-          "Een dakdekker pakt dakinspectie meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij dakinspectie voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor dakinspectie direct scherper maken."
+          "Wat een dakdekker meestal eerst controleert (dakinspectie) — dakinspectie: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij wat een dakdekker meestal eerst controleert (dakinspectie) — dakinspectie tellen factoren zoals visuele opname van dakvlak en details, vastleggen van aandachtspunten en advies over onderhoud, herstel of renovatie mee, omdat ze de omvang en aanpak van dakwerk rond dakinspectie concreet maken.",
+          "Voor wat een dakdekker meestal eerst controleert (dakinspectie) — dakinspectie beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "visuele opname van dakvlak en details",
@@ -2980,8 +3009,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in herstel: lokaal, deels of breder — dakinspectie",
         "paragraphs": [
-          "Bij dakinspectie zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor dakinspectie logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in herstel: lokaal, deels of breder — dakinspectie: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in herstel: lokaal, deels of breder — dakinspectie tellen factoren zoals eenmalige inspectie of periodieke controle en direct vervolgwerk opnemen of later plannen mee, omdat ze de omvang en aanpak van dakwerk rond dakinspectie concreet maken.",
+          "Voor keuzes in herstel: lokaal, deels of breder — dakinspectie beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "eenmalige inspectie of periodieke controle",
@@ -2991,17 +3021,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke informatie je in je aanvraag moet zetten — dakinspectie",
         "paragraphs": [
-          "Een sterke aanvraag voor dakinspectie bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als dakinspectie samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van dakinspectie en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke informatie je in je aanvraag moet zetten — dakinspectie: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke informatie je in je aanvraag moet zetten — dakinspectie tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond dakinspectie concreet maken.",
+          "Voor welke informatie je in je aanvraag moet zetten — dakinspectie beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Gevolgen van uitstel en wanneer sneller handelen verstandig is — dakinspectie",
         "paragraphs": [
-          "Uitstel bij dakinspectie kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer dakinspectie terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om dakinspectie tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Gevolgen van uitstel en wanneer sneller handelen verstandig is — dakinspectie: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij gevolgen van uitstel en wanneer sneller handelen verstandig is — dakinspectie tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van dakwerk rond dakinspectie concreet maken.",
+          "Voor gevolgen van uitstel en wanneer sneller handelen verstandig is — dakinspectie beoordeelt een dakdekker meestal welke stap logisch volgt; zonder die afweging neemt de kans op vocht en constructieve aantasting toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -3053,7 +3083,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je dakinspectie-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over dakinspectie, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende dakdekker.",
+      "description": "Plaats je aanvraag op /aanvraag met details over dakinspectie, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Vraag een dakinspectie aan",
       "secondaryLabel": "Terug naar dakdekker",
       "secondaryHref": "/dakdekker"
@@ -3096,16 +3126,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer binnenschilderwerk in beeld komt",
         "paragraphs": [
-          "De bezoeker wil weten hoe je binnenschilderwerk strak en duurzaam laat uitvoeren.",
-          "Bij binnenschilderwerk draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van binnenschilderwerk op comfort, veiligheid of planning benoemt, kan een schilder sneller prioriteiten bepalen."
+          "Wanneer binnenschilderwerk in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer binnenschilderwerk in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van schilderwerk rond binnenschilderwerk concreet maken.",
+          "Voor wanneer binnenschilderwerk in beeld komt beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Welke klachten je vaak ziet vóór schilderwerk — binnenschilderwerk",
         "paragraphs": [
-          "Signalen bij binnenschilderwerk beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van binnenschilderwerk te noteren, maak je je aanvraag concreter."
+          "Welke klachten je vaak ziet vóór schilderwerk — binnenschilderwerk: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij welke klachten je vaak ziet vóór schilderwerk — binnenschilderwerk tellen factoren zoals vlekken, strepen of beschadigingen, slijtage op houtwerk en ongelijke oude lagen mee, omdat ze de omvang en aanpak van schilderwerk rond binnenschilderwerk concreet maken.",
+          "Voor welke klachten je vaak ziet vóór schilderwerk — binnenschilderwerk beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "vlekken, strepen of beschadigingen",
@@ -3116,8 +3147,9 @@ const rawServiceSubPages = {
       {
         "heading": "Oorzaken achter slijtage of slechte afwerking — binnenschilderwerk",
         "paragraphs": [
-          "De oorzaak van binnenschilderwerk ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij binnenschilderwerk helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Oorzaken achter slijtage of slechte afwerking — binnenschilderwerk: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij oorzaken achter slijtage of slechte afwerking — binnenschilderwerk tellen factoren zoals normaal gebruik, vocht of condens en verouderde afwerking mee, omdat ze de omvang en aanpak van schilderwerk rond binnenschilderwerk concreet maken.",
+          "Voor oorzaken achter slijtage of slechte afwerking — binnenschilderwerk beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "normaal gebruik",
@@ -3128,9 +3160,9 @@ const rawServiceSubPages = {
       {
         "heading": "Hoe een schilder de ondergrond beoordeelt (binnenschilderwerk) — binnenschilderwerk",
         "paragraphs": [
-          "Een schilder pakt binnenschilderwerk meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij binnenschilderwerk voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor binnenschilderwerk direct scherper maken."
+          "Hoe een schilder de ondergrond beoordeelt (binnenschilderwerk) — binnenschilderwerk: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij hoe een schilder de ondergrond beoordeelt (binnenschilderwerk) — binnenschilderwerk tellen factoren zoals ondergrond voorbereiden, passende lagen opbouwen en strak afwerken van randen en details mee, omdat ze de omvang en aanpak van schilderwerk rond binnenschilderwerk concreet maken.",
+          "Voor hoe een schilder de ondergrond beoordeelt (binnenschilderwerk) — binnenschilderwerk beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "ondergrond voorbereiden",
@@ -3141,8 +3173,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in afwerking en combinatie met ander onderhoud — binnenschilderwerk",
         "paragraphs": [
-          "Bij binnenschilderwerk zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor binnenschilderwerk logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in afwerking en combinatie met ander onderhoud — binnenschilderwerk: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in afwerking en combinatie met ander onderhoud — binnenschilderwerk tellen factoren zoals ruimte voor ruimte werken, accent op muren, plafonds of houtwerk en hoog belastbare verf in druk gebruikte ruimtes mee, omdat ze de omvang en aanpak van schilderwerk rond binnenschilderwerk concreet maken.",
+          "Voor keuzes in afwerking en combinatie met ander onderhoud — binnenschilderwerk beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "ruimte voor ruimte werken",
@@ -3153,17 +3186,17 @@ const rawServiceSubPages = {
       {
         "heading": "Zo maak je je aanvraag concreet en vergelijkbaar — binnenschilderwerk",
         "paragraphs": [
-          "Een sterke aanvraag voor binnenschilderwerk bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als binnenschilderwerk samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van binnenschilderwerk en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Zo maak je je aanvraag concreet en vergelijkbaar — binnenschilderwerk: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij zo maak je je aanvraag concreet en vergelijkbaar — binnenschilderwerk tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van schilderwerk rond binnenschilderwerk concreet maken.",
+          "Voor zo maak je je aanvraag concreet en vergelijkbaar — binnenschilderwerk beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Wat er gebeurt als je onderhoud te lang uitstelt — binnenschilderwerk",
         "paragraphs": [
-          "Uitstel bij binnenschilderwerk kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer binnenschilderwerk terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om binnenschilderwerk tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Wat er gebeurt als je onderhoud te lang uitstelt — binnenschilderwerk: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij wat er gebeurt als je onderhoud te lang uitstelt — binnenschilderwerk tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van schilderwerk rond binnenschilderwerk concreet maken.",
+          "Voor wat er gebeurt als je onderhoud te lang uitstelt — binnenschilderwerk beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -3216,7 +3249,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je binnenschilderwerk-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over binnenschilderwerk, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende schilder.",
+      "description": "Plaats je aanvraag op /aanvraag met details over binnenschilderwerk, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Start je aanvraag voor binnenschilderwerk",
       "secondaryLabel": "Terug naar schilder",
       "secondaryHref": "/schilder"
@@ -3259,16 +3292,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer buitenschilderwerk in beeld komt",
         "paragraphs": [
-          "Deze pagina beantwoordt vooral wanneer onderhoud nodig is en hoe je houtwerk buiten duurzaam beschermt.",
-          "Bij buitenschilderwerk draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van buitenschilderwerk op comfort, veiligheid of planning benoemt, kan een schilder sneller prioriteiten bepalen."
+          "Wanneer buitenschilderwerk in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer buitenschilderwerk in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van schilderwerk rond buitenschilderwerk concreet maken.",
+          "Voor wanneer buitenschilderwerk in beeld komt beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Welke klachten je vaak ziet vóór schilderwerk — buitenschilderwerk",
         "paragraphs": [
-          "Signalen bij buitenschilderwerk beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van buitenschilderwerk te noteren, maak je je aanvraag concreter."
+          "Welke klachten je vaak ziet vóór schilderwerk — buitenschilderwerk: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij welke klachten je vaak ziet vóór schilderwerk — buitenschilderwerk tellen factoren zoals bladderende buitenverf, kale plekken op hout en verkleuring op zonzijde mee, omdat ze de omvang en aanpak van schilderwerk rond buitenschilderwerk concreet maken.",
+          "Voor welke klachten je vaak ziet vóór schilderwerk — buitenschilderwerk beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "bladderende buitenverf",
@@ -3279,8 +3313,9 @@ const rawServiceSubPages = {
       {
         "heading": "Oorzaken achter slijtage of slechte afwerking — buitenschilderwerk",
         "paragraphs": [
-          "De oorzaak van buitenschilderwerk ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij buitenschilderwerk helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Oorzaken achter slijtage of slechte afwerking — buitenschilderwerk: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij oorzaken achter slijtage of slechte afwerking — buitenschilderwerk tellen factoren zoals UV en neerslag, achterstallig onderhoud en vochtinwerking mee, omdat ze de omvang en aanpak van schilderwerk rond buitenschilderwerk concreet maken.",
+          "Voor oorzaken achter slijtage of slechte afwerking — buitenschilderwerk beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "UV en neerslag",
@@ -3291,9 +3326,9 @@ const rawServiceSubPages = {
       {
         "heading": "Hoe een schilder de ondergrond beoordeelt (buitenschilderwerk) — buitenschilderwerk",
         "paragraphs": [
-          "Een schilder pakt buitenschilderwerk meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij buitenschilderwerk voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor buitenschilderwerk direct scherper maken."
+          "Hoe een schilder de ondergrond beoordeelt (buitenschilderwerk) — buitenschilderwerk: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij hoe een schilder de ondergrond beoordeelt (buitenschilderwerk) — buitenschilderwerk tellen factoren zoals inspectie van geveldelen, voorbehandeling en herstel en opbouw van duurzaam verfsysteem mee, omdat ze de omvang en aanpak van schilderwerk rond buitenschilderwerk concreet maken.",
+          "Voor hoe een schilder de ondergrond beoordeelt (buitenschilderwerk) — buitenschilderwerk beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "inspectie van geveldelen",
@@ -3304,8 +3339,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in afwerking en combinatie met ander onderhoud — buitenschilderwerk",
         "paragraphs": [
-          "Bij buitenschilderwerk zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor buitenschilderwerk logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in afwerking en combinatie met ander onderhoud — buitenschilderwerk: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in afwerking en combinatie met ander onderhoud — buitenschilderwerk tellen factoren zoals deelonderhoud of complete ronde, focus op kozijnen, deuren of boeidelen en combinatie met houtreparatie mee, omdat ze de omvang en aanpak van schilderwerk rond buitenschilderwerk concreet maken.",
+          "Voor keuzes in afwerking en combinatie met ander onderhoud — buitenschilderwerk beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "deelonderhoud of complete ronde",
@@ -3316,17 +3352,17 @@ const rawServiceSubPages = {
       {
         "heading": "Zo maak je je aanvraag concreet en vergelijkbaar — buitenschilderwerk",
         "paragraphs": [
-          "Een sterke aanvraag voor buitenschilderwerk bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als buitenschilderwerk samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van buitenschilderwerk en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Zo maak je je aanvraag concreet en vergelijkbaar — buitenschilderwerk: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij zo maak je je aanvraag concreet en vergelijkbaar — buitenschilderwerk tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van schilderwerk rond buitenschilderwerk concreet maken.",
+          "Voor zo maak je je aanvraag concreet en vergelijkbaar — buitenschilderwerk beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Wat er gebeurt als je onderhoud te lang uitstelt — buitenschilderwerk",
         "paragraphs": [
-          "Uitstel bij buitenschilderwerk kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer buitenschilderwerk terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om buitenschilderwerk tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Wat er gebeurt als je onderhoud te lang uitstelt — buitenschilderwerk: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij wat er gebeurt als je onderhoud te lang uitstelt — buitenschilderwerk tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van schilderwerk rond buitenschilderwerk concreet maken.",
+          "Voor wat er gebeurt als je onderhoud te lang uitstelt — buitenschilderwerk beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -3379,7 +3415,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je buitenschilderwerk-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over buitenschilderwerk, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende schilder.",
+      "description": "Plaats je aanvraag op /aanvraag met details over buitenschilderwerk, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Vraag buitenschilderwerk aan",
       "secondaryLabel": "Terug naar schilder",
       "secondaryHref": "/schilder"
@@ -3422,16 +3458,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer kozijnen schilderen in beeld komt",
         "paragraphs": [
-          "Bezoekers zoeken een aanpak die hout beschermt en tegelijk strak oogt.",
-          "Bij kozijnen schilderen draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van kozijnen schilderen op comfort, veiligheid of planning benoemt, kan een schilder sneller prioriteiten bepalen."
+          "Wanneer kozijnen schilderen in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer kozijnen schilderen in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van schilderwerk rond kozijnen schilderen concreet maken.",
+          "Voor wanneer kozijnen schilderen in beeld komt beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Welke klachten je vaak ziet vóór schilderwerk — kozijnen schilderen",
         "paragraphs": [
-          "Signalen bij kozijnen schilderen beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van kozijnen schilderen te noteren, maak je je aanvraag concreter."
+          "Welke klachten je vaak ziet vóór schilderwerk — kozijnen schilderen: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij welke klachten je vaak ziet vóór schilderwerk — kozijnen schilderen tellen factoren zoals scheuren of bladders, doffe plekken en beginnende houtaantasting mee, omdat ze de omvang en aanpak van schilderwerk rond kozijnen schilderen concreet maken.",
+          "Voor welke klachten je vaak ziet vóór schilderwerk — kozijnen schilderen beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "scheuren of bladders",
@@ -3442,8 +3479,9 @@ const rawServiceSubPages = {
       {
         "heading": "Oorzaken achter slijtage of slechte afwerking — kozijnen schilderen",
         "paragraphs": [
-          "De oorzaak van kozijnen schilderen ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij kozijnen schilderen helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Oorzaken achter slijtage of slechte afwerking — kozijnen schilderen: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij oorzaken achter slijtage of slechte afwerking — kozijnen schilderen tellen factoren zoals verouderde verflaag, vocht in naden en intensieve zonbelasting mee, omdat ze de omvang en aanpak van schilderwerk rond kozijnen schilderen concreet maken.",
+          "Voor oorzaken achter slijtage of slechte afwerking — kozijnen schilderen beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "verouderde verflaag",
@@ -3454,9 +3492,9 @@ const rawServiceSubPages = {
       {
         "heading": "Hoe een schilder de ondergrond beoordeelt (kozijnen schilderen) — kozijnen schilderen",
         "paragraphs": [
-          "Een schilder pakt kozijnen schilderen meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij kozijnen schilderen voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor kozijnen schilderen direct scherper maken."
+          "Hoe een schilder de ondergrond beoordeelt (kozijnen schilderen) — kozijnen schilderen: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij hoe een schilder de ondergrond beoordeelt (kozijnen schilderen) — kozijnen schilderen tellen factoren zoals conditie van hout beoordelen, herstellen en gronden en aflakken met geschikt systeem mee, omdat ze de omvang en aanpak van schilderwerk rond kozijnen schilderen concreet maken.",
+          "Voor hoe een schilder de ondergrond beoordeelt (kozijnen schilderen) — kozijnen schilderen beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "conditie van hout beoordelen",
@@ -3467,8 +3505,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in afwerking en combinatie met ander onderhoud — kozijnen schilderen",
         "paragraphs": [
-          "Bij kozijnen schilderen zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor kozijnen schilderen logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in afwerking en combinatie met ander onderhoud — kozijnen schilderen: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in afwerking en combinatie met ander onderhoud — kozijnen schilderen tellen factoren zoals binnenzijde, buitenzijde of beide en lokale herstelklus of volledig kozijnpakket mee, omdat ze de omvang en aanpak van schilderwerk rond kozijnen schilderen concreet maken.",
+          "Voor keuzes in afwerking en combinatie met ander onderhoud — kozijnen schilderen beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "binnenzijde, buitenzijde of beide",
@@ -3478,17 +3517,17 @@ const rawServiceSubPages = {
       {
         "heading": "Zo maak je je aanvraag concreet en vergelijkbaar — kozijnen schilderen",
         "paragraphs": [
-          "Een sterke aanvraag voor kozijnen schilderen bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als kozijnen schilderen samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van kozijnen schilderen en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Zo maak je je aanvraag concreet en vergelijkbaar — kozijnen schilderen: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij zo maak je je aanvraag concreet en vergelijkbaar — kozijnen schilderen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van schilderwerk rond kozijnen schilderen concreet maken.",
+          "Voor zo maak je je aanvraag concreet en vergelijkbaar — kozijnen schilderen beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Wat er gebeurt als je onderhoud te lang uitstelt — kozijnen schilderen",
         "paragraphs": [
-          "Uitstel bij kozijnen schilderen kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer kozijnen schilderen terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om kozijnen schilderen tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Wat er gebeurt als je onderhoud te lang uitstelt — kozijnen schilderen: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij wat er gebeurt als je onderhoud te lang uitstelt — kozijnen schilderen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van schilderwerk rond kozijnen schilderen concreet maken.",
+          "Voor wat er gebeurt als je onderhoud te lang uitstelt — kozijnen schilderen beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -3541,7 +3580,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je kozijnen schilderen-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over kozijnen schilderen, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende schilder.",
+      "description": "Plaats je aanvraag op /aanvraag met details over kozijnen schilderen, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Plaats je kozijnen-schilderaanvraag",
       "secondaryLabel": "Terug naar schilder",
       "secondaryHref": "/schilder"
@@ -3584,16 +3623,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer deuren schilderen in beeld komt",
         "paragraphs": [
-          "Bezoekers willen vooral weten hoe deuren netjes en duurzaam worden afgewerkt ondanks intensief gebruik.",
-          "Bij deuren schilderen draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van deuren schilderen op comfort, veiligheid of planning benoemt, kan een schilder sneller prioriteiten bepalen."
+          "Wanneer deuren schilderen in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer deuren schilderen in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van schilderwerk rond deuren schilderen concreet maken.",
+          "Voor wanneer deuren schilderen in beeld komt beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Welke klachten je vaak ziet vóór schilderwerk — deuren schilderen",
         "paragraphs": [
-          "Signalen bij deuren schilderen beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van deuren schilderen te noteren, maak je je aanvraag concreter."
+          "Welke klachten je vaak ziet vóór schilderwerk — deuren schilderen: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij welke klachten je vaak ziet vóór schilderwerk — deuren schilderen tellen factoren zoals krassen of stootplekken, slijtage rond handgrepen en oude lak die vergeling toont mee, omdat ze de omvang en aanpak van schilderwerk rond deuren schilderen concreet maken.",
+          "Voor welke klachten je vaak ziet vóór schilderwerk — deuren schilderen beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "krassen of stootplekken",
@@ -3604,8 +3644,9 @@ const rawServiceSubPages = {
       {
         "heading": "Oorzaken achter slijtage of slechte afwerking — deuren schilderen",
         "paragraphs": [
-          "De oorzaak van deuren schilderen ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij deuren schilderen helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Oorzaken achter slijtage of slechte afwerking — deuren schilderen: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij oorzaken achter slijtage of slechte afwerking — deuren schilderen tellen factoren zoals dagelijks gebruik, onvoldoende harde toplaag en vocht- of temperatuurbelasting mee, omdat ze de omvang en aanpak van schilderwerk rond deuren schilderen concreet maken.",
+          "Voor oorzaken achter slijtage of slechte afwerking — deuren schilderen beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "dagelijks gebruik",
@@ -3616,9 +3657,9 @@ const rawServiceSubPages = {
       {
         "heading": "Hoe een schilder de ondergrond beoordeelt (deuren schilderen) — deuren schilderen",
         "paragraphs": [
-          "Een schilder pakt deuren schilderen meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij deuren schilderen voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor deuren schilderen direct scherper maken."
+          "Hoe een schilder de ondergrond beoordeelt (deuren schilderen) — deuren schilderen: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij hoe een schilder de ondergrond beoordeelt (deuren schilderen) — deuren schilderen tellen factoren zoals oppervlak voorbereiden, beschadigingen herstellen en aflakken met slijtvaste laag mee, omdat ze de omvang en aanpak van schilderwerk rond deuren schilderen concreet maken.",
+          "Voor hoe een schilder de ondergrond beoordeelt (deuren schilderen) — deuren schilderen beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "oppervlak voorbereiden",
@@ -3629,8 +3670,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in afwerking en combinatie met ander onderhoud — deuren schilderen",
         "paragraphs": [
-          "Bij deuren schilderen zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor deuren schilderen logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in afwerking en combinatie met ander onderhoud — deuren schilderen: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in afwerking en combinatie met ander onderhoud — deuren schilderen tellen factoren zoals alle deuren tegelijk of gefaseerd en binnen en buiten apart plannen mee, omdat ze de omvang en aanpak van schilderwerk rond deuren schilderen concreet maken.",
+          "Voor keuzes in afwerking en combinatie met ander onderhoud — deuren schilderen beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "alle deuren tegelijk of gefaseerd",
@@ -3640,17 +3682,17 @@ const rawServiceSubPages = {
       {
         "heading": "Zo maak je je aanvraag concreet en vergelijkbaar — deuren schilderen",
         "paragraphs": [
-          "Een sterke aanvraag voor deuren schilderen bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als deuren schilderen samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van deuren schilderen en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Zo maak je je aanvraag concreet en vergelijkbaar — deuren schilderen: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij zo maak je je aanvraag concreet en vergelijkbaar — deuren schilderen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van schilderwerk rond deuren schilderen concreet maken.",
+          "Voor zo maak je je aanvraag concreet en vergelijkbaar — deuren schilderen beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Wat er gebeurt als je onderhoud te lang uitstelt — deuren schilderen",
         "paragraphs": [
-          "Uitstel bij deuren schilderen kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer deuren schilderen terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om deuren schilderen tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Wat er gebeurt als je onderhoud te lang uitstelt — deuren schilderen: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij wat er gebeurt als je onderhoud te lang uitstelt — deuren schilderen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van schilderwerk rond deuren schilderen concreet maken.",
+          "Voor wat er gebeurt als je onderhoud te lang uitstelt — deuren schilderen beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -3703,7 +3745,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je deuren schilderen-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over deuren schilderen, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende schilder.",
+      "description": "Plaats je aanvraag op /aanvraag met details over deuren schilderen, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Start je deurenschilder-aanvraag",
       "secondaryLabel": "Terug naar schilder",
       "secondaryHref": "/schilder"
@@ -3746,16 +3788,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer plafond schilderen in beeld komt",
         "paragraphs": [
-          "Deze pagina richt zich op mensen die vlekken of strepen willen oplossen met een duurzame afwerking.",
-          "Bij plafond schilderen draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van plafond schilderen op comfort, veiligheid of planning benoemt, kan een schilder sneller prioriteiten bepalen."
+          "Wanneer plafond schilderen in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer plafond schilderen in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van schilderwerk rond plafond schilderen concreet maken.",
+          "Voor wanneer plafond schilderen in beeld komt beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Welke klachten je vaak ziet vóór schilderwerk — plafond schilderen",
         "paragraphs": [
-          "Signalen bij plafond schilderen beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van plafond schilderen te noteren, maak je je aanvraag concreter."
+          "Welke klachten je vaak ziet vóór schilderwerk — plafond schilderen: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij welke klachten je vaak ziet vóór schilderwerk — plafond schilderen tellen factoren zoals vlekken door vocht of rook, streperig eindbeeld en haarscheuren mee, omdat ze de omvang en aanpak van schilderwerk rond plafond schilderen concreet maken.",
+          "Voor welke klachten je vaak ziet vóór schilderwerk — plafond schilderen beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "vlekken door vocht of rook",
@@ -3766,8 +3809,9 @@ const rawServiceSubPages = {
       {
         "heading": "Oorzaken achter slijtage of slechte afwerking — plafond schilderen",
         "paragraphs": [
-          "De oorzaak van plafond schilderen ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij plafond schilderen helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Oorzaken achter slijtage of slechte afwerking — plafond schilderen: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij oorzaken achter slijtage of slechte afwerking — plafond schilderen tellen factoren zoals onvoldoende voorstrijk, ondergrond niet egaal en verkeerde verfkeuze mee, omdat ze de omvang en aanpak van schilderwerk rond plafond schilderen concreet maken.",
+          "Voor oorzaken achter slijtage of slechte afwerking — plafond schilderen beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "onvoldoende voorstrijk",
@@ -3778,9 +3822,9 @@ const rawServiceSubPages = {
       {
         "heading": "Hoe een schilder de ondergrond beoordeelt (plafond schilderen) — plafond schilderen",
         "paragraphs": [
-          "Een schilder pakt plafond schilderen meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij plafond schilderen voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor plafond schilderen direct scherper maken."
+          "Hoe een schilder de ondergrond beoordeelt (plafond schilderen) — plafond schilderen: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij hoe een schilder de ondergrond beoordeelt (plafond schilderen) — plafond schilderen tellen factoren zoals ondergrond reinigen en voorbereiden, lokale herstelpunten aanpakken en baangewijs afwerken voor egaal resultaat mee, omdat ze de omvang en aanpak van schilderwerk rond plafond schilderen concreet maken.",
+          "Voor hoe een schilder de ondergrond beoordeelt (plafond schilderen) — plafond schilderen beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "ondergrond reinigen en voorbereiden",
@@ -3791,8 +3835,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in afwerking en combinatie met ander onderhoud — plafond schilderen",
         "paragraphs": [
-          "Bij plafond schilderen zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor plafond schilderen logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in afwerking en combinatie met ander onderhoud — plafond schilderen: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in afwerking en combinatie met ander onderhoud — plafond schilderen tellen factoren zoals alleen plafond of combinatie met wand en standaard verf of vochtbestendige variant mee, omdat ze de omvang en aanpak van schilderwerk rond plafond schilderen concreet maken.",
+          "Voor keuzes in afwerking en combinatie met ander onderhoud — plafond schilderen beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "alleen plafond of combinatie met wand",
@@ -3802,17 +3847,17 @@ const rawServiceSubPages = {
       {
         "heading": "Zo maak je je aanvraag concreet en vergelijkbaar — plafond schilderen",
         "paragraphs": [
-          "Een sterke aanvraag voor plafond schilderen bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als plafond schilderen samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van plafond schilderen en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Zo maak je je aanvraag concreet en vergelijkbaar — plafond schilderen: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij zo maak je je aanvraag concreet en vergelijkbaar — plafond schilderen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van schilderwerk rond plafond schilderen concreet maken.",
+          "Voor zo maak je je aanvraag concreet en vergelijkbaar — plafond schilderen beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Wat er gebeurt als je onderhoud te lang uitstelt — plafond schilderen",
         "paragraphs": [
-          "Uitstel bij plafond schilderen kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer plafond schilderen terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om plafond schilderen tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Wat er gebeurt als je onderhoud te lang uitstelt — plafond schilderen: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij wat er gebeurt als je onderhoud te lang uitstelt — plafond schilderen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van schilderwerk rond plafond schilderen concreet maken.",
+          "Voor wat er gebeurt als je onderhoud te lang uitstelt — plafond schilderen beoordeelt een schilder meestal welke stap logisch volgt; zonder die afweging neemt de kans op snelle slijtage van ondergronden toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -3865,7 +3910,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je plafond schilderen-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over plafond schilderen, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende schilder.",
+      "description": "Plaats je aanvraag op /aanvraag met details over plafond schilderen, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Vraag plafond-schilderwerk aan",
       "secondaryLabel": "Terug naar schilder",
       "secondaryHref": "/schilder"
@@ -3908,16 +3953,17 @@ const rawServiceSubPages = {
       {
         "heading": "Van eerste lekkagesignaal naar gerichte diagnose",
         "paragraphs": [
-          "Deze pagina beantwoordt de vraag hoe je lekkage snel en gericht laat oppakken zonder onnodige vervolgschade.",
-          "Bij lekkage draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van lekkage op comfort, veiligheid of planning benoemt, kan een loodgieter sneller prioriteiten bepalen."
+          "Van eerste lekkagesignaal naar gerichte diagnose: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij van eerste lekkagesignaal naar gerichte diagnose tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond lekkage concreet maken.",
+          "Voor van eerste lekkagesignaal naar gerichte diagnose beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Signalen die duiden op een loodgietersprobleem — lekkage",
         "paragraphs": [
-          "Signalen bij lekkage beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van lekkage te noteren, maak je je aanvraag concreter."
+          "Signalen die duiden op een loodgietersprobleem — lekkage: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij signalen die duiden op een loodgietersprobleem — lekkage tellen factoren zoals druppels bij koppelingen, vochtkringen in kast of wand, drukverlies en onverklaarbare vochtgeur mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond lekkage concreet maken.",
+          "Voor signalen die duiden op een loodgietersprobleem — lekkage beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "druppels bij koppelingen",
@@ -3929,8 +3975,9 @@ const rawServiceSubPages = {
       {
         "heading": "Technische oorzaken die vaak terugkomen — lekkage",
         "paragraphs": [
-          "De oorzaak van lekkage ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij lekkage helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Technische oorzaken die vaak terugkomen — lekkage: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij technische oorzaken die vaak terugkomen — lekkage tellen factoren zoals versleten koppelingen, haarscheur in leiding, slechte afdichting en oude appendages mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond lekkage concreet maken.",
+          "Voor technische oorzaken die vaak terugkomen — lekkage beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "versleten koppelingen",
@@ -3942,9 +3989,9 @@ const rawServiceSubPages = {
       {
         "heading": "Diagnose en eerste aanpak door een loodgieter (lekkage) — lekkage",
         "paragraphs": [
-          "Een loodgieter pakt lekkage meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij lekkage voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor lekkage direct scherper maken."
+          "Diagnose en eerste aanpak door een loodgieter (lekkage) — lekkage: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij diagnose en eerste aanpak door een loodgieter (lekkage) — lekkage tellen factoren zoals lekbron bepalen, tijdelijk beperken van schade, defect deel vervangen en controle op vervolgschade mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond lekkage concreet maken.",
+          "Voor diagnose en eerste aanpak door een loodgieter (lekkage) — lekkage beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "lekbron bepalen",
@@ -3956,8 +4003,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes tussen noodoplossing en definitieve reparatie — lekkage",
         "paragraphs": [
-          "Bij lekkage zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor lekkage logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes tussen noodoplossing en definitieve reparatie — lekkage: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes tussen noodoplossing en definitieve reparatie — lekkage tellen factoren zoals noodherstel gevolgd door definitief herstel, lokaal vervangen of groter leidingdeel vernieuwen en combinatie met sanitair- of renovatiewerk mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond lekkage concreet maken.",
+          "Voor keuzes tussen noodoplossing en definitieve reparatie — lekkage beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "noodherstel gevolgd door definitief herstel",
@@ -3968,25 +4016,26 @@ const rawServiceSubPages = {
       {
         "heading": "Welke gegevens je direct moet aanleveren — lekkage",
         "paragraphs": [
-          "Een sterke aanvraag voor lekkage bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als lekkage samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van lekkage en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke gegevens je direct moet aanleveren — lekkage: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke gegevens je direct moet aanleveren — lekkage tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond lekkage concreet maken.",
+          "Voor welke gegevens je direct moet aanleveren — lekkage beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Risico bij uitstel van lekkage of verstopping — lekkage",
         "paragraphs": [
-          "Uitstel bij lekkage kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer lekkage terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om lekkage tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Risico bij uitstel van lekkage of verstopping — lekkage: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij risico bij uitstel van lekkage of verstopping — lekkage tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond lekkage concreet maken.",
+          "Voor risico bij uitstel van lekkage of verstopping — lekkage beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "type": "warning"
       },
       {
         "heading": "Praktische planning en bereikbaarheid van leidingen — lekkage",
         "paragraphs": [
-          "De planning van lekkage wordt vaak bepaald door bereikbaarheid, voorbereiding en afhankelijkheid van andere disciplines.",
-          "Als je voor lekkage vooraf duidelijk bent over gewenste timing en flexibiliteit, kan de specialist realistischer plannen."
+          "Praktische planning en bereikbaarheid van leidingen — lekkage: Een zorgvuldige beoordeling van dit onderdeel maakt offertes beter vergelijkbaar en realistischer.",
+          "Bij praktische planning en bereikbaarheid van leidingen — lekkage tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond lekkage concreet maken.",
+          "Voor praktische planning en bereikbaarheid van leidingen — lekkage beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -4049,7 +4098,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je loodgieter lekkage-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over lekkage, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende loodgieter.",
+      "description": "Plaats je aanvraag op /aanvraag met details over lekkage, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Plaats je lekkage-aanvraag",
       "secondaryLabel": "Terug naar loodgieter",
       "secondaryHref": "/loodgieter"
@@ -4092,16 +4141,17 @@ const rawServiceSubPages = {
       {
         "heading": "Waarom verstoppingen terugkomen en hoe je dat voorkomt",
         "paragraphs": [
-          "De bezoeker wil weten waarom verstoppingen terugkomen en wanneer professionele aanpak nodig is.",
-          "Bij verstopping draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van verstopping op comfort, veiligheid of planning benoemt, kan een loodgieter sneller prioriteiten bepalen."
+          "Waarom verstoppingen terugkomen en hoe je dat voorkomt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij waarom verstoppingen terugkomen en hoe je dat voorkomt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond verstopping concreet maken.",
+          "Voor waarom verstoppingen terugkomen en hoe je dat voorkomt beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Signalen die duiden op een loodgietersprobleem — verstopping",
         "paragraphs": [
-          "Signalen bij verstopping beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van verstopping te noteren, maak je je aanvraag concreter."
+          "Signalen die duiden op een loodgietersprobleem — verstopping: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij signalen die duiden op een loodgietersprobleem — verstopping tellen factoren zoals langzaam weglopend water, borrelende geluiden, terugslag in meerdere afvoeren en geurhinder mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond verstopping concreet maken.",
+          "Voor signalen die duiden op een loodgietersprobleem — verstopping beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "langzaam weglopend water",
@@ -4113,8 +4163,9 @@ const rawServiceSubPages = {
       {
         "heading": "Technische oorzaken die vaak terugkomen — verstopping",
         "paragraphs": [
-          "De oorzaak van verstopping ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij verstopping helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Technische oorzaken die vaak terugkomen — verstopping: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij technische oorzaken die vaak terugkomen — verstopping tellen factoren zoals vet- en zeepresten, opbouw in leidingtraject, vreemde voorwerpen en beperkte helling mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond verstopping concreet maken.",
+          "Voor technische oorzaken die vaak terugkomen — verstopping beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "vet- en zeepresten",
@@ -4126,9 +4177,9 @@ const rawServiceSubPages = {
       {
         "heading": "Diagnose en eerste aanpak door een loodgieter (verstopping) — verstopping",
         "paragraphs": [
-          "Een loodgieter pakt verstopping meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij verstopping voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor verstopping direct scherper maken."
+          "Diagnose en eerste aanpak door een loodgieter (verstopping) — verstopping: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij diagnose en eerste aanpak door een loodgieter (verstopping) — verstopping tellen factoren zoals vaststellen waar blokkade zit, mechanisch of met apparatuur vrijmaken, controleren op structurele oorzaak en nazicht van doorstroming mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond verstopping concreet maken.",
+          "Voor diagnose en eerste aanpak door een loodgieter (verstopping) — verstopping beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "vaststellen waar blokkade zit",
@@ -4140,8 +4191,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes tussen noodoplossing en definitieve reparatie — verstopping",
         "paragraphs": [
-          "Bij verstopping zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor verstopping logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes tussen noodoplossing en definitieve reparatie — verstopping: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes tussen noodoplossing en definitieve reparatie — verstopping tellen factoren zoals acute ontstopping of bredere inspectie, deeltraject vervangen bij terugkerende problemen en combinatie met afvoeroptimalisatie mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond verstopping concreet maken.",
+          "Voor keuzes tussen noodoplossing en definitieve reparatie — verstopping beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "acute ontstopping of bredere inspectie",
@@ -4152,25 +4204,26 @@ const rawServiceSubPages = {
       {
         "heading": "Welke gegevens je direct moet aanleveren — verstopping",
         "paragraphs": [
-          "Een sterke aanvraag voor verstopping bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als verstopping samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van verstopping en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke gegevens je direct moet aanleveren — verstopping: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke gegevens je direct moet aanleveren — verstopping tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond verstopping concreet maken.",
+          "Voor welke gegevens je direct moet aanleveren — verstopping beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Risico bij uitstel van lekkage of verstopping — verstopping",
         "paragraphs": [
-          "Uitstel bij verstopping kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer verstopping terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om verstopping tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Risico bij uitstel van lekkage of verstopping — verstopping: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij risico bij uitstel van lekkage of verstopping — verstopping tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond verstopping concreet maken.",
+          "Voor risico bij uitstel van lekkage of verstopping — verstopping beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "type": "warning"
       },
       {
         "heading": "Praktische planning en bereikbaarheid van leidingen — verstopping",
         "paragraphs": [
-          "De planning van verstopping wordt vaak bepaald door bereikbaarheid, voorbereiding en afhankelijkheid van andere disciplines.",
-          "Als je voor verstopping vooraf duidelijk bent over gewenste timing en flexibiliteit, kan de specialist realistischer plannen."
+          "Praktische planning en bereikbaarheid van leidingen — verstopping: Een zorgvuldige beoordeling van dit onderdeel maakt offertes beter vergelijkbaar en realistischer.",
+          "Bij praktische planning en bereikbaarheid van leidingen — verstopping tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond verstopping concreet maken.",
+          "Voor praktische planning en bereikbaarheid van leidingen — verstopping beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -4228,7 +4281,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je verstopping-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over verstopping, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende loodgieter.",
+      "description": "Plaats je aanvraag op /aanvraag met details over verstopping, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Start je verstoppingsaanvraag",
       "secondaryLabel": "Terug naar loodgieter",
       "secondaryHref": "/loodgieter"
@@ -4271,16 +4324,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer leidingwerk in beeld komt",
         "paragraphs": [
-          "De bezoeker wil weten wat leidingaanpassingen betekenen voor verbouwing, bereikbaarheid en kosten.",
-          "Bij leidingwerk draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van leidingwerk op comfort, veiligheid of planning benoemt, kan een loodgieter sneller prioriteiten bepalen."
+          "Wanneer leidingwerk in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer leidingwerk in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond leidingwerk concreet maken.",
+          "Voor wanneer leidingwerk in beeld komt beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Signalen die duiden op een loodgietersprobleem — leidingwerk",
         "paragraphs": [
-          "Signalen bij leidingwerk beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van leidingwerk te noteren, maak je je aanvraag concreter."
+          "Signalen die duiden op een loodgietersprobleem — leidingwerk: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij signalen die duiden op een loodgietersprobleem — leidingwerk tellen factoren zoals nieuwe keuken- of badkamerindeling, oude leidingen met storingen en druk- of temperatuurproblemen mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond leidingwerk concreet maken.",
+          "Voor signalen die duiden op een loodgietersprobleem — leidingwerk beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "nieuwe keuken- of badkamerindeling",
@@ -4291,8 +4345,9 @@ const rawServiceSubPages = {
       {
         "heading": "Technische oorzaken die vaak terugkomen — leidingwerk",
         "paragraphs": [
-          "De oorzaak van leidingwerk ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij leidingwerk helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Technische oorzaken die vaak terugkomen — leidingwerk: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij technische oorzaken die vaak terugkomen — leidingwerk tellen factoren zoals veroudering, onlogische routing en nieuwe functies in ruimte mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond leidingwerk concreet maken.",
+          "Voor technische oorzaken die vaak terugkomen — leidingwerk beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "veroudering",
@@ -4303,9 +4358,9 @@ const rawServiceSubPages = {
       {
         "heading": "Diagnose en eerste aanpak door een loodgieter (leidingwerk) — leidingwerk",
         "paragraphs": [
-          "Een loodgieter pakt leidingwerk meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij leidingwerk voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor leidingwerk direct scherper maken."
+          "Diagnose en eerste aanpak door een loodgieter (leidingwerk) — leidingwerk: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij diagnose en eerste aanpak door een loodgieter (leidingwerk) — leidingwerk tellen factoren zoals route en aansluitpunten bepalen, leidingen aanpassen of vervangen en druk en dichtheid testen mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond leidingwerk concreet maken.",
+          "Voor diagnose en eerste aanpak door een loodgieter (leidingwerk) — leidingwerk beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "route en aansluitpunten bepalen",
@@ -4316,8 +4371,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes tussen noodoplossing en definitieve reparatie — leidingwerk",
         "paragraphs": [
-          "Bij leidingwerk zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor leidingwerk logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes tussen noodoplossing en definitieve reparatie — leidingwerk: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes tussen noodoplossing en definitieve reparatie — leidingwerk tellen factoren zoals gefaseerde uitvoering, open of weggewerkte route en combinatie met afbouw- of tegelwerk mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond leidingwerk concreet maken.",
+          "Voor keuzes tussen noodoplossing en definitieve reparatie — leidingwerk beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "gefaseerde uitvoering",
@@ -4328,17 +4384,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke gegevens je direct moet aanleveren — leidingwerk",
         "paragraphs": [
-          "Een sterke aanvraag voor leidingwerk bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als leidingwerk samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van leidingwerk en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke gegevens je direct moet aanleveren — leidingwerk: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke gegevens je direct moet aanleveren — leidingwerk tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond leidingwerk concreet maken.",
+          "Voor welke gegevens je direct moet aanleveren — leidingwerk beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Risico bij uitstel van lekkage of verstopping — leidingwerk",
         "paragraphs": [
-          "Uitstel bij leidingwerk kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer leidingwerk terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om leidingwerk tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Risico bij uitstel van lekkage of verstopping — leidingwerk: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij risico bij uitstel van lekkage of verstopping — leidingwerk tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond leidingwerk concreet maken.",
+          "Voor risico bij uitstel van lekkage of verstopping — leidingwerk beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -4391,7 +4447,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je leidingwerk-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over leidingwerk, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende loodgieter.",
+      "description": "Plaats je aanvraag op /aanvraag met details over leidingwerk, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Beschrijf je leidingwerkklus",
       "secondaryLabel": "Terug naar loodgieter",
       "secondaryHref": "/loodgieter"
@@ -4434,16 +4490,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer sanitair in beeld komt",
         "paragraphs": [
-          "Deze pagina helpt bezoekers bij de afweging tussen losse sanitairwissel en bredere aanpassing van de ruimte.",
-          "Bij sanitair draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van sanitair op comfort, veiligheid of planning benoemt, kan een loodgieter sneller prioriteiten bepalen."
+          "Wanneer sanitair in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer sanitair in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond sanitair concreet maken.",
+          "Voor wanneer sanitair in beeld komt beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Signalen die duiden op een loodgietersprobleem — sanitair",
         "paragraphs": [
-          "Signalen bij sanitair beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van sanitair te noteren, maak je je aanvraag concreter."
+          "Signalen die duiden op een loodgietersprobleem — sanitair: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij signalen die duiden op een loodgietersprobleem — sanitair tellen factoren zoals lekkende aansluiting, versleten sanitair en onpraktische opstelling mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond sanitair concreet maken.",
+          "Voor signalen die duiden op een loodgietersprobleem — sanitair beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "lekkende aansluiting",
@@ -4454,8 +4511,9 @@ const rawServiceSubPages = {
       {
         "heading": "Technische oorzaken die vaak terugkomen — sanitair",
         "paragraphs": [
-          "De oorzaak van sanitair ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij sanitair helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Technische oorzaken die vaak terugkomen — sanitair: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij technische oorzaken die vaak terugkomen — sanitair tellen factoren zoals slijtage, verouderde aansluitpunten en gewijzigde woonwensen mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond sanitair concreet maken.",
+          "Voor technische oorzaken die vaak terugkomen — sanitair beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "slijtage",
@@ -4466,9 +4524,9 @@ const rawServiceSubPages = {
       {
         "heading": "Diagnose en eerste aanpak door een loodgieter (sanitair) — sanitair",
         "paragraphs": [
-          "Een loodgieter pakt sanitair meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij sanitair voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor sanitair direct scherper maken."
+          "Diagnose en eerste aanpak door een loodgieter (sanitair) — sanitair: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij diagnose en eerste aanpak door een loodgieter (sanitair) — sanitair tellen factoren zoals demontage en voorbereiding, nieuw sanitair aansluiten en afstellen en afdichten mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond sanitair concreet maken.",
+          "Voor diagnose en eerste aanpak door een loodgieter (sanitair) — sanitair beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "demontage en voorbereiding",
@@ -4479,8 +4537,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes tussen noodoplossing en definitieve reparatie — sanitair",
         "paragraphs": [
-          "Bij sanitair zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor sanitair logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes tussen noodoplossing en definitieve reparatie — sanitair: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes tussen noodoplossing en definitieve reparatie — sanitair tellen factoren zoals deelvervanging of compleet pakket, eigen producten aanleveren of advies volgen en combinatie met tegelwerk mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond sanitair concreet maken.",
+          "Voor keuzes tussen noodoplossing en definitieve reparatie — sanitair beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "deelvervanging of compleet pakket",
@@ -4491,17 +4550,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke gegevens je direct moet aanleveren — sanitair",
         "paragraphs": [
-          "Een sterke aanvraag voor sanitair bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als sanitair samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van sanitair en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke gegevens je direct moet aanleveren — sanitair: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke gegevens je direct moet aanleveren — sanitair tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond sanitair concreet maken.",
+          "Voor welke gegevens je direct moet aanleveren — sanitair beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Risico bij uitstel van lekkage of verstopping — sanitair",
         "paragraphs": [
-          "Uitstel bij sanitair kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer sanitair terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om sanitair tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Risico bij uitstel van lekkage of verstopping — sanitair: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij risico bij uitstel van lekkage of verstopping — sanitair tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond sanitair concreet maken.",
+          "Voor risico bij uitstel van lekkage of verstopping — sanitair beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -4554,7 +4613,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je sanitair-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over sanitair, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende loodgieter.",
+      "description": "Plaats je aanvraag op /aanvraag met details over sanitair, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Start je sanitair-aanvraag",
       "secondaryLabel": "Terug naar loodgieter",
       "secondaryHref": "/loodgieter"
@@ -4597,16 +4656,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer spoed loodgieter in beeld komt",
         "paragraphs": [
-          "De bezoeker zoekt een snelle route van acute melding naar passende opvolging.",
-          "Bij spoed draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van spoed op comfort, veiligheid of planning benoemt, kan een loodgieter sneller prioriteiten bepalen."
+          "Wanneer spoed loodgieter in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer spoed loodgieter in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond spoed concreet maken.",
+          "Voor wanneer spoed loodgieter in beeld komt beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Signalen die duiden op een loodgietersprobleem — spoed",
         "paragraphs": [
-          "Signalen bij spoed beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van spoed te noteren, maak je je aanvraag concreter."
+          "Signalen die duiden op een loodgietersprobleem — spoed: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij signalen die duiden op een loodgietersprobleem — spoed tellen factoren zoals actieve lekkage, volledige blokkade en snel oplopende waterschade mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond spoed concreet maken.",
+          "Voor signalen die duiden op een loodgietersprobleem — spoed beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "actieve lekkage",
@@ -4617,8 +4677,9 @@ const rawServiceSubPages = {
       {
         "heading": "Technische oorzaken die vaak terugkomen — spoed",
         "paragraphs": [
-          "De oorzaak van spoed ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij spoed helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Technische oorzaken die vaak terugkomen — spoed: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij technische oorzaken die vaak terugkomen — spoed tellen factoren zoals gesprongen verbinding, acute verstopping en defect afsluitpunt mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond spoed concreet maken.",
+          "Voor technische oorzaken die vaak terugkomen — spoed beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "gesprongen verbinding",
@@ -4629,9 +4690,9 @@ const rawServiceSubPages = {
       {
         "heading": "Diagnose en eerste aanpak door een loodgieter (spoed) — spoed",
         "paragraphs": [
-          "Een loodgieter pakt spoed meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij spoed voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor spoed direct scherper maken."
+          "Diagnose en eerste aanpak door een loodgieter (spoed) — spoed: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij diagnose en eerste aanpak door een loodgieter (spoed) — spoed tellen factoren zoals situatie veilig maken, snelle diagnose en noodmaatregel en vervolgplan mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond spoed concreet maken.",
+          "Voor diagnose en eerste aanpak door een loodgieter (spoed) — spoed beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "situatie veilig maken",
@@ -4642,8 +4703,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes tussen noodoplossing en definitieve reparatie — spoed",
         "paragraphs": [
-          "Bij spoed zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor spoed logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes tussen noodoplossing en definitieve reparatie — spoed: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes tussen noodoplossing en definitieve reparatie — spoed tellen factoren zoals tijdelijk beperken of direct definitief herstel en combineren met vervolginspectie mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond spoed concreet maken.",
+          "Voor keuzes tussen noodoplossing en definitieve reparatie — spoed beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "tijdelijk beperken of direct definitief herstel",
@@ -4653,17 +4715,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke gegevens je direct moet aanleveren — spoed",
         "paragraphs": [
-          "Een sterke aanvraag voor spoed bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als spoed samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van spoed en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke gegevens je direct moet aanleveren — spoed: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke gegevens je direct moet aanleveren — spoed tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond spoed concreet maken.",
+          "Voor welke gegevens je direct moet aanleveren — spoed beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Risico bij uitstel van lekkage of verstopping — spoed",
         "paragraphs": [
-          "Uitstel bij spoed kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer spoed terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om spoed tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Risico bij uitstel van lekkage of verstopping — spoed: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij risico bij uitstel van lekkage of verstopping — spoed tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond spoed concreet maken.",
+          "Voor risico bij uitstel van lekkage of verstopping — spoed beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -4716,7 +4778,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je spoed loodgieter-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over spoed, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende loodgieter.",
+      "description": "Plaats je aanvraag op /aanvraag met details over spoed, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Plaats een spoedaanvraag",
       "secondaryLabel": "Terug naar loodgieter",
       "secondaryHref": "/loodgieter"
@@ -4759,16 +4821,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer afvoer in beeld komt",
         "paragraphs": [
-          "Bezoekers willen onderscheid tussen tijdelijke verstopping en structureel afvoerprobleem.",
-          "Bij afvoer draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van afvoer op comfort, veiligheid of planning benoemt, kan een loodgieter sneller prioriteiten bepalen."
+          "Wanneer afvoer in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer afvoer in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond afvoer concreet maken.",
+          "Voor wanneer afvoer in beeld komt beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Signalen die duiden op een loodgietersprobleem — afvoer",
         "paragraphs": [
-          "Signalen bij afvoer beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van afvoer te noteren, maak je je aanvraag concreter."
+          "Signalen die duiden op een loodgietersprobleem — afvoer: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij signalen die duiden op een loodgietersprobleem — afvoer tellen factoren zoals langzame afvoer, regelmatige geurhinder en terugkerende blokkades mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond afvoer concreet maken.",
+          "Voor signalen die duiden op een loodgietersprobleem — afvoer beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "langzame afvoer",
@@ -4779,8 +4842,9 @@ const rawServiceSubPages = {
       {
         "heading": "Technische oorzaken die vaak terugkomen — afvoer",
         "paragraphs": [
-          "De oorzaak van afvoer ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij afvoer helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Technische oorzaken die vaak terugkomen — afvoer: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij technische oorzaken die vaak terugkomen — afvoer tellen factoren zoals ophoping, beperkte helling en lokale beschadiging mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond afvoer concreet maken.",
+          "Voor technische oorzaken die vaak terugkomen — afvoer beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "ophoping",
@@ -4791,9 +4855,9 @@ const rawServiceSubPages = {
       {
         "heading": "Diagnose en eerste aanpak door een loodgieter (afvoer) — afvoer",
         "paragraphs": [
-          "Een loodgieter pakt afvoer meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij afvoer voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor afvoer direct scherper maken."
+          "Diagnose en eerste aanpak door een loodgieter (afvoer) — afvoer: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij diagnose en eerste aanpak door een loodgieter (afvoer) — afvoer tellen factoren zoals afvoertraject controleren, blokkades verwijderen en vervangingsadvies bij structurele gebreken mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond afvoer concreet maken.",
+          "Voor diagnose en eerste aanpak door een loodgieter (afvoer) — afvoer beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "afvoertraject controleren",
@@ -4804,8 +4868,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes tussen noodoplossing en definitieve reparatie — afvoer",
         "paragraphs": [
-          "Bij afvoer zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor afvoer logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes tussen noodoplossing en definitieve reparatie — afvoer: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes tussen noodoplossing en definitieve reparatie — afvoer tellen factoren zoals periodiek onderhoud, deelvervanging van traject en combinatie met verstoppingsanalyse mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond afvoer concreet maken.",
+          "Voor keuzes tussen noodoplossing en definitieve reparatie — afvoer beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "periodiek onderhoud",
@@ -4816,17 +4881,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke gegevens je direct moet aanleveren — afvoer",
         "paragraphs": [
-          "Een sterke aanvraag voor afvoer bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als afvoer samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van afvoer en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke gegevens je direct moet aanleveren — afvoer: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke gegevens je direct moet aanleveren — afvoer tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond afvoer concreet maken.",
+          "Voor welke gegevens je direct moet aanleveren — afvoer beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Risico bij uitstel van lekkage of verstopping — afvoer",
         "paragraphs": [
-          "Uitstel bij afvoer kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer afvoer terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om afvoer tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Risico bij uitstel van lekkage of verstopping — afvoer: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij risico bij uitstel van lekkage of verstopping — afvoer tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van water- en afvoerwerk rond afvoer concreet maken.",
+          "Voor risico bij uitstel van lekkage of verstopping — afvoer beoordeelt een loodgieter meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtschade en hygiëneproblemen toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -4879,7 +4944,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je afvoer-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over afvoer, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende loodgieter.",
+      "description": "Plaats je aanvraag op /aanvraag met details over afvoer, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Vraag hulp bij afvoerproblemen",
       "secondaryLabel": "Terug naar loodgieter",
       "secondaryHref": "/loodgieter"
@@ -4922,16 +4987,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer een groepenkast niet meer past bij je woninggebruik",
         "paragraphs": [
-          "De bezoeker zoekt vooral duidelijkheid over capaciteit, veiligheid en het verschil tussen uitbreiden en volledig vervangen.",
-          "Bij groepenkast draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van groepenkast op comfort, veiligheid of planning benoemt, kan een elektricien sneller prioriteiten bepalen."
+          "Wanneer een groepenkast niet meer past bij je woninggebruik: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer een groepenkast niet meer past bij je woninggebruik tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van elektrotechniek rond groepenkast concreet maken.",
+          "Voor wanneer een groepenkast niet meer past bij je woninggebruik beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Klachten die vaak op elektra-issues wijzen — groepenkast",
         "paragraphs": [
-          "Signalen bij groepenkast beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van groepenkast te noteren, maak je je aanvraag concreter."
+          "Klachten die vaak op elektra-issues wijzen — groepenkast: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij klachten die vaak op elektra-issues wijzen — groepenkast tellen factoren zoals groepen vallen vaak uit, nieuwe apparatuur past niet op huidige verdeling en verouderde kast zonder moderne beveiliging mee, omdat ze de omvang en aanpak van elektrotechniek rond groepenkast concreet maken.",
+          "Voor klachten die vaak op elektra-issues wijzen — groepenkast beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "groepen vallen vaak uit",
@@ -4942,8 +5008,9 @@ const rawServiceSubPages = {
       {
         "heading": "Oorzaken achter storingen of capaciteitsproblemen — groepenkast",
         "paragraphs": [
-          "De oorzaak van groepenkast ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij groepenkast helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Oorzaken achter storingen of capaciteitsproblemen — groepenkast: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij oorzaken achter storingen of capaciteitsproblemen — groepenkast tellen factoren zoals toegenomen belasting, ouderdom van componenten en beperkte ruimte in kast mee, omdat ze de omvang en aanpak van elektrotechniek rond groepenkast concreet maken.",
+          "Voor oorzaken achter storingen of capaciteitsproblemen — groepenkast beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "toegenomen belasting",
@@ -4954,9 +5021,9 @@ const rawServiceSubPages = {
       {
         "heading": "Veilige beoordeling door een elektricien (groepenkast) — groepenkast",
         "paragraphs": [
-          "Een elektricien pakt groepenkast meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij groepenkast voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor groepenkast direct scherper maken."
+          "Veilige beoordeling door een elektricien (groepenkast) — groepenkast: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij veilige beoordeling door een elektricien (groepenkast) — groepenkast tellen factoren zoals belastingsprofiel beoordelen, uitbreiden of herindelen van groepen, beveiliging actualiseren en controle en test na aanpassing mee, omdat ze de omvang en aanpak van elektrotechniek rond groepenkast concreet maken.",
+          "Voor veilige beoordeling door een elektricien (groepenkast) — groepenkast beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "belastingsprofiel beoordelen",
@@ -4968,8 +5035,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes bij uitbreiding, vervanging of herverdeling — groepenkast",
         "paragraphs": [
-          "Bij groepenkast zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor groepenkast logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes bij uitbreiding, vervanging of herverdeling — groepenkast: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes bij uitbreiding, vervanging of herverdeling — groepenkast tellen factoren zoals extra groepen bij bestaande kast, volledige vervanging bij beperkte basis en 1-fase of 3-fase passend bij toepassing mee, omdat ze de omvang en aanpak van elektrotechniek rond groepenkast concreet maken.",
+          "Voor keuzes bij uitbreiding, vervanging of herverdeling — groepenkast beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "extra groepen bij bestaande kast",
@@ -4980,25 +5048,26 @@ const rawServiceSubPages = {
       {
         "heading": "Welke info je nodig hebt voor een gerichte intake — groepenkast",
         "paragraphs": [
-          "Een sterke aanvraag voor groepenkast bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als groepenkast samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van groepenkast en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke info je nodig hebt voor een gerichte intake — groepenkast: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke info je nodig hebt voor een gerichte intake — groepenkast tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van elektrotechniek rond groepenkast concreet maken.",
+          "Voor welke info je nodig hebt voor een gerichte intake — groepenkast beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Waarom uitstel bij elektra risico’s vergroot — groepenkast",
         "paragraphs": [
-          "Uitstel bij groepenkast kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer groepenkast terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om groepenkast tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Waarom uitstel bij elektra risico’s vergroot — groepenkast: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij waarom uitstel bij elektra risico’s vergroot — groepenkast tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van elektrotechniek rond groepenkast concreet maken.",
+          "Voor waarom uitstel bij elektra risico’s vergroot — groepenkast beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ],
         "type": "warning"
       },
       {
         "heading": "Planning, stroomonderbreking en praktische uitvoering — groepenkast",
         "paragraphs": [
-          "De planning van groepenkast wordt vaak bepaald door bereikbaarheid, voorbereiding en afhankelijkheid van andere disciplines.",
-          "Als je voor groepenkast vooraf duidelijk bent over gewenste timing en flexibiliteit, kan de specialist realistischer plannen."
+          "Planning, stroomonderbreking en praktische uitvoering — groepenkast: Een zorgvuldige beoordeling van dit onderdeel maakt offertes beter vergelijkbaar en realistischer.",
+          "Bij planning, stroomonderbreking en praktische uitvoering — groepenkast tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van elektrotechniek rond groepenkast concreet maken.",
+          "Voor planning, stroomonderbreking en praktische uitvoering — groepenkast beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -5056,7 +5125,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je groepenkast-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over groepenkast, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende elektricien.",
+      "description": "Plaats je aanvraag op /aanvraag met details over groepenkast, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Vraag een elektricien voor je groepenkast",
       "secondaryLabel": "Terug naar elektricien",
       "secondaryHref": "/elektricien"
@@ -5103,16 +5172,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer elektra storing in beeld komt",
         "paragraphs": [
-          "Bezoekers willen oorzaak en risico duiden zonder zelf gevaarlijke handelingen uit te voeren.",
-          "Bij storing draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van storing op comfort, veiligheid of planning benoemt, kan een elektricien sneller prioriteiten bepalen."
+          "Wanneer elektra storing in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer elektra storing in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van elektrotechniek rond storing concreet maken.",
+          "Voor wanneer elektra storing in beeld komt beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Klachten die vaak op elektra-issues wijzen — storing",
         "paragraphs": [
-          "Signalen bij storing beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van storing te noteren, maak je je aanvraag concreter."
+          "Klachten die vaak op elektra-issues wijzen — storing: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij klachten die vaak op elektra-issues wijzen — storing tellen factoren zoals uitvallende groep, flikkerend licht en gedeeltelijke stroomuitval mee, omdat ze de omvang en aanpak van elektrotechniek rond storing concreet maken.",
+          "Voor klachten die vaak op elektra-issues wijzen — storing beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "uitvallende groep",
@@ -5123,8 +5193,9 @@ const rawServiceSubPages = {
       {
         "heading": "Oorzaken achter storingen of capaciteitsproblemen — storing",
         "paragraphs": [
-          "De oorzaak van storing ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij storing helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Oorzaken achter storingen of capaciteitsproblemen — storing: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij oorzaken achter storingen of capaciteitsproblemen — storing tellen factoren zoals defect apparaat, bekabelingsprobleem en probleem in groepenkast mee, omdat ze de omvang en aanpak van elektrotechniek rond storing concreet maken.",
+          "Voor oorzaken achter storingen of capaciteitsproblemen — storing beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "defect apparaat",
@@ -5135,9 +5206,9 @@ const rawServiceSubPages = {
       {
         "heading": "Veilige beoordeling door een elektricien (storing) — storing",
         "paragraphs": [
-          "Een elektricien pakt storing meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij storing voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor storing direct scherper maken."
+          "Veilige beoordeling door een elektricien (storing) — storing: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij veilige beoordeling door een elektricien (storing) — storing tellen factoren zoals storingsbron isoleren, meten en controleren en defecten veilig herstellen mee, omdat ze de omvang en aanpak van elektrotechniek rond storing concreet maken.",
+          "Voor veilige beoordeling door een elektricien (storing) — storing beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "storingsbron isoleren",
@@ -5148,8 +5219,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes bij uitbreiding, vervanging of herverdeling — storing",
         "paragraphs": [
-          "Bij storing zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor storing logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes bij uitbreiding, vervanging of herverdeling — storing: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes bij uitbreiding, vervanging of herverdeling — storing tellen factoren zoals acute fout oplossen en oorzaakanalyse bij terugkerende storingen mee, omdat ze de omvang en aanpak van elektrotechniek rond storing concreet maken.",
+          "Voor keuzes bij uitbreiding, vervanging of herverdeling — storing beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "acute fout oplossen",
@@ -5159,17 +5231,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke info je nodig hebt voor een gerichte intake — storing",
         "paragraphs": [
-          "Een sterke aanvraag voor storing bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als storing samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van storing en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke info je nodig hebt voor een gerichte intake — storing: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke info je nodig hebt voor een gerichte intake — storing tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van elektrotechniek rond storing concreet maken.",
+          "Voor welke info je nodig hebt voor een gerichte intake — storing beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Waarom uitstel bij elektra risico’s vergroot — storing",
         "paragraphs": [
-          "Uitstel bij storing kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer storing terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om storing tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Waarom uitstel bij elektra risico’s vergroot — storing: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij waarom uitstel bij elektra risico’s vergroot — storing tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van elektrotechniek rond storing concreet maken.",
+          "Voor waarom uitstel bij elektra risico’s vergroot — storing beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -5222,7 +5294,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je elektra storing-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over storing, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende elektricien.",
+      "description": "Plaats je aanvraag op /aanvraag met details over storing, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Start je aanvraag voor storing",
       "secondaryLabel": "Terug naar elektricien",
       "secondaryHref": "/elektricien"
@@ -5269,16 +5341,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer stopcontacten in beeld komt",
         "paragraphs": [
-          "De bezoeker wil weten hoe extra aansluitpunten veilig en toekomstbestendig worden aangelegd.",
-          "Bij stopcontacten draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van stopcontacten op comfort, veiligheid of planning benoemt, kan een elektricien sneller prioriteiten bepalen."
+          "Wanneer stopcontacten in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer stopcontacten in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van elektrotechniek rond stopcontacten concreet maken.",
+          "Voor wanneer stopcontacten in beeld komt beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Klachten die vaak op elektra-issues wijzen — stopcontacten",
         "paragraphs": [
-          "Signalen bij stopcontacten beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van stopcontacten te noteren, maak je je aanvraag concreter."
+          "Klachten die vaak op elektra-issues wijzen — stopcontacten: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij klachten die vaak op elektra-issues wijzen — stopcontacten tellen factoren zoals te weinig stopcontacten, veel verlengsnoeren en loszittende aansluitpunten mee, omdat ze de omvang en aanpak van elektrotechniek rond stopcontacten concreet maken.",
+          "Voor klachten die vaak op elektra-issues wijzen — stopcontacten beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "te weinig stopcontacten",
@@ -5289,8 +5362,9 @@ const rawServiceSubPages = {
       {
         "heading": "Oorzaken achter storingen of capaciteitsproblemen — stopcontacten",
         "paragraphs": [
-          "De oorzaak van stopcontacten ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij stopcontacten helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Oorzaken achter storingen of capaciteitsproblemen — stopcontacten: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij oorzaken achter storingen of capaciteitsproblemen — stopcontacten tellen factoren zoals gewijzigde ruimte-indeling, meer apparatuur en verouderde installatie mee, omdat ze de omvang en aanpak van elektrotechniek rond stopcontacten concreet maken.",
+          "Voor oorzaken achter storingen of capaciteitsproblemen — stopcontacten beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "gewijzigde ruimte-indeling",
@@ -5301,9 +5375,9 @@ const rawServiceSubPages = {
       {
         "heading": "Veilige beoordeling door een elektricien (stopcontacten) — stopcontacten",
         "paragraphs": [
-          "Een elektricien pakt stopcontacten meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij stopcontacten voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor stopcontacten direct scherper maken."
+          "Veilige beoordeling door een elektricien (stopcontacten) — stopcontacten: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij veilige beoordeling door een elektricien (stopcontacten) — stopcontacten tellen factoren zoals locaties bepalen, bekabeling veilig aanleggen en aansluitpunten testen mee, omdat ze de omvang en aanpak van elektrotechniek rond stopcontacten concreet maken.",
+          "Voor veilige beoordeling door een elektricien (stopcontacten) — stopcontacten beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "locaties bepalen",
@@ -5314,8 +5388,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes bij uitbreiding, vervanging of herverdeling — stopcontacten",
         "paragraphs": [
-          "Bij stopcontacten zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor stopcontacten logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes bij uitbreiding, vervanging of herverdeling — stopcontacten: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes bij uitbreiding, vervanging of herverdeling — stopcontacten tellen factoren zoals opbouw of inbouw, enkele ruimte of woningbreed en voorbereiding op toekomstig gebruik mee, omdat ze de omvang en aanpak van elektrotechniek rond stopcontacten concreet maken.",
+          "Voor keuzes bij uitbreiding, vervanging of herverdeling — stopcontacten beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "opbouw of inbouw",
@@ -5326,17 +5401,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke info je nodig hebt voor een gerichte intake — stopcontacten",
         "paragraphs": [
-          "Een sterke aanvraag voor stopcontacten bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als stopcontacten samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van stopcontacten en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke info je nodig hebt voor een gerichte intake — stopcontacten: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke info je nodig hebt voor een gerichte intake — stopcontacten tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van elektrotechniek rond stopcontacten concreet maken.",
+          "Voor welke info je nodig hebt voor een gerichte intake — stopcontacten beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Waarom uitstel bij elektra risico’s vergroot — stopcontacten",
         "paragraphs": [
-          "Uitstel bij stopcontacten kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer stopcontacten terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om stopcontacten tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Waarom uitstel bij elektra risico’s vergroot — stopcontacten: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij waarom uitstel bij elektra risico’s vergroot — stopcontacten tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van elektrotechniek rond stopcontacten concreet maken.",
+          "Voor waarom uitstel bij elektra risico’s vergroot — stopcontacten beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -5389,7 +5464,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je stopcontacten-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over stopcontacten, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende elektricien.",
+      "description": "Plaats je aanvraag op /aanvraag met details over stopcontacten, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Vraag stopcontacten aan",
       "secondaryLabel": "Terug naar elektricien",
       "secondaryHref": "/elektricien"
@@ -5436,16 +5511,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer verlichting in beeld komt",
         "paragraphs": [
-          "Deze pagina helpt bezoekers bij de vertaalslag van lichtwens naar technisch haalbare installatie.",
-          "Bij verlichting draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van verlichting op comfort, veiligheid of planning benoemt, kan een elektricien sneller prioriteiten bepalen."
+          "Wanneer verlichting in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer verlichting in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van elektrotechniek rond verlichting concreet maken.",
+          "Voor wanneer verlichting in beeld komt beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Klachten die vaak op elektra-issues wijzen — verlichting",
         "paragraphs": [
-          "Signalen bij verlichting beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van verlichting te noteren, maak je je aanvraag concreter."
+          "Klachten die vaak op elektra-issues wijzen — verlichting: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij klachten die vaak op elektra-issues wijzen — verlichting tellen factoren zoals onvoldoende lichtpunten, onpraktische schakeling en oude armaturen mee, omdat ze de omvang en aanpak van elektrotechniek rond verlichting concreet maken.",
+          "Voor klachten die vaak op elektra-issues wijzen — verlichting beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "onvoldoende lichtpunten",
@@ -5456,8 +5532,9 @@ const rawServiceSubPages = {
       {
         "heading": "Oorzaken achter storingen of capaciteitsproblemen — verlichting",
         "paragraphs": [
-          "De oorzaak van verlichting ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij verlichting helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Oorzaken achter storingen of capaciteitsproblemen — verlichting: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij oorzaken achter storingen of capaciteitsproblemen — verlichting tellen factoren zoals verouderde installatie, gewijzigde indeling en defecte componenten mee, omdat ze de omvang en aanpak van elektrotechniek rond verlichting concreet maken.",
+          "Voor oorzaken achter storingen of capaciteitsproblemen — verlichting beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "verouderde installatie",
@@ -5468,9 +5545,9 @@ const rawServiceSubPages = {
       {
         "heading": "Veilige beoordeling door een elektricien (verlichting) — verlichting",
         "paragraphs": [
-          "Een elektricien pakt verlichting meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij verlichting voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor verlichting direct scherper maken."
+          "Veilige beoordeling door een elektricien (verlichting) — verlichting: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij veilige beoordeling door een elektricien (verlichting) — verlichting tellen factoren zoals lichtpunten bepalen, aansluitingen en schakeling realiseren en testen en afwerken mee, omdat ze de omvang en aanpak van elektrotechniek rond verlichting concreet maken.",
+          "Voor veilige beoordeling door een elektricien (verlichting) — verlichting beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "lichtpunten bepalen",
@@ -5481,8 +5558,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes bij uitbreiding, vervanging of herverdeling — verlichting",
         "paragraphs": [
-          "Bij verlichting zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor verlichting logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes bij uitbreiding, vervanging of herverdeling — verlichting: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes bij uitbreiding, vervanging of herverdeling — verlichting tellen factoren zoals functioneel of sfeergericht lichtplan, binnen en buiten combineren en dimmers en zones mee, omdat ze de omvang en aanpak van elektrotechniek rond verlichting concreet maken.",
+          "Voor keuzes bij uitbreiding, vervanging of herverdeling — verlichting beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "functioneel of sfeergericht lichtplan",
@@ -5493,17 +5571,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke info je nodig hebt voor een gerichte intake — verlichting",
         "paragraphs": [
-          "Een sterke aanvraag voor verlichting bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als verlichting samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van verlichting en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke info je nodig hebt voor een gerichte intake — verlichting: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke info je nodig hebt voor een gerichte intake — verlichting tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van elektrotechniek rond verlichting concreet maken.",
+          "Voor welke info je nodig hebt voor een gerichte intake — verlichting beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Waarom uitstel bij elektra risico’s vergroot — verlichting",
         "paragraphs": [
-          "Uitstel bij verlichting kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer verlichting terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om verlichting tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Waarom uitstel bij elektra risico’s vergroot — verlichting: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij waarom uitstel bij elektra risico’s vergroot — verlichting tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van elektrotechniek rond verlichting concreet maken.",
+          "Voor waarom uitstel bij elektra risico’s vergroot — verlichting beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -5556,7 +5634,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je verlichting-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over verlichting, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende elektricien.",
+      "description": "Plaats je aanvraag op /aanvraag met details over verlichting, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Start je verlichtingsaanvraag",
       "secondaryLabel": "Terug naar elektricien",
       "secondaryHref": "/elektricien"
@@ -5603,16 +5681,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer krachtstroom in beeld komt",
         "paragraphs": [
-          "Bezoekers willen weten wat er nodig is om veilig van wens naar bruikbare aansluiting te gaan.",
-          "Bij krachtstroom draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van krachtstroom op comfort, veiligheid of planning benoemt, kan een elektricien sneller prioriteiten bepalen."
+          "Wanneer krachtstroom in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer krachtstroom in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van elektrotechniek rond krachtstroom concreet maken.",
+          "Voor wanneer krachtstroom in beeld komt beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Klachten die vaak op elektra-issues wijzen — krachtstroom",
         "paragraphs": [
-          "Signalen bij krachtstroom beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van krachtstroom te noteren, maak je je aanvraag concreter."
+          "Klachten die vaak op elektra-issues wijzen — krachtstroom: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij klachten die vaak op elektra-issues wijzen — krachtstroom tellen factoren zoals nieuwe apparatuur met hogere vermogensvraag, beperkte huidige aansluiting en plannen voor werkplaats of zwaardere keukenapparatuur mee, omdat ze de omvang en aanpak van elektrotechniek rond krachtstroom concreet maken.",
+          "Voor klachten die vaak op elektra-issues wijzen — krachtstroom beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "nieuwe apparatuur met hogere vermogensvraag",
@@ -5623,8 +5702,9 @@ const rawServiceSubPages = {
       {
         "heading": "Oorzaken achter storingen of capaciteitsproblemen — krachtstroom",
         "paragraphs": [
-          "De oorzaak van krachtstroom ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij krachtstroom helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Oorzaken achter storingen of capaciteitsproblemen — krachtstroom: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij oorzaken achter storingen of capaciteitsproblemen — krachtstroom tellen factoren zoals groeiende stroomvraag, onvoldoende bestaande verdeling en ontbrekende geschikte bekabeling mee, omdat ze de omvang en aanpak van elektrotechniek rond krachtstroom concreet maken.",
+          "Voor oorzaken achter storingen of capaciteitsproblemen — krachtstroom beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "groeiende stroomvraag",
@@ -5635,9 +5715,9 @@ const rawServiceSubPages = {
       {
         "heading": "Veilige beoordeling door een elektricien (krachtstroom) — krachtstroom",
         "paragraphs": [
-          "Een elektricien pakt krachtstroom meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij krachtstroom voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor krachtstroom direct scherper maken."
+          "Veilige beoordeling door een elektricien (krachtstroom) — krachtstroom: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij veilige beoordeling door een elektricien (krachtstroom) — krachtstroom tellen factoren zoals aansluitvoorwaarden controleren, groep en bekabeling realiseren en veiligheid en werking testen mee, omdat ze de omvang en aanpak van elektrotechniek rond krachtstroom concreet maken.",
+          "Voor veilige beoordeling door een elektricien (krachtstroom) — krachtstroom beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "aansluitvoorwaarden controleren",
@@ -5648,8 +5728,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes bij uitbreiding, vervanging of herverdeling — krachtstroom",
         "paragraphs": [
-          "Bij krachtstroom zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor krachtstroom logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes bij uitbreiding, vervanging of herverdeling — krachtstroom: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes bij uitbreiding, vervanging of herverdeling — krachtstroom tellen factoren zoals volledige voorbereiding of gefaseerde uitbreiding en combinatie met groepenkastaanpassing mee, omdat ze de omvang en aanpak van elektrotechniek rond krachtstroom concreet maken.",
+          "Voor keuzes bij uitbreiding, vervanging of herverdeling — krachtstroom beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "volledige voorbereiding of gefaseerde uitbreiding",
@@ -5659,17 +5740,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke info je nodig hebt voor een gerichte intake — krachtstroom",
         "paragraphs": [
-          "Een sterke aanvraag voor krachtstroom bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als krachtstroom samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van krachtstroom en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke info je nodig hebt voor een gerichte intake — krachtstroom: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke info je nodig hebt voor een gerichte intake — krachtstroom tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van elektrotechniek rond krachtstroom concreet maken.",
+          "Voor welke info je nodig hebt voor een gerichte intake — krachtstroom beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Waarom uitstel bij elektra risico’s vergroot — krachtstroom",
         "paragraphs": [
-          "Uitstel bij krachtstroom kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer krachtstroom terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om krachtstroom tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Waarom uitstel bij elektra risico’s vergroot — krachtstroom: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij waarom uitstel bij elektra risico’s vergroot — krachtstroom tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van elektrotechniek rond krachtstroom concreet maken.",
+          "Voor waarom uitstel bij elektra risico’s vergroot — krachtstroom beoordeelt een elektricien meestal welke stap logisch volgt; zonder die afweging neemt de kans op onveilige belasting en uitval toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -5722,7 +5803,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je krachtstroom-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over krachtstroom, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende elektricien.",
+      "description": "Plaats je aanvraag op /aanvraag met details over krachtstroom, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Vraag krachtstroom aan",
       "secondaryLabel": "Terug naar elektricien",
       "secondaryHref": "/elektricien"
@@ -5769,16 +5850,17 @@ const rawServiceSubPages = {
       {
         "heading": "Materiaalkeuze, profielen en uitstraling",
         "paragraphs": [
-          "Deze zoekintentie draait om materiaalkeuze en de vraag of kunststof past bij woning en onderhoudswens.",
-          "Bij kunststof kozijnen draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van kunststof kozijnen op comfort, veiligheid of planning benoemt, kan een kozijnspecialist sneller prioriteiten bepalen."
+          "Materiaalkeuze, profielen en uitstraling: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij materiaalkeuze, profielen en uitstraling tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van kozijnwerk rond kunststof kozijnen concreet maken.",
+          "Voor materiaalkeuze, profielen en uitstraling beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Signalen dat kozijnen of aansluitingen aandacht vragen — kunststof kozijnen",
         "paragraphs": [
-          "Signalen bij kunststof kozijnen beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van kunststof kozijnen te noteren, maak je je aanvraag concreter."
+          "Signalen dat kozijnen of aansluitingen aandacht vragen — kunststof kozijnen: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij signalen dat kozijnen of aansluitingen aandacht vragen — kunststof kozijnen tellen factoren zoals huidige kozijnen vragen veel onderhoud, tocht rond ramen en wens voor betere isolatie mee, omdat ze de omvang en aanpak van kozijnwerk rond kunststof kozijnen concreet maken.",
+          "Voor signalen dat kozijnen of aansluitingen aandacht vragen — kunststof kozijnen beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "huidige kozijnen vragen veel onderhoud",
@@ -5789,8 +5871,9 @@ const rawServiceSubPages = {
       {
         "heading": "Mogelijke oorzaken van tocht, slijtage of klemmen — kunststof kozijnen",
         "paragraphs": [
-          "De oorzaak van kunststof kozijnen ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij kunststof kozijnen helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Mogelijke oorzaken van tocht, slijtage of klemmen — kunststof kozijnen: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij mogelijke oorzaken van tocht, slijtage of klemmen — kunststof kozijnen tellen factoren zoals ouder materiaal, slechte kierdichting en slijtage van beslag mee, omdat ze de omvang en aanpak van kozijnwerk rond kunststof kozijnen concreet maken.",
+          "Voor mogelijke oorzaken van tocht, slijtage of klemmen — kunststof kozijnen beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "ouder materiaal",
@@ -5801,9 +5884,9 @@ const rawServiceSubPages = {
       {
         "heading": "Wat een kozijnspecialist doorgaans beoordeelt (kunststof kozijnen) — kunststof kozijnen",
         "paragraphs": [
-          "Een kozijnspecialist pakt kunststof kozijnen meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij kunststof kozijnen voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor kunststof kozijnen direct scherper maken."
+          "Wat een kozijnspecialist doorgaans beoordeelt (kunststof kozijnen) — kunststof kozijnen: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij wat een kozijnspecialist doorgaans beoordeelt (kunststof kozijnen) — kunststof kozijnen tellen factoren zoals inmeten en profielkeuze, oude kozijnen vervangen en aansluitingen en afwerking controleren mee, omdat ze de omvang en aanpak van kozijnwerk rond kunststof kozijnen concreet maken.",
+          "Voor wat een kozijnspecialist doorgaans beoordeelt (kunststof kozijnen) — kunststof kozijnen beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "inmeten en profielkeuze",
@@ -5814,8 +5897,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in materiaal, herstel en vervanging — kunststof kozijnen",
         "paragraphs": [
-          "Bij kunststof kozijnen zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor kunststof kozijnen logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in materiaal, herstel en vervanging — kunststof kozijnen: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in materiaal, herstel en vervanging — kunststof kozijnen tellen factoren zoals kleur en profielstijl, glasopties afhankelijk van comfortwens en gefaseerde vervanging mee, omdat ze de omvang en aanpak van kozijnwerk rond kunststof kozijnen concreet maken.",
+          "Voor keuzes in materiaal, herstel en vervanging — kunststof kozijnen beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "kleur en profielstijl",
@@ -5826,17 +5910,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke gegevens je aanvraag echt sterker maken — kunststof kozijnen",
         "paragraphs": [
-          "Een sterke aanvraag voor kunststof kozijnen bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als kunststof kozijnen samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van kunststof kozijnen en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke gegevens je aanvraag echt sterker maken — kunststof kozijnen: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke gegevens je aanvraag echt sterker maken — kunststof kozijnen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van kozijnwerk rond kunststof kozijnen concreet maken.",
+          "Voor welke gegevens je aanvraag echt sterker maken — kunststof kozijnen beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Wat uitstel betekent voor comfort en onderhoudskosten — kunststof kozijnen",
         "paragraphs": [
-          "Uitstel bij kunststof kozijnen kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer kunststof kozijnen terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om kunststof kozijnen tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Wat uitstel betekent voor comfort en onderhoudskosten — kunststof kozijnen: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij wat uitstel betekent voor comfort en onderhoudskosten — kunststof kozijnen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van kozijnwerk rond kunststof kozijnen concreet maken.",
+          "Voor wat uitstel betekent voor comfort en onderhoudskosten — kunststof kozijnen beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -5889,7 +5973,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je kunststof kozijnen-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over kunststof kozijnen, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende kozijnspecialist.",
+      "description": "Plaats je aanvraag op /aanvraag met details over kunststof kozijnen, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Start je aanvraag voor kunststof kozijnen",
       "secondaryLabel": "Terug naar kozijnen",
       "secondaryHref": "/kozijnen"
@@ -5932,16 +6016,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer houten kozijnen in beeld komt",
         "paragraphs": [
-          "Bezoekers zoeken balans tussen karakter, onderhoud en technische staat.",
-          "Bij houten kozijnen draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van houten kozijnen op comfort, veiligheid of planning benoemt, kan een kozijnspecialist sneller prioriteiten bepalen."
+          "Wanneer houten kozijnen in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer houten kozijnen in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van kozijnwerk rond houten kozijnen concreet maken.",
+          "Voor wanneer houten kozijnen in beeld komt beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Signalen dat kozijnen of aansluitingen aandacht vragen — houten kozijnen",
         "paragraphs": [
-          "Signalen bij houten kozijnen beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van houten kozijnen te noteren, maak je je aanvraag concreter."
+          "Signalen dat kozijnen of aansluitingen aandacht vragen — houten kozijnen: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij signalen dat kozijnen of aansluitingen aandacht vragen — houten kozijnen tellen factoren zoals bladderende verf, zachte houtdelen en klemmen van ramen mee, omdat ze de omvang en aanpak van kozijnwerk rond houten kozijnen concreet maken.",
+          "Voor signalen dat kozijnen of aansluitingen aandacht vragen — houten kozijnen beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "bladderende verf",
@@ -5952,8 +6037,9 @@ const rawServiceSubPages = {
       {
         "heading": "Mogelijke oorzaken van tocht, slijtage of klemmen — houten kozijnen",
         "paragraphs": [
-          "De oorzaak van houten kozijnen ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij houten kozijnen helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Mogelijke oorzaken van tocht, slijtage of klemmen — houten kozijnen: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij mogelijke oorzaken van tocht, slijtage of klemmen — houten kozijnen tellen factoren zoals vochtbelasting, uitgesteld onderhoud en verouderde detaillering mee, omdat ze de omvang en aanpak van kozijnwerk rond houten kozijnen concreet maken.",
+          "Voor mogelijke oorzaken van tocht, slijtage of klemmen — houten kozijnen beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "vochtbelasting",
@@ -5964,9 +6050,9 @@ const rawServiceSubPages = {
       {
         "heading": "Wat een kozijnspecialist doorgaans beoordeelt (houten kozijnen) — houten kozijnen",
         "paragraphs": [
-          "Een kozijnspecialist pakt houten kozijnen meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij houten kozijnen voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor houten kozijnen direct scherper maken."
+          "Wat een kozijnspecialist doorgaans beoordeelt (houten kozijnen) — houten kozijnen: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij wat een kozijnspecialist doorgaans beoordeelt (houten kozijnen) — houten kozijnen tellen factoren zoals conditie beoordelen, lokale herstel- of vervangingskeuze en afwerken en beschermen mee, omdat ze de omvang en aanpak van kozijnwerk rond houten kozijnen concreet maken.",
+          "Voor wat een kozijnspecialist doorgaans beoordeelt (houten kozijnen) — houten kozijnen beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "conditie beoordelen",
@@ -5977,8 +6063,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in materiaal, herstel en vervanging — houten kozijnen",
         "paragraphs": [
-          "Bij houten kozijnen zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor houten kozijnen logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in materiaal, herstel en vervanging — houten kozijnen: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in materiaal, herstel en vervanging — houten kozijnen tellen factoren zoals herstellen of vervangen, combinatie met schilderwerk en fasering per gevel mee, omdat ze de omvang en aanpak van kozijnwerk rond houten kozijnen concreet maken.",
+          "Voor keuzes in materiaal, herstel en vervanging — houten kozijnen beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "herstellen of vervangen",
@@ -5989,17 +6076,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke gegevens je aanvraag echt sterker maken — houten kozijnen",
         "paragraphs": [
-          "Een sterke aanvraag voor houten kozijnen bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als houten kozijnen samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van houten kozijnen en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke gegevens je aanvraag echt sterker maken — houten kozijnen: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke gegevens je aanvraag echt sterker maken — houten kozijnen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van kozijnwerk rond houten kozijnen concreet maken.",
+          "Voor welke gegevens je aanvraag echt sterker maken — houten kozijnen beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Wat uitstel betekent voor comfort en onderhoudskosten — houten kozijnen",
         "paragraphs": [
-          "Uitstel bij houten kozijnen kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer houten kozijnen terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om houten kozijnen tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Wat uitstel betekent voor comfort en onderhoudskosten — houten kozijnen: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij wat uitstel betekent voor comfort en onderhoudskosten — houten kozijnen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van kozijnwerk rond houten kozijnen concreet maken.",
+          "Voor wat uitstel betekent voor comfort en onderhoudskosten — houten kozijnen beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -6052,7 +6139,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je houten kozijnen-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over houten kozijnen, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende kozijnspecialist.",
+      "description": "Plaats je aanvraag op /aanvraag met details over houten kozijnen, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Vraag hulp voor houten kozijnen",
       "secondaryLabel": "Terug naar kozijnen",
       "secondaryHref": "/kozijnen"
@@ -6095,16 +6182,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer aluminium kozijnen in beeld komt",
         "paragraphs": [
-          "De bezoeker wil begrijpen wat aluminium onderscheidt qua profieldikte, onderhoud en toepasbaarheid.",
-          "Bij aluminium kozijnen draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van aluminium kozijnen op comfort, veiligheid of planning benoemt, kan een kozijnspecialist sneller prioriteiten bepalen."
+          "Wanneer aluminium kozijnen in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer aluminium kozijnen in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van kozijnwerk rond aluminium kozijnen concreet maken.",
+          "Voor wanneer aluminium kozijnen in beeld komt beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Signalen dat kozijnen of aansluitingen aandacht vragen — aluminium kozijnen",
         "paragraphs": [
-          "Signalen bij aluminium kozijnen beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van aluminium kozijnen te noteren, maak je je aanvraag concreter."
+          "Signalen dat kozijnen of aansluitingen aandacht vragen — aluminium kozijnen: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij signalen dat kozijnen of aansluitingen aandacht vragen — aluminium kozijnen tellen factoren zoals wens voor slanke uitstraling, vervanging van verouderde kozijnen en grotere glasopeningen mee, omdat ze de omvang en aanpak van kozijnwerk rond aluminium kozijnen concreet maken.",
+          "Voor signalen dat kozijnen of aansluitingen aandacht vragen — aluminium kozijnen beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "wens voor slanke uitstraling",
@@ -6115,8 +6203,9 @@ const rawServiceSubPages = {
       {
         "heading": "Mogelijke oorzaken van tocht, slijtage of klemmen — aluminium kozijnen",
         "paragraphs": [
-          "De oorzaak van aluminium kozijnen ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij aluminium kozijnen helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Mogelijke oorzaken van tocht, slijtage of klemmen — aluminium kozijnen: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij mogelijke oorzaken van tocht, slijtage of klemmen — aluminium kozijnen tellen factoren zoals esthetische vernieuwing, comfortverbetering en technische veroudering van oude kozijnen mee, omdat ze de omvang en aanpak van kozijnwerk rond aluminium kozijnen concreet maken.",
+          "Voor mogelijke oorzaken van tocht, slijtage of klemmen — aluminium kozijnen beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "esthetische vernieuwing",
@@ -6127,9 +6216,9 @@ const rawServiceSubPages = {
       {
         "heading": "Wat een kozijnspecialist doorgaans beoordeelt (aluminium kozijnen) — aluminium kozijnen",
         "paragraphs": [
-          "Een kozijnspecialist pakt aluminium kozijnen meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij aluminium kozijnen voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor aluminium kozijnen direct scherper maken."
+          "Wat een kozijnspecialist doorgaans beoordeelt (aluminium kozijnen) — aluminium kozijnen: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij wat een kozijnspecialist doorgaans beoordeelt (aluminium kozijnen) — aluminium kozijnen tellen factoren zoals systeem en profiel kiezen, inmeten en plaatsen en afstellen en afdichten mee, omdat ze de omvang en aanpak van kozijnwerk rond aluminium kozijnen concreet maken.",
+          "Voor wat een kozijnspecialist doorgaans beoordeelt (aluminium kozijnen) — aluminium kozijnen beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "systeem en profiel kiezen",
@@ -6140,8 +6229,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in materiaal, herstel en vervanging — aluminium kozijnen",
         "paragraphs": [
-          "Bij aluminium kozijnen zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor aluminium kozijnen logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in materiaal, herstel en vervanging — aluminium kozijnen: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in materiaal, herstel en vervanging — aluminium kozijnen tellen factoren zoals kleur en afwerking, glascombinaties en gefaseerde uitvoering mee, omdat ze de omvang en aanpak van kozijnwerk rond aluminium kozijnen concreet maken.",
+          "Voor keuzes in materiaal, herstel en vervanging — aluminium kozijnen beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "kleur en afwerking",
@@ -6152,17 +6242,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke gegevens je aanvraag echt sterker maken — aluminium kozijnen",
         "paragraphs": [
-          "Een sterke aanvraag voor aluminium kozijnen bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als aluminium kozijnen samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van aluminium kozijnen en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke gegevens je aanvraag echt sterker maken — aluminium kozijnen: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke gegevens je aanvraag echt sterker maken — aluminium kozijnen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van kozijnwerk rond aluminium kozijnen concreet maken.",
+          "Voor welke gegevens je aanvraag echt sterker maken — aluminium kozijnen beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Wat uitstel betekent voor comfort en onderhoudskosten — aluminium kozijnen",
         "paragraphs": [
-          "Uitstel bij aluminium kozijnen kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer aluminium kozijnen terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om aluminium kozijnen tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Wat uitstel betekent voor comfort en onderhoudskosten — aluminium kozijnen: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij wat uitstel betekent voor comfort en onderhoudskosten — aluminium kozijnen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van kozijnwerk rond aluminium kozijnen concreet maken.",
+          "Voor wat uitstel betekent voor comfort en onderhoudskosten — aluminium kozijnen beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -6215,7 +6305,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je aluminium kozijnen-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over aluminium kozijnen, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende kozijnspecialist.",
+      "description": "Plaats je aanvraag op /aanvraag met details over aluminium kozijnen, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Vind een specialist voor aluminium kozijnen",
       "secondaryLabel": "Terug naar kozijnen",
       "secondaryHref": "/kozijnen"
@@ -6258,16 +6348,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer kozijnen vervangen in beeld komt",
         "paragraphs": [
-          "De bezoeker zoekt een heldere grens tussen dooronderhouden en verstandig vernieuwen.",
-          "Bij kozijnen vervangen draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van kozijnen vervangen op comfort, veiligheid of planning benoemt, kan een kozijnspecialist sneller prioriteiten bepalen."
+          "Wanneer kozijnen vervangen in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer kozijnen vervangen in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van kozijnwerk rond kozijnen vervangen concreet maken.",
+          "Voor wanneer kozijnen vervangen in beeld komt beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Signalen dat kozijnen of aansluitingen aandacht vragen — kozijnen vervangen",
         "paragraphs": [
-          "Signalen bij kozijnen vervangen beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van kozijnen vervangen te noteren, maak je je aanvraag concreter."
+          "Signalen dat kozijnen of aansluitingen aandacht vragen — kozijnen vervangen: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij signalen dat kozijnen of aansluitingen aandacht vragen — kozijnen vervangen tellen factoren zoals terugkerende tocht, structurele slijtage en slecht sluitwerk mee, omdat ze de omvang en aanpak van kozijnwerk rond kozijnen vervangen concreet maken.",
+          "Voor signalen dat kozijnen of aansluitingen aandacht vragen — kozijnen vervangen beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "terugkerende tocht",
@@ -6278,8 +6369,9 @@ const rawServiceSubPages = {
       {
         "heading": "Mogelijke oorzaken van tocht, slijtage of klemmen — kozijnen vervangen",
         "paragraphs": [
-          "De oorzaak van kozijnen vervangen ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij kozijnen vervangen helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Mogelijke oorzaken van tocht, slijtage of klemmen — kozijnen vervangen: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij mogelijke oorzaken van tocht, slijtage of klemmen — kozijnen vervangen tellen factoren zoals ouderdom, vochtinvloed en beperkte isolatiewaarde mee, omdat ze de omvang en aanpak van kozijnwerk rond kozijnen vervangen concreet maken.",
+          "Voor mogelijke oorzaken van tocht, slijtage of klemmen — kozijnen vervangen beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "ouderdom",
@@ -6290,9 +6382,9 @@ const rawServiceSubPages = {
       {
         "heading": "Wat een kozijnspecialist doorgaans beoordeelt (kozijnen vervangen) — kozijnen vervangen",
         "paragraphs": [
-          "Een kozijnspecialist pakt kozijnen vervangen meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij kozijnen vervangen voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor kozijnen vervangen direct scherper maken."
+          "Wat een kozijnspecialist doorgaans beoordeelt (kozijnen vervangen) — kozijnen vervangen: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij wat een kozijnspecialist doorgaans beoordeelt (kozijnen vervangen) — kozijnen vervangen tellen factoren zoals staat in kaart brengen, materiaal en glas kiezen en vervanging en afwerking uitvoeren mee, omdat ze de omvang en aanpak van kozijnwerk rond kozijnen vervangen concreet maken.",
+          "Voor wat een kozijnspecialist doorgaans beoordeelt (kozijnen vervangen) — kozijnen vervangen beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "staat in kaart brengen",
@@ -6303,8 +6395,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in materiaal, herstel en vervanging — kozijnen vervangen",
         "paragraphs": [
-          "Bij kozijnen vervangen zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor kozijnen vervangen logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in materiaal, herstel en vervanging — kozijnen vervangen: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in materiaal, herstel en vervanging — kozijnen vervangen tellen factoren zoals vervangen per fase of in één project, materiaalkeuze op onderhoud en uitstraling en combinatie met gevel- of schilderwerk mee, omdat ze de omvang en aanpak van kozijnwerk rond kozijnen vervangen concreet maken.",
+          "Voor keuzes in materiaal, herstel en vervanging — kozijnen vervangen beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "vervangen per fase of in één project",
@@ -6315,17 +6408,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke gegevens je aanvraag echt sterker maken — kozijnen vervangen",
         "paragraphs": [
-          "Een sterke aanvraag voor kozijnen vervangen bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als kozijnen vervangen samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van kozijnen vervangen en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke gegevens je aanvraag echt sterker maken — kozijnen vervangen: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke gegevens je aanvraag echt sterker maken — kozijnen vervangen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van kozijnwerk rond kozijnen vervangen concreet maken.",
+          "Voor welke gegevens je aanvraag echt sterker maken — kozijnen vervangen beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Wat uitstel betekent voor comfort en onderhoudskosten — kozijnen vervangen",
         "paragraphs": [
-          "Uitstel bij kozijnen vervangen kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer kozijnen vervangen terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om kozijnen vervangen tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Wat uitstel betekent voor comfort en onderhoudskosten — kozijnen vervangen: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij wat uitstel betekent voor comfort en onderhoudskosten — kozijnen vervangen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van kozijnwerk rond kozijnen vervangen concreet maken.",
+          "Voor wat uitstel betekent voor comfort en onderhoudskosten — kozijnen vervangen beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -6378,7 +6471,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je kozijnen vervangen-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over kozijnen vervangen, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende kozijnspecialist.",
+      "description": "Plaats je aanvraag op /aanvraag met details over kozijnen vervangen, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Plaats je aanvraag voor kozijnvervanging",
       "secondaryLabel": "Terug naar kozijnen",
       "secondaryHref": "/kozijnen"
@@ -6421,16 +6514,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer ramen en deuren in beeld komt",
         "paragraphs": [
-          "Deze pagina helpt bij klachten rond bediening, tocht en sluiting van ramen en deuren.",
-          "Bij ramen en deuren draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van ramen en deuren op comfort, veiligheid of planning benoemt, kan een kozijnspecialist sneller prioriteiten bepalen."
+          "Wanneer ramen en deuren in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer ramen en deuren in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van kozijnwerk rond ramen en deuren concreet maken.",
+          "Voor wanneer ramen en deuren in beeld komt beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Signalen dat kozijnen of aansluitingen aandacht vragen — ramen en deuren",
         "paragraphs": [
-          "Signalen bij ramen en deuren beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van ramen en deuren te noteren, maak je je aanvraag concreter."
+          "Signalen dat kozijnen of aansluitingen aandacht vragen — ramen en deuren: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij signalen dat kozijnen of aansluitingen aandacht vragen — ramen en deuren tellen factoren zoals klemmende delen, tocht rond sluiting en slijtage van beslag mee, omdat ze de omvang en aanpak van kozijnwerk rond ramen en deuren concreet maken.",
+          "Voor signalen dat kozijnen of aansluitingen aandacht vragen — ramen en deuren beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "klemmende delen",
@@ -6441,8 +6535,9 @@ const rawServiceSubPages = {
       {
         "heading": "Mogelijke oorzaken van tocht, slijtage of klemmen — ramen en deuren",
         "paragraphs": [
-          "De oorzaak van ramen en deuren ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij ramen en deuren helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Mogelijke oorzaken van tocht, slijtage of klemmen — ramen en deuren: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij mogelijke oorzaken van tocht, slijtage of klemmen — ramen en deuren tellen factoren zoals verouderde onderdelen, scheefstand en onvoldoende afstelling mee, omdat ze de omvang en aanpak van kozijnwerk rond ramen en deuren concreet maken.",
+          "Voor mogelijke oorzaken van tocht, slijtage of klemmen — ramen en deuren beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "verouderde onderdelen",
@@ -6453,9 +6548,9 @@ const rawServiceSubPages = {
       {
         "heading": "Wat een kozijnspecialist doorgaans beoordeelt (ramen en deuren) — ramen en deuren",
         "paragraphs": [
-          "Een kozijnspecialist pakt ramen en deuren meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij ramen en deuren voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor ramen en deuren direct scherper maken."
+          "Wat een kozijnspecialist doorgaans beoordeelt (ramen en deuren) — ramen en deuren: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij wat een kozijnspecialist doorgaans beoordeelt (ramen en deuren) — ramen en deuren tellen factoren zoals controle van beslag en sluitpunten, afstellen of vervangen en aansluiten op kozijnconditie mee, omdat ze de omvang en aanpak van kozijnwerk rond ramen en deuren concreet maken.",
+          "Voor wat een kozijnspecialist doorgaans beoordeelt (ramen en deuren) — ramen en deuren beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "controle van beslag en sluitpunten",
@@ -6466,8 +6561,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in materiaal, herstel en vervanging — ramen en deuren",
         "paragraphs": [
-          "Bij ramen en deuren zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor ramen en deuren logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in materiaal, herstel en vervanging — ramen en deuren: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in materiaal, herstel en vervanging — ramen en deuren tellen factoren zoals onderdelen vervangen of compleet vernieuwen en combineren met kozijnproject mee, omdat ze de omvang en aanpak van kozijnwerk rond ramen en deuren concreet maken.",
+          "Voor keuzes in materiaal, herstel en vervanging — ramen en deuren beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "onderdelen vervangen of compleet vernieuwen",
@@ -6477,17 +6573,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke gegevens je aanvraag echt sterker maken — ramen en deuren",
         "paragraphs": [
-          "Een sterke aanvraag voor ramen en deuren bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als ramen en deuren samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van ramen en deuren en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke gegevens je aanvraag echt sterker maken — ramen en deuren: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke gegevens je aanvraag echt sterker maken — ramen en deuren tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van kozijnwerk rond ramen en deuren concreet maken.",
+          "Voor welke gegevens je aanvraag echt sterker maken — ramen en deuren beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Wat uitstel betekent voor comfort en onderhoudskosten — ramen en deuren",
         "paragraphs": [
-          "Uitstel bij ramen en deuren kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer ramen en deuren terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om ramen en deuren tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Wat uitstel betekent voor comfort en onderhoudskosten — ramen en deuren: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij wat uitstel betekent voor comfort en onderhoudskosten — ramen en deuren tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van kozijnwerk rond ramen en deuren concreet maken.",
+          "Voor wat uitstel betekent voor comfort en onderhoudskosten — ramen en deuren beoordeelt een kozijnspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op tocht, vocht en comfortverlies toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -6540,7 +6636,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je ramen en deuren-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over ramen en deuren, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende kozijnspecialist.",
+      "description": "Plaats je aanvraag op /aanvraag met details over ramen en deuren, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Vraag een specialist voor ramen en deuren",
       "secondaryLabel": "Terug naar kozijnen",
       "secondaryHref": "/kozijnen"
@@ -6583,16 +6679,17 @@ const rawServiceSubPages = {
       {
         "heading": "Van huidige situatie naar een uitvoerbaar renovatieplan",
         "paragraphs": [
-          "Deze zoekintentie gaat over het samenbrengen van ontwerp, techniek en planning tot een uitvoerbaar renovatieplan.",
-          "Bij renovatie draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van renovatie op comfort, veiligheid of planning benoemt, kan een badkamerspecialist sneller prioriteiten bepalen."
+          "Van huidige situatie naar een uitvoerbaar renovatieplan: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij van huidige situatie naar een uitvoerbaar renovatieplan tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van badkamerwerk rond renovatie concreet maken.",
+          "Voor van huidige situatie naar een uitvoerbaar renovatieplan beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Welke signalen laten zien dat de badkamer aan vernieuwing toe is — renovatie",
         "paragraphs": [
-          "Signalen bij renovatie beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van renovatie te noteren, maak je je aanvraag concreter."
+          "Welke signalen laten zien dat de badkamer aan vernieuwing toe is — renovatie: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij welke signalen laten zien dat de badkamer aan vernieuwing toe is — renovatie tellen factoren zoals verouderde indeling, lekkage of vochtproblemen en sanitair dat niet meer past mee, omdat ze de omvang en aanpak van badkamerwerk rond renovatie concreet maken.",
+          "Voor welke signalen laten zien dat de badkamer aan vernieuwing toe is — renovatie beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "verouderde indeling",
@@ -6603,8 +6700,9 @@ const rawServiceSubPages = {
       {
         "heading": "Technische oorzaken achter vocht- of gebruiksproblemen — renovatie",
         "paragraphs": [
-          "De oorzaak van renovatie ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij renovatie helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Technische oorzaken achter vocht- of gebruiksproblemen — renovatie: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij technische oorzaken achter vocht- of gebruiksproblemen — renovatie tellen factoren zoals slijtage, ouder leidingwerk en onvoldoende ventilatie mee, omdat ze de omvang en aanpak van badkamerwerk rond renovatie concreet maken.",
+          "Voor technische oorzaken achter vocht- of gebruiksproblemen — renovatie beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "slijtage",
@@ -6615,9 +6713,9 @@ const rawServiceSubPages = {
       {
         "heading": "Wat een specialist eerst in kaart brengt (renovatie) — renovatie",
         "paragraphs": [
-          "Een badkamerspecialist pakt renovatie meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij renovatie voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor renovatie direct scherper maken."
+          "Wat een specialist eerst in kaart brengt (renovatie) — renovatie: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij wat een specialist eerst in kaart brengt (renovatie) — renovatie tellen factoren zoals huidige situatie in kaart brengen, sloop en voorbereiding plannen, water, afvoer, elektra en ventilatie afstemmen en tegelwerk en sanitair in logische volgorde uitvoeren mee, omdat ze de omvang en aanpak van badkamerwerk rond renovatie concreet maken.",
+          "Voor wat een specialist eerst in kaart brengt (renovatie) — renovatie beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "huidige situatie in kaart brengen",
@@ -6629,8 +6727,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in scope, indeling en combinatie met installatiewerk — renovatie",
         "paragraphs": [
-          "Bij renovatie zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor renovatie logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in scope, indeling en combinatie met installatiewerk — renovatie: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in scope, indeling en combinatie met installatiewerk — renovatie tellen factoren zoals deelrenovatie of complete aanpak, huidige indeling verbeteren of volledig wijzigen en combinatie met loodgieter- en elektricienwerk mee, omdat ze de omvang en aanpak van badkamerwerk rond renovatie concreet maken.",
+          "Voor keuzes in scope, indeling en combinatie met installatiewerk — renovatie beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "deelrenovatie of complete aanpak",
@@ -6641,25 +6740,26 @@ const rawServiceSubPages = {
       {
         "heading": "Welke input nodig is voor een realistische offertefase — renovatie",
         "paragraphs": [
-          "Een sterke aanvraag voor renovatie bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als renovatie samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van renovatie en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke input nodig is voor een realistische offertefase — renovatie: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke input nodig is voor een realistische offertefase — renovatie tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van badkamerwerk rond renovatie concreet maken.",
+          "Voor welke input nodig is voor een realistische offertefase — renovatie beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Gevolgen van uitstel bij vocht en slijtage — renovatie",
         "paragraphs": [
-          "Uitstel bij renovatie kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer renovatie terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om renovatie tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Gevolgen van uitstel bij vocht en slijtage — renovatie: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij gevolgen van uitstel bij vocht en slijtage — renovatie tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van badkamerwerk rond renovatie concreet maken.",
+          "Voor gevolgen van uitstel bij vocht en slijtage — renovatie beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "type": "warning"
       },
       {
         "heading": "Planning tussen sloop, techniek en afwerking — renovatie",
         "paragraphs": [
-          "De planning van renovatie wordt vaak bepaald door bereikbaarheid, voorbereiding en afhankelijkheid van andere disciplines.",
-          "Als je voor renovatie vooraf duidelijk bent over gewenste timing en flexibiliteit, kan de specialist realistischer plannen."
+          "Planning tussen sloop, techniek en afwerking — renovatie: Een zorgvuldige beoordeling van dit onderdeel maakt offertes beter vergelijkbaar en realistischer.",
+          "Bij planning tussen sloop, techniek en afwerking — renovatie tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van badkamerwerk rond renovatie concreet maken.",
+          "Voor planning tussen sloop, techniek en afwerking — renovatie beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -6723,7 +6823,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je badkamerrenovatie-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over renovatie, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende badkamerspecialist.",
+      "description": "Plaats je aanvraag op /aanvraag met details over renovatie, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Start je badkamerrenovatie",
       "secondaryLabel": "Terug naar badkamer",
       "secondaryHref": "/badkamer"
@@ -6766,16 +6866,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer badkamer tegelen in beeld komt",
         "paragraphs": [
-          "Bezoekers willen weten hoe tegelkeuze en voorbereiding samenhangen met kwaliteit en onderhoud.",
-          "Bij tegelen draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van tegelen op comfort, veiligheid of planning benoemt, kan een badkamerspecialist sneller prioriteiten bepalen."
+          "Wanneer badkamer tegelen in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer badkamer tegelen in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van badkamerwerk rond tegelen concreet maken.",
+          "Voor wanneer badkamer tegelen in beeld komt beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Welke signalen laten zien dat de badkamer aan vernieuwing toe is — tegelen",
         "paragraphs": [
-          "Signalen bij tegelen beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van tegelen te noteren, maak je je aanvraag concreter."
+          "Welke signalen laten zien dat de badkamer aan vernieuwing toe is — tegelen: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij welke signalen laten zien dat de badkamer aan vernieuwing toe is — tegelen tellen factoren zoals losse tegels, scheuren in voegwerk en verouderde uitstraling mee, omdat ze de omvang en aanpak van badkamerwerk rond tegelen concreet maken.",
+          "Voor welke signalen laten zien dat de badkamer aan vernieuwing toe is — tegelen beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "losse tegels",
@@ -6786,8 +6887,9 @@ const rawServiceSubPages = {
       {
         "heading": "Technische oorzaken achter vocht- of gebruiksproblemen — tegelen",
         "paragraphs": [
-          "De oorzaak van tegelen ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij tegelen helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Technische oorzaken achter vocht- of gebruiksproblemen — tegelen: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij technische oorzaken achter vocht- of gebruiksproblemen — tegelen tellen factoren zoals onvoldoende hechting, vochtbelasting en ondergrondbeweging mee, omdat ze de omvang en aanpak van badkamerwerk rond tegelen concreet maken.",
+          "Voor technische oorzaken achter vocht- of gebruiksproblemen — tegelen beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "onvoldoende hechting",
@@ -6798,9 +6900,9 @@ const rawServiceSubPages = {
       {
         "heading": "Wat een specialist eerst in kaart brengt (tegelen) — tegelen",
         "paragraphs": [
-          "Een badkamerspecialist pakt tegelen meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij tegelen voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor tegelen direct scherper maken."
+          "Wat een specialist eerst in kaart brengt (tegelen) — tegelen: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij wat een specialist eerst in kaart brengt (tegelen) — tegelen tellen factoren zoals ondergrond controleren, waterdichting beoordelen, tegels plaatsen en voegen en afwerken van kritieke randen mee, omdat ze de omvang en aanpak van badkamerwerk rond tegelen concreet maken.",
+          "Voor wat een specialist eerst in kaart brengt (tegelen) — tegelen beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "ondergrond controleren",
@@ -6812,8 +6914,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in scope, indeling en combinatie met installatiewerk — tegelen",
         "paragraphs": [
-          "Bij tegelen zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor tegelen logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in scope, indeling en combinatie met installatiewerk — tegelen: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in scope, indeling en combinatie met installatiewerk — tegelen tellen factoren zoals groot formaat of klassiek formaat, wand, vloer of combinatie en voegkleur en onderhoudsgemak mee, omdat ze de omvang en aanpak van badkamerwerk rond tegelen concreet maken.",
+          "Voor keuzes in scope, indeling en combinatie met installatiewerk — tegelen beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "groot formaat of klassiek formaat",
@@ -6824,17 +6927,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke input nodig is voor een realistische offertefase — tegelen",
         "paragraphs": [
-          "Een sterke aanvraag voor tegelen bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als tegelen samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van tegelen en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke input nodig is voor een realistische offertefase — tegelen: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke input nodig is voor een realistische offertefase — tegelen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van badkamerwerk rond tegelen concreet maken.",
+          "Voor welke input nodig is voor een realistische offertefase — tegelen beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Gevolgen van uitstel bij vocht en slijtage — tegelen",
         "paragraphs": [
-          "Uitstel bij tegelen kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer tegelen terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om tegelen tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Gevolgen van uitstel bij vocht en slijtage — tegelen: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij gevolgen van uitstel bij vocht en slijtage — tegelen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van badkamerwerk rond tegelen concreet maken.",
+          "Voor gevolgen van uitstel bij vocht en slijtage — tegelen beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -6887,7 +6990,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je badkamer tegelen-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over tegelen, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende badkamerspecialist.",
+      "description": "Plaats je aanvraag op /aanvraag met details over tegelen, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Vraag badkamer-tegelwerk aan",
       "secondaryLabel": "Terug naar badkamer",
       "secondaryHref": "/badkamer"
@@ -6930,16 +7033,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer badkamer sanitair in beeld komt",
         "paragraphs": [
-          "De pagina helpt bezoekers om sanitairkeuzes te koppelen aan technische haalbaarheid.",
-          "Bij sanitair draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van sanitair op comfort, veiligheid of planning benoemt, kan een badkamerspecialist sneller prioriteiten bepalen."
+          "Wanneer badkamer sanitair in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer badkamer sanitair in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van badkamerwerk rond sanitair concreet maken.",
+          "Voor wanneer badkamer sanitair in beeld komt beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Welke signalen laten zien dat de badkamer aan vernieuwing toe is — sanitair",
         "paragraphs": [
-          "Signalen bij sanitair beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van sanitair te noteren, maak je je aanvraag concreter."
+          "Welke signalen laten zien dat de badkamer aan vernieuwing toe is — sanitair: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij welke signalen laten zien dat de badkamer aan vernieuwing toe is — sanitair tellen factoren zoals lekkende aansluitingen, versleten elementen en onpraktische opstelling mee, omdat ze de omvang en aanpak van badkamerwerk rond sanitair concreet maken.",
+          "Voor welke signalen laten zien dat de badkamer aan vernieuwing toe is — sanitair beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "lekkende aansluitingen",
@@ -6950,8 +7054,9 @@ const rawServiceSubPages = {
       {
         "heading": "Technische oorzaken achter vocht- of gebruiksproblemen — sanitair",
         "paragraphs": [
-          "De oorzaak van sanitair ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij sanitair helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Technische oorzaken achter vocht- of gebruiksproblemen — sanitair: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij technische oorzaken achter vocht- of gebruiksproblemen — sanitair tellen factoren zoals slijtage, oude aansluitpunten en gewijzigde comfortwensen mee, omdat ze de omvang en aanpak van badkamerwerk rond sanitair concreet maken.",
+          "Voor technische oorzaken achter vocht- of gebruiksproblemen — sanitair beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "slijtage",
@@ -6962,9 +7067,9 @@ const rawServiceSubPages = {
       {
         "heading": "Wat een specialist eerst in kaart brengt (sanitair) — sanitair",
         "paragraphs": [
-          "Een badkamerspecialist pakt sanitair meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij sanitair voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor sanitair direct scherper maken."
+          "Wat een specialist eerst in kaart brengt (sanitair) — sanitair: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij wat een specialist eerst in kaart brengt (sanitair) — sanitair tellen factoren zoals opstelling beoordelen, nieuw sanitair selecteren en aansluiten, afstellen en afdichten mee, omdat ze de omvang en aanpak van badkamerwerk rond sanitair concreet maken.",
+          "Voor wat een specialist eerst in kaart brengt (sanitair) — sanitair beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "opstelling beoordelen",
@@ -6975,8 +7080,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in scope, indeling en combinatie met installatiewerk — sanitair",
         "paragraphs": [
-          "Bij sanitair zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor sanitair logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in scope, indeling en combinatie met installatiewerk — sanitair: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in scope, indeling en combinatie met installatiewerk — sanitair tellen factoren zoals deelvervanging of complete set, eigen inkoop of adviestraject en combinatie met tegelwerk mee, omdat ze de omvang en aanpak van badkamerwerk rond sanitair concreet maken.",
+          "Voor keuzes in scope, indeling en combinatie met installatiewerk — sanitair beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "deelvervanging of complete set",
@@ -6987,17 +7093,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke input nodig is voor een realistische offertefase — sanitair",
         "paragraphs": [
-          "Een sterke aanvraag voor sanitair bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als sanitair samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van sanitair en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke input nodig is voor een realistische offertefase — sanitair: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke input nodig is voor een realistische offertefase — sanitair tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van badkamerwerk rond sanitair concreet maken.",
+          "Voor welke input nodig is voor een realistische offertefase — sanitair beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Gevolgen van uitstel bij vocht en slijtage — sanitair",
         "paragraphs": [
-          "Uitstel bij sanitair kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer sanitair terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om sanitair tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Gevolgen van uitstel bij vocht en slijtage — sanitair: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij gevolgen van uitstel bij vocht en slijtage — sanitair tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van badkamerwerk rond sanitair concreet maken.",
+          "Voor gevolgen van uitstel bij vocht en slijtage — sanitair beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -7050,7 +7156,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je badkamer sanitair-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over sanitair, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende badkamerspecialist.",
+      "description": "Plaats je aanvraag op /aanvraag met details over sanitair, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Start je aanvraag voor badkamersanitair",
       "secondaryLabel": "Terug naar badkamer",
       "secondaryHref": "/badkamer"
@@ -7093,16 +7199,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer inloopdouche in beeld komt",
         "paragraphs": [
-          "Bezoekers willen weten of een inloopdouche haalbaar is in hun huidige badkamer.",
-          "Bij inloopdouche draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van inloopdouche op comfort, veiligheid of planning benoemt, kan een badkamerspecialist sneller prioriteiten bepalen."
+          "Wanneer inloopdouche in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer inloopdouche in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van badkamerwerk rond inloopdouche concreet maken.",
+          "Voor wanneer inloopdouche in beeld komt beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Welke signalen laten zien dat de badkamer aan vernieuwing toe is — inloopdouche",
         "paragraphs": [
-          "Signalen bij inloopdouche beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van inloopdouche te noteren, maak je je aanvraag concreter."
+          "Welke signalen laten zien dat de badkamer aan vernieuwing toe is — inloopdouche: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij welke signalen laten zien dat de badkamer aan vernieuwing toe is — inloopdouche tellen factoren zoals wens voor drempelloze douche, water blijft staan en oude douchezone voldoet niet mee, omdat ze de omvang en aanpak van badkamerwerk rond inloopdouche concreet maken.",
+          "Voor welke signalen laten zien dat de badkamer aan vernieuwing toe is — inloopdouche beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "wens voor drempelloze douche",
@@ -7113,8 +7220,9 @@ const rawServiceSubPages = {
       {
         "heading": "Technische oorzaken achter vocht- of gebruiksproblemen — inloopdouche",
         "paragraphs": [
-          "De oorzaak van inloopdouche ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij inloopdouche helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Technische oorzaken achter vocht- of gebruiksproblemen — inloopdouche: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij technische oorzaken achter vocht- of gebruiksproblemen — inloopdouche tellen factoren zoals onvoldoende afschot, beperkte afvoeroplossing en verouderde opbouw mee, omdat ze de omvang en aanpak van badkamerwerk rond inloopdouche concreet maken.",
+          "Voor technische oorzaken achter vocht- of gebruiksproblemen — inloopdouche beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "onvoldoende afschot",
@@ -7125,9 +7233,9 @@ const rawServiceSubPages = {
       {
         "heading": "Wat een specialist eerst in kaart brengt (inloopdouche) — inloopdouche",
         "paragraphs": [
-          "Een badkamerspecialist pakt inloopdouche meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij inloopdouche voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor inloopdouche direct scherper maken."
+          "Wat een specialist eerst in kaart brengt (inloopdouche) — inloopdouche: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij wat een specialist eerst in kaart brengt (inloopdouche) — inloopdouche tellen factoren zoals haalbaarheid beoordelen, vloer en afvoer aanpassen en waterdichte opbouw en afwerking maken mee, omdat ze de omvang en aanpak van badkamerwerk rond inloopdouche concreet maken.",
+          "Voor wat een specialist eerst in kaart brengt (inloopdouche) — inloopdouche beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "haalbaarheid beoordelen",
@@ -7138,8 +7246,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in scope, indeling en combinatie met installatiewerk — inloopdouche",
         "paragraphs": [
-          "Bij inloopdouche zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor inloopdouche logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in scope, indeling en combinatie met installatiewerk — inloopdouche: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in scope, indeling en combinatie met installatiewerk — inloopdouche tellen factoren zoals lineaire drain of put, glasoplossing en indeling en combinatie met volledige renovatie mee, omdat ze de omvang en aanpak van badkamerwerk rond inloopdouche concreet maken.",
+          "Voor keuzes in scope, indeling en combinatie met installatiewerk — inloopdouche beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "lineaire drain of put",
@@ -7150,17 +7259,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke input nodig is voor een realistische offertefase — inloopdouche",
         "paragraphs": [
-          "Een sterke aanvraag voor inloopdouche bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als inloopdouche samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van inloopdouche en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke input nodig is voor een realistische offertefase — inloopdouche: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke input nodig is voor een realistische offertefase — inloopdouche tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van badkamerwerk rond inloopdouche concreet maken.",
+          "Voor welke input nodig is voor een realistische offertefase — inloopdouche beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Gevolgen van uitstel bij vocht en slijtage — inloopdouche",
         "paragraphs": [
-          "Uitstel bij inloopdouche kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer inloopdouche terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om inloopdouche tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Gevolgen van uitstel bij vocht en slijtage — inloopdouche: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij gevolgen van uitstel bij vocht en slijtage — inloopdouche tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van badkamerwerk rond inloopdouche concreet maken.",
+          "Voor gevolgen van uitstel bij vocht en slijtage — inloopdouche beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -7213,7 +7322,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je inloopdouche-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over inloopdouche, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende badkamerspecialist.",
+      "description": "Plaats je aanvraag op /aanvraag met details over inloopdouche, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Vraag een specialist voor inloopdouche",
       "secondaryLabel": "Terug naar badkamer",
       "secondaryHref": "/badkamer"
@@ -7256,16 +7365,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer complete badkamer in beeld komt",
         "paragraphs": [
-          "De bezoeker zoekt overzicht en realistische verwachtingen voor een totaalproject.",
-          "Bij complete badkamer draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van complete badkamer op comfort, veiligheid of planning benoemt, kan een badkamerspecialist sneller prioriteiten bepalen."
+          "Wanneer complete badkamer in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer complete badkamer in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van badkamerwerk rond complete badkamer concreet maken.",
+          "Voor wanneer complete badkamer in beeld komt beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Welke signalen laten zien dat de badkamer aan vernieuwing toe is — complete badkamer",
         "paragraphs": [
-          "Signalen bij complete badkamer beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van complete badkamer te noteren, maak je je aanvraag concreter."
+          "Welke signalen laten zien dat de badkamer aan vernieuwing toe is — complete badkamer: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij welke signalen laten zien dat de badkamer aan vernieuwing toe is — complete badkamer tellen factoren zoals meerdere gebreken tegelijk, technisch en visueel verouderd en wens voor nieuwe indeling mee, omdat ze de omvang en aanpak van badkamerwerk rond complete badkamer concreet maken.",
+          "Voor welke signalen laten zien dat de badkamer aan vernieuwing toe is — complete badkamer beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "meerdere gebreken tegelijk",
@@ -7276,8 +7386,9 @@ const rawServiceSubPages = {
       {
         "heading": "Technische oorzaken achter vocht- of gebruiksproblemen — complete badkamer",
         "paragraphs": [
-          "De oorzaak van complete badkamer ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij complete badkamer helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Technische oorzaken achter vocht- of gebruiksproblemen — complete badkamer: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij technische oorzaken achter vocht- of gebruiksproblemen — complete badkamer tellen factoren zoals ouderdom van installatie, opstapeling van kleine problemen en nieuwe woonbehoefte mee, omdat ze de omvang en aanpak van badkamerwerk rond complete badkamer concreet maken.",
+          "Voor technische oorzaken achter vocht- of gebruiksproblemen — complete badkamer beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "ouderdom van installatie",
@@ -7288,9 +7399,9 @@ const rawServiceSubPages = {
       {
         "heading": "Wat een specialist eerst in kaart brengt (complete badkamer) — complete badkamer",
         "paragraphs": [
-          "Een badkamerspecialist pakt complete badkamer meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij complete badkamer voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor complete badkamer direct scherper maken."
+          "Wat een specialist eerst in kaart brengt (complete badkamer) — complete badkamer: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij wat een specialist eerst in kaart brengt (complete badkamer) — complete badkamer tellen factoren zoals inventariseren en prioriteren, technische disciplines afstemmen en volledige uitvoering en oplevering mee, omdat ze de omvang en aanpak van badkamerwerk rond complete badkamer concreet maken.",
+          "Voor wat een specialist eerst in kaart brengt (complete badkamer) — complete badkamer beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "inventariseren en prioriteren",
@@ -7301,8 +7412,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in scope, indeling en combinatie met installatiewerk — complete badkamer",
         "paragraphs": [
-          "Bij complete badkamer zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor complete badkamer logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in scope, indeling en combinatie met installatiewerk — complete badkamer: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in scope, indeling en combinatie met installatiewerk — complete badkamer tellen factoren zoals basisrenovatie of luxe afwerking en gefaseerde planning of alles in één traject mee, omdat ze de omvang en aanpak van badkamerwerk rond complete badkamer concreet maken.",
+          "Voor keuzes in scope, indeling en combinatie met installatiewerk — complete badkamer beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "basisrenovatie of luxe afwerking",
@@ -7312,17 +7424,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke input nodig is voor een realistische offertefase — complete badkamer",
         "paragraphs": [
-          "Een sterke aanvraag voor complete badkamer bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als complete badkamer samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van complete badkamer en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke input nodig is voor een realistische offertefase — complete badkamer: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke input nodig is voor een realistische offertefase — complete badkamer tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van badkamerwerk rond complete badkamer concreet maken.",
+          "Voor welke input nodig is voor een realistische offertefase — complete badkamer beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Gevolgen van uitstel bij vocht en slijtage — complete badkamer",
         "paragraphs": [
-          "Uitstel bij complete badkamer kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer complete badkamer terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om complete badkamer tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Gevolgen van uitstel bij vocht en slijtage — complete badkamer: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij gevolgen van uitstel bij vocht en slijtage — complete badkamer tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van badkamerwerk rond complete badkamer concreet maken.",
+          "Voor gevolgen van uitstel bij vocht en slijtage — complete badkamer beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -7375,7 +7487,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je complete badkamer-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over complete badkamer, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende badkamerspecialist.",
+      "description": "Plaats je aanvraag op /aanvraag met details over complete badkamer, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Plaats je complete badkamer-aanvraag",
       "secondaryLabel": "Terug naar badkamer",
       "secondaryHref": "/badkamer"
@@ -7418,16 +7530,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer badkamerventilatie in beeld komt",
         "paragraphs": [
-          "Deze pagina helpt bij vragen over vocht, schimmel en luchtkwaliteit in natte ruimtes.",
-          "Bij ventilatie draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van ventilatie op comfort, veiligheid of planning benoemt, kan een badkamerspecialist sneller prioriteiten bepalen."
+          "Wanneer badkamerventilatie in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer badkamerventilatie in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van badkamerwerk rond ventilatie concreet maken.",
+          "Voor wanneer badkamerventilatie in beeld komt beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Welke signalen laten zien dat de badkamer aan vernieuwing toe is — ventilatie",
         "paragraphs": [
-          "Signalen bij ventilatie beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van ventilatie te noteren, maak je je aanvraag concreter."
+          "Welke signalen laten zien dat de badkamer aan vernieuwing toe is — ventilatie: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij welke signalen laten zien dat de badkamer aan vernieuwing toe is — ventilatie tellen factoren zoals lang natte oppervlakken, schimmel in voegen en blijvende muffe geur mee, omdat ze de omvang en aanpak van badkamerwerk rond ventilatie concreet maken.",
+          "Voor welke signalen laten zien dat de badkamer aan vernieuwing toe is — ventilatie beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "lang natte oppervlakken",
@@ -7438,8 +7551,9 @@ const rawServiceSubPages = {
       {
         "heading": "Technische oorzaken achter vocht- of gebruiksproblemen — ventilatie",
         "paragraphs": [
-          "De oorzaak van ventilatie ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij ventilatie helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Technische oorzaken achter vocht- of gebruiksproblemen — ventilatie: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij technische oorzaken achter vocht- of gebruiksproblemen — ventilatie tellen factoren zoals onvoldoende afzuiging, verouderde ventilator en onjuiste luchtstroom mee, omdat ze de omvang en aanpak van badkamerwerk rond ventilatie concreet maken.",
+          "Voor technische oorzaken achter vocht- of gebruiksproblemen — ventilatie beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "onvoldoende afzuiging",
@@ -7450,9 +7564,9 @@ const rawServiceSubPages = {
       {
         "heading": "Wat een specialist eerst in kaart brengt (ventilatie) — ventilatie",
         "paragraphs": [
-          "Een badkamerspecialist pakt ventilatie meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij ventilatie voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor ventilatie direct scherper maken."
+          "Wat een specialist eerst in kaart brengt (ventilatie) — ventilatie: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij wat een specialist eerst in kaart brengt (ventilatie) — ventilatie tellen factoren zoals ventilatieprestatie beoordelen, componenten verbeteren of vervangen en afstemmen met badkamergebruik mee, omdat ze de omvang en aanpak van badkamerwerk rond ventilatie concreet maken.",
+          "Voor wat een specialist eerst in kaart brengt (ventilatie) — ventilatie beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "ventilatieprestatie beoordelen",
@@ -7463,8 +7577,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in scope, indeling en combinatie met installatiewerk — ventilatie",
         "paragraphs": [
-          "Bij ventilatie zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor ventilatie logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in scope, indeling en combinatie met installatiewerk — ventilatie: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in scope, indeling en combinatie met installatiewerk — ventilatie tellen factoren zoals lokaal ventilatieherstel of integrale renovatie en combineren met elektra-aanpassing mee, omdat ze de omvang en aanpak van badkamerwerk rond ventilatie concreet maken.",
+          "Voor keuzes in scope, indeling en combinatie met installatiewerk — ventilatie beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "lokaal ventilatieherstel of integrale renovatie",
@@ -7474,17 +7589,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke input nodig is voor een realistische offertefase — ventilatie",
         "paragraphs": [
-          "Een sterke aanvraag voor ventilatie bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als ventilatie samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van ventilatie en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke input nodig is voor een realistische offertefase — ventilatie: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke input nodig is voor een realistische offertefase — ventilatie tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van badkamerwerk rond ventilatie concreet maken.",
+          "Voor welke input nodig is voor een realistische offertefase — ventilatie beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Gevolgen van uitstel bij vocht en slijtage — ventilatie",
         "paragraphs": [
-          "Uitstel bij ventilatie kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer ventilatie terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om ventilatie tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Gevolgen van uitstel bij vocht en slijtage — ventilatie: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij gevolgen van uitstel bij vocht en slijtage — ventilatie tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van badkamerwerk rond ventilatie concreet maken.",
+          "Voor gevolgen van uitstel bij vocht en slijtage — ventilatie beoordeelt een badkamerspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op vochtproblemen en functieverlies toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -7537,7 +7652,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je badkamerventilatie-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over ventilatie, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende badkamerspecialist.",
+      "description": "Plaats je aanvraag op /aanvraag met details over ventilatie, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Start je aanvraag voor badkamerventilatie",
       "secondaryLabel": "Terug naar badkamer",
       "secondaryHref": "/badkamer"
@@ -7580,16 +7695,17 @@ const rawServiceSubPages = {
       {
         "heading": "Hellend dak en plat dak vragen een andere benadering",
         "paragraphs": [
-          "De bezoeker wil begrijpen welke isolatie-aanpak past bij zijn dak en verbouwingsplannen.",
-          "Bij dakisolatie draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van dakisolatie op comfort, veiligheid of planning benoemt, kan een isolatiespecialist sneller prioriteiten bepalen."
+          "Hellend dak en plat dak vragen een andere benadering: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij hellend dak en plat dak vragen een andere benadering tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van isolatiewerk rond dakisolatie concreet maken.",
+          "Voor hellend dak en plat dak vragen een andere benadering beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Signalen dat isolatieverbetering zinvol is — dakisolatie",
         "paragraphs": [
-          "Signalen bij dakisolatie beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van dakisolatie te noteren, maak je je aanvraag concreter."
+          "Signalen dat isolatieverbetering zinvol is — dakisolatie: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij signalen dat isolatieverbetering zinvol is — dakisolatie tellen factoren zoals koude bovenverdieping, hoge stookvraag en tocht op zolder mee, omdat ze de omvang en aanpak van isolatiewerk rond dakisolatie concreet maken.",
+          "Voor signalen dat isolatieverbetering zinvol is — dakisolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "koude bovenverdieping",
@@ -7600,8 +7716,9 @@ const rawServiceSubPages = {
       {
         "heading": "Waardoor comfortverlies en warmteverlies ontstaan — dakisolatie",
         "paragraphs": [
-          "De oorzaak van dakisolatie ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij dakisolatie helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Waardoor comfortverlies en warmteverlies ontstaan — dakisolatie: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij waardoor comfortverlies en warmteverlies ontstaan — dakisolatie tellen factoren zoals onvoldoende isolatielaag, oude dakopbouw en zwakke aansluitingen mee, omdat ze de omvang en aanpak van isolatiewerk rond dakisolatie concreet maken.",
+          "Voor waardoor comfortverlies en warmteverlies ontstaan — dakisolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "onvoldoende isolatielaag",
@@ -7612,9 +7729,9 @@ const rawServiceSubPages = {
       {
         "heading": "Wat een isolatiespecialist beoordeelt vóór uitvoering (dakisolatie) — dakisolatie",
         "paragraphs": [
-          "Een isolatiespecialist pakt dakisolatie meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij dakisolatie voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor dakisolatie direct scherper maken."
+          "Wat een isolatiespecialist beoordeelt vóór uitvoering (dakisolatie) — dakisolatie: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij wat een isolatiespecialist beoordeelt vóór uitvoering (dakisolatie) — dakisolatie tellen factoren zoals daktype en opbouw beoordelen, methode kiezen (binnenzijde of buitenzijde) en uitvoering combineren met details en ventilatie mee, omdat ze de omvang en aanpak van isolatiewerk rond dakisolatie concreet maken.",
+          "Voor wat een isolatiespecialist beoordeelt vóór uitvoering (dakisolatie) — dakisolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "daktype en opbouw beoordelen",
@@ -7625,8 +7742,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in methode, materiaal en combinatiemaatregelen — dakisolatie",
         "paragraphs": [
-          "Bij dakisolatie zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor dakisolatie logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in methode, materiaal en combinatiemaatregelen — dakisolatie: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in methode, materiaal en combinatiemaatregelen — dakisolatie tellen factoren zoals isoleren bij renovatie of als losse maatregel, focus op comfort, energie of beide en combinatie met dakrenovatie mee, omdat ze de omvang en aanpak van isolatiewerk rond dakisolatie concreet maken.",
+          "Voor keuzes in methode, materiaal en combinatiemaatregelen — dakisolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "isoleren bij renovatie of als losse maatregel",
@@ -7637,17 +7755,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke woninginformatie je vooraf moet delen — dakisolatie",
         "paragraphs": [
-          "Een sterke aanvraag voor dakisolatie bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als dakisolatie samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van dakisolatie en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke woninginformatie je vooraf moet delen — dakisolatie: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke woninginformatie je vooraf moet delen — dakisolatie tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van isolatiewerk rond dakisolatie concreet maken.",
+          "Voor welke woninginformatie je vooraf moet delen — dakisolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Wat uitstel betekent voor comfort en energiegebruik — dakisolatie",
         "paragraphs": [
-          "Uitstel bij dakisolatie kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer dakisolatie terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om dakisolatie tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Wat uitstel betekent voor comfort en energiegebruik — dakisolatie: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij wat uitstel betekent voor comfort en energiegebruik — dakisolatie tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van isolatiewerk rond dakisolatie concreet maken.",
+          "Voor wat uitstel betekent voor comfort en energiegebruik — dakisolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -7701,7 +7819,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je dakisolatie-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over dakisolatie, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende isolatiespecialist.",
+      "description": "Plaats je aanvraag op /aanvraag met details over dakisolatie, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Vraag dakisolatie aan",
       "secondaryLabel": "Terug naar isolatie",
       "secondaryHref": "/isolatie"
@@ -7744,16 +7862,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer spouwmuurisolatie in beeld komt",
         "paragraphs": [
-          "Bezoekers zoeken een realistisch beeld van geschiktheid en effect bij bestaande bouw.",
-          "Bij spouwmuurisolatie draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van spouwmuurisolatie op comfort, veiligheid of planning benoemt, kan een isolatiespecialist sneller prioriteiten bepalen."
+          "Wanneer spouwmuurisolatie in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer spouwmuurisolatie in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van isolatiewerk rond spouwmuurisolatie concreet maken.",
+          "Voor wanneer spouwmuurisolatie in beeld komt beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Signalen dat isolatieverbetering zinvol is — spouwmuurisolatie",
         "paragraphs": [
-          "Signalen bij spouwmuurisolatie beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van spouwmuurisolatie te noteren, maak je je aanvraag concreter."
+          "Signalen dat isolatieverbetering zinvol is — spouwmuurisolatie: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij signalen dat isolatieverbetering zinvol is — spouwmuurisolatie tellen factoren zoals koude buitenmuren, tochtbeleving en hoge energievraag mee, omdat ze de omvang en aanpak van isolatiewerk rond spouwmuurisolatie concreet maken.",
+          "Voor signalen dat isolatieverbetering zinvol is — spouwmuurisolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "koude buitenmuren",
@@ -7764,8 +7883,9 @@ const rawServiceSubPages = {
       {
         "heading": "Waardoor comfortverlies en warmteverlies ontstaan — spouwmuurisolatie",
         "paragraphs": [
-          "De oorzaak van spouwmuurisolatie ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij spouwmuurisolatie helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Waardoor comfortverlies en warmteverlies ontstaan — spouwmuurisolatie: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij waardoor comfortverlies en warmteverlies ontstaan — spouwmuurisolatie tellen factoren zoals lege spouw, onregelmatige vulling en vochtbelasting mee, omdat ze de omvang en aanpak van isolatiewerk rond spouwmuurisolatie concreet maken.",
+          "Voor waardoor comfortverlies en warmteverlies ontstaan — spouwmuurisolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "lege spouw",
@@ -7776,9 +7896,9 @@ const rawServiceSubPages = {
       {
         "heading": "Wat een isolatiespecialist beoordeelt vóór uitvoering (spouwmuurisolatie) — spouwmuurisolatie",
         "paragraphs": [
-          "Een isolatiespecialist pakt spouwmuurisolatie meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij spouwmuurisolatie voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor spouwmuurisolatie direct scherper maken."
+          "Wat een isolatiespecialist beoordeelt vóór uitvoering (spouwmuurisolatie) — spouwmuurisolatie: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij wat een isolatiespecialist beoordeelt vóór uitvoering (spouwmuurisolatie) — spouwmuurisolatie tellen factoren zoals spouwconditie beoordelen, geschikt materiaal inblazen en controle op resultaat mee, omdat ze de omvang en aanpak van isolatiewerk rond spouwmuurisolatie concreet maken.",
+          "Voor wat een isolatiespecialist beoordeelt vóór uitvoering (spouwmuurisolatie) — spouwmuurisolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "spouwconditie beoordelen",
@@ -7789,8 +7909,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in methode, materiaal en combinatiemaatregelen — spouwmuurisolatie",
         "paragraphs": [
-          "Bij spouwmuurisolatie zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor spouwmuurisolatie logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in methode, materiaal en combinatiemaatregelen — spouwmuurisolatie: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in methode, materiaal en combinatiemaatregelen — spouwmuurisolatie tellen factoren zoals losse maatregel of onderdeel van bredere renovatie en combineren met gevel- of kozijnwerk mee, omdat ze de omvang en aanpak van isolatiewerk rond spouwmuurisolatie concreet maken.",
+          "Voor keuzes in methode, materiaal en combinatiemaatregelen — spouwmuurisolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "losse maatregel of onderdeel van bredere renovatie",
@@ -7800,17 +7921,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke woninginformatie je vooraf moet delen — spouwmuurisolatie",
         "paragraphs": [
-          "Een sterke aanvraag voor spouwmuurisolatie bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als spouwmuurisolatie samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van spouwmuurisolatie en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke woninginformatie je vooraf moet delen — spouwmuurisolatie: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke woninginformatie je vooraf moet delen — spouwmuurisolatie tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van isolatiewerk rond spouwmuurisolatie concreet maken.",
+          "Voor welke woninginformatie je vooraf moet delen — spouwmuurisolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Wat uitstel betekent voor comfort en energiegebruik — spouwmuurisolatie",
         "paragraphs": [
-          "Uitstel bij spouwmuurisolatie kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer spouwmuurisolatie terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om spouwmuurisolatie tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Wat uitstel betekent voor comfort en energiegebruik — spouwmuurisolatie: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij wat uitstel betekent voor comfort en energiegebruik — spouwmuurisolatie tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van isolatiewerk rond spouwmuurisolatie concreet maken.",
+          "Voor wat uitstel betekent voor comfort en energiegebruik — spouwmuurisolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -7863,7 +7984,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je spouwmuurisolatie-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over spouwmuurisolatie, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende isolatiespecialist.",
+      "description": "Plaats je aanvraag op /aanvraag met details over spouwmuurisolatie, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Start je aanvraag voor spouwmuurisolatie",
       "secondaryLabel": "Terug naar isolatie",
       "secondaryHref": "/isolatie"
@@ -7906,16 +8027,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer vloerisolatie in beeld komt",
         "paragraphs": [
-          "Deze pagina wordt vooral bezocht door bewoners met koude vloeren of tochtklachten op de begane grond.",
-          "Bij vloerisolatie draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van vloerisolatie op comfort, veiligheid of planning benoemt, kan een isolatiespecialist sneller prioriteiten bepalen."
+          "Wanneer vloerisolatie in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer vloerisolatie in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van isolatiewerk rond vloerisolatie concreet maken.",
+          "Voor wanneer vloerisolatie in beeld komt beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Signalen dat isolatieverbetering zinvol is — vloerisolatie",
         "paragraphs": [
-          "Signalen bij vloerisolatie beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van vloerisolatie te noteren, maak je je aanvraag concreter."
+          "Signalen dat isolatieverbetering zinvol is — vloerisolatie: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij signalen dat isolatieverbetering zinvol is — vloerisolatie tellen factoren zoals koude vloer, tocht langs plinten en vochtige kruipruimte mee, omdat ze de omvang en aanpak van isolatiewerk rond vloerisolatie concreet maken.",
+          "Voor signalen dat isolatieverbetering zinvol is — vloerisolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "koude vloer",
@@ -7926,8 +8048,9 @@ const rawServiceSubPages = {
       {
         "heading": "Waardoor comfortverlies en warmteverlies ontstaan — vloerisolatie",
         "paragraphs": [
-          "De oorzaak van vloerisolatie ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij vloerisolatie helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Waardoor comfortverlies en warmteverlies ontstaan — vloerisolatie: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij waardoor comfortverlies en warmteverlies ontstaan — vloerisolatie tellen factoren zoals ongeïsoleerde vloer, koude lucht uit kruipruimte en vochtbelasting mee, omdat ze de omvang en aanpak van isolatiewerk rond vloerisolatie concreet maken.",
+          "Voor waardoor comfortverlies en warmteverlies ontstaan — vloerisolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "ongeïsoleerde vloer",
@@ -7938,9 +8061,9 @@ const rawServiceSubPages = {
       {
         "heading": "Wat een isolatiespecialist beoordeelt vóór uitvoering (vloerisolatie) — vloerisolatie",
         "paragraphs": [
-          "Een isolatiespecialist pakt vloerisolatie meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij vloerisolatie voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor vloerisolatie direct scherper maken."
+          "Wat een isolatiespecialist beoordeelt vóór uitvoering (vloerisolatie) — vloerisolatie: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij wat een isolatiespecialist beoordeelt vóór uitvoering (vloerisolatie) — vloerisolatie tellen factoren zoals kruipruimte inspecteren, geschikte isolatiemethode kiezen en uitvoering en controle mee, omdat ze de omvang en aanpak van isolatiewerk rond vloerisolatie concreet maken.",
+          "Voor wat een isolatiespecialist beoordeelt vóór uitvoering (vloerisolatie) — vloerisolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "kruipruimte inspecteren",
@@ -7951,8 +8074,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in methode, materiaal en combinatiemaatregelen — vloerisolatie",
         "paragraphs": [
-          "Bij vloerisolatie zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor vloerisolatie logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in methode, materiaal en combinatiemaatregelen — vloerisolatie: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in methode, materiaal en combinatiemaatregelen — vloerisolatie tellen factoren zoals vloer- of bodemgerichte aanpak en combineren met kruipruimte-isolatie mee, omdat ze de omvang en aanpak van isolatiewerk rond vloerisolatie concreet maken.",
+          "Voor keuzes in methode, materiaal en combinatiemaatregelen — vloerisolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "vloer- of bodemgerichte aanpak",
@@ -7962,17 +8086,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke woninginformatie je vooraf moet delen — vloerisolatie",
         "paragraphs": [
-          "Een sterke aanvraag voor vloerisolatie bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als vloerisolatie samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van vloerisolatie en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke woninginformatie je vooraf moet delen — vloerisolatie: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke woninginformatie je vooraf moet delen — vloerisolatie tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van isolatiewerk rond vloerisolatie concreet maken.",
+          "Voor welke woninginformatie je vooraf moet delen — vloerisolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Wat uitstel betekent voor comfort en energiegebruik — vloerisolatie",
         "paragraphs": [
-          "Uitstel bij vloerisolatie kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer vloerisolatie terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om vloerisolatie tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Wat uitstel betekent voor comfort en energiegebruik — vloerisolatie: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij wat uitstel betekent voor comfort en energiegebruik — vloerisolatie tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van isolatiewerk rond vloerisolatie concreet maken.",
+          "Voor wat uitstel betekent voor comfort en energiegebruik — vloerisolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -8025,7 +8149,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je vloerisolatie-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over vloerisolatie, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende isolatiespecialist.",
+      "description": "Plaats je aanvraag op /aanvraag met details over vloerisolatie, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Vraag vloerisolatie aan",
       "secondaryLabel": "Terug naar isolatie",
       "secondaryHref": "/isolatie"
@@ -8068,16 +8192,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer gevelisolatie in beeld komt",
         "paragraphs": [
-          "De bezoeker wil weten hoe gevelisolatie zich verhoudt tot uitstraling, bouwdetails en comfort.",
-          "Bij gevelisolatie draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van gevelisolatie op comfort, veiligheid of planning benoemt, kan een isolatiespecialist sneller prioriteiten bepalen."
+          "Wanneer gevelisolatie in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer gevelisolatie in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van isolatiewerk rond gevelisolatie concreet maken.",
+          "Voor wanneer gevelisolatie in beeld komt beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Signalen dat isolatieverbetering zinvol is — gevelisolatie",
         "paragraphs": [
-          "Signalen bij gevelisolatie beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van gevelisolatie te noteren, maak je je aanvraag concreter."
+          "Signalen dat isolatieverbetering zinvol is — gevelisolatie: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij signalen dat isolatieverbetering zinvol is — gevelisolatie tellen factoren zoals koude buitenwanden, hoge warmteverliezen en renovatie van gevelafwerking mee, omdat ze de omvang en aanpak van isolatiewerk rond gevelisolatie concreet maken.",
+          "Voor signalen dat isolatieverbetering zinvol is — gevelisolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "koude buitenwanden",
@@ -8088,8 +8213,9 @@ const rawServiceSubPages = {
       {
         "heading": "Waardoor comfortverlies en warmteverlies ontstaan — gevelisolatie",
         "paragraphs": [
-          "De oorzaak van gevelisolatie ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij gevelisolatie helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Waardoor comfortverlies en warmteverlies ontstaan — gevelisolatie: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij waardoor comfortverlies en warmteverlies ontstaan — gevelisolatie tellen factoren zoals onvoldoende isolatieschil, verouderde gevelopbouw en koudebruggen mee, omdat ze de omvang en aanpak van isolatiewerk rond gevelisolatie concreet maken.",
+          "Voor waardoor comfortverlies en warmteverlies ontstaan — gevelisolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "onvoldoende isolatieschil",
@@ -8100,9 +8226,9 @@ const rawServiceSubPages = {
       {
         "heading": "Wat een isolatiespecialist beoordeelt vóór uitvoering (gevelisolatie) — gevelisolatie",
         "paragraphs": [
-          "Een isolatiespecialist pakt gevelisolatie meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij gevelisolatie voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor gevelisolatie direct scherper maken."
+          "Wat een isolatiespecialist beoordeelt vóór uitvoering (gevelisolatie) — gevelisolatie: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij wat een isolatiespecialist beoordeelt vóór uitvoering (gevelisolatie) — gevelisolatie tellen factoren zoals gevelsituatie analyseren, systeemkeuze en detaillering bepalen en uitvoering met nette aansluitingen mee, omdat ze de omvang en aanpak van isolatiewerk rond gevelisolatie concreet maken.",
+          "Voor wat een isolatiespecialist beoordeelt vóór uitvoering (gevelisolatie) — gevelisolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "gevelsituatie analyseren",
@@ -8113,8 +8239,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in methode, materiaal en combinatiemaatregelen — gevelisolatie",
         "paragraphs": [
-          "Bij gevelisolatie zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor gevelisolatie logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in methode, materiaal en combinatiemaatregelen — gevelisolatie: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in methode, materiaal en combinatiemaatregelen — gevelisolatie tellen factoren zoals binnen- of buitengevelbenadering en combineren met kozijnproject mee, omdat ze de omvang en aanpak van isolatiewerk rond gevelisolatie concreet maken.",
+          "Voor keuzes in methode, materiaal en combinatiemaatregelen — gevelisolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "binnen- of buitengevelbenadering",
@@ -8124,17 +8251,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke woninginformatie je vooraf moet delen — gevelisolatie",
         "paragraphs": [
-          "Een sterke aanvraag voor gevelisolatie bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als gevelisolatie samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van gevelisolatie en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke woninginformatie je vooraf moet delen — gevelisolatie: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke woninginformatie je vooraf moet delen — gevelisolatie tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van isolatiewerk rond gevelisolatie concreet maken.",
+          "Voor welke woninginformatie je vooraf moet delen — gevelisolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Wat uitstel betekent voor comfort en energiegebruik — gevelisolatie",
         "paragraphs": [
-          "Uitstel bij gevelisolatie kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer gevelisolatie terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om gevelisolatie tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Wat uitstel betekent voor comfort en energiegebruik — gevelisolatie: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij wat uitstel betekent voor comfort en energiegebruik — gevelisolatie tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van isolatiewerk rond gevelisolatie concreet maken.",
+          "Voor wat uitstel betekent voor comfort en energiegebruik — gevelisolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -8187,7 +8314,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je gevelisolatie-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over gevelisolatie, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende isolatiespecialist.",
+      "description": "Plaats je aanvraag op /aanvraag met details over gevelisolatie, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Beschrijf je gevelisolatieklus",
       "secondaryLabel": "Terug naar isolatie",
       "secondaryHref": "/isolatie"
@@ -8230,16 +8357,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer kruipruimte isolatie in beeld komt",
         "paragraphs": [
-          "Deze pagina helpt bezoekers die koude vloeren koppelen aan een vochtige kruipruimte.",
-          "Bij kruipruimte isolatie draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van kruipruimte isolatie op comfort, veiligheid of planning benoemt, kan een isolatiespecialist sneller prioriteiten bepalen."
+          "Wanneer kruipruimte isolatie in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer kruipruimte isolatie in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van isolatiewerk rond kruipruimte isolatie concreet maken.",
+          "Voor wanneer kruipruimte isolatie in beeld komt beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Signalen dat isolatieverbetering zinvol is — kruipruimte isolatie",
         "paragraphs": [
-          "Signalen bij kruipruimte isolatie beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van kruipruimte isolatie te noteren, maak je je aanvraag concreter."
+          "Signalen dat isolatieverbetering zinvol is — kruipruimte isolatie: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij signalen dat isolatieverbetering zinvol is — kruipruimte isolatie tellen factoren zoals koude trek op begane grond, vochtige lucht en muffe geur mee, omdat ze de omvang en aanpak van isolatiewerk rond kruipruimte isolatie concreet maken.",
+          "Voor signalen dat isolatieverbetering zinvol is — kruipruimte isolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "koude trek op begane grond",
@@ -8250,8 +8378,9 @@ const rawServiceSubPages = {
       {
         "heading": "Waardoor comfortverlies en warmteverlies ontstaan — kruipruimte isolatie",
         "paragraphs": [
-          "De oorzaak van kruipruimte isolatie ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij kruipruimte isolatie helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Waardoor comfortverlies en warmteverlies ontstaan — kruipruimte isolatie: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij waardoor comfortverlies en warmteverlies ontstaan — kruipruimte isolatie tellen factoren zoals onvoldoende isolatie, hoge vochtbelasting en beperkte ventilatie mee, omdat ze de omvang en aanpak van isolatiewerk rond kruipruimte isolatie concreet maken.",
+          "Voor waardoor comfortverlies en warmteverlies ontstaan — kruipruimte isolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "onvoldoende isolatie",
@@ -8262,9 +8391,9 @@ const rawServiceSubPages = {
       {
         "heading": "Wat een isolatiespecialist beoordeelt vóór uitvoering (kruipruimte isolatie) — kruipruimte isolatie",
         "paragraphs": [
-          "Een isolatiespecialist pakt kruipruimte isolatie meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij kruipruimte isolatie voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor kruipruimte isolatie direct scherper maken."
+          "Wat een isolatiespecialist beoordeelt vóór uitvoering (kruipruimte isolatie) — kruipruimte isolatie: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij wat een isolatiespecialist beoordeelt vóór uitvoering (kruipruimte isolatie) — kruipruimte isolatie tellen factoren zoals toegang en staat beoordelen, methode kiezen en uitvoering en controle mee, omdat ze de omvang en aanpak van isolatiewerk rond kruipruimte isolatie concreet maken.",
+          "Voor wat een isolatiespecialist beoordeelt vóór uitvoering (kruipruimte isolatie) — kruipruimte isolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "toegang en staat beoordelen",
@@ -8275,8 +8404,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in methode, materiaal en combinatiemaatregelen — kruipruimte isolatie",
         "paragraphs": [
-          "Bij kruipruimte isolatie zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor kruipruimte isolatie logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in methode, materiaal en combinatiemaatregelen — kruipruimte isolatie: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in methode, materiaal en combinatiemaatregelen — kruipruimte isolatie tellen factoren zoals bodem- of vloerisolatie en combinatie met ventilatiemaatregelen mee, omdat ze de omvang en aanpak van isolatiewerk rond kruipruimte isolatie concreet maken.",
+          "Voor keuzes in methode, materiaal en combinatiemaatregelen — kruipruimte isolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "bodem- of vloerisolatie",
@@ -8286,17 +8416,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke woninginformatie je vooraf moet delen — kruipruimte isolatie",
         "paragraphs": [
-          "Een sterke aanvraag voor kruipruimte isolatie bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als kruipruimte isolatie samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van kruipruimte isolatie en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke woninginformatie je vooraf moet delen — kruipruimte isolatie: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke woninginformatie je vooraf moet delen — kruipruimte isolatie tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van isolatiewerk rond kruipruimte isolatie concreet maken.",
+          "Voor welke woninginformatie je vooraf moet delen — kruipruimte isolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Wat uitstel betekent voor comfort en energiegebruik — kruipruimte isolatie",
         "paragraphs": [
-          "Uitstel bij kruipruimte isolatie kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer kruipruimte isolatie terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om kruipruimte isolatie tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Wat uitstel betekent voor comfort en energiegebruik — kruipruimte isolatie: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij wat uitstel betekent voor comfort en energiegebruik — kruipruimte isolatie tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van isolatiewerk rond kruipruimte isolatie concreet maken.",
+          "Voor wat uitstel betekent voor comfort en energiegebruik — kruipruimte isolatie beoordeelt een isolatiespecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op warmteverlies en condensproblemen toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -8349,7 +8479,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je kruipruimte isolatie-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over kruipruimte isolatie, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende isolatiespecialist.",
+      "description": "Plaats je aanvraag op /aanvraag met details over kruipruimte isolatie, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Vraag kruipruimte-isolatie aan",
       "secondaryLabel": "Terug naar isolatie",
       "secondaryHref": "/isolatie"
@@ -8392,16 +8522,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer aanbouw in beeld komt",
         "paragraphs": [
-          "Bezoekers willen weten hoe je extra ruimte realiseert met realistische planning en scope.",
-          "Bij aanbouw draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van aanbouw op comfort, veiligheid of planning benoemt, kan een verbouwspecialist sneller prioriteiten bepalen."
+          "Wanneer aanbouw in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer aanbouw in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van verbouwwerk rond aanbouw concreet maken.",
+          "Voor wanneer aanbouw in beeld komt beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Wanneer een verbouwing meestal in beeld komt — aanbouw",
         "paragraphs": [
-          "Signalen bij aanbouw beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van aanbouw te noteren, maak je je aanvraag concreter."
+          "Wanneer een verbouwing meestal in beeld komt — aanbouw: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij wanneer een verbouwing meestal in beeld komt — aanbouw tellen factoren zoals structureel ruimtegebrek, wens voor grotere leefruimte en functionele uitbreiding mee, omdat ze de omvang en aanpak van verbouwwerk rond aanbouw concreet maken.",
+          "Voor wanneer een verbouwing meestal in beeld komt — aanbouw beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "structureel ruimtegebrek",
@@ -8412,8 +8543,9 @@ const rawServiceSubPages = {
       {
         "heading": "Oorzaken van knelpunten in ruimte of woninggebruik — aanbouw",
         "paragraphs": [
-          "De oorzaak van aanbouw ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij aanbouw helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Oorzaken van knelpunten in ruimte of woninggebruik — aanbouw: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij oorzaken van knelpunten in ruimte of woninggebruik — aanbouw tellen factoren zoals veranderde gezinssituatie, onvoldoende huidige indeling en toekomstige woonwensen mee, omdat ze de omvang en aanpak van verbouwwerk rond aanbouw concreet maken.",
+          "Voor oorzaken van knelpunten in ruimte of woninggebruik — aanbouw beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "veranderde gezinssituatie",
@@ -8424,9 +8556,9 @@ const rawServiceSubPages = {
       {
         "heading": "Eerste beoordeling door een verbouwspecialist (aanbouw) — aanbouw",
         "paragraphs": [
-          "Een verbouwspecialist pakt aanbouw meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij aanbouw voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor aanbouw direct scherper maken."
+          "Eerste beoordeling door een verbouwspecialist (aanbouw) — aanbouw: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij eerste beoordeling door een verbouwspecialist (aanbouw) — aanbouw tellen factoren zoals scope en haalbaarheid bepalen, bouwkundige voorbereiding en uitvoering en aansluiting op bestaande woning mee, omdat ze de omvang en aanpak van verbouwwerk rond aanbouw concreet maken.",
+          "Voor eerste beoordeling door een verbouwspecialist (aanbouw) — aanbouw beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "scope en haalbaarheid bepalen",
@@ -8437,8 +8569,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in fasering, scope en combinatieklussen — aanbouw",
         "paragraphs": [
-          "Bij aanbouw zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor aanbouw logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in fasering, scope en combinatieklussen — aanbouw: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in fasering, scope en combinatieklussen — aanbouw tellen factoren zoals compacte of ruime aanbouw, fasering van project en combinatie met installatiewerk mee, omdat ze de omvang en aanpak van verbouwwerk rond aanbouw concreet maken.",
+          "Voor keuzes in fasering, scope en combinatieklussen — aanbouw beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "compacte of ruime aanbouw",
@@ -8449,17 +8582,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke projectinformatie je aanvraag sterker maakt — aanbouw",
         "paragraphs": [
-          "Een sterke aanvraag voor aanbouw bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als aanbouw samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van aanbouw en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke projectinformatie je aanvraag sterker maakt — aanbouw: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke projectinformatie je aanvraag sterker maakt — aanbouw tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van verbouwwerk rond aanbouw concreet maken.",
+          "Voor welke projectinformatie je aanvraag sterker maakt — aanbouw beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Risico’s van uitstel of onduidelijke scope — aanbouw",
         "paragraphs": [
-          "Uitstel bij aanbouw kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer aanbouw terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om aanbouw tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Risico’s van uitstel of onduidelijke scope — aanbouw: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij risico’s van uitstel of onduidelijke scope — aanbouw tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van verbouwwerk rond aanbouw concreet maken.",
+          "Voor risico’s van uitstel of onduidelijke scope — aanbouw beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -8512,7 +8645,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je aanbouw-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over aanbouw, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende verbouwspecialist.",
+      "description": "Plaats je aanvraag op /aanvraag met details over aanbouw, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Start je aanvraag voor aanbouw",
       "secondaryLabel": "Terug naar verbouwing",
       "secondaryHref": "/verbouwing"
@@ -8555,16 +8688,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer uitbouw in beeld komt",
         "paragraphs": [
-          "Deze pagina richt zich op bezoekers die hun bestaande ruimte willen vergroten zonder verhuizing.",
-          "Bij uitbouw draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van uitbouw op comfort, veiligheid of planning benoemt, kan een verbouwspecialist sneller prioriteiten bepalen."
+          "Wanneer uitbouw in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer uitbouw in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van verbouwwerk rond uitbouw concreet maken.",
+          "Voor wanneer uitbouw in beeld komt beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Wanneer een verbouwing meestal in beeld komt — uitbouw",
         "paragraphs": [
-          "Signalen bij uitbouw beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van uitbouw te noteren, maak je je aanvraag concreter."
+          "Wanneer een verbouwing meestal in beeld komt — uitbouw: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij wanneer een verbouwing meestal in beeld komt — uitbouw tellen factoren zoals te beperkte woonkeuken, krappe woonkamer en wens voor open plattegrond mee, omdat ze de omvang en aanpak van verbouwwerk rond uitbouw concreet maken.",
+          "Voor wanneer een verbouwing meestal in beeld komt — uitbouw beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "te beperkte woonkeuken",
@@ -8575,8 +8709,9 @@ const rawServiceSubPages = {
       {
         "heading": "Oorzaken van knelpunten in ruimte of woninggebruik — uitbouw",
         "paragraphs": [
-          "De oorzaak van uitbouw ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij uitbouw helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Oorzaken van knelpunten in ruimte of woninggebruik — uitbouw: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij oorzaken van knelpunten in ruimte of woninggebruik — uitbouw tellen factoren zoals huidige woningindeling en nieuwe gebruiksbehoeften mee, omdat ze de omvang en aanpak van verbouwwerk rond uitbouw concreet maken.",
+          "Voor oorzaken van knelpunten in ruimte of woninggebruik — uitbouw beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "huidige woningindeling",
@@ -8586,9 +8721,9 @@ const rawServiceSubPages = {
       {
         "heading": "Eerste beoordeling door een verbouwspecialist (uitbouw) — uitbouw",
         "paragraphs": [
-          "Een verbouwspecialist pakt uitbouw meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij uitbouw voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor uitbouw direct scherper maken."
+          "Eerste beoordeling door een verbouwspecialist (uitbouw) — uitbouw: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij eerste beoordeling door een verbouwspecialist (uitbouw) — uitbouw tellen factoren zoals mogelijkheden verkennen, constructie en afwerking plannen en uitvoering met installatiewerk afstemmen mee, omdat ze de omvang en aanpak van verbouwwerk rond uitbouw concreet maken.",
+          "Voor eerste beoordeling door een verbouwspecialist (uitbouw) — uitbouw beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "mogelijkheden verkennen",
@@ -8599,8 +8734,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in fasering, scope en combinatieklussen — uitbouw",
         "paragraphs": [
-          "Bij uitbouw zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor uitbouw logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in fasering, scope en combinatieklussen — uitbouw: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in fasering, scope en combinatieklussen — uitbouw tellen factoren zoals kleine of grote uitbreiding, combinatie met keukenverbouwing en gefaseerde aanpak mee, omdat ze de omvang en aanpak van verbouwwerk rond uitbouw concreet maken.",
+          "Voor keuzes in fasering, scope en combinatieklussen — uitbouw beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "kleine of grote uitbreiding",
@@ -8611,17 +8747,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke projectinformatie je aanvraag sterker maakt — uitbouw",
         "paragraphs": [
-          "Een sterke aanvraag voor uitbouw bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als uitbouw samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van uitbouw en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke projectinformatie je aanvraag sterker maakt — uitbouw: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke projectinformatie je aanvraag sterker maakt — uitbouw tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van verbouwwerk rond uitbouw concreet maken.",
+          "Voor welke projectinformatie je aanvraag sterker maakt — uitbouw beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Risico’s van uitstel of onduidelijke scope — uitbouw",
         "paragraphs": [
-          "Uitstel bij uitbouw kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer uitbouw terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om uitbouw tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Risico’s van uitstel of onduidelijke scope — uitbouw: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij risico’s van uitstel of onduidelijke scope — uitbouw tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van verbouwwerk rond uitbouw concreet maken.",
+          "Voor risico’s van uitstel of onduidelijke scope — uitbouw beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -8674,7 +8810,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je uitbouw-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over uitbouw, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende verbouwspecialist.",
+      "description": "Plaats je aanvraag op /aanvraag met details over uitbouw, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Vraag een specialist voor uitbouw",
       "secondaryLabel": "Terug naar verbouwing",
       "secondaryHref": "/verbouwing"
@@ -8717,16 +8853,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer zolder verbouwen in beeld komt",
         "paragraphs": [
-          "Bezoekers zoeken een stappenplan voor comfort, indeling en techniek op zolderniveau.",
-          "Bij zolder verbouwen draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van zolder verbouwen op comfort, veiligheid of planning benoemt, kan een verbouwspecialist sneller prioriteiten bepalen."
+          "Wanneer zolder verbouwen in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer zolder verbouwen in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van verbouwwerk rond zolder verbouwen concreet maken.",
+          "Voor wanneer zolder verbouwen in beeld komt beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Wanneer een verbouwing meestal in beeld komt — zolder verbouwen",
         "paragraphs": [
-          "Signalen bij zolder verbouwen beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van zolder verbouwen te noteren, maak je je aanvraag concreter."
+          "Wanneer een verbouwing meestal in beeld komt — zolder verbouwen: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij wanneer een verbouwing meestal in beeld komt — zolder verbouwen tellen factoren zoals onbenutte ruimte, tekort aan kamers en comfortproblemen op zolder mee, omdat ze de omvang en aanpak van verbouwwerk rond zolder verbouwen concreet maken.",
+          "Voor wanneer een verbouwing meestal in beeld komt — zolder verbouwen beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "onbenutte ruimte",
@@ -8737,8 +8874,9 @@ const rawServiceSubPages = {
       {
         "heading": "Oorzaken van knelpunten in ruimte of woninggebruik — zolder verbouwen",
         "paragraphs": [
-          "De oorzaak van zolder verbouwen ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij zolder verbouwen helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Oorzaken van knelpunten in ruimte of woninggebruik — zolder verbouwen: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij oorzaken van knelpunten in ruimte of woninggebruik — zolder verbouwen tellen factoren zoals gebrek aan isolatie, onpraktische indeling en onvoldoende licht of elektra mee, omdat ze de omvang en aanpak van verbouwwerk rond zolder verbouwen concreet maken.",
+          "Voor oorzaken van knelpunten in ruimte of woninggebruik — zolder verbouwen beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "gebrek aan isolatie",
@@ -8749,9 +8887,9 @@ const rawServiceSubPages = {
       {
         "heading": "Eerste beoordeling door een verbouwspecialist (zolder verbouwen) — zolder verbouwen",
         "paragraphs": [
-          "Een verbouwspecialist pakt zolder verbouwen meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij zolder verbouwen voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor zolder verbouwen direct scherper maken."
+          "Eerste beoordeling door een verbouwspecialist (zolder verbouwen) — zolder verbouwen: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij eerste beoordeling door een verbouwspecialist (zolder verbouwen) — zolder verbouwen tellen factoren zoals functiedoel bepalen, isolatie en installaties afstemmen en afbouw voor dagelijks gebruik mee, omdat ze de omvang en aanpak van verbouwwerk rond zolder verbouwen concreet maken.",
+          "Voor eerste beoordeling door een verbouwspecialist (zolder verbouwen) — zolder verbouwen beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "functiedoel bepalen",
@@ -8762,8 +8900,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in fasering, scope en combinatieklussen — zolder verbouwen",
         "paragraphs": [
-          "Bij zolder verbouwen zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor zolder verbouwen logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in fasering, scope en combinatieklussen — zolder verbouwen: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in fasering, scope en combinatieklussen — zolder verbouwen tellen factoren zoals slaapkamer, werkplek of multifunctioneel en combinatie met dakisolatie mee, omdat ze de omvang en aanpak van verbouwwerk rond zolder verbouwen concreet maken.",
+          "Voor keuzes in fasering, scope en combinatieklussen — zolder verbouwen beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "slaapkamer, werkplek of multifunctioneel",
@@ -8773,17 +8912,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke projectinformatie je aanvraag sterker maakt — zolder verbouwen",
         "paragraphs": [
-          "Een sterke aanvraag voor zolder verbouwen bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als zolder verbouwen samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van zolder verbouwen en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke projectinformatie je aanvraag sterker maakt — zolder verbouwen: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke projectinformatie je aanvraag sterker maakt — zolder verbouwen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van verbouwwerk rond zolder verbouwen concreet maken.",
+          "Voor welke projectinformatie je aanvraag sterker maakt — zolder verbouwen beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Risico’s van uitstel of onduidelijke scope — zolder verbouwen",
         "paragraphs": [
-          "Uitstel bij zolder verbouwen kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer zolder verbouwen terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om zolder verbouwen tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Risico’s van uitstel of onduidelijke scope — zolder verbouwen: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij risico’s van uitstel of onduidelijke scope — zolder verbouwen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van verbouwwerk rond zolder verbouwen concreet maken.",
+          "Voor risico’s van uitstel of onduidelijke scope — zolder verbouwen beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -8836,7 +8975,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je zolder verbouwen-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over zolder verbouwen, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende verbouwspecialist.",
+      "description": "Plaats je aanvraag op /aanvraag met details over zolder verbouwen, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Plaats je zolderverbouwing-aanvraag",
       "secondaryLabel": "Terug naar verbouwing",
       "secondaryHref": "/verbouwing"
@@ -8879,16 +9018,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer woning renoveren in beeld komt",
         "paragraphs": [
-          "Deze zoekintentie gaat over samenhang: hoe pak je meerdere woningproblemen logisch en beheersbaar aan.",
-          "Bij woning renoveren draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van woning renoveren op comfort, veiligheid of planning benoemt, kan een verbouwspecialist sneller prioriteiten bepalen."
+          "Wanneer woning renoveren in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer woning renoveren in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van verbouwwerk rond woning renoveren concreet maken.",
+          "Voor wanneer woning renoveren in beeld komt beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Wanneer een verbouwing meestal in beeld komt — woning renoveren",
         "paragraphs": [
-          "Signalen bij woning renoveren beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van woning renoveren te noteren, maak je je aanvraag concreter."
+          "Wanneer een verbouwing meestal in beeld komt — woning renoveren: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij wanneer een verbouwing meestal in beeld komt — woning renoveren tellen factoren zoals meerdere verouderde onderdelen, comfort- en onderhoudsproblemen en installaties voldoen niet meer mee, omdat ze de omvang en aanpak van verbouwwerk rond woning renoveren concreet maken.",
+          "Voor wanneer een verbouwing meestal in beeld komt — woning renoveren beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "meerdere verouderde onderdelen",
@@ -8899,8 +9039,9 @@ const rawServiceSubPages = {
       {
         "heading": "Oorzaken van knelpunten in ruimte of woninggebruik — woning renoveren",
         "paragraphs": [
-          "De oorzaak van woning renoveren ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij woning renoveren helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Oorzaken van knelpunten in ruimte of woninggebruik — woning renoveren: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij oorzaken van knelpunten in ruimte of woninggebruik — woning renoveren tellen factoren zoals achterstallig onderhoud, technische veroudering en gewijzigde woonwensen mee, omdat ze de omvang en aanpak van verbouwwerk rond woning renoveren concreet maken.",
+          "Voor oorzaken van knelpunten in ruimte of woninggebruik — woning renoveren beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "achterstallig onderhoud",
@@ -8911,9 +9052,9 @@ const rawServiceSubPages = {
       {
         "heading": "Eerste beoordeling door een verbouwspecialist (woning renoveren) — woning renoveren",
         "paragraphs": [
-          "Een verbouwspecialist pakt woning renoveren meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij woning renoveren voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor woning renoveren direct scherper maken."
+          "Eerste beoordeling door een verbouwspecialist (woning renoveren) — woning renoveren: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij eerste beoordeling door een verbouwspecialist (woning renoveren) — woning renoveren tellen factoren zoals prioriteiten stellen, fasering bepalen en uitvoering en controle per fase mee, omdat ze de omvang en aanpak van verbouwwerk rond woning renoveren concreet maken.",
+          "Voor eerste beoordeling door een verbouwspecialist (woning renoveren) — woning renoveren beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "prioriteiten stellen",
@@ -8924,8 +9065,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in fasering, scope en combinatieklussen — woning renoveren",
         "paragraphs": [
-          "Bij woning renoveren zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor woning renoveren logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in fasering, scope en combinatieklussen — woning renoveren: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in fasering, scope en combinatieklussen — woning renoveren tellen factoren zoals ruimtegerichte planning, combineren met isolatie en kozijnen en deelrenovatie versus totaalproject mee, omdat ze de omvang en aanpak van verbouwwerk rond woning renoveren concreet maken.",
+          "Voor keuzes in fasering, scope en combinatieklussen — woning renoveren beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "ruimtegerichte planning",
@@ -8936,17 +9078,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke projectinformatie je aanvraag sterker maakt — woning renoveren",
         "paragraphs": [
-          "Een sterke aanvraag voor woning renoveren bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als woning renoveren samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van woning renoveren en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke projectinformatie je aanvraag sterker maakt — woning renoveren: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke projectinformatie je aanvraag sterker maakt — woning renoveren tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van verbouwwerk rond woning renoveren concreet maken.",
+          "Voor welke projectinformatie je aanvraag sterker maakt — woning renoveren beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Risico’s van uitstel of onduidelijke scope — woning renoveren",
         "paragraphs": [
-          "Uitstel bij woning renoveren kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer woning renoveren terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om woning renoveren tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Risico’s van uitstel of onduidelijke scope — woning renoveren: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij risico’s van uitstel of onduidelijke scope — woning renoveren tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van verbouwwerk rond woning renoveren concreet maken.",
+          "Voor risico’s van uitstel of onduidelijke scope — woning renoveren beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -8999,7 +9141,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je woning renoveren-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over woning renoveren, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende verbouwspecialist.",
+      "description": "Plaats je aanvraag op /aanvraag met details over woning renoveren, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Start je woningrenovatie-aanvraag",
       "secondaryLabel": "Terug naar verbouwing",
       "secondaryHref": "/verbouwing"
@@ -9042,16 +9184,17 @@ const rawServiceSubPages = {
       {
         "heading": "Wanneer keuken verbouwen in beeld komt",
         "paragraphs": [
-          "Bezoekers willen weten hoe ze keukenwensen combineren met water, elektra en afwerking.",
-          "Bij keuken verbouwen draait de eerste beoordeling meestal om de vraag of het probleem lokaal is of onderdeel van een bredere situatie in de woning.",
-          "Wanneer je de impact van keuken verbouwen op comfort, veiligheid of planning benoemt, kan een verbouwspecialist sneller prioriteiten bepalen."
+          "Wanneer keuken verbouwen in beeld komt: In dit onderdeel wordt meestal eerst geïnventariseerd wat direct aandacht vraagt en wat gepland kan worden.",
+          "Bij wanneer keuken verbouwen in beeld komt tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van verbouwwerk rond keuken verbouwen concreet maken.",
+          "Voor wanneer keuken verbouwen in beeld komt beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Wanneer een verbouwing meestal in beeld komt — keuken verbouwen",
         "paragraphs": [
-          "Signalen bij keuken verbouwen beginnen vaak klein, maar worden opvallender wanneer de oorzaak blijft bestaan.",
-          "Door veranderingen in frequentie, intensiteit en timing van keuken verbouwen te noteren, maak je je aanvraag concreter."
+          "Wanneer een verbouwing meestal in beeld komt — keuken verbouwen: Dit onderwerp bepaalt vaak of een korte ingreep volstaat of dat een bredere aanpak verstandiger is.",
+          "Bij wanneer een verbouwing meestal in beeld komt — keuken verbouwen tellen factoren zoals onpraktische opstelling, verouderde apparatuur en te weinig werkruimte mee, omdat ze de omvang en aanpak van verbouwwerk rond keuken verbouwen concreet maken.",
+          "Voor wanneer een verbouwing meestal in beeld komt — keuken verbouwen beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "onpraktische opstelling",
@@ -9062,8 +9205,9 @@ const rawServiceSubPages = {
       {
         "heading": "Oorzaken van knelpunten in ruimte of woninggebruik — keuken verbouwen",
         "paragraphs": [
-          "De oorzaak van keuken verbouwen ligt vaak in een combinatie van materiaal, gebruik en detailuitvoering, niet in één los onderdeel.",
-          "Bij keuken verbouwen helpt het om zowel zichtbare symptomen als mogelijke nevenfactoren te benoemen, zodat de diagnose breder kan worden opgezet."
+          "Oorzaken van knelpunten in ruimte of woninggebruik — keuken verbouwen: Juist hier wordt duidelijk welke voorbereiding nodig is voordat uitvoering efficiënt kan starten.",
+          "Bij oorzaken van knelpunten in ruimte of woninggebruik — keuken verbouwen tellen factoren zoals gewijzigde gebruikswensen, technische beperkingen oude keuken en slijtage mee, omdat ze de omvang en aanpak van verbouwwerk rond keuken verbouwen concreet maken.",
+          "Voor oorzaken van knelpunten in ruimte of woninggebruik — keuken verbouwen beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "gewijzigde gebruikswensen",
@@ -9074,9 +9218,9 @@ const rawServiceSubPages = {
       {
         "heading": "Eerste beoordeling door een verbouwspecialist (keuken verbouwen) — keuken verbouwen",
         "paragraphs": [
-          "Een verbouwspecialist pakt keuken verbouwen meestal stap voor stap aan: eerst oorzaak bevestigen, daarna scope afbakenen en pas dan uitvoering plannen.",
-          "Bij keuken verbouwen voorkomt deze volgorde dat alleen een zichtbaar symptoom wordt aangepakt terwijl de kernoorzaak blijft bestaan.",
-          "Door vooraf context te delen over bereikbaarheid en eerdere ingrepen, kan de professional het plan voor keuken verbouwen direct scherper maken."
+          "Eerste beoordeling door een verbouwspecialist (keuken verbouwen) — keuken verbouwen: Dit deel van de klus heeft vaak invloed op keuzes in materiaal, planning en bereikbaarheid.",
+          "Bij eerste beoordeling door een verbouwspecialist (keuken verbouwen) — keuken verbouwen tellen factoren zoals huidige situatie opnemen, leiding- en elektra-aanpassingen plannen en plaatsing en afwerking mee, omdat ze de omvang en aanpak van verbouwwerk rond keuken verbouwen concreet maken.",
+          "Voor eerste beoordeling door een verbouwspecialist (keuken verbouwen) — keuken verbouwen beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "huidige situatie opnemen",
@@ -9087,8 +9231,9 @@ const rawServiceSubPages = {
       {
         "heading": "Keuzes in fasering, scope en combinatieklussen — keuken verbouwen",
         "paragraphs": [
-          "Bij keuken verbouwen zijn vaak meerdere routes mogelijk: tijdelijk stabiliseren, lokaal herstellen of een bredere structurele oplossing kiezen.",
-          "Welke route voor keuken verbouwen logisch is, hangt af van de staat van omliggende delen en van je planning met eventuele andere klussen."
+          "Keuzes in fasering, scope en combinatieklussen — keuken verbouwen: Wanneer dit onderdeel te laat wordt beoordeeld, loopt de kans op vervolgschade sneller op.",
+          "Bij keuzes in fasering, scope en combinatieklussen — keuken verbouwen tellen factoren zoals gedeeltelijke update of complete verbouwing, hergebruik van onderdelen of volledig nieuw en combinatie met uitbouw mee, omdat ze de omvang en aanpak van verbouwwerk rond keuken verbouwen concreet maken.",
+          "Voor keuzes in fasering, scope en combinatieklussen — keuken verbouwen beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ],
         "bullets": [
           "gedeeltelijke update of complete verbouwing",
@@ -9099,17 +9244,17 @@ const rawServiceSubPages = {
       {
         "heading": "Welke projectinformatie je aanvraag sterker maakt — keuken verbouwen",
         "paragraphs": [
-          "Een sterke aanvraag voor keuken verbouwen bevat altijd plaats, timing, zichtbare kenmerken en wat je al hebt laten controleren of uitvoeren.",
-          "Als keuken verbouwen samenhangt met andere werkzaamheden, vermeld dat direct zodat planning en volgorde vanaf het begin realistisch blijven.",
-          "Foto’s van keuken verbouwen en de omgeving helpen om sneller een passende specialist te koppelen via VakConnect."
+          "Welke projectinformatie je aanvraag sterker maakt — keuken verbouwen: Goede afstemming op dit punt voorkomt misverstanden over scope, timing en verwachte resultaten.",
+          "Bij welke projectinformatie je aanvraag sterker maakt — keuken verbouwen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van verbouwwerk rond keuken verbouwen concreet maken.",
+          "Voor welke projectinformatie je aanvraag sterker maakt — keuken verbouwen beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ]
       },
       {
         "heading": "Risico’s van uitstel of onduidelijke scope — keuken verbouwen",
         "paragraphs": [
-          "Uitstel bij keuken verbouwen kan in sommige gevallen, maar alleen wanneer de situatie stabiel is en geen extra schade of veiligheidsrisico geeft.",
-          "Wanneer keuken verbouwen terugkeert, wordt het probleem vaak minder voorspelbaar en neemt de kans op aanvullende herstelstappen toe.",
-          "Daarom is het meestal verstandig om keuken verbouwen tijdig te laten beoordelen in plaats van alleen symptomatisch te blijven reageren."
+          "Risico’s van uitstel of onduidelijke scope — keuken verbouwen: Dit is vaak het punt waarop verschillen tussen woningen en installaties het meest zichtbaar worden.",
+          "Bij risico’s van uitstel of onduidelijke scope — keuken verbouwen tellen factoren zoals bereikbaarheid, huidige staat en volgorde van uitvoering mee, omdat ze de omvang en aanpak van verbouwwerk rond keuken verbouwen concreet maken.",
+          "Voor risico’s van uitstel of onduidelijke scope — keuken verbouwen beoordeelt een verbouwspecialist meestal welke stap logisch volgt; zonder die afweging neemt de kans op uitloop en extra herstelwerk toe of wordt planning onnodig onrustig."
         ]
       }
     ],
@@ -9162,7 +9307,7 @@ const rawServiceSubPages = {
     ],
     "cta": {
       "title": "Beschrijf je keuken verbouwen-klus en vind een passende vakman",
-      "description": "Plaats je aanvraag op /aanvraag met details over keuken verbouwen, je locatie en gewenste timing. Zo kan VakConnect je koppelen aan een passende verbouwspecialist.",
+      "description": "Plaats je aanvraag op /aanvraag met details over keuken verbouwen, locatie en timing zodat de eerste beoordeling direct concreet is.",
       "label": "Vraag een specialist voor keukenverbouwing",
       "secondaryLabel": "Terug naar verbouwing",
       "secondaryHref": "/verbouwing"
