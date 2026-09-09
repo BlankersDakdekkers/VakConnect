@@ -3,15 +3,20 @@
 import { useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/button";
 
-export function SubmitButton({
-  children,
-  pendingLabel = "Opslaan...",
-  ...props
-}: Readonly<React.ComponentProps<typeof Button> & { pendingLabel?: string }>) {
+type SubmitButtonProps = {
+  children: React.ReactNode;
+  pendingLabel?: string;
+  variant?: "primary" | "secondary" | "ghost" | "danger";
+  size?: "default" | "sm" | "lg";
+  className?: string;
+  disabled?: boolean;
+};
+
+export function SubmitButton({ children, pendingLabel = "Opslaan...", disabled, ...props }: Readonly<SubmitButtonProps>) {
   const { pending } = useFormStatus();
 
   return (
-    <Button {...props} aria-disabled={pending} disabled={pending || props.disabled}>
+    <Button type="submit" {...props} aria-disabled={pending} disabled={pending || disabled}>
       {pending ? pendingLabel : children}
     </Button>
   );
