@@ -7,7 +7,12 @@ export const siteConfig = {
   description:
     "VakConnect koppelt consumenten aan geschikte lokale vakmensen met een schaalbare lead marketplace-basis.",
   url: baseUrl,
+  contactEmail: "info@vakconnect.nl",
 };
+
+function toAbsoluteUrl(path: string) {
+  return new URL(path, siteConfig.url).toString();
+}
 
 export function buildMetadata(overrides?: Metadata): Metadata {
   return {
@@ -30,4 +35,28 @@ export function buildMetadata(overrides?: Metadata): Metadata {
     },
     ...overrides,
   };
+}
+
+export function buildPageMetadata(input: {
+  title: string;
+  description: string;
+  path: string;
+  keywords?: string[];
+}): Metadata {
+  return buildMetadata({
+    title: input.title,
+    description: input.description,
+    alternates: {
+      canonical: input.path,
+    },
+    openGraph: {
+      title: `${input.title} | ${siteConfig.name}`,
+      description: input.description,
+      url: toAbsoluteUrl(input.path),
+      siteName: siteConfig.name,
+      locale: "nl_NL",
+      type: "website",
+    },
+    keywords: input.keywords,
+  });
 }

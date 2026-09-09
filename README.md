@@ -201,3 +201,42 @@ Deze repository bevat geen echte testaccounts. Maak lokaal in Supabase zelf mini
 - `lead_assignments` bevat naast assignmentstatus nu `progress_status`, `progress_updated_at` en optionele `loss_reason`.
 - `lead_activity` bewaart traceerbare status- en opvolgacties met timestamps.
 - Professional flow ondersteunt stappen: `contacted`, `appointment_scheduled`, `quote_sent`, `won`, `lost`.
+
+
+## Publieke website- en contentfase
+
+Deze fase breidt de publieke website uit met conversion-first pagina's en duidelijke interne navigatie:
+
+- `/` met hero, compacte aanvraagstart, diensten, voordelen, vertrouwen en FAQ
+- `/hoe-werkt-het` met procesuitleg en duidelijke do/do-not verwachting
+- `/diensten` met actieve services uit de bestaande service-querylaag
+- `/dakdekker` plus subpagina's voor `daklekkage`, `dakrenovatie`, `dakpannen-vervangen`, `plat-dak` en `schoorsteen`
+- `/voor-vakmannen` en `/aanmelden-vakman` voor publieke vakmanwerving
+- `/kosten`, `/over-vakconnect`, `/contact` en `/privacy`
+
+## Publieke vakman-aanmelding
+
+Publieke aanmeldingen maken **geen** actieve professional-account aan. De flow:
+
+1. valideert server-side
+2. slaat professional op met `status = pending`
+3. zet `verification_status = pending`
+4. koppelt gekozen diensten en postcode4-werkgebieden
+5. vereist daarna handmatige adminbeoordeling
+
+Er wordt in deze route geen automatische login of privilege-escalatie uitgevoerd.
+
+## SEO-opzet publieke pagina's
+
+- Iedere publieke pagina gebruikt de Next.js Metadata API met unieke title/description
+- Iedere pagina heeft een canonical URL en Open Graph metadata
+- `app/sitemap.ts` bevat de complete publieke kernroutes
+- `app/robots.ts` laat publieke routes indexeren en blokkeert dashboard/login-routes
+
+## Nieuwe dienstpagina's toevoegen
+
+1. Maak een nieuwe route onder `app/(public)/<dienst>/page.tsx`
+2. Voeg unieke metadata toe met `buildPageMetadata`
+3. Link de pagina vanuit `/diensten` en relevante categoriepagina's
+4. Voeg de route toe aan `app/sitemap.ts`
+5. Houd content gescheiden van lead-, matching- en authlogica

@@ -163,3 +163,53 @@ De huidige structuur is voorbereid op:
 - Admin dashboard toont volume, lifecycle-statussen, leadkwaliteit en ratio's (acceptatiepercentage/winrate) op basis van echte databasewaarden.
 - Professional dashboard toont uitsluitend eigen KPI's uit eigen assignments en progressiestatussen.
 - Attribution KPI toont leads per source/medium op basis van opgeslagen leadattributie.
+
+
+## Publieke route-architectuur (contentfase)
+
+De publieke laag gebruikt uitsluitend routes in `app/(public)`:
+
+- `/`
+- `/aanvraag`
+- `/hoe-werkt-het`
+- `/diensten`
+- `/voor-vakmannen`
+- `/aanmelden-vakman`
+- `/dakdekker`
+- `/dakdekker/daklekkage`
+- `/dakdekker/dakrenovatie`
+- `/dakdekker/dakpannen-vervangen`
+- `/dakdekker/plat-dak`
+- `/dakdekker/schoorsteen`
+- `/kosten`
+- `/over-vakconnect`
+- `/contact`
+- `/privacy`
+
+Deze routes gebruiken bestaande UI-bouwblokken (`Card`, `Button`, `FormField`, `Input`, `Select`, `Textarea`) en raken geen dashboardlogica.
+
+## Contentstructuur en scheiding van verantwoordelijkheden
+
+- Publieke pagina's bevatten alleen content, CTA's en veilige formulieringangspunten.
+- Businesslogic voor leads, matching, scoring, auth en analytics blijft in `lib/leads`, `lib/matching`, `lib/auth` en `lib/analytics`.
+- Service-data voor publieke lijsten komt uit `lib/services/queries` (`getActiveServices`, `getActiveServicesWithQuestions`) zodat geen dubbele hardcoded dataset nodig is.
+
+## SEO-architectuur
+
+- `lib/config/site.ts` bevat `buildPageMetadata` voor consistente title/description/canonical/OG-opbouw.
+- `app/sitemap.ts` registreert indexeerbare publieke routes centraal.
+- `app/robots.ts` staat publieke routes toe en blokkeert `/admin`, `/vakman` en `/login`.
+- Contentpagina's houden één duidelijke H1 en semantische H2/H3 voor crawlbaarheid en leesbaarheid.
+
+## Publieke formulieren
+
+- `lib/public/actions.ts` bevat server actions voor contact en vakman-aanmelding.
+- Vakman-aanmelding schrijft naar bestaande professional-tabellen zonder auth-accountcreatie en forceert `status = pending`, `verification_status = pending`, `auth_user_id = null`.
+- Gekozen diensten en werkgebieden worden gekoppeld via bestaande `professional_services` en `professional_service_areas`.
+
+## Patroon voor toekomstige dienstuitbreiding
+
+1. Maak per dienst een hoofdpagina en eventueel subpagina's binnen `app/(public)/<dienst>/...`.
+2. Gebruik unieke inhoud per zoekintentie en link altijd door naar `/aanvraag`.
+3. Koppel nieuwe dienstpagina's aan `/diensten`, relevante categorie-overzichten en de sitemap.
+4. Houd alle commerciële/logistieke logica buiten contentroutes; gebruik bestaande query- en action-lagen.

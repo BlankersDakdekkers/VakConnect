@@ -1,7 +1,25 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { buttonClassName } from "@/components/ui/button";
+import { buildMetadata } from "@/lib/config/site";
+
+export const metadata: Metadata = buildMetadata({
+  title: "Aanvraag ontvangen",
+  description: "Bevestiging van je aanvraag bij VakConnect.",
+  alternates: { canonical: "/aanvraag/bedankt" },
+  keywords: ["aanvraag ontvangen"],
+  robots: { index: false, follow: false },
+  openGraph: {
+    title: "Aanvraag ontvangen | VakConnect",
+    description: "Bevestiging van je aanvraag bij VakConnect.",
+    url: "/aanvraag/bedankt",
+    siteName: "VakConnect",
+    locale: "nl_NL",
+    type: "website",
+  },
+});
 
 export default async function ThankYouPage({
   searchParams,
