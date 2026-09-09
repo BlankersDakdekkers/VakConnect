@@ -103,12 +103,21 @@ function getArrayAnswer(value: DynamicAnswerValue | undefined) {
 
 export function LeadRequestForm({
   services,
+  prefill,
 }: Readonly<{
   services: Array<Service & { questions: ServiceQuestionDefinition[] }>;
+  prefill?: {
+    serviceId?: string;
+    postalCode?: string;
+  };
 }>) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
-  const [draft, setDraft] = useState<LeadDraft>(initialDraft);
+  const [draft, setDraft] = useState<LeadDraft>(() => ({
+    ...initialDraft,
+    serviceId: prefill?.serviceId ?? "",
+    postalCode: prefill?.postalCode ?? "",
+  }));
   const [dynamicAnswers, setDynamicAnswers] = useState<DynamicAnswerDraft>({});
   const [images, setImages] = useState<File[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
