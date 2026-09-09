@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import test from "node:test";
-import { serviceMainPages, serviceSubPages, getAllServiceRoutes } from "../lib/content/service-pages.ts";
+import { getEditorialClusters, getServiceDetailHref } from "../lib/content/service-cards.ts";
+import { getAllServicePages, serviceMainPages, serviceSubPages, getAllServiceRoutes } from "../lib/content/service-pages.ts";
 import { publicContactSchema, publicProfessionalApplicationSchema } from "../lib/validation/public.ts";
 
 const repoRoot = process.cwd();
@@ -75,6 +76,9 @@ const expectedSubRoutes = [
   "/verbouwing/zolder-verbouwen",
   "/verbouwing/woning-renoveren",
   "/verbouwing/keuken-verbouwen",
+  "/loodgieter/afvoer",
+  "/isolatie/kruipruimte-isolatie",
+  "/badkamer/ventilatie",
 ];
 
 const baseSitemapRoutes = [
@@ -120,6 +124,33 @@ test("servicepagina's hebben metadata, canonical pad en CTA-tekst", () => {
   }
 });
 
+test("servicepagina's hebben voldoende inhoudelijke diepgang en niet-thin hoofdcontent", () => {
+  for (const page of Object.values(serviceMainPages)) {
+    const totalChars = page.intro.join(" ").length + page.sections.flatMap((section) => section.paragraphs).join(" ").length;
+    assert.ok(page.h1.length > 20, `H1 ontbreekt of is te kort op ${page.path}`);
+    assert.ok(page.sections.length >= 8, `Te weinig secties op hoofdpagina ${page.path}`);
+    assert.ok(page.faqs.length >= 5, `Te weinig FAQ-items op hoofdpagina ${page.path}`);
+    assert.ok(totalChars >= 3000, `Hoofdpagina is te dun: ${page.path}`);
+  }
+
+  for (const page of Object.values(serviceSubPages)) {
+    const totalChars = page.intro.join(" ").length + page.sections.flatMap((section) => section.paragraphs).join(" ").length;
+    assert.ok(page.h1.length > 20, `H1 ontbreekt of is te kort op ${page.path}`);
+    assert.ok(page.sections.length >= 7, `Te weinig secties op subdienstpagina ${page.path}`);
+    assert.ok(page.faqs.length >= 4, `Te weinig FAQ-items op subdienstpagina ${page.path}`);
+    assert.ok(totalChars >= 2200, `Subdienstpagina is te dun: ${page.path}`);
+  }
+});
+
+test("servicepagina canonical paths zijn uniek en routepaden bevatten geen duplicaten", () => {
+  const pages = getAllServicePages();
+  const paths = pages.map((page) => page.path);
+  const uniquePaths = new Set(paths);
+
+  assert.equal(uniquePaths.size, paths.length, "Duplicate canonical/service path gevonden");
+  assert.equal(new Set(getAllServiceRoutes()).size, getAllServiceRoutes().length, "Duplicate route in service routing");
+});
+
 test("interne links verwijzen alleen naar bestaande publieke routes", () => {
   const routeSet = new Set([...baseSitemapRoutes, ...getAllServiceRoutes()]);
 
@@ -128,6 +159,26 @@ test("interne links verwijzen alleen naar bestaande publieke routes", () => {
       assert.equal(routeSet.has(link.href), true, `Onbekende interne link ${link.href} op ${page.path}`);
     }
   }
+});
+
+test("diensten helper voorkomt dubbele editorial cards op hetzelfde pad", () => {
+  const servicesWithBathroom = [
+    { slug: "dakdekker" },
+    { slug: "badkamer-verbouwen" },
+    { slug: "schilder" },
+  ];
+  const clustersWithBathroom = getEditorialClusters(servicesWithBathroom);
+  assert.equal(clustersWithBathroom.some((cluster) => cluster.href === "/badkamer"), false);
+
+  const servicesWithoutBathroom = [{ slug: "dakdekker" }];
+  const clustersWithoutBathroom = getEditorialClusters(servicesWithoutBathroom);
+  assert.equal(clustersWithoutBathroom.some((cluster) => cluster.href === "/badkamer"), true);
+});
+
+test("service detail route helper geeft bekende mappings terug", () => {
+  assert.equal(getServiceDetailHref("dakdekker"), "/dakdekker");
+  assert.equal(getServiceDetailHref("badkamer-verbouwen"), "/badkamer");
+  assert.equal(getServiceDetailHref("onbekend"), undefined);
 });
 
 test("sitemap bevat publieke routes en geen protected routes", () => {

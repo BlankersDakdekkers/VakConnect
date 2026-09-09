@@ -4,16 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { buttonClassName } from "@/components/ui/button";
 import { buildPageMetadata } from "@/lib/config/site";
+import { getServiceDetailHref } from "@/lib/content/service-cards";
 import { getActiveServices } from "@/lib/services/queries";
-
-const serviceDetailRoutes: Record<string, string> = {
-  dakdekker: "/dakdekker",
-  schilder: "/schilder",
-  loodgieter: "/loodgieter",
-  elektricien: "/elektricien",
-  isolatie: "/isolatie",
-  "badkamer-verbouwen": "/badkamer",
-};
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Vind de juiste vakman",
@@ -174,7 +166,7 @@ export default async function HomePage() {
               <Badge>{service.category}</Badge>
               <h3 className="text-xl font-semibold tracking-tight">{service.name}</h3>
               <p className="text-sm text-muted-foreground">{service.description ?? "Beschikbaar voor aanvraag via VakConnect."}</p>
-              <Link href={serviceDetailRoutes[service.slug] ?? "/diensten"} className={buttonClassName({ variant: "secondary", size: "sm" })}>
+              <Link href={getServiceDetailHref(service.slug) ?? "/diensten"} className={buttonClassName({ variant: "secondary", size: "sm" })}>
                 Bekijk dienst
               </Link>
             </Card>

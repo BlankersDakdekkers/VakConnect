@@ -25,6 +25,12 @@ function Breadcrumbs({ items }: Readonly<{ items: ServiceContentPageData["breadc
 }
 
 export function ServiceContentPage({ page }: Readonly<{ page: ServiceContentPageData }>) {
+  const sectionStyles: Record<NonNullable<ServiceContentPageData["sections"][number]["type"]>, string> = {
+    default: "space-y-3",
+    info: "space-y-3 border-blue-200 bg-blue-50",
+    warning: "space-y-3 border-amber-200 bg-amber-50",
+  };
+
   return (
     <div className="container-shell space-y-10 py-14">
       <Breadcrumbs items={page.breadcrumbs} />
@@ -38,25 +44,27 @@ export function ServiceContentPage({ page }: Readonly<{ page: ServiceContentPage
         </div>
       </section>
 
-      <section className="grid gap-4 md:grid-cols-2">
-        {page.highlights.map((item) => (
-          <Card key={item.title} className="space-y-3">
-            <h2 className="text-2xl font-semibold tracking-tight">{item.title}</h2>
-            {item.paragraphs.map((paragraph) => (
-              <p key={paragraph} className="text-sm leading-7 text-muted-foreground">
-                {paragraph}
-              </p>
-            ))}
-            {item.bullets?.length ? (
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                {item.bullets.map((bullet) => (
-                  <li key={bullet}>• {bullet}</li>
-                ))}
-              </ul>
-            ) : null}
-          </Card>
+      <div className="space-y-4">
+        {page.sections.map((section) => (
+          <section key={section.heading}>
+            <Card className={sectionStyles[section.type ?? "default"]}>
+              <h2 className="text-2xl font-semibold tracking-tight">{section.heading}</h2>
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph} className="text-sm leading-7 text-muted-foreground">
+                  {paragraph}
+                </p>
+              ))}
+              {section.bullets?.length ? (
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  {section.bullets.map((bullet) => (
+                    <li key={bullet}>• {bullet}</li>
+                  ))}
+                </ul>
+              ) : null}
+            </Card>
+          </section>
         ))}
-      </section>
+      </div>
 
       {page.warning ? (
         <section>
