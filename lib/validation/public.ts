@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { contactReasonValues, contactSubmissionStatusValues } from "./constants.ts";
 
 export const publicProfessionalApplicationSchema = z.object({
   companyName: z.string().trim().min(2, "Bedrijfsnaam is verplicht.").max(120),
@@ -13,9 +14,24 @@ export const publicProfessionalApplicationSchema = z.object({
 });
 
 export const publicContactSchema = z.object({
-  reason: z.enum(["consument", "vakman", "algemeen"]),
+  reason: z.enum(contactReasonValues),
   name: z.string().trim().min(2, "Naam is verplicht.").max(120),
   email: z.email("Vul een geldig e-mailadres in."),
-  phone: z.string().trim().max(30).optional().or(z.literal("")),
+  phone: z
+    .string()
+    .trim()
+    .max(30)
+    .refine((value) => value.length === 0 || /^[0-9+()\-\s]{8,30}$/.test(value), "Vul een geldig telefoonnummer in.")
+    .optional()
+    .or(z.literal("")),
   message: z.string().trim().min(20, "Beschrijf je vraag in minimaal 20 tekens.").max(3000),
+  honeypot: z.string().trim().max(0).optional().or(z.literal("")),
+});
+
+export const contactSubmissionStatusSchema = z.enum(contactSubmissionStatusValues);
+
+export const contactSubmissionStatusUpdateSchema = z.object({
+  submissionId: z.string().uuid(),
+  status: contactSubmissionStatusSchema,
+  redirectTo: z.string().startsWith("/admin/contact"),
 });

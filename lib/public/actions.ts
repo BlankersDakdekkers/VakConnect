@@ -99,16 +99,39 @@ export async function submitProfessionalApplicationAction(formData: FormData) {
 }
 
 export async function submitContactFormAction(formData: FormData) {
+  if (!isSupabaseConfigured()) {
+    redirectWithMessage("/contact", "error", "Contact opnemen is tijdelijk niet beschikbaar.");
+  }
+
   const payload = publicContactSchema.safeParse({
     reason: formData.get("reason"),
     name: formData.get("name"),
     email: formData.get("email"),
     phone: formData.get("phone"),
     message: formData.get("message"),
+    honeypot: formData.get("website"),
   });
 
   if (!payload.success) {
     redirectWithMessage("/contact", "error", payload.error.issues[0]?.message ?? "Controleer je bericht.");
+  }
+
+  if (payload.data.honeypot) {
+    redirectWithMessage("/contact", "error", "Je bericht kon niet worden verzonden.");
+  }
+
+  const supabase = createAdminSupabaseClient();
+  const { error } = await supabase.from("contact_submissions").insert({
+    reason: payload.data.reason,
+    name: payload.data.name,
+    email: payload.data.email,
+    phone: payload.data.phone || null,
+    message: payload.data.message,
+    status: "new",
+  });
+
+  if (error) {
+    redirectWithMessage("/contact", "error", "Je bericht kon niet worden verzonden. Probeer het later opnieuw.");
   }
 
   redirectWithMessage("/contact", "success", "Bedankt voor je bericht. We komen hier zo snel mogelijk op terug.");

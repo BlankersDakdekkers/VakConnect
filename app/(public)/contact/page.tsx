@@ -38,6 +38,15 @@ export default async function ContactPage({
 
       <Card className="space-y-6">
         <form action={submitContactFormAction} className="grid gap-4 md:grid-cols-2">
+          <input
+            type="text"
+            name="website"
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+            className="hidden"
+            defaultValue=""
+          />
           <FormField id="reason" label="Waar gaat je vraag over?" className="md:col-span-2">
             <Select id="reason" name="reason" required>
               <option value="consument">Consumentenvraag</option>
