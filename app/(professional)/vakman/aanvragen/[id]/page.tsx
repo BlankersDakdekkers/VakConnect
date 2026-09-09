@@ -61,7 +61,7 @@ export default async function ProfessionalLeadDetailPage({
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Regio</p>
-                <p className="mt-1 font-medium">{marketLead.preview.city ?? `Postcodegebied ${marketLead.preview.postalCode.slice(0, 4)}`}</p>
+                <p className="mt-1 font-medium">{marketLead.preview.city ?? `Postcodegebied ${marketLead.preview.postalCodePrefix}`}</p>
                 <p className="text-sm text-muted-foreground">Ingediend op {formatDate(marketLead.preview.createdAt)}</p>
               </div>
             </div>

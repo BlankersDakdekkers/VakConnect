@@ -58,10 +58,13 @@ test("phase5 migration enforces immutable ledger and atomic purchase functions",
   assert.match(sql, /create or replace function public\.apply_wallet_transaction/);
   assert.match(sql, /for update;/);
   assert.match(sql, /if next_balance < 0 then/);
+  assert.match(sql, /INVALID_TRANSACTION_AMOUNT_SIGN/);
+  assert.match(sql, /create or replace function public\.is_valid_wallet_transaction_amount/);
   assert.match(sql, /create trigger prevent_wallet_transactions_update/);
   assert.match(sql, /create or replace function public\.purchase_lead/);
   assert.match(sql, /purchase_idempotency_key text default null/);
-  assert.match(sql, /transaction_type = 'lead_purchase'/);
+  assert.match(sql, /IDEMPOTENCY_KEY_CONFLICT/);
+  assert.match(sql, /LEAD_PURCHASE_REFUNDED/);
   assert.match(sql, /raise exception 'LEAD_SOLD_OUT'/);
   assert.match(sql, /raise exception 'INSUFFICIENT_BALANCE'/);
 });
@@ -73,6 +76,19 @@ test("phase5 migration tightens lead privacy and refund flow", () => {
   assert.match(sql, /create or replace function public\.refund_lead_purchase/);
   assert.match(sql, /raise exception 'PURCHASE_ALREADY_REFUNDED'/);
   assert.match(sql, /create table if not exists public\.commercial_audit_log/);
+  assert.match(sql, /create or replace function public\.get_wallet_reconciliation/);
+});
+
+test("phase5 migration revokes helper RPC access and removes production auto-credits", () => {
+  assert.match(sql, /revoke all on function public\.append_commercial_audit_log\(uuid, uuid, text, uuid, text, jsonb\) from public;/);
+  assert.match(sql, /revoke all on function public\.ensure_professional_wallet\(uuid\) from public;/);
+  assert.match(sql, /revoke all on function public\.resolve_lead_price\(uuid\) from public;/);
+  assert.match(sql, /revoke all on function public\.refresh_lead_sales_state\(uuid\) from public;/);
+  assert.match(sql, /grant execute on function public\.purchase_lead\(uuid, text\) to authenticated;/);
+  assert.match(sql, /grant execute on function public\.refund_lead_purchase\(uuid, text\) to authenticated;/);
+  assert.doesNotMatch(sql, /seed-initial-credits/);
+  assert.doesNotMatch(sql, /Ontwikkel-\/teststartcredits/);
+  assert.doesNotMatch(sql, /cached_balance\)\s*select p\.id, 25/);
 });
 
 test("contact unlock helper only returns true after purchased access or accepted legacy assignment", () => {

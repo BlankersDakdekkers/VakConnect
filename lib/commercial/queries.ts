@@ -64,7 +64,7 @@ export interface ProfessionalLeadMarketListItem {
   serviceName: string;
   serviceSlug: string;
   city: string | null;
-  postalCode: string;
+  postalCodePrefix: string;
   urgency: string;
   leadScore: number | null;
   summary: string;
@@ -101,7 +101,7 @@ export interface ProfessionalLeadMarketDetail {
     serviceName: string;
     serviceSlug: string;
     city: string | null;
-    postalCode: string;
+    postalCodePrefix: string;
     urgency: string;
     leadScore: number | null;
     summary: string;
@@ -121,6 +121,8 @@ export interface AdminWalletRow {
   status: Professional["status"];
   walletId: string | null;
   cachedBalance: number;
+  ledgerBalance: number;
+  isConsistent: boolean;
   totalIn: number;
   totalOut: number;
   lastTransactionAt: string | null;
@@ -312,7 +314,7 @@ export async function getProfessionalLeadMarketplace(professionalId: string) {
       serviceName: service?.name ?? "Onbekend",
       serviceSlug: service?.slug ?? "onbekend",
       city: (row.city as string | null) ?? null,
-      postalCode: String(row.postal_code),
+      postalCodePrefix: String(row.postal_code).slice(0, 4),
       urgency: String(row.urgency),
       leadScore: typeof row.lead_score === "number" ? row.lead_score : row.lead_score === null ? null : Number(row.lead_score),
       summary: summarizeLeadDescription(String(row.description)),
@@ -411,7 +413,7 @@ export async function getProfessionalLeadMarketDetail(leadId: string, profession
       serviceName: service?.name ?? "Onbekend",
       serviceSlug: service?.slug ?? "onbekend",
       city: (leadRow.city as string | null) ?? null,
-      postalCode: String(leadRow.postal_code),
+      postalCodePrefix: String(leadRow.postal_code).slice(0, 4),
       urgency: String(leadRow.urgency),
       leadScore: typeof leadRow.lead_score === "number" ? leadRow.lead_score : leadRow.lead_score === null ? null : Number(leadRow.lead_score),
       summary: summarizeLeadDescription(String(leadRow.description), 260),
@@ -456,6 +458,8 @@ export async function getAdminWalletOverview() {
       status: row.status as Professional["status"],
       walletId: wallet ? String(wallet.id) : null,
       cachedBalance: wallet ? toNumber(wallet.cached_balance) : 0,
+      ledgerBalance: professionalTransactions.reduce((sum, item) => sum + item.amount, 0),
+      isConsistent: (wallet ? toNumber(wallet.cached_balance) : 0) === professionalTransactions.reduce((sum, item) => sum + item.amount, 0),
       totalIn: professionalTransactions.filter((item) => item.amount > 0).reduce((sum, item) => sum + item.amount, 0),
       totalOut: professionalTransactions.filter((item) => item.amount < 0).reduce((sum, item) => sum + Math.abs(item.amount), 0),
       lastTransactionAt: professionalTransactions[0]?.created_at ?? null,

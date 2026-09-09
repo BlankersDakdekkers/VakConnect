@@ -45,8 +45,12 @@ export async function purchaseLeadAction(formData: FormData) {
   if (error) {
     const message = error.message.includes("INSUFFICIENT_BALANCE")
       ? "Onvoldoende credits. Credits kopen wordt binnenkort beschikbaar."
-      : error.message.includes("LEAD_SOLD_OUT") || error.message.includes("LEAD_NOT_AVAILABLE")
-        ? "Deze lead is niet meer beschikbaar."
+        : error.message.includes("IDEMPOTENCY_KEY_CONFLICT")
+          ? "Deze aankoopbevestiging hoort bij een andere lead. Vernieuw de pagina en probeer opnieuw."
+          : error.message.includes("LEAD_PURCHASE_REFUNDED")
+            ? "Deze lead is eerder terugbetaald en kan in deze fase niet opnieuw worden gekocht."
+        : error.message.includes("LEAD_SOLD_OUT") || error.message.includes("LEAD_NOT_AVAILABLE")
+          ? "Deze lead is niet meer beschikbaar."
         : error.message.includes("LEAD_MATCH_REQUIRED")
           ? "Je account komt niet in aanmerking voor deze lead."
           : "De leadaankoop kon niet worden afgerond.";
@@ -63,7 +67,7 @@ export async function purchaseLeadAction(formData: FormData) {
 }
 
 export async function applyAdminWalletMutationAction(formData: FormData) {
-  const user = await requireAdminUser();
+  await requireAdminUser();
   const payload = walletAdminMutationSchema.safeParse({
     professionalId: formData.get("professional_id"),
     type: formData.get("type"),
@@ -78,7 +82,7 @@ export async function applyAdminWalletMutationAction(formData: FormData) {
   }
 
   const signedAmount = payload.data.type === "admin_debit" ? -payload.data.amount : payload.data.amount;
-  const supabase = createAdminSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const { error } = await supabase.rpc("apply_wallet_transaction", {
     target_professional_id: payload.data.professionalId,
     transaction_type: payload.data.type,
@@ -86,12 +90,13 @@ export async function applyAdminWalletMutationAction(formData: FormData) {
     transaction_reference: payload.data.reference || null,
     transaction_description: payload.data.reason,
     transaction_metadata: { source: "admin_credits" },
-    transaction_created_by_admin_id: user.id,
   });
 
   if (error) {
     const message = error.message.includes("INSUFFICIENT_BALANCE")
       ? "Afboeking geblokkeerd: onvoldoende saldo."
+      : error.message.includes("INVALID_TRANSACTION_AMOUNT_SIGN")
+        ? "Type en teken van de walletmutatie komen niet overeen."
       : "De walletmutatie kon niet worden opgeslagen.";
     redirectWithMessage(payload.data.redirectTo, "error", message);
   }
@@ -124,7 +129,7 @@ export async function upsertLeadPricingRuleAction(formData: FormData) {
     redirectWithMessage("/admin/lead-prijzen", "error", payload.error.issues[0]?.message ?? "Prijsregel is ongeldig.");
   }
 
-  const supabase = createAdminSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const serviceId = payload.data.serviceId || null;
   const { data: service } = serviceId
     ? await supabase.from("services").select("slug").eq("id", serviceId).maybeSingle()
@@ -179,7 +184,7 @@ export async function toggleLeadPricingRuleAction(formData: FormData) {
     redirectWithMessage("/admin/lead-prijzen", "error", "Prijsregel kon niet worden bijgewerkt.");
   }
 
-  const supabase = createAdminSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const { error } = await supabase.from("lead_pricing_rules").update({ active: payload.data.active }).eq("id", payload.data.ruleId);
 
   if (error) {
@@ -206,7 +211,7 @@ export async function updateLeadCommercialSettingsAction(formData: FormData) {
     redirectWithMessage("/admin/leads", "error", payload.error.issues[0]?.message ?? "Commerciële instellingen zijn ongeldig.");
   }
 
-  const supabase = createAdminSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const { data: lead, error: leadError } = await supabase
     .from("leads")
     .select("buyers_count, commercial_type")
@@ -238,7 +243,7 @@ export async function updateLeadCommercialSettingsAction(formData: FormData) {
     redirectWithMessage(payload.data.redirectTo, "error", "Commerciële instellingen konden niet worden opgeslagen.");
   }
 
-  await supabase.rpc("refresh_lead_sales_state", { target_lead_id: payload.data.leadId });
+  await createAdminSupabaseClient().rpc("refresh_lead_sales_state", { target_lead_id: payload.data.leadId });
   await supabase.from("commercial_audit_log").insert({
     actor_user_id: user.id,
     entity_type: "lead",
@@ -261,7 +266,7 @@ export async function updateLeadCommercialSettingsAction(formData: FormData) {
 }
 
 export async function refundLeadPurchaseAction(formData: FormData) {
-  const user = await requireAdminUser();
+  await requireAdminUser();
   const payload = leadRefundSchema.safeParse({
     purchaseId: formData.get("purchase_id"),
     reason: formData.get("reason"),
@@ -272,11 +277,10 @@ export async function refundLeadPurchaseAction(formData: FormData) {
     redirectWithMessage("/admin/leads", "error", payload.error.issues[0]?.message ?? "Refund kon niet worden verwerkt.");
   }
 
-  const supabase = createAdminSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const { error } = await supabase.rpc("refund_lead_purchase", {
     target_purchase_id: payload.data.purchaseId,
     refund_reason: payload.data.reason,
-    acting_admin_id: user.id,
   });
 
   if (error) {

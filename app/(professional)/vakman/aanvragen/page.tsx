@@ -40,7 +40,7 @@ export default async function ProfessionalAssignmentsPage() {
                     <p className="mt-1 max-w-md text-xs text-muted-foreground">{lead.summary}</p>
                   </td>
                   <td className="py-4">{lead.serviceName}</td>
-                  <td className="py-4">{lead.city ?? `Postcodegebied ${lead.postalCode.slice(0, 4)}`}</td>
+                  <td className="py-4">{lead.city ?? `Postcodegebied ${lead.postalCodePrefix}`}</td>
                   <td className="py-4">{lead.leadScore ?? "—"}</td>
                   <td className="py-4 font-medium">{formatCredits(lead.priceCredits)}</td>
                   <td className="py-4"><StatusBadge value={lead.commercialType} /><span className="sr-only">{getCommercialTypeLabel(lead.commercialType)}</span></td>

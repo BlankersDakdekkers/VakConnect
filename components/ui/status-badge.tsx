@@ -27,6 +27,8 @@ const variantClasses: Record<string, string> = {
   closed: "border-border bg-slate-100 text-slate-700",
   inactive: "border-border bg-slate-100 text-slate-700",
   contacted: "border-sky-200 bg-sky-50 text-sky-700",
+  consistent: "border-success/20 bg-success/10 text-success",
+  inconsistent: "border-danger/20 bg-red-50 text-danger",
   appointment_scheduled: "border-indigo-200 bg-indigo-50 text-indigo-700",
   quote_sent: "border-violet-200 bg-violet-50 text-violet-700",
   verified: "border-success/20 bg-success/10 text-success",

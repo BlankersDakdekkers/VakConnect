@@ -12,6 +12,23 @@ create type lead_commercial_type as enum ('shared', 'exclusive');
 create type lead_sales_status as enum ('unavailable', 'available', 'partially_sold', 'sold_out', 'closed');
 create type lead_purchase_status as enum ('purchased', 'refunded', 'cancelled');
 
+create or replace function public.is_valid_wallet_transaction_amount(
+  input_type wallet_transaction_type,
+  input_amount integer
+)
+returns boolean
+language sql
+immutable
+as $$
+  select case
+    when input_amount = 0 then false
+    when input_type in ('lead_purchase', 'admin_debit') then input_amount < 0
+    when input_type in ('credit_purchase', 'refund', 'admin_credit', 'promotional_credit') then input_amount > 0
+    when input_type = 'correction' then true
+    else false
+  end;
+$$;
+
 alter table public.leads
   add column if not exists subservice_slug text,
   add column if not exists commercial_type lead_commercial_type not null default 'shared',
@@ -93,7 +110,7 @@ create table if not exists public.wallet_transactions (
   wallet_id uuid not null references public.professional_wallets(id) on delete cascade,
   professional_id uuid not null references public.professionals(id) on delete cascade,
   type wallet_transaction_type not null,
-  amount integer not null check (amount <> 0),
+  amount integer not null check (public.is_valid_wallet_transaction_amount(type, amount)),
   balance_after integer not null check (balance_after >= 0),
   lead_id uuid references public.leads(id) on delete set null,
   lead_assignment_id uuid references public.lead_assignments(id) on delete set null,
@@ -193,7 +210,7 @@ create or replace function public.append_commercial_audit_log(
 returns void
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, pg_temp
 as $$
 begin
   insert into public.commercial_audit_log (
@@ -218,11 +235,19 @@ create or replace function public.ensure_professional_wallet(target_professional
 returns uuid
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, pg_temp
 as $$
 declare
   resolved_wallet_id uuid;
 begin
+  if not (
+    auth.role() = 'service_role'
+    or public.is_admin()
+    or public.current_professional_id() = target_professional_id
+  ) then
+    raise exception 'UNAUTHORIZED_WALLET_ACCESS';
+  end if;
+
   insert into public.professional_wallets (professional_id)
   values (target_professional_id)
   on conflict (professional_id) do nothing;
@@ -253,7 +278,7 @@ returns table (
 )
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, pg_temp
 as $$
 declare
   lead_row record;
@@ -386,7 +411,7 @@ returns table (
 )
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, pg_temp
 as $$
 declare
   lead_row record;
@@ -394,10 +419,15 @@ declare
   purchased_count integer;
   next_status lead_sales_status;
 begin
-  select id, commercial_type, max_buyers, sales_status, locked_at
+  select
+    l.id,
+    l.commercial_type,
+    l.max_buyers,
+    l.sales_status,
+    l.locked_at
   into lead_row
-  from public.leads
-  where id = target_lead_id
+  from public.leads l
+  where l.id = target_lead_id
   for update;
 
   if lead_row is null then
@@ -499,8 +529,7 @@ create or replace function public.apply_wallet_transaction(
   transaction_lead_assignment_id uuid default null,
   transaction_reference text default null,
   transaction_description text default null,
-  transaction_metadata jsonb default '{}'::jsonb,
-  transaction_created_by_admin_id uuid default null
+  transaction_metadata jsonb default '{}'::jsonb
 )
 returns table (
   transaction_id uuid,
@@ -509,23 +538,24 @@ returns table (
 )
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, pg_temp
 as $$
 declare
   resolved_wallet_id uuid;
   current_balance integer;
   next_balance integer;
   resolved_transaction_id uuid;
-  actor_user_id uuid;
-  actor_professional_id uuid;
 begin
   if transaction_amount = 0 then
     raise exception 'ZERO_AMOUNT_NOT_ALLOWED';
   end if;
 
+  if not public.is_valid_wallet_transaction_amount(transaction_type, transaction_amount) then
+    raise exception 'INVALID_TRANSACTION_AMOUNT_SIGN';
+  end if;
+
   if not (
-    auth.role() = 'service_role'
-    or public.is_admin()
+    public.is_admin()
     or (
       transaction_type = 'lead_purchase'
       and public.current_professional_id() = target_professional_id
@@ -576,16 +606,13 @@ begin
     transaction_reference,
     transaction_description,
     coalesce(transaction_metadata, '{}'::jsonb),
-    transaction_created_by_admin_id
+    case when public.is_admin() then auth.uid() else null end
   )
   returning id into resolved_transaction_id;
 
-  actor_user_id := case when auth.role() = 'service_role' then transaction_created_by_admin_id else auth.uid() end;
-  actor_professional_id := case when auth.role() = 'service_role' then null else public.current_professional_id() end;
-
   perform public.append_commercial_audit_log(
-    actor_user_id,
-    actor_professional_id,
+    auth.uid(),
+    case when transaction_type = 'lead_purchase' then public.current_professional_id() else null end,
     'wallet_transaction',
     resolved_transaction_id,
     case when transaction_amount > 0 then 'wallet_credit' else 'wallet_debit' end,
@@ -619,7 +646,7 @@ returns table (
 )
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, pg_temp
 as $$
 declare
   current_professional uuid := public.current_professional_id();
@@ -653,16 +680,35 @@ begin
   end if;
 
   if purchase_idempotency_key is not null then
-    select id, wallet_transaction_id, lead_assignment_id, price_credits, commercial_type
+    select
+      lp.id,
+      lp.lead_id,
+      lp.status,
+      lp.wallet_transaction_id,
+      lp.lead_assignment_id,
+      lp.price_credits,
+      lp.commercial_type
     into existing_purchase
-    from public.lead_purchases
-    where professional_id = current_professional
-      and idempotency_key = purchase_idempotency_key
+    from public.lead_purchases lp
+    where lp.professional_id = current_professional
+      and lp.idempotency_key = purchase_idempotency_key
     limit 1;
 
     if existing_purchase is not null then
-      select balance_after into wallet_row from public.wallet_transactions where id = existing_purchase.wallet_transaction_id;
-      select sales_status into lead_row from public.leads where id = target_lead_id;
+      if existing_purchase.lead_id <> target_lead_id then
+        raise exception 'IDEMPOTENCY_KEY_CONFLICT';
+      end if;
+
+      if existing_purchase.status = 'refunded' then
+        raise exception 'LEAD_PURCHASE_REFUNDED';
+      end if;
+
+      if existing_purchase.status = 'cancelled' then
+        raise exception 'LEAD_PURCHASE_CANCELLED';
+      end if;
+
+      select wt.balance_after into wallet_row from public.wallet_transactions wt where wt.id = existing_purchase.wallet_transaction_id;
+      select l.sales_status into lead_row from public.leads l where l.id = target_lead_id;
       return query
       select
         existing_purchase.id,
@@ -676,25 +722,46 @@ begin
     end if;
   end if;
 
-  select id, service_id, postal_code, commercial_type, max_buyers, buyers_count, sales_status
+  select
+    l.id,
+    l.service_id,
+    l.postal_code,
+    l.commercial_type,
+    l.max_buyers,
+    l.buyers_count,
+    l.sales_status
   into lead_row
-  from public.leads
-  where id = target_lead_id
+  from public.leads l
+  where l.id = target_lead_id
   for update;
 
   if lead_row is null then
     raise exception 'LEAD_NOT_FOUND';
   end if;
 
-  select id, wallet_transaction_id, lead_assignment_id, price_credits, commercial_type
+  select
+    lp.id,
+    lp.status,
+    lp.wallet_transaction_id,
+    lp.lead_assignment_id,
+    lp.price_credits,
+    lp.commercial_type
   into existing_purchase
-  from public.lead_purchases
-  where lead_id = target_lead_id
-    and professional_id = current_professional
+  from public.lead_purchases lp
+  where lp.lead_id = target_lead_id
+    and lp.professional_id = current_professional
   limit 1;
 
   if existing_purchase is not null then
-    select balance_after into wallet_row from public.wallet_transactions where id = existing_purchase.wallet_transaction_id;
+    if existing_purchase.status = 'refunded' then
+      raise exception 'LEAD_PURCHASE_REFUNDED';
+    end if;
+
+    if existing_purchase.status = 'cancelled' then
+      raise exception 'LEAD_PURCHASE_CANCELLED';
+    end if;
+
+    select wt.balance_after into wallet_row from public.wallet_transactions wt where wt.id = existing_purchase.wallet_transaction_id;
     return query
     select
       existing_purchase.id,
@@ -811,7 +878,7 @@ begin
       'commercial_type', lead_row.commercial_type,
       'pricing_source', price_row.price_source,
       'pricing_rule_id', price_row.pricing_rule_id
-    )
+    )::jsonb
   );
 
   insert into public.lead_purchases (
@@ -882,8 +949,7 @@ $$;
 
 create or replace function public.refund_lead_purchase(
   target_purchase_id uuid,
-  refund_reason text,
-  acting_admin_id uuid
+  refund_reason text
 )
 returns table (
   purchase_id uuid,
@@ -893,7 +959,7 @@ returns table (
 )
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, pg_temp
 as $$
 declare
   purchase_row record;
@@ -901,7 +967,7 @@ declare
   sales_row record;
   now_utc timestamptz := timezone('utc', now());
 begin
-  if not (auth.role() = 'service_role' or public.is_admin()) then
+  if not public.is_admin() then
     raise exception 'UNAUTHORIZED_REFUND';
   end if;
 
@@ -929,8 +995,7 @@ begin
     purchase_row.lead_assignment_id,
     concat('refund:', purchase_row.id::text),
     refund_reason,
-    jsonb_build_object('purchase_id', purchase_row.id),
-    acting_admin_id
+    jsonb_build_object('purchase_id', purchase_row.id)
   );
 
   update public.lead_purchases
@@ -947,7 +1012,7 @@ begin
   end if;
 
   perform public.append_commercial_audit_log(
-    acting_admin_id,
+    auth.uid(),
     null,
     'lead_purchase',
     purchase_row.id,
@@ -972,6 +1037,38 @@ begin
 
   return query
   select purchase_row.id, transaction_row.transaction_id, transaction_row.balance_after, sales_row.sales_status;
+end;
+$$;
+
+create or replace function public.get_wallet_reconciliation(target_professional_id uuid default null)
+returns table (
+  wallet_id uuid,
+  professional_id uuid,
+  cached_balance integer,
+  ledger_balance integer,
+  is_consistent boolean
+)
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+begin
+  if not (auth.role() = 'service_role' or public.is_admin()) then
+    raise exception 'UNAUTHORIZED_WALLET_RECONCILIATION';
+  end if;
+
+  return query
+  select
+    w.id,
+    w.professional_id,
+    w.cached_balance,
+    coalesce(sum(wt.amount), 0)::integer as ledger_balance,
+    w.cached_balance = coalesce(sum(wt.amount), 0)::integer
+  from public.professional_wallets w
+  left join public.wallet_transactions wt on wt.wallet_id = w.id
+  where target_professional_id is null or w.professional_id = target_professional_id
+  group by w.id, w.professional_id, w.cached_balance
+  order by w.created_at asc;
 end;
 $$;
 
@@ -1048,6 +1145,21 @@ create policy "admins manage commercial audit log"
   using (public.is_admin())
   with check (public.is_admin());
 
+revoke all on function public.append_commercial_audit_log(uuid, uuid, text, uuid, text, jsonb) from public;
+revoke all on function public.ensure_professional_wallet(uuid) from public;
+revoke all on function public.resolve_lead_price(uuid) from public;
+revoke all on function public.refresh_lead_sales_state(uuid) from public;
+revoke all on function public.apply_wallet_transaction(uuid, wallet_transaction_type, integer, uuid, uuid, text, text, jsonb) from public;
+revoke all on function public.purchase_lead(uuid, text) from public;
+revoke all on function public.refund_lead_purchase(uuid, text) from public;
+revoke all on function public.get_wallet_reconciliation(uuid) from public;
+
+grant execute on function public.refresh_lead_sales_state(uuid) to service_role;
+grant execute on function public.apply_wallet_transaction(uuid, wallet_transaction_type, integer, uuid, uuid, text, text, jsonb) to authenticated;
+grant execute on function public.purchase_lead(uuid, text) to authenticated;
+grant execute on function public.refund_lead_purchase(uuid, text) to authenticated;
+grant execute on function public.get_wallet_reconciliation(uuid) to authenticated, service_role;
+
 insert into public.lead_pricing_rules (
   service_id,
   service_slug,
@@ -1084,41 +1196,3 @@ cross join (
     ('exclusive', 20, 1.60::numeric, 1.00::numeric, 80, null::integer, 30)
 ) as v(lead_type, base_price_credits, exclusive_multiplier, shared_multiplier, min_score, max_score, priority)
 on conflict do nothing;
-
-insert into public.professional_wallets (professional_id, cached_balance)
-select p.id, 25
-from public.professionals p
-where not exists (
-  select 1
-  from public.professional_wallets w
-  where w.professional_id = p.id
-)
-and p.status in ('active', 'pending');
-
-insert into public.wallet_transactions (
-  wallet_id,
-  professional_id,
-  type,
-  amount,
-  balance_after,
-  reference,
-  description,
-  metadata
-)
-select
-  w.id,
-  w.professional_id,
-  'promotional_credit',
-  25,
-  25,
-  'seed-initial-credits',
-  'Ontwikkel-/teststartcredits voor commerciële fase',
-  jsonb_build_object('seed', true)
-from public.professional_wallets w
-where w.cached_balance = 25
-  and not exists (
-    select 1
-    from public.wallet_transactions wt
-    where wt.wallet_id = w.id
-      and wt.reference = 'seed-initial-credits'
-  );

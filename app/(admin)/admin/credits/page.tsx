@@ -68,6 +68,8 @@ export default async function AdminCreditsPage({
               <th className="py-3">Vakman</th>
               <th className="py-3">Status</th>
               <th className="py-3">Saldo</th>
+              <th className="py-3">Ledger</th>
+              <th className="py-3">Reconciliatie</th>
               <th className="py-3">Totaal in</th>
               <th className="py-3">Totaal uit</th>
               <th className="py-3">Laatste transactie</th>
@@ -82,6 +84,10 @@ export default async function AdminCreditsPage({
                 </td>
                 <td className="py-4"><StatusBadge value={wallet.status} /></td>
                 <td className="py-4 font-medium">{formatCredits(wallet.cachedBalance)}</td>
+                <td className="py-4">{formatCredits(wallet.ledgerBalance)}</td>
+                <td className="py-4">
+                  <StatusBadge value={wallet.isConsistent ? "consistent" : "inconsistent"} />
+                </td>
                 <td className="py-4">{formatCredits(wallet.totalIn)}</td>
                 <td className="py-4">{formatCredits(wallet.totalOut)}</td>
                 <td className="py-4 text-muted-foreground">{wallet.lastTransactionAt ? formatDate(wallet.lastTransactionAt) : "—"}</td>
