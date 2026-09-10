@@ -6,6 +6,8 @@ import { calculateDistributionScore, evaluateDistributionEligibility } from "../
 const migrationPath =
   "/home/runner/work/VakConnect/VakConnect/supabase/migrations/20260910160000_phase6_lead_distribution_engine.sql";
 const migrationSql = readFileSync(migrationPath, "utf8");
+const enginePath = "/home/runner/work/VakConnect/VakConnect/lib/distribution/engine.ts";
+const engineSource = readFileSync(enginePath, "utf8");
 
 
 test("phase6 migration adds distribution schema, capacity settings and idempotency constraints", () => {
@@ -20,6 +22,8 @@ test("phase6 migration adds distribution schema, capacity settings and idempoten
 test("phase6 migration enforces privacy and secure purchase gating", () => {
   assert.doesNotMatch(migrationSql, /first_name|last_name|email|phone/);
   assert.match(migrationSql, /raise exception 'LEAD_OFFER_NOT_ACTIVE'/);
+  assert.match(migrationSql, /create trigger enforce_active_offer_for_purchase_on_update/);
+  assert.match(migrationSql, /create trigger sync_distribution_after_purchase_on_update/);
   assert.match(migrationSql, /create policy "professionals read own distribution candidates"/);
   assert.match(migrationSql, /create policy "admins manage distribution candidates"/);
 });
@@ -143,4 +147,19 @@ test("scoring breakdown blijft uitlegbaar per component", () => {
     fairness: 999,
   });
   assert.ok(extreme.breakdown.fairness <= 10);
+});
+
+test("engine bevat centrale offer lifecycle activatie voor exclusive/shared/sold-out/exhausted", () => {
+  assert.match(engineSource, /function determineDistributionActivation/);
+  assert.match(engineSource, /action: "close_sold_out"/);
+  assert.match(engineSource, /action: "offer_exclusive"/);
+  assert.match(engineSource, /action: "offer_shared"/);
+  assert.match(engineSource, /action: "exhausted"/);
+  assert.match(engineSource, /const activation = determineDistributionActivation/);
+});
+
+test("engine blokkeert admin requeue voor purchased kandidaten", () => {
+  assert.match(engineSource, /function canAdminRequeueCandidate/);
+  assert.match(engineSource, /status !== "purchased"/);
+  assert.match(engineSource, /Handmatige override is niet toegestaan voor een reeds gekochte kandidaat/);
 });

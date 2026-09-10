@@ -198,6 +198,11 @@ drop trigger if exists enforce_active_offer_for_purchase on public.lead_purchase
 create trigger enforce_active_offer_for_purchase
 before insert on public.lead_purchases
 for each row execute function public.enforce_active_offer_for_purchase();
+create trigger enforce_active_offer_for_purchase_on_update
+before update on public.lead_purchases
+for each row
+when (new.status = 'purchased' and old.status is distinct from new.status)
+execute function public.enforce_active_offer_for_purchase();
 
 create or replace function public.sync_distribution_after_purchase()
 returns trigger
@@ -274,6 +279,11 @@ drop trigger if exists sync_distribution_after_purchase on public.lead_purchases
 create trigger sync_distribution_after_purchase
 after insert on public.lead_purchases
 for each row execute function public.sync_distribution_after_purchase();
+create trigger sync_distribution_after_purchase_on_update
+after update on public.lead_purchases
+for each row
+when (new.status = 'purchased' and old.status is distinct from new.status)
+execute function public.sync_distribution_after_purchase();
 
 alter table public.lead_distribution_runs enable row level security;
 alter table public.lead_distribution_candidates enable row level security;

@@ -195,12 +195,25 @@ export async function getLeadDistributionDetail(leadId: string): Promise<LeadDis
   };
 }
 
-export async function getProfessionalDistributionOffer(professionalId: string, leadId: string) {
+export async function getProfessionalDistributionOffer(leadId: string) {
   const supabase = await createServerSupabaseClient();
+  const { data: auth } = await supabase.auth.getUser();
+  const authUserId = auth.user?.id ?? null;
+  if (!authUserId) {
+    return null;
+  }
+  const { data: professional } = await supabase
+    .from("professionals")
+    .select("id")
+    .eq("auth_user_id", authUserId)
+    .maybeSingle();
+  if (!professional?.id) {
+    return null;
+  }
   const { data } = await supabase
     .from("lead_distribution_candidates")
     .select("id, status, offer_expires_at, offered_at")
-    .eq("professional_id", professionalId)
+    .eq("professional_id", professional.id)
     .eq("lead_id", leadId)
     .order("created_at", { ascending: false })
     .limit(1)

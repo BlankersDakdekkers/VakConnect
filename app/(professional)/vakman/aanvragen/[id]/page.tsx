@@ -32,6 +32,7 @@ export default async function ProfessionalLeadDetailPage({
   if (!marketLead) {
     notFound();
   }
+  const canPurchaseFromOffer = !marketLead.distributionOffer.id || marketLead.distributionOffer.status === "viewed";
 
   const confirmationToken = crypto.randomUUID();
 
@@ -170,9 +171,12 @@ export default async function ProfessionalLeadDetailPage({
               <p className="rounded-2xl bg-surface-muted px-4 py-3 text-sm text-muted-foreground">
                 Controleer lead, prijs, saldo en type voordat je doorgaat. De prijs wordt altijd server-side opnieuw berekend.
               </p>
-              <SubmitButton className="w-full" disabled={marketLead.state !== "available" || marketLead.commercial.balanceAfterPurchase < 0} pendingLabel="Aankoop wordt verwerkt...">
+              <SubmitButton className="w-full" disabled={marketLead.state !== "available" || marketLead.commercial.balanceAfterPurchase < 0 || !canPurchaseFromOffer} pendingLabel="Aankoop wordt verwerkt...">
                 Bevestig aankoop
               </SubmitButton>
+              {!canPurchaseFromOffer && marketLead.distributionOffer.status === "offered" ? (
+                <p className="text-sm text-muted-foreground">Open eerst het aanbod via “Markeer als bekeken” voordat je kunt kopen.</p>
+              ) : null}
               {marketLead.commercial.balanceAfterPurchase < 0 ? (
                 <p className="text-sm text-danger">Onvoldoende saldo. Benodigd: {formatCredits(marketLead.commercial.priceCredits)}, huidig: {formatCredits(marketLead.commercial.currentBalance)}. Credits kopen wordt binnenkort beschikbaar.</p>
               ) : null}

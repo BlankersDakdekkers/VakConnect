@@ -31,6 +31,40 @@ interface DistributionCandidateInput {
   };
 }
 
+export type DistributionActivationAction = "close_sold_out" | "offer_exclusive" | "offer_shared" | "exhausted" | "noop";
+
+export function determineDistributionActivation(params: {
+  commercialType: LeadCommercialType;
+  slotsLeft: number;
+  liveCount: number;
+  queuedCount: number;
+  sharedBatchSize: number;
+}) {
+  const { commercialType, slotsLeft, liveCount, queuedCount, sharedBatchSize } = params;
+  if (slotsLeft <= 0) {
+    return { action: "close_sold_out" as DistributionActivationAction, offerCount: 0 };
+  }
+  if (commercialType === "exclusive") {
+    if (liveCount === 0 && queuedCount > 0) {
+      return { action: "offer_exclusive" as DistributionActivationAction, offerCount: 1 };
+    }
+  } else {
+    const targetLive = Math.min(sharedBatchSize, slotsLeft);
+    const required = Math.max(0, targetLive - liveCount);
+    if (required > 0 && queuedCount > 0) {
+      return { action: "offer_shared" as DistributionActivationAction, offerCount: Math.min(required, queuedCount) };
+    }
+  }
+  if (liveCount === 0 && queuedCount === 0) {
+    return { action: "exhausted" as DistributionActivationAction, offerCount: 0 };
+  }
+  return { action: "noop" as DistributionActivationAction, offerCount: 0 };
+}
+
+export function canAdminRequeueCandidate(status: string) {
+  return status !== "purchased";
+}
+
 function toNumber(value: unknown, fallback = 0) {
   if (typeof value === "number") {
     return value;
@@ -349,7 +383,14 @@ export async function activateOffersForRun(runId: string) {
 
   const maxBuyers = toNumber(lead?.max_buyers, 1);
   const slotsLeft = Math.max(0, maxBuyers - (purchasedCount ?? 0));
-  if (slotsLeft <= 0) {
+  const activation = determineDistributionActivation({
+    commercialType: run.commercial_type as LeadCommercialType,
+    slotsLeft,
+    liveCount: live.length,
+    queuedCount: queued.length,
+    sharedBatchSize: distributionConfig.sharedBatchSize,
+  });
+  if (activation.action === "close_sold_out") {
     await supabase
       .from("lead_distribution_candidates")
       .update({ status: "skipped", skipped_at: new Date().toISOString() })
@@ -362,38 +403,34 @@ export async function activateOffersForRun(runId: string) {
   const now = new Date();
   const expiryIso = new Date(now.getTime() + getOfferWindowMinutes(run.commercial_type as LeadCommercialType) * 60_000).toISOString();
 
-  if (run.commercial_type === "exclusive") {
-    if (live.length === 0 && queued.length > 0) {
-      const next = queued[0];
-      await supabase.from("lead_distribution_candidates").update({ status: "offered", offered_at: now.toISOString(), offer_expires_at: expiryIso }).eq("id", next.id);
-      await appendDistributionActivity(String(next.lead_id), "candidate_offered", String(next.professional_id), { candidate_id: next.id, run_id: runId });
+  if (activation.action === "offer_exclusive") {
+    const next = queued[0];
+    await supabase.from("lead_distribution_candidates").update({ status: "offered", offered_at: now.toISOString(), offer_expires_at: expiryIso }).eq("id", next.id);
+    await appendDistributionActivity(String(next.lead_id), "candidate_offered", String(next.professional_id), { candidate_id: next.id, run_id: runId });
+    await supabase.from("lead_distribution_runs").update({ status: "active" }).eq("id", runId);
+    return;
+  }
+
+  if (activation.action === "offer_shared") {
+    const toOffer = queued.slice(0, activation.offerCount);
+    if (toOffer.length > 0) {
+      await supabase.from("lead_distribution_candidates").upsert(
+        toOffer.map((candidate) => ({
+          id: candidate.id,
+          status: "offered",
+          offered_at: now.toISOString(),
+          offer_expires_at: expiryIso,
+        })),
+      );
+      for (const candidate of toOffer) {
+        await appendDistributionActivity(String(candidate.lead_id), "candidate_offered", String(candidate.professional_id), { candidate_id: candidate.id, run_id: runId });
+      }
       await supabase.from("lead_distribution_runs").update({ status: "active" }).eq("id", runId);
       return;
     }
-  } else {
-    const targetLive = Math.min(distributionConfig.sharedBatchSize, slotsLeft);
-    const required = Math.max(0, targetLive - live.length);
-    if (required > 0) {
-      const toOffer = queued.slice(0, required);
-      if (toOffer.length > 0) {
-        await supabase.from("lead_distribution_candidates").upsert(
-          toOffer.map((candidate) => ({
-            id: candidate.id,
-            status: "offered",
-            offered_at: now.toISOString(),
-            offer_expires_at: expiryIso,
-          })),
-        );
-        for (const candidate of toOffer) {
-          await appendDistributionActivity(String(candidate.lead_id), "candidate_offered", String(candidate.professional_id), { candidate_id: candidate.id, run_id: runId });
-        }
-        await supabase.from("lead_distribution_runs").update({ status: "active" }).eq("id", runId);
-        return;
-      }
-    }
   }
 
-  if (live.length === 0 && queued.length === 0) {
+  if (activation.action === "exhausted") {
     await supabase.from("lead_distribution_runs").update({ status: "exhausted", completed_at: new Date().toISOString() }).eq("id", runId);
     await appendDistributionActivity(String(run.lead_id), "distribution_exhausted", null, { run_id: runId });
   }
@@ -672,7 +709,19 @@ export async function adminAddManualOffer(leadId: string, professionalId: string
 
   await ensureDistributionSettingsForProfessional(professionalId);
 
+  const { data: existingCandidate } = await supabase
+    .from("lead_distribution_candidates")
+    .select("id, status")
+    .eq("distribution_run_id", runId)
+    .eq("professional_id", professionalId)
+    .maybeSingle();
+
+  if (existingCandidate && !canAdminRequeueCandidate(String(existingCandidate.status))) {
+    throw new Error("Handmatige override is niet toegestaan voor een reeds gekochte kandidaat.");
+  }
+
   await supabase.from("lead_distribution_candidates").upsert({
+    id: existingCandidate?.id,
     distribution_run_id: runId,
     lead_id: leadId,
     professional_id: professionalId,
@@ -691,6 +740,14 @@ export async function adminAddManualOffer(leadId: string, professionalId: string
     },
     eligibility_reason: { manual_override: true },
     status: "queued",
+    offered_at: null,
+    offer_expires_at: null,
+    viewed_at: null,
+    skipped_at: null,
+    declined_at: null,
+    expired_at: null,
+    purchased_at: null,
+    decline_reason: null,
   }, { onConflict: "distribution_run_id,professional_id" });
 
   await appendDistributionActivity(leadId, "distribution_admin_override", professionalId, {
