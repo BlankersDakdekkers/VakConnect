@@ -301,6 +301,7 @@ export interface LeadDistributionCandidate {
   offered_at: string | null;
   offer_expires_at: string | null;
   viewed_at: string | null;
+  expired_at: string | null;
   skipped_at: string | null;
   declined_at: string | null;
   purchased_at: string | null;

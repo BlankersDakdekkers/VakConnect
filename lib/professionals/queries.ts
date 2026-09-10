@@ -115,7 +115,7 @@ export async function getAdminProfessionalDetail(id: string) {
     supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("professional_id", id).eq("status", "accepted"),
     supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("professional_id", id).eq("progress_status", "won"),
     supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("professional_id", id).eq("progress_status", "lost"),
-    supabase.from("lead_distribution_candidates").select("status, offered_at, viewed_at, declined_at, purchased_at").eq("professional_id", id),
+    supabase.from("lead_distribution_candidates").select("status, offered_at, viewed_at, declined_at, expired_at, purchased_at").eq("professional_id", id),
   ]);
 
   const offers = (candidateRows.data ?? []) as Array<Record<string, unknown>>;
@@ -169,11 +169,11 @@ export async function getAdminProfessionalDetail(id: string) {
       assignmentsAccepted: acceptedAssignments.count ?? 0,
       assignmentsWon: wonAssignments.count ?? 0,
       assignmentsLost: lostAssignments.count ?? 0,
-      offersReceived: offers.length,
-      offersViewed: offers.filter((row) => row.status === "viewed").length,
-      offersDeclined: offers.filter((row) => row.status === "declined").length,
-      offersExpired: offers.filter((row) => row.status === "expired").length,
-      offersPurchased: offers.filter((row) => row.status === "purchased").length,
+      offersReceived: offers.filter((row) => Boolean(row.offered_at)).length,
+      offersViewed: offers.filter((row) => Boolean(row.viewed_at)).length,
+      offersDeclined: offers.filter((row) => Boolean(row.declined_at)).length,
+      offersExpired: offers.filter((row) => Boolean(row.expired_at)).length,
+      offersPurchased: offers.filter((row) => Boolean(row.purchased_at)).length,
       averageResponseHours: responseHours.length ? Number((responseHours.reduce((sum, value) => sum + value, 0) / responseHours.length).toFixed(1)) : 0,
     },
   } as ProfessionalDetail;

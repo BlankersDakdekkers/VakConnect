@@ -18,6 +18,7 @@ const migrationFiles = [
   "supabase/migrations/20260909133000_phase2_dynamic_intake.sql",
   "supabase/migrations/20260909152000_phase3_analytics_operations.sql",
   "supabase/migrations/20260909222000_phase5_commercial_lead_wallet.sql",
+  "supabase/migrations/20260910160000_phase6_lead_distribution_engine.sql",
 ].map((file) => join(repoRoot, file));
 
 type AppRole = "admin" | "professional" | null;

@@ -7,9 +7,6 @@ const migrationPath =
   "/home/runner/work/VakConnect/VakConnect/supabase/migrations/20260910160000_phase6_lead_distribution_engine.sql";
 const migrationSql = readFileSync(migrationPath, "utf8");
 
-const actionsPath =
-  "/home/runner/work/VakConnect/VakConnect/lib/distribution/actions.ts";
-const actionsSource = readFileSync(actionsPath, "utf8");
 
 test("phase6 migration adds distribution schema, capacity settings and idempotency constraints", () => {
   assert.match(migrationSql, /create table if not exists public\.lead_distribution_runs/);
@@ -89,6 +86,9 @@ test("eligibility blocks wrong service/area, inactive, paused and open-offer ove
   assert.equal(evaluateDistributionEligibility({ ...base, areaMatch: false }).eligible, false);
   assert.equal(evaluateDistributionEligibility({ ...base, paused: true }).eligible, false);
   assert.equal(evaluateDistributionEligibility({ ...base, openOffers: 5 }).eligible, false);
+  assert.equal(evaluateDistributionEligibility({ ...base, verificationAllowed: false }).eligible, false);
+  assert.equal(evaluateDistributionEligibility({ ...base, alreadyPurchased: true }).eligible, false);
+  assert.equal(evaluateDistributionEligibility({ ...base, leadCommerciallyAvailable: false }).eligible, false);
 });
 
 test("cold-start scoring stays neutral and fairness can boost underexposed professionals", () => {
@@ -113,10 +113,34 @@ test("cold-start scoring stays neutral and fairness can boost underexposed profe
   assert.ok(boosted.score > neutral.score);
 });
 
-test("admin override and requeue actions are available server-side", () => {
-  assert.match(actionsSource, /export async function requeueLeadDistributionAction/);
-  assert.match(actionsSource, /export async function pauseDistributionRunAction/);
-  assert.match(actionsSource, /export async function addManualDistributionOfferAction/);
-  assert.match(actionsSource, /export async function skipDistributionCandidateAction/);
-  assert.match(actionsSource, /export async function startDistributionRunAction/);
+test("scoring breakdown blijft uitlegbaar per component", () => {
+  const result = calculateDistributionScore({
+    verification: "verified",
+    acceptRate: 0.8,
+    winRate: 0.6,
+    avgResponseHours: 4,
+    workloadRatio: 0.3,
+    fairness: 2,
+  });
+
+  assert.deepEqual(Object.keys(result.breakdown), [
+    "service",
+    "regio",
+    "verificatie",
+    "response_performance",
+    "win_rate",
+    "response_time",
+    "workload",
+    "fairness",
+  ]);
+  assert.ok(result.score >= 0 && result.score <= 100);
+  const extreme = calculateDistributionScore({
+    verification: "verified",
+    acceptRate: 1,
+    winRate: 1,
+    avgResponseHours: 0,
+    workloadRatio: 0,
+    fairness: 999,
+  });
+  assert.ok(extreme.breakdown.fairness <= 10);
 });

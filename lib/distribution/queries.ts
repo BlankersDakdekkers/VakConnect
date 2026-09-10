@@ -35,6 +35,7 @@ export interface DistributionCandidateView {
   offerExpiresAt: string | null;
   viewedAt: string | null;
   declinedAt: string | null;
+  expiredAt: string | null;
   purchasedAt: string | null;
   declineReason: string | null;
 }
@@ -158,7 +159,7 @@ export async function getLeadDistributionDetail(leadId: string): Promise<LeadDis
 
   const { data: candidates } = await supabase
     .from("lead_distribution_candidates")
-    .select("id, professional_id, rank_position, ranking_score, score_breakdown, eligibility_reason, status, offered_at, offer_expires_at, viewed_at, declined_at, purchased_at, decline_reason, professional:professionals(company_name)")
+    .select("id, professional_id, rank_position, ranking_score, score_breakdown, eligibility_reason, status, offered_at, offer_expires_at, viewed_at, declined_at, expired_at, purchased_at, decline_reason, professional:professionals(company_name)")
     .eq("distribution_run_id", run.id)
     .order("rank_position", { ascending: true });
 
@@ -186,6 +187,7 @@ export async function getLeadDistributionDetail(leadId: string): Promise<LeadDis
         offerExpiresAt: (row.offer_expires_at as string | null) ?? null,
         viewedAt: (row.viewed_at as string | null) ?? null,
         declinedAt: (row.declined_at as string | null) ?? null,
+        expiredAt: (row.expired_at as string | null) ?? null,
         purchasedAt: (row.purchased_at as string | null) ?? null,
         declineReason: (row.decline_reason as string | null) ?? null,
       } satisfies DistributionCandidateView;
@@ -220,27 +222,38 @@ export async function getDistributionPerformanceStats(): Promise<DistributionPer
   const supabase = createAdminSupabaseClient();
   const since = new Date(Date.now() - (90 * 24 * 60 * 60 * 1000)).toISOString();
   const [{ data: candidateRows }, { data: purchaseRows }, { count: exhaustedCount }] = await Promise.all([
-    supabase.from("lead_distribution_candidates").select("lead_id, status, offered_at, purchased_at").gte("created_at", since),
-    supabase.from("lead_purchases").select("purchased_at, lead_id").eq("status", "purchased").gte("purchased_at", since),
+    supabase.from("lead_distribution_candidates").select("lead_id, professional_id, status, offered_at, viewed_at, declined_at, expired_at, purchased_at").gte("created_at", since),
+    supabase.from("lead_purchases").select("purchased_at, lead_id, professional_id").eq("status", "purchased").gte("purchased_at", since),
     supabase.from("lead_distribution_runs").select("id", { count: "exact", head: true }).eq("status", "exhausted").gte("created_at", since),
   ]);
 
   const rows = (candidateRows ?? []) as Array<Record<string, unknown>>;
-  const offersSent = rows.filter((row) => ["offered", "viewed", "declined", "expired", "purchased"].includes(String(row.status))).length;
-  const offersViewed = rows.filter((row) => String(row.status) === "viewed").length;
-  const offersDeclined = rows.filter((row) => String(row.status) === "declined").length;
-  const offersExpired = rows.filter((row) => String(row.status) === "expired").length;
-  const purchases = rows.filter((row) => String(row.status) === "purchased").length;
+  const offersSent = rows.filter((row) => Boolean(row.offered_at)).length;
+  const offersViewed = rows.filter((row) => Boolean(row.viewed_at)).length;
+  const offersDeclined = rows.filter((row) => Boolean(row.declined_at)).length;
+  const offersExpired = rows.filter((row) => Boolean(row.expired_at)).length;
+  const purchases = rows.filter((row) => Boolean(row.purchased_at)).length;
+  const offerMap = new Map<string, number>();
+  for (const row of rows) {
+    if (!row.purchased_at) {
+      continue;
+    }
+    const key = `${String((row as { lead_id?: string }).lead_id)}::${String((row as { professional_id?: string }).professional_id)}`;
+    const offeredAt = row.offered_at ? new Date(String(row.offered_at)).getTime() : 0;
+    if (offeredAt > 0) {
+      offerMap.set(key, offeredAt);
+    }
+  }
 
   const durations = ((purchaseRows ?? []) as Array<Record<string, unknown>>)
     .map((row) => ({
       purchasedAt: row.purchased_at ? new Date(String(row.purchased_at)).getTime() : 0,
       leadId: String(row.lead_id),
+      professionalId: String(row.professional_id),
     }))
     .filter((row) => row.purchasedAt > 0)
     .map((row) => {
-      const offer = rows.find((candidate) => String(candidate.status) === "purchased" && String((candidate as { lead_id?: string }).lead_id) === row.leadId);
-      const offeredAt = offer?.offered_at ? new Date(String(offer.offered_at)).getTime() : 0;
+      const offeredAt = offerMap.get(`${row.leadId}::${row.professionalId}`) ?? 0;
       return offeredAt > 0 ? (row.purchasedAt - offeredAt) / (1000 * 60 * 60) : null;
     })
     .filter((value): value is number => value !== null && Number.isFinite(value) && value >= 0);

@@ -9,8 +9,8 @@ import {
   adminRequeueLeadDistribution,
   adminSkipDistributionCandidate,
   declineDistributionOffer,
-  processDistributionExpirations,
   markDistributionOfferViewed,
+  processDistributionExpirations,
   startLeadDistribution,
 } from "@/lib/distribution/engine";
 import {
@@ -49,6 +49,22 @@ export async function startDistributionRunAction(formData: FormData) {
   redirectWithMessage(payload.data.redirectTo, "success", "Distributierun gestart.");
 }
 
+export async function pauseDistributionRunAction(formData: FormData) {
+  const user = await requireAdminUser();
+  const payload = adminDistributionPauseSchema.safeParse({
+    runId: formData.get("run_id"),
+    redirectTo: formData.get("redirect_to"),
+  });
+
+  if (!payload.success) {
+    redirectWithMessage("/admin/distributie", "error", "Run kon niet worden gepauzeerd.");
+  }
+
+  await adminPauseDistributionRun(payload.data.runId, user.id);
+  revalidatePath("/admin/distributie");
+  redirectWithMessage(payload.data.redirectTo, "success", "Run gepauzeerd.");
+}
+
 export async function skipDistributionCandidateAction(formData: FormData) {
   const user = await requireAdminUser();
   const payload = adminDistributionRunSchema.safeParse({
@@ -75,22 +91,6 @@ export async function requeueLeadDistributionAction(formData: FormData) {
 
   if (!payload.success) {
     redirectWithMessage("/admin/distributie", "error", "Lead kon niet opnieuw in distributie worden gezet.");
-  }
-
-  export async function pauseDistributionRunAction(formData: FormData) {
-    const user = await requireAdminUser();
-    const payload = adminDistributionPauseSchema.safeParse({
-      runId: formData.get("run_id"),
-      redirectTo: formData.get("redirect_to"),
-    });
-
-    if (!payload.success) {
-      redirectWithMessage("/admin/distributie", "error", "Run kon niet worden gepauzeerd.");
-    }
-
-    await adminPauseDistributionRun(payload.data.runId, user.id);
-    revalidatePath("/admin/distributie");
-    redirectWithMessage(payload.data.redirectTo, "success", "Run gepauzeerd.");
   }
 
   await adminRequeueLeadDistribution(payload.data.leadId, user.id);
@@ -131,22 +131,6 @@ export async function declineDistributionOfferAction(formData: FormData) {
     redirectWithMessage("/vakman/aanvragen", "error", payload.error.issues[0]?.message ?? "Aanbod kon niet worden geweigerd.");
   }
 
-  export async function viewDistributionOfferAction(formData: FormData) {
-    const user = await requireProfessionalUser();
-    const payload = professionalOfferViewSchema.safeParse({
-      candidateId: formData.get("candidate_id"),
-      redirectTo: formData.get("redirect_to"),
-    });
-
-    if (!payload.success) {
-      redirectWithMessage("/vakman/aanvragen", "error", "Offer kon niet worden geopend.");
-    }
-
-    await markDistributionOfferViewed(payload.data.candidateId, user.professional.id);
-    revalidatePath("/vakman/aanvragen");
-    redirect(payload.data.redirectTo);
-  }
-
   try {
     await declineDistributionOffer(payload.data.candidateId, user.professional.id, payload.data.reason);
   } catch (error) {
@@ -156,6 +140,22 @@ export async function declineDistributionOfferAction(formData: FormData) {
   revalidatePath("/vakman/aanvragen");
   revalidatePath(payload.data.redirectTo);
   redirectWithMessage(payload.data.redirectTo, "success", "Aanbod geweigerd.");
+}
+
+export async function viewDistributionOfferAction(formData: FormData) {
+  const user = await requireProfessionalUser();
+  const payload = professionalOfferViewSchema.safeParse({
+    candidateId: formData.get("candidate_id"),
+    redirectTo: formData.get("redirect_to"),
+  });
+
+  if (!payload.success) {
+    redirectWithMessage("/vakman/aanvragen", "error", "Offer kon niet worden geopend.");
+  }
+
+  await markDistributionOfferViewed(payload.data.candidateId, user.professional.id);
+  revalidatePath("/vakman/aanvragen");
+  redirect(payload.data.redirectTo);
 }
 
 export async function processDistributionExpirationsAction() {

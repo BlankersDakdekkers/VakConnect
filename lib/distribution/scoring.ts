@@ -1,4 +1,4 @@
-import { distributionConfig } from "@/lib/distribution/config";
+import { distributionConfig } from "./config.ts";
 
 export interface DistributionEligibilityInput {
   professionalActive: boolean;

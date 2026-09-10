@@ -51,26 +51,38 @@ export default async function AdminDistributionPage({
 
       <Card className="space-y-4">
         <form className="grid gap-4 md:grid-cols-5">
-          <Select name="status" defaultValue={status ?? ""}>
+          <label className="space-y-1 text-sm">
+            <span className="sr-only">Filter op runstatus</span>
+            <Select name="status" defaultValue={status ?? ""} aria-label="Filter op runstatus">
             <option value="">Alle statussen</option>
             <option value="pending">pending</option>
             <option value="active">active</option>
             <option value="completed">completed</option>
             <option value="cancelled">cancelled</option>
             <option value="exhausted">exhausted</option>
-          </Select>
-          <Select name="lead_type" defaultValue={leadType ?? ""}>
+            </Select>
+          </label>
+          <label className="space-y-1 text-sm">
+            <span className="sr-only">Filter op leadtype</span>
+            <Select name="lead_type" defaultValue={leadType ?? ""} aria-label="Filter op leadtype">
             <option value="">Alle types</option>
             <option value="shared">shared</option>
             <option value="exclusive">exclusive</option>
-          </Select>
-          <Select name="service_id" defaultValue={serviceId ?? ""}>
+            </Select>
+          </label>
+          <label className="space-y-1 text-sm">
+            <span className="sr-only">Filter op dienst</span>
+            <Select name="service_id" defaultValue={serviceId ?? ""} aria-label="Filter op dienst">
             <option value="">Alle diensten</option>
             {services.map((service) => (
               <option key={service.id} value={service.id}>{service.name}</option>
             ))}
-          </Select>
-          <Input type="date" name="from_date" defaultValue={fromDate ?? ""} />
+            </Select>
+          </label>
+          <label className="space-y-1 text-sm">
+            <span className="sr-only">Filter vanaf datum</span>
+            <Input type="date" name="from_date" defaultValue={fromDate ?? ""} aria-label="Filter vanaf datum" />
+          </label>
           <button className="rounded-full bg-primary px-5 py-3 text-sm font-medium text-primary-foreground">Filter</button>
         </form>
         <form action={processDistributionExpirationsAction}>

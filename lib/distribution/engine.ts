@@ -1,8 +1,10 @@
 import "server-only";
 
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { distributionConfig, distributionStrategyVersion, getOfferWindowMinutes } from "@/lib/distribution/config";
-import type { Json, LeadCommercialType, LeadStatus, ProfessionalVerificationStatus } from "@/types/database";
+import { calculateDistributionScore } from "@/lib/distribution/scoring";
+import type { Json, LeadCommercialType, ProfessionalVerificationStatus } from "@/types/database";
 
 interface DistributionCandidateInput {
   professionalId: string;
@@ -77,9 +79,9 @@ function getFairnessPoints(candidate: DistributionCandidateInput, averageRecentO
 }
 
 function buildScore(candidate: DistributionCandidateInput, averageRecentOffers: number) {
-  const acceptRateDenominator = candidate.stats.offersDeclined + candidate.stats.purchases;
+  const acceptRateDenominator = candidate.stats.offersReceived;
   const acceptRate = acceptRateDenominator > 0
-    ? candidate.stats.purchases / acceptRateDenominator
+    ? (candidate.stats.offersViewed + candidate.stats.purchases) / acceptRateDenominator
     : distributionConfig.coldStart.acceptRate;
   const winRateDenominator = candidate.stats.won + candidate.stats.lost;
   const winRate = winRateDenominator > 0
@@ -91,43 +93,16 @@ function buildScore(candidate: DistributionCandidateInput, averageRecentOffers: 
     ? clamp(candidate.stats.activeAssignments / candidate.settings.maxActiveAssignments, 0, 1)
     : 1;
 
-  const verification = candidate.verificationStatus === "verified"
-    ? distributionConfig.weights.verification
-    : candidate.verificationStatus === "pending"
-      ? Math.round(distributionConfig.weights.verification * 0.7)
-      : Math.round(distributionConfig.weights.verification * 0.4);
-
-  const responsePerformance = Math.round(acceptRate * distributionConfig.weights.responsePerformance);
-  const winRatePoints = Math.round(winRate * distributionConfig.weights.winRate);
-  const responseTimePoints = Math.round(normalizedResponseTime * distributionConfig.weights.responseTime);
-  const workloadPoints = Math.round((1 - workloadUtilization) * distributionConfig.weights.workload);
   const fairnessPoints = getFairnessPoints(candidate, averageRecentOffers);
 
-  const breakdown = {
-    service: distributionConfig.weights.serviceMatch,
-    regio: distributionConfig.weights.geoMatch,
-    verificatie: verification,
-    response_performance: responsePerformance,
-    win_rate: winRatePoints,
-    response_time: responseTimePoints,
-    workload: workloadPoints,
+  return calculateDistributionScore({
+    verification: candidate.verificationStatus === "verified" ? "verified" : candidate.verificationStatus === "pending" ? "pending" : "unverified",
+    acceptRate,
+    winRate,
+    avgResponseHours: Math.max(0, (1 - normalizedResponseTime) * 48),
+    workloadRatio: workloadUtilization,
     fairness: fairnessPoints,
-  };
-
-  const score = clamp(
-    breakdown.service
-      + breakdown.regio
-      + breakdown.verificatie
-      + breakdown.response_performance
-      + breakdown.win_rate
-      + breakdown.response_time
-      + breakdown.workload
-      + breakdown.fairness,
-    0,
-    100,
-  );
-
-  return { score, breakdown };
+  });
 }
 
 export async function ensureDistributionSettingsForProfessional(professionalId: string) {
@@ -151,7 +126,7 @@ async function loadEligiblePool(leadId: string) {
     throw new Error("Lead kon niet worden geladen voor distributie.");
   }
 
-  if (!distributionConfig.eligibleLeadStatuses.includes(lead.status as LeadStatus) || !["available", "partially_sold"].includes(String(lead.sales_status))) {
+  if (!distributionConfig.eligibleLeadStatuses.includes(String(lead.status) as (typeof distributionConfig.eligibleLeadStatuses)[number]) || !["available", "partially_sold"].includes(String(lead.sales_status))) {
     throw new Error("Lead is commercieel niet beschikbaar voor distributie.");
   }
 
@@ -190,6 +165,7 @@ async function loadEligiblePool(leadId: string) {
   const purchasedSet = new Set((purchasedRows ?? []).map((row) => String(row.professional_id)));
   const openOfferRows = (offerRows ?? []).filter((row) => ["offered", "viewed"].includes(String(row.status))
     && (!row.offer_expires_at || new Date(String(row.offer_expires_at)).getTime() > Date.now()));
+  const responseAggregates = new Map<string, { totalHours: number; count: number }>();
 
   const offerStats = new Map<string, DistributionCandidateInput["stats"]>();
   for (const row of (offerRows ?? [])) {
@@ -226,9 +202,10 @@ async function loadEligiblePool(leadId: string) {
     if (offeredTs && responseTs) {
       const responseHours = (new Date(String(responseTs)).getTime() - offeredTs) / (1000 * 60 * 60);
       if (responseHours >= 0) {
-        existing.avgResponseHours = existing.avgResponseHours === null
-          ? responseHours
-          : (existing.avgResponseHours + responseHours) / 2;
+        const aggregate = responseAggregates.get(key) ?? { totalHours: 0, count: 0 };
+        aggregate.totalHours += responseHours;
+        aggregate.count += 1;
+        responseAggregates.set(key, aggregate);
       }
     }
     if (offeredTs && (!existing.lastOfferAt || offeredTs > new Date(existing.lastOfferAt).getTime())) {
@@ -239,9 +216,27 @@ async function loadEligiblePool(leadId: string) {
 
   for (const row of openOfferRows) {
     const key = String(row.professional_id);
-    const existing = offerStats.get(key);
-    if (existing) {
-      existing.openOffers += 1;
+    const existing = offerStats.get(key) ?? {
+      openOffers: 0,
+      activeAssignments: 0,
+      offersReceived: 0,
+      offersViewed: 0,
+      offersDeclined: 0,
+      offersExpired: 0,
+      purchases: 0,
+      won: 0,
+      lost: 0,
+      avgResponseHours: null,
+      lastOfferAt: null,
+    };
+    existing.openOffers += 1;
+    offerStats.set(key, existing);
+  }
+
+  for (const [professionalId, aggregate] of responseAggregates) {
+    const existing = offerStats.get(professionalId);
+    if (existing && aggregate.count > 0) {
+      existing.avgResponseHours = aggregate.totalHours / aggregate.count;
     }
   }
 
@@ -427,7 +422,10 @@ export async function startLeadDistribution(leadId: string, actorUserId?: string
     .filter((candidate) => {
       if (candidate.settings.paused) {
         const pauseUntilTs = candidate.settings.pauseUntil ? new Date(candidate.settings.pauseUntil).getTime() : 0;
-        return pauseUntilTs > 0 && pauseUntilTs < Date.now();
+        if (pauseUntilTs === 0) {
+          return false;
+        }
+        return pauseUntilTs < Date.now();
       }
       return true;
     })
@@ -455,14 +453,35 @@ export async function startLeadDistribution(leadId: string, actorUserId?: string
     .select("id")
     .single();
 
-  if (runError || !run) {
+  let resolvedRunId = run?.id ?? null;
+
+  if (runError || !resolvedRunId) {
+    if (runError?.code !== "23505") {
+      throw new Error("Distributierun kon niet worden gestart.");
+    }
+
+    const { data: concurrentRun } = await supabase
+      .from("lead_distribution_runs")
+      .select("id")
+      .eq("lead_id", leadId)
+      .in("status", ["pending", "active"])
+      .maybeSingle();
+
+    if (!concurrentRun) {
+      throw new Error("Distributierun kon niet worden gestart.");
+    }
+
+    resolvedRunId = concurrentRun.id;
+  }
+
+  if (!resolvedRunId) {
     throw new Error("Distributierun kon niet worden gestart.");
   }
 
   if (eligibleCandidates.length) {
-    await supabase.from("lead_distribution_candidates").insert(
+    await supabase.from("lead_distribution_candidates").upsert(
       eligibleCandidates.map((entry, index) => ({
-        distribution_run_id: run.id,
+        distribution_run_id: resolvedRunId,
         lead_id: leadId,
         professional_id: entry.candidate.professionalId,
         rank_position: index + 1,
@@ -477,23 +496,24 @@ export async function startLeadDistribution(leadId: string, actorUserId?: string
           already_purchased: false,
         },
       })),
+      { onConflict: "distribution_run_id,professional_id", ignoreDuplicates: true },
     );
   }
 
   await appendDistributionActivity(leadId, "distribution_started", null, {
-    run_id: run.id,
+    run_id: resolvedRunId,
     strategy_version: distributionStrategyVersion,
     candidate_count: eligibleCandidates.length,
     actor_user_id: actorUserId ?? null,
   });
 
   if (eligibleCandidates.length) {
-    await activateOffersForRun(run.id);
+    await activateOffersForRun(resolvedRunId);
   } else {
-    await appendDistributionActivity(leadId, "distribution_exhausted", null, { run_id: run.id });
+    await appendDistributionActivity(leadId, "distribution_exhausted", null, { run_id: resolvedRunId });
   }
 
-  return run.id;
+  return resolvedRunId;
 }
 
 export async function processDistributionExpirations() {
@@ -514,7 +534,7 @@ export async function processDistributionExpirations() {
   for (const candidate of expired) {
     await supabase
       .from("lead_distribution_candidates")
-      .update({ status: "expired", skipped_at: now })
+      .update({ status: "expired", expired_at: now })
       .eq("id", candidate.id)
       .in("status", ["offered", "viewed"]);
     runIds.add(String(candidate.distribution_run_id));
@@ -529,7 +549,7 @@ export async function processDistributionExpirations() {
 }
 
 export async function declineDistributionOffer(candidateId: string, professionalId: string, reason: string) {
-  const supabase = createAdminSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const now = new Date().toISOString();
   const { data: candidate } = await supabase
     .from("lead_distribution_candidates")
@@ -546,7 +566,7 @@ export async function declineDistributionOffer(candidateId: string, professional
     throw new Error("Offer kan niet meer worden geweigerd.");
   }
 
-  if (candidate.offer_expires_at && new Date(String(candidate.offer_expires_at)).getTime() < Date.now()) {
+  if (candidate.offer_expires_at && new Date(String(candidate.offer_expires_at)).getTime() <= Date.now()) {
     throw new Error("Offer is verlopen.");
   }
 
@@ -566,7 +586,7 @@ export async function declineDistributionOffer(candidateId: string, professional
 }
 
 export async function markDistributionOfferViewed(candidateId: string, professionalId: string) {
-  const supabase = createAdminSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const { data: candidate } = await supabase
     .from("lead_distribution_candidates")
     .select("id, lead_id, professional_id, status")
@@ -670,13 +690,13 @@ export async function adminAddManualOffer(leadId: string, professionalId: string
       admin_override: true,
     },
     eligibility_reason: { manual_override: true },
-    status: "offered",
-    offered_at: new Date().toISOString(),
-    offer_expires_at: new Date(Date.now() + getOfferWindowMinutes("exclusive") * 60_000).toISOString(),
+    status: "queued",
   }, { onConflict: "distribution_run_id,professional_id" });
 
   await appendDistributionActivity(leadId, "distribution_admin_override", professionalId, {
     action: "manual_offer",
     actor_user_id: actorUserId ?? null,
   });
+
+  await activateOffersForRun(runId);
 }

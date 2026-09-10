@@ -378,7 +378,7 @@ export async function getProfessionalLeadMarketDetail(leadId: string, profession
     supabase.from("lead_assignments").select("id, status, lead_purchase_id").eq("lead_id", leadId).eq("professional_id", professionalId).maybeSingle(),
     supabase.from("lead_purchases").select("id, status, purchased_at").eq("lead_id", leadId).eq("professional_id", professionalId).maybeSingle(),
     supabase.from("professional_wallets").select("cached_balance").eq("professional_id", professionalId).maybeSingle(),
-    supabase.from("lead_distribution_candidates").select("id, status, offered_at, offer_expires_at").eq("lead_id", leadId).eq("professional_id", professionalId).order("created_at", { ascending: false }).limit(1).maybeSingle(),
+    supabase.from("lead_distribution_candidates").select("id, status, offered_at, offer_expires_at, viewed_at").eq("lead_id", leadId).eq("professional_id", professionalId).order("created_at", { ascending: false }).limit(1).maybeSingle(),
   ]);
 
   if (leadError) {
@@ -392,11 +392,6 @@ export async function getProfessionalLeadMarketDetail(leadId: string, profession
   const { data: match } = await supabase.from("lead_matches").select("id").eq("lead_id", leadId).eq("professional_id", professionalId).maybeSingle();
   if (!match && !assignment && !purchase && !offer) {
     return null;
-  }
-
-  if (offer?.status === "offered") {
-    await supabase.from("lead_distribution_candidates").update({ status: "viewed", viewed_at: new Date().toISOString() }).eq("id", offer.id);
-    offer.status = "viewed";
   }
 
   const service = firstOf(leadRow.service as Pick<Service, "name" | "slug"> | Array<Pick<Service, "name" | "slug">>);
@@ -424,8 +419,11 @@ export async function getProfessionalLeadMarketDetail(leadId: string, profession
     maxBuyers: resolvedPrice.maxBuyers,
   });
   const remainingSlots = Math.max(0, resolvedPrice.maxBuyers - toNumber(leadRow.buyers_count));
-  const hasActiveOffer = Boolean(offer && [ "offered", "viewed", "purchased" ].includes(String(offer.status))
-    && (!offer.offer_expires_at || new Date(String(offer.offer_expires_at)).getTime() > Date.now()));
+  const hasActiveOffer = Boolean(offer && (
+    String(offer.status) === "purchased"
+      || (["offered", "viewed"].includes(String(offer.status))
+        && (!offer.offer_expires_at || new Date(String(offer.offer_expires_at)).getTime() > Date.now()))
+  ));
   const detail = canViewContact ? await getProfessionalLeadDetail(leadId, professionalId, actorUserId) : null;
 
   return {

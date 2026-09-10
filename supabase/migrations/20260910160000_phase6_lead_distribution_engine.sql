@@ -58,6 +58,7 @@ create table if not exists public.lead_distribution_candidates (
   offered_at timestamptz,
   offer_expires_at timestamptz,
   viewed_at timestamptz,
+  expired_at timestamptz,
   skipped_at timestamptz,
   declined_at timestamptz,
   purchased_at timestamptz,
@@ -118,6 +119,7 @@ begin
     or new.eligibility_reason <> old.eligibility_reason
     or new.offered_at is distinct from old.offered_at
     or new.offer_expires_at is distinct from old.offer_expires_at
+    or new.expired_at is distinct from old.expired_at
     or new.skipped_at is distinct from old.skipped_at
     or new.purchased_at is distinct from old.purchased_at
   then
@@ -128,7 +130,7 @@ begin
     raise exception 'DISTRIBUTION_CANDIDATE_LOCKED';
   end if;
 
-  if old.status = 'offered' and new.status not in ('viewed', 'declined') then
+  if old.status = 'offered' and new.status not in ('offered', 'viewed', 'declined') then
     raise exception 'INVALID_DISTRIBUTION_STATUS_TRANSITION';
   end if;
 
@@ -180,7 +182,7 @@ begin
     from public.lead_distribution_candidates c
     where c.lead_id = new.lead_id
       and c.professional_id = new.professional_id
-      and c.status in ('offered', 'viewed', 'purchased')
+      and c.status in ('offered', 'viewed')
       and (c.offer_expires_at is null or c.offer_expires_at >= timezone('utc', now()))
   ) into has_active_offer;
 
@@ -230,7 +232,7 @@ begin
       purchased_at = coalesce(purchased_at, new.purchased_at)
   where distribution_run_id = run_row.id
     and professional_id = new.professional_id
-    and status in ('offered', 'viewed', 'queued', 'purchased');
+    and status in ('offered', 'viewed', 'purchased');
 
   select commercial_type, max_buyers
   into lead_row
