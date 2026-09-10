@@ -26,7 +26,7 @@ VakConnect is opgezet als een Next.js App Router applicatie met TypeScript stric
 
 ## Databaseconcepten
 
-De basis bestaat uit de tabellen `professionals`, `services`, `service_questions`, `service_question_options`, `professional_services`, `professional_service_areas`, `leads`, `lead_answers`, `lead_images`, `lead_matches`, `lead_assignments`, `analytics_events` en `lead_activity`.
+De basis bestaat uit de tabellen `professionals`, `services`, `service_questions`, `service_question_options`, `professional_services`, `professional_service_areas`, `leads`, `lead_answers`, `lead_images`, `lead_matches`, `lead_assignments`, `analytics_events`, `lead_activity`, `professional_wallets`, `wallet_transactions`, `lead_pricing_rules`, `lead_purchases` en `commercial_audit_log`.
 
 Belangrijke keuzes:
 
@@ -35,7 +35,10 @@ Belangrijke keuzes:
 - `professional_services` en `lead_assignments` hebben unieke combinaties om dubbele koppelingen te voorkomen.
 - `service_questions.slug` is uniek binnen een dienst.
 - `lead_answers` houdt dienstspecifieke intake generiek buiten de `leads`-tabel.
-- `lead_matches` bewaart potentiële geschikte vakmannen; `lead_assignments` bewaart daadwerkelijke toewijzingen.
+- `lead_matches` bewaart potentiële geschikte vakmannen; `lead_purchases` bewaart commerciële aankopen; `lead_assignments` bewaart daadwerkelijke operationele leadrelaties.
+- `wallet_transactions` is een immutable ledger; `professional_wallets.cached_balance` is alleen een transactioneel bijgewerkte cache.
+- Nieuwe wallets starten op `0` credits; eventuele testcredits worden alleen via expliciete seed- of admintransacties toegevoegd.
+- `leads` bewaart commerciële verkoopstatus via `commercial_type`, `price_credits`, `max_buyers`, `buyers_count`, `sales_status` en optionele `subservice_slug`.
 - `postal_code_prefix` gebruikt een viercijferige MVP-regiobasis voor matching.
 - `created_at` en `updated_at` zijn standaard aanwezig waar mutaties relevant zijn.
 
@@ -56,11 +59,13 @@ RLS is geactiveerd op alle relevante domeintabellen.
 - Publiek kan alleen actieve `service_questions` en `service_question_options` lezen.
 - Admins worden in de normale client herkend via `is_admin()` op basis van JWT metadata.
 - Professionals kunnen alleen hun eigen `professionals`, `professional_services`, `professional_service_areas` en `lead_assignments` lezen.
-- Professionals kunnen alleen `leads`, `lead_images` en `lead_answers` lezen als er een assignment naar hun `professional_id` bestaat.
+- Professionals kunnen alleen hun eigen `professional_wallets`, `wallet_transactions` en `lead_purchases` lezen.
+- Professionals kunnen alleen `leads`, `lead_images`, `lead_answers` en `lead_activity` direct lezen na `can_professional_view_lead_contact(...)`, dus pas na geldige purchase of geaccepteerde directe assignment.
 - Professionals kunnen alleen eigen `lead_matches` lezen wanneer dat server-side nodig is; ze zien geen matches van andere vakmannen.
 - Professionals kunnen assignments niet creëren; alleen admins of server-side service-role logica kunnen toewijzen.
+- Prijsresolutie, walletdebits, refunds en lead purchases gebeuren via centrale server-side / SQL functies; client-submitted prijzen worden genegeerd.
 
-Admin-mutaties verlopen in de applicatie server-side via de service role key nadat de admin-rol eerst is gevalideerd.
+Admin-mutaties verlopen server-side na een admin-sessiecheck. De admin-RPC's gebruiken de ingelogde admin-identiteit voor auditvelden; service-role EXECUTE blijft alleen open voor interne onderhoudspaden zoals sales-state refresh en backend reconciliatie.
 
 ## Lead lifecycle
 
@@ -72,16 +77,18 @@ Admin-mutaties verlopen in de applicatie server-side via de service role key nad
 6. Optionele afbeeldingen worden veilig opgeslagen in de private bucket `lead-images` en geregistreerd in `lead_images`.
 7. `lib/leads/scoring` berekent `lead_score` en `score_reasons`.
 8. `lib/matching` berekent potentiële matches en slaat die op in `lead_matches`.
-9. Admin beoordeelt de lead en wijst handmatig toe via `lead_assignments`.
+9. Admin beoordeelt de lead en kan commerciële instellingen beheren of handmatig toewijzen via `lead_assignments`.
+10. Professionals zien voor gematchte leads alleen beperkte marktmetadata.
+11. `purchase_lead` voert de commerciële acceptatie atomair uit: eligibility-check, prijsresolutie, walletdebit, purchase-record, assignment unlock en sales-status update.
 
 ## Assignment lifecycle
 
-1. Admin maakt een record in `lead_assignments`.
-2. Leadstatus wordt op `assigned` gezet.
-3. Professional ziet alleen eigen assignments in `/vakman/aanvragen`.
-4. Bij openen wordt een pending assignment gemarkeerd als `viewed`.
-5. Professional kan accepteren of weigeren.
-6. Timestamps `accepted_at` of `rejected_at` worden vastgelegd.
+1. `lead_matches` vormt de shortlist van potentiële professionals.
+2. Een directe admin-assignment kan nog steeds een `lead_assignments` record maken zonder walletstap.
+3. Een commerciële purchase maakt eerst een `lead_purchases` record en koppelt/maakt daarna een `lead_assignments` record.
+4. Een purchase-linked assignment unlockt contact pas zolang de gekoppelde purchase `status = purchased` heeft.
+5. Shared leads blijven verkoopbaar totdat `buyers_count = max_buyers`; exclusive leads blokkeren na de eerste geldige koper.
+6. Refunds maken een positieve wallettransactie, markeren de purchase als refunded en verversen de sales-status zonder historische transacties te wijzigen.
 
 ## Dynamische intake-opzet
 
@@ -106,7 +113,19 @@ Admin-mutaties verlopen in de applicatie server-side via de service role key nad
 - `service_id` matcht
 - ten minste één `professional_service_area.postal_code_prefix` matcht met de leadpostcode
 
-Iedere match bevat `professional_id`, `match_score` en `reasons`. De admin beslist altijd handmatig over de uiteindelijke toewijzing. `lead_assignments` blijft dus het beslismoment; `lead_matches` is alleen de shortlist.
+Iedere match bevat `professional_id`, `match_score` en `reasons`. In de commerciële flow is `lead_matches` de toegangsvoorwaarde tot de leadmarkt, `lead_purchases` het financiële beslismoment en `lead_assignments` de operationele vervolgrelatie.
+
+## Wallet- en pricing-opzet
+
+- `apply_wallet_transaction(...)` lockt eerst de walletrow (`FOR UPDATE`), leest het saldo, valideert credits, schrijft een immutable transactie en werkt pas daarna `cached_balance` bij.
+- Positieve bedragen verhogen credits; negatieve bedragen verlagen credits; `amount = 0` is verboden.
+- Het transactietype dwingt het teken af: `lead_purchase` en `admin_debit` zijn negatief, `refund`/`admin_credit`/`promotional_credit`/`credit_purchase` positief en alleen `correction` mag beide kanten op.
+- `lead_pricing_rules` ondersteunt prioriteitsvolgorde, dienst-/subdienstfilters, scorebanden en aparte multipliers voor shared/exclusive leads.
+- `resolve_lead_price(...)` bepaalt de authoritative prijs server-side en gebruikt alleen een lead-level override of een centrale fallback wanneer geen actieve regel matcht.
+- `commercial_audit_log` registreert walletcredits/debits, lead purchases, refunds, pricing changes en commerciële leadwijzigingen.
+- `purchase_lead(...)` bindt idempotency keys aan één professional én één lead; hergebruik op een andere lead geeft `IDEMPOTENCY_KEY_CONFLICT`.
+- Een refunded purchase kan niet opnieuw worden gekocht; compensatie verloopt uitsluitend via de refundtransactie en niet via mutatie van historische debits.
+- `get_wallet_reconciliation(...)` en admin-overzichten controleren afwijkingen tussen `cached_balance` en de som van het immutable ledger zonder automatische correctie.
 
 ## Storage-aanpak
 
@@ -118,7 +137,7 @@ De huidige structuur is voorbereid op:
 
 - rijkere scoring- en matchinglogica
 - uitgebreide professionalprofielen
-- betalingen en leadverkoop
+- externe betalingen, checkout en leadverkoop
 - notificaties en workflow-automatisering
 - SEO-uitbreidingen zoals dienst- en locatiepagina's
 - admin tooling voor kwalificatie, rapportage en lifecycle-automatisering

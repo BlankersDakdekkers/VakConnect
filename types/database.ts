@@ -25,6 +25,17 @@ export type LeadActivityType =
 export type LeadUrgency = "normal" | "urgent";
 export type LeadPreferredTiming = "asap" | "few_weeks" | "one_to_three_months" | "later" | "unknown";
 export type LeadAssignmentStatus = "pending" | "viewed" | "accepted" | "rejected";
+export type LeadCommercialType = "shared" | "exclusive";
+export type LeadSalesStatus = "unavailable" | "available" | "partially_sold" | "sold_out" | "closed";
+export type LeadPurchaseStatus = "purchased" | "refunded" | "cancelled";
+export type WalletTransactionType =
+  | "credit_purchase"
+  | "lead_purchase"
+  | "refund"
+  | "admin_credit"
+  | "admin_debit"
+  | "promotional_credit"
+  | "correction";
 export type ServiceQuestionType = "text" | "textarea" | "select" | "multiselect" | "radio" | "boolean" | "number";
 export type ContactSubmissionStatus = "new" | "read" | "handled" | "spam";
 export type SeoContentStatus = "draft" | "review" | "approved" | "published";
@@ -62,6 +73,7 @@ export interface Lead {
   id: string;
   public_reference: string;
   service_id: string;
+  subservice_slug: string | null;
   first_name: string;
   last_name: string;
   email: string;
@@ -76,6 +88,12 @@ export interface Lead {
   lead_score: number | null;
   score_reasons: Json | null;
   status: LeadStatus;
+  commercial_type: LeadCommercialType;
+  price_credits: number | null;
+  max_buyers: number;
+  buyers_count: number;
+  sales_status: LeadSalesStatus;
+  locked_at: string | null;
   source: string | null;
   utm_source: string | null;
   utm_medium: string | null;
@@ -149,6 +167,7 @@ export interface LeadAssignment {
   id: string;
   lead_id: string;
   professional_id: string;
+  lead_purchase_id: string | null;
   status: LeadAssignmentStatus;
   progress_status: LeadProgressStatus;
   loss_reason: string | null;
@@ -179,6 +198,73 @@ export interface LeadActivity {
   from_status: LeadProgressStatus | null;
   to_status: LeadProgressStatus | null;
   metadata: Json | null;
+  created_at: string;
+}
+
+export interface ProfessionalWallet {
+  id: string;
+  professional_id: string;
+  cached_balance: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface WalletTransaction {
+  id: string;
+  wallet_id: string;
+  professional_id: string;
+  type: WalletTransactionType;
+  amount: number;
+  balance_after: number;
+  lead_id: string | null;
+  lead_assignment_id: string | null;
+  reference: string | null;
+  description: string | null;
+  metadata: Json;
+  created_by_admin_id: string | null;
+  created_at: string;
+}
+
+export interface LeadPricingRule {
+  id: string;
+  service_id: string | null;
+  service_slug: string | null;
+  subservice_slug: string | null;
+  lead_type: LeadCommercialType;
+  base_price_credits: number;
+  exclusive_multiplier: number | null;
+  shared_multiplier: number | null;
+  min_score: number | null;
+  max_score: number | null;
+  active: boolean;
+  priority: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface LeadPurchase {
+  id: string;
+  lead_id: string;
+  professional_id: string;
+  lead_assignment_id: string | null;
+  price_credits: number;
+  commercial_type: LeadCommercialType;
+  wallet_transaction_id: string;
+  refund_transaction_id: string | null;
+  status: LeadPurchaseStatus;
+  idempotency_key: string | null;
+  purchased_at: string;
+  refunded_at: string | null;
+}
+
+export interface CommercialAuditLog {
+  id: string;
+  actor_user_id: string | null;
+  actor_professional_id: string | null;
+  entity_type: "wallet" | "wallet_transaction" | "lead" | "lead_purchase" | "lead_pricing_rule";
+  entity_id: string;
+  action: "wallet_credit" | "wallet_debit" | "lead_purchase" | "refund" | "pricing_change" | "commercial_type_change";
+  metadata: Json;
   created_at: string;
 }
 
@@ -329,6 +415,31 @@ export interface Database {
       lead_activity: {
         Row: LeadActivity;
         Insert: Partial<LeadActivity> & Pick<LeadActivity, "lead_id" | "activity_type">;
+        Update: never;
+      };
+      professional_wallets: {
+        Row: ProfessionalWallet;
+        Insert: Partial<ProfessionalWallet> & Pick<ProfessionalWallet, "professional_id">;
+        Update: Partial<ProfessionalWallet>;
+      };
+      wallet_transactions: {
+        Row: WalletTransaction;
+        Insert: Partial<WalletTransaction> & Pick<WalletTransaction, "wallet_id" | "professional_id" | "type" | "amount" | "balance_after">;
+        Update: never;
+      };
+      lead_pricing_rules: {
+        Row: LeadPricingRule;
+        Insert: Partial<LeadPricingRule> & Pick<LeadPricingRule, "lead_type" | "base_price_credits">;
+        Update: Partial<LeadPricingRule>;
+      };
+      lead_purchases: {
+        Row: LeadPurchase;
+        Insert: Partial<LeadPurchase> & Pick<LeadPurchase, "lead_id" | "professional_id" | "price_credits" | "commercial_type" | "wallet_transaction_id">;
+        Update: Partial<LeadPurchase>;
+      };
+      commercial_audit_log: {
+        Row: CommercialAuditLog;
+        Insert: Partial<CommercialAuditLog> & Pick<CommercialAuditLog, "entity_type" | "entity_id" | "action">;
         Update: never;
       };
       contact_submissions: {

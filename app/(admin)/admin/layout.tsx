@@ -21,6 +21,8 @@ export const metadata: Metadata = buildMetadata({
 const navigation = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/leads", label: "Leads" },
+  { href: "/admin/credits", label: "Credits" },
+  { href: "/admin/lead-prijzen", label: "Lead prijzen" },
   { href: "/admin/contact", label: "Contact" },
   { href: "/admin/vakmannen", label: "Vakmannen" },
   { href: "/admin/diensten", label: "Diensten" },
@@ -46,7 +48,7 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
   return (
     <DashboardShell
       title="Admin dashboard"
-      subtitle="Beheer leads, vakmannen, diensten, handmatige matching en lokale SEO"
+      subtitle="Beheer leads, credits, prijzen, vakmannen, matching en lokale SEO"
       navigation={navigation}
     >
       {children}
