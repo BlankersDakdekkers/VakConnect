@@ -27,7 +27,7 @@ export interface DistributionCandidateView {
   professionalId: string;
   companyName: string;
   rankPosition: number;
-  rankingScore: number;
+  rankingScore: number | null;
   scoreBreakdown: Record<string, unknown>;
   eligibilityReason: Record<string, unknown>;
   status: string;
@@ -98,9 +98,13 @@ export async function getAdminDistributionRuns(filters: {
   const rows = (data ?? []) as Array<Record<string, unknown>>;
   const runIds = rows.map((row) => String(row.id));
 
-  const { data: candidateRows } = runIds.length
+  const { data: candidateRows, error: candidateError } = runIds.length
     ? await supabase.from("lead_distribution_candidates").select("distribution_run_id, status").in("distribution_run_id", runIds)
-    : { data: [] };
+    : { data: [], error: null };
+
+  if (candidateError) {
+    throw new Error("Distributiecandidates konden niet worden geladen.");
+  }
 
   const candidateMap = new Map<string, { total: number; offered: number; purchased: number }>();
   for (const row of (candidateRows ?? [])) {
@@ -179,7 +183,7 @@ export async function getLeadDistributionDetail(leadId: string): Promise<LeadDis
         professionalId: String(row.professional_id),
         companyName: professional?.company_name ?? "Onbekend",
         rankPosition: toNumber(row.rank_position),
-        rankingScore: toNumber(row.ranking_score),
+        rankingScore: row.ranking_score === null || row.ranking_score === undefined ? null : toNumber(row.ranking_score),
         scoreBreakdown: (row.score_breakdown as Record<string, unknown>) ?? {},
         eligibilityReason: (row.eligibility_reason as Record<string, unknown>) ?? {},
         status: String(row.status),

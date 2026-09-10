@@ -2,7 +2,7 @@ import "server-only";
 
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { distributionConfig, distributionStrategyVersion, getOfferWindowMinutes } from "@/lib/distribution/config";
+import { distributionConfig, distributionStrategyVersion } from "@/lib/distribution/config";
 import { calculateDistributionScore } from "@/lib/distribution/scoring";
 import type { Json, LeadCommercialType, ProfessionalVerificationStatus } from "@/types/database";
 
@@ -113,10 +113,10 @@ function getFairnessPoints(candidate: DistributionCandidateInput, averageRecentO
 }
 
 function buildScore(candidate: DistributionCandidateInput, averageRecentOffers: number) {
-  const acceptRateDenominator = candidate.stats.offersReceived;
-  const acceptRate = acceptRateDenominator > 0
-    ? (candidate.stats.offersViewed + candidate.stats.purchases) / acceptRateDenominator
-    : distributionConfig.coldStart.acceptRate;
+  const offersReceivedDenominator = candidate.stats.offersReceived;
+  const purchaseRate = offersReceivedDenominator > 0
+    ? candidate.stats.purchases / offersReceivedDenominator
+    : distributionConfig.coldStart.purchaseRate;
   const winRateDenominator = candidate.stats.won + candidate.stats.lost;
   const winRate = winRateDenominator > 0
     ? candidate.stats.won / winRateDenominator
@@ -131,7 +131,7 @@ function buildScore(candidate: DistributionCandidateInput, averageRecentOffers: 
 
   return calculateDistributionScore({
     verification: candidate.verificationStatus === "verified" ? "verified" : candidate.verificationStatus === "pending" ? "pending" : "unverified",
-    acceptRate,
+    purchaseRate,
     winRate,
     avgResponseHours: Math.max(0, (1 - normalizedResponseTime) * 48),
     workloadRatio: workloadUtilization,
@@ -218,7 +218,9 @@ async function loadEligiblePool(leadId: string) {
       lastOfferAt: null,
     };
 
-    existing.offersReceived += 1;
+    if (row.offered_at) {
+      existing.offersReceived += 1;
+    }
     if (row.status === "viewed") {
       existing.offersViewed += 1;
     }
@@ -349,99 +351,42 @@ async function appendDistributionActivity(leadId: string, activityType: string, 
 
 export async function activateOffersForRun(runId: string) {
   const supabase = createAdminSupabaseClient();
-  const [{ data: run, error: runError }, { data: candidates, error: candidatesError }] = await Promise.all([
-    supabase
-      .from("lead_distribution_runs")
-      .select("id, lead_id, commercial_type, status")
-      .eq("id", runId)
-      .maybeSingle(),
-    supabase
-      .from("lead_distribution_candidates")
-      .select("id, lead_id, professional_id, rank_position, status")
-      .eq("distribution_run_id", runId)
-      .order("rank_position", { ascending: true }),
-  ]);
-
-  if (runError || !run || candidatesError) {
+  const { data, error } = await supabase.rpc("activate_lead_distribution_run", {
+    target_run_id: runId,
+    exclusive_offer_window_minutes: distributionConfig.exclusiveOfferWindowMinutes,
+    shared_offer_window_minutes: distributionConfig.sharedOfferWindowMinutes,
+    shared_batch_size: distributionConfig.sharedBatchSize,
+  });
+  if (error) {
     throw new Error("Distributierun kon niet worden geactiveerd.");
   }
-
-  const live = (candidates ?? []).filter((candidate) => ["offered", "viewed"].includes(String(candidate.status)));
-  const queued = (candidates ?? []).filter((candidate) => candidate.status === "queued");
-
-  const { data: lead } = await supabase
-    .from("leads")
-    .select("commercial_type, max_buyers")
-    .eq("id", run.lead_id)
-    .maybeSingle();
-
-  const { count: purchasedCount } = await supabase
-    .from("lead_purchases")
-    .select("id", { count: "exact", head: true })
-    .eq("lead_id", run.lead_id)
-    .eq("status", "purchased");
-
-  const maxBuyers = toNumber(lead?.max_buyers, 1);
-  const slotsLeft = Math.max(0, maxBuyers - (purchasedCount ?? 0));
-  const activation = determineDistributionActivation({
-    commercialType: run.commercial_type as LeadCommercialType,
-    slotsLeft,
-    liveCount: live.length,
-    queuedCount: queued.length,
-    sharedBatchSize: distributionConfig.sharedBatchSize,
-  });
-  if (activation.action === "close_sold_out") {
-    await supabase
-      .from("lead_distribution_candidates")
-      .update({ status: "skipped", skipped_at: new Date().toISOString() })
-      .eq("distribution_run_id", runId)
-      .in("status", ["queued", "offered", "viewed"]);
-    await supabase.from("lead_distribution_runs").update({ status: "completed", completed_at: new Date().toISOString() }).eq("id", runId);
-    return;
-  }
-
-  const now = new Date();
-  const expiryIso = new Date(now.getTime() + getOfferWindowMinutes(run.commercial_type as LeadCommercialType) * 60_000).toISOString();
-
-  if (activation.action === "offer_exclusive") {
-    const next = queued[0];
-    await supabase.from("lead_distribution_candidates").update({ status: "offered", offered_at: now.toISOString(), offer_expires_at: expiryIso }).eq("id", next.id);
-    await appendDistributionActivity(String(next.lead_id), "candidate_offered", String(next.professional_id), { candidate_id: next.id, run_id: runId });
-    await supabase.from("lead_distribution_runs").update({ status: "active" }).eq("id", runId);
-    return;
-  }
-
-  if (activation.action === "offer_shared") {
-    const toOffer = queued.slice(0, activation.offerCount);
-    if (toOffer.length > 0) {
-      for (const candidate of toOffer) {
-        await supabase
-          .from("lead_distribution_candidates")
-          .update({
-            status: "offered",
-            offered_at: now.toISOString(),
-            offer_expires_at: expiryIso,
-            viewed_at: null,
-          })
-          .eq("id", candidate.id)
-          .eq("status", "queued");
-      }
-      for (const candidate of toOffer) {
-        await appendDistributionActivity(String(candidate.lead_id), "candidate_offered", String(candidate.professional_id), { candidate_id: candidate.id, run_id: runId });
-      }
-      await supabase.from("lead_distribution_runs").update({ status: "active" }).eq("id", runId);
-      return;
+  for (const row of (data ?? []) as Array<Record<string, unknown>>) {
+    if (row.action === "offered" && row.lead_id && row.professional_id && row.candidate_id) {
+      await appendDistributionActivity(String(row.lead_id), "candidate_offered", String(row.professional_id), {
+        candidate_id: String(row.candidate_id),
+        run_id: runId,
+      });
     }
-  }
-
-  if (activation.action === "exhausted") {
-    await supabase.from("lead_distribution_runs").update({ status: "exhausted", completed_at: new Date().toISOString() }).eq("id", runId);
-    await appendDistributionActivity(String(run.lead_id), "distribution_exhausted", null, { run_id: runId });
+    if (row.action === "exhausted" && row.lead_id) {
+      await appendDistributionActivity(String(row.lead_id), "distribution_exhausted", null, { run_id: runId });
+    }
   }
 }
 
 export async function startLeadDistribution(leadId: string, actorUserId?: string | null) {
   const supabase = createAdminSupabaseClient();
+  const { data: activeRun } = await supabase
+    .from("lead_distribution_runs")
+    .select("id")
+    .eq("lead_id", leadId)
+    .in("status", ["pending", "active"])
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (activeRun?.id) {
+    return String(activeRun.id);
+  }
+
   const { lead, baseCandidates } = await loadEligiblePool(leadId);
   const now = new Date();
   const averageRecentOffers = average(baseCandidates.map((candidate) => candidate.stats.offersReceived));
@@ -552,13 +497,12 @@ export async function startLeadDistribution(leadId: string, actorUserId?: string
 
 export async function processDistributionExpirations() {
   const supabase = createAdminSupabaseClient();
-  const now = new Date().toISOString();
-  const { data: expired } = await supabase
-    .from("lead_distribution_candidates")
-    .select("id, lead_id, professional_id, distribution_run_id")
-    .in("status", ["offered", "viewed"])
-    .lte("offer_expires_at", now)
-    .limit(200);
+  const { data: expired, error } = await supabase.rpc("claim_expired_distribution_candidates", {
+    max_count: 200,
+  });
+  if (error) {
+    throw new Error("Verlopen offers konden niet worden verwerkt.");
+  }
 
   if (!expired?.length) {
     return 0;
@@ -566,11 +510,6 @@ export async function processDistributionExpirations() {
 
   const runIds = new Set<string>();
   for (const candidate of expired) {
-    await supabase
-      .from("lead_distribution_candidates")
-      .update({ status: "expired", expired_at: now })
-      .eq("id", candidate.id)
-      .in("status", ["offered", "viewed"]);
     runIds.add(String(candidate.distribution_run_id));
     await appendDistributionActivity(String(candidate.lead_id), "candidate_expired", String(candidate.professional_id), { candidate_id: candidate.id });
   }
@@ -711,7 +650,7 @@ export async function adminAddManualOffer(leadId: string, professionalId: string
 
   const { data: existingCandidate } = await supabase
     .from("lead_distribution_candidates")
-    .select("id, status")
+    .select("id, status, rank_position, ranking_score, score_breakdown")
     .eq("distribution_run_id", runId)
     .eq("professional_id", professionalId)
     .maybeSingle();
@@ -720,23 +659,26 @@ export async function adminAddManualOffer(leadId: string, professionalId: string
     throw new Error("Handmatige override is niet toegestaan voor een reeds gekochte kandidaat.");
   }
 
+  const { data: rankRows } = await supabase
+    .from("lead_distribution_candidates")
+    .select("rank_position")
+    .eq("distribution_run_id", runId)
+    .order("rank_position", { ascending: false })
+    .limit(1);
+  const nextRank = toNumber(rankRows?.[0]?.rank_position, 0) + 1;
+  const existingScoreBreakdown = (existingCandidate?.score_breakdown as Record<string, unknown> | null) ?? null;
+
   await supabase.from("lead_distribution_candidates").upsert({
     id: existingCandidate?.id,
     distribution_run_id: runId,
     lead_id: leadId,
     professional_id: professionalId,
-    rank_position: 1,
-    ranking_score: 100,
+    rank_position: toNumber(existingCandidate?.rank_position, nextRank),
+    ranking_score: existingCandidate?.ranking_score ?? null,
     score_breakdown: {
-      service: distributionConfig.weights.serviceMatch,
-      regio: distributionConfig.weights.geoMatch,
-      verificatie: distributionConfig.weights.verification,
-      response_performance: distributionConfig.weights.responsePerformance,
-      win_rate: distributionConfig.weights.winRate,
-      response_time: distributionConfig.weights.responseTime,
-      workload: distributionConfig.weights.workload,
-      fairness: distributionConfig.weights.fairness,
+      ...(existingScoreBreakdown ?? {}),
       admin_override: true,
+      manual_added: true,
     },
     eligibility_reason: { manual_override: true },
     status: "queued",

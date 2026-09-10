@@ -41,7 +41,8 @@ export default async function ProfessionalLeadDetailPage({
   if (!marketLead) {
     notFound();
   }
-  const canPurchaseFromOffer = !marketLead.distributionOffer.id || marketLead.distributionOffer.status === "viewed";
+  const canPurchaseFromOffer = !marketLead.distributionOffer.id
+    || ["offered", "viewed"].includes(marketLead.distributionOffer.status ?? "");
 
   const confirmationToken = crypto.randomUUID();
 
@@ -183,9 +184,6 @@ export default async function ProfessionalLeadDetailPage({
               <SubmitButton className="w-full" disabled={marketLead.state !== "available" || marketLead.commercial.balanceAfterPurchase < 0 || !canPurchaseFromOffer} pendingLabel="Aankoop wordt verwerkt...">
                 Bevestig aankoop
               </SubmitButton>
-              {!canPurchaseFromOffer && marketLead.distributionOffer.status === "offered" ? (
-                <p className="text-sm text-muted-foreground">Open eerst het aanbod via “Markeer als bekeken” voordat je kunt kopen.</p>
-              ) : null}
               {marketLead.commercial.balanceAfterPurchase < 0 ? (
                 <p className="text-sm text-danger">Onvoldoende saldo. Benodigd: {formatCredits(marketLead.commercial.priceCredits)}, huidig: {formatCredits(marketLead.commercial.currentBalance)}. Credits kopen wordt binnenkort beschikbaar.</p>
               ) : null}

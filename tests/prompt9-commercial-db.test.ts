@@ -622,3 +622,120 @@ test("refunds add counter-transactions, block double refunds, block repurchase a
   assert.equal(reconciliation.cached_balance, reconciliation.ledger_balance);
   assert.equal(reconciliation.is_consistent, true);
 });
+
+test("concurrent expiry workers claim each expired offer once and trigger one fallback offer", { concurrency: false }, async (t) => {
+  const isolated = await createIsolatedDatabase(t, "distribution_expiry_workers");
+  if (!isolated) {
+    return;
+  }
+
+  const { harness, database } = isolated;
+  const fixture = insertFixture(harness, database, { commercialType: "exclusive", maxBuyers: 1, balances: [50, 50, 50] });
+  const runId = randomUUID();
+  const [firstProfessional, secondProfessional, thirdProfessional] = fixture.professionalIds;
+
+  harness.run(database, `
+    insert into public.lead_distribution_runs (id, lead_id, commercial_type, status, strategy_version)
+    values (${sqlLiteral(runId)}, ${sqlLiteral(fixture.leadId)}, 'exclusive', 'active', 'v1');
+    insert into public.lead_distribution_candidates (
+      distribution_run_id, lead_id, professional_id, rank_position, ranking_score, status, offered_at, offer_expires_at, score_breakdown, eligibility_reason
+    ) values
+      (${sqlLiteral(runId)}, ${sqlLiteral(fixture.leadId)}, ${sqlLiteral(firstProfessional)}, 1, 90, 'offered', timezone('utc', now()) - interval '30 minutes', timezone('utc', now()) - interval '2 minutes', '{}'::jsonb, '{}'::jsonb),
+      (${sqlLiteral(runId)}, ${sqlLiteral(fixture.leadId)}, ${sqlLiteral(secondProfessional)}, 2, 85, 'queued', null, null, '{}'::jsonb, '{}'::jsonb),
+      (${sqlLiteral(runId)}, ${sqlLiteral(fixture.leadId)}, ${sqlLiteral(thirdProfessional)}, 3, 80, 'queued', null, null, '{}'::jsonb, '{}'::jsonb);
+  `);
+
+  const workerSql = `
+    with claimed as (
+      select * from public.claim_expired_distribution_candidates(200)
+    ),
+    activated as (
+      select * from public.activate_lead_distribution_run(${sqlLiteral(runId)}, 15, 20, 3)
+    )
+    select
+      (select count(*) from claimed) as claimed_count,
+      (select count(*) from activated where action = 'offered') as offered_count;
+  `;
+
+  const [workerA, workerB] = await Promise.all([
+    harness.runConcurrent(database, workerSql),
+    harness.runConcurrent(database, workerSql),
+  ]);
+
+  assert.equal(workerA.ok, true, workerA.stderr || workerA.stdout);
+  assert.equal(workerB.ok, true, workerB.stderr || workerB.stdout);
+
+  assert.equal(
+    Number(harness.run(database, `
+      select count(*)
+      from public.lead_distribution_candidates
+      where distribution_run_id = ${sqlLiteral(runId)}
+        and status = 'expired';
+    `)),
+    1,
+  );
+
+  assert.equal(
+    Number(harness.run(database, `
+      select count(*)
+      from public.lead_distribution_candidates
+      where distribution_run_id = ${sqlLiteral(runId)}
+        and status in ('offered', 'viewed');
+    `)),
+    1,
+  );
+
+  assert.equal(
+    Number(harness.run(database, `
+      select count(*)
+      from public.lead_distribution_candidates
+      where distribution_run_id = ${sqlLiteral(runId)}
+        and professional_id = ${sqlLiteral(secondProfessional)}
+        and status = 'offered';
+    `)),
+    1,
+  );
+});
+
+test("activate_lead_distribution_run is idempotent and respects slots/batch limits", { concurrency: false }, async (t) => {
+  const isolated = await createIsolatedDatabase(t, "distribution_activation_idempotency");
+  if (!isolated) {
+    return;
+  }
+
+  const { harness, database } = isolated;
+  const fixture = insertFixture(harness, database, { commercialType: "shared", maxBuyers: 2, balances: [50, 50, 50] });
+  const runId = randomUUID();
+
+  harness.run(database, `
+    insert into public.lead_distribution_runs (id, lead_id, commercial_type, status, strategy_version)
+    values (${sqlLiteral(runId)}, ${sqlLiteral(fixture.leadId)}, 'shared', 'pending', 'v1');
+    insert into public.lead_distribution_candidates (
+      distribution_run_id, lead_id, professional_id, rank_position, ranking_score, status, score_breakdown, eligibility_reason
+    ) values
+      (${sqlLiteral(runId)}, ${sqlLiteral(fixture.leadId)}, ${sqlLiteral(fixture.professionalIds[0])}, 1, 90, 'queued', '{}'::jsonb, '{}'::jsonb),
+      (${sqlLiteral(runId)}, ${sqlLiteral(fixture.leadId)}, ${sqlLiteral(fixture.professionalIds[1])}, 2, 88, 'queued', '{}'::jsonb, '{}'::jsonb),
+      (${sqlLiteral(runId)}, ${sqlLiteral(fixture.leadId)}, ${sqlLiteral(fixture.professionalIds[2])}, 3, 85, 'queued', '{}'::jsonb, '{}'::jsonb);
+  `);
+
+  const firstActivationCount = Number(harness.run(database, `
+    select count(*) from public.activate_lead_distribution_run(${sqlLiteral(runId)}, 15, 20, 3)
+    where action = 'offered';
+  `));
+  const secondActivationCount = Number(harness.run(database, `
+    select count(*) from public.activate_lead_distribution_run(${sqlLiteral(runId)}, 15, 20, 3)
+    where action = 'offered';
+  `));
+
+  assert.equal(firstActivationCount, 2);
+  assert.equal(secondActivationCount, 0);
+  assert.equal(
+    Number(harness.run(database, `
+      select count(*)
+      from public.lead_distribution_candidates
+      where distribution_run_id = ${sqlLiteral(runId)}
+        and status in ('offered', 'viewed');
+    `)),
+    2,
+  );
+});

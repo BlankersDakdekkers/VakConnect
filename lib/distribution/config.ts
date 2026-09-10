@@ -12,7 +12,7 @@ export const distributionConfig = {
   defaultMaxOpenOffers: 5,
   defaultMaxActiveAssignments: 12,
   coldStart: {
-    acceptRate: 0.5,
+    purchaseRate: 0.35,
     winRate: 0.5,
     avgResponseHours: 12,
   },

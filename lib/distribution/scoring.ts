@@ -14,7 +14,7 @@ export interface DistributionEligibilityInput {
 
 export interface DistributionScoreInput {
   verification: "verified" | "pending" | "unverified";
-  acceptRate: number;
+  purchaseRate: number;
   winRate: number;
   avgResponseHours: number;
   workloadRatio: number;
@@ -61,7 +61,7 @@ export function calculateDistributionScore(input: DistributionScoreInput) {
     service: distributionConfig.weights.serviceMatch,
     regio: distributionConfig.weights.geoMatch,
     verificatie: verification,
-    response_performance: Math.round(clamp(input.acceptRate, 0, 1) * distributionConfig.weights.responsePerformance),
+    response_performance: Math.round(clamp(input.purchaseRate, 0, 1) * distributionConfig.weights.responsePerformance),
     win_rate: Math.round(clamp(input.winRate, 0, 1) * distributionConfig.weights.winRate),
     response_time: Math.round(clamp(1 - (Math.max(input.avgResponseHours, 0) / 48), 0, 1) * distributionConfig.weights.responseTime),
     workload: Math.round((1 - clamp(input.workloadRatio, 0, 1)) * distributionConfig.weights.workload),

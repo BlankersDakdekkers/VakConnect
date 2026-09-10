@@ -124,7 +124,7 @@ Iedere match bevat `professional_id`, `match_score` en `reasons`. In de commerci
 ## Distributie-opzet (Prompt 10)
 
 - Eligibility wordt centraal beoordeeld op status, verificatie, service-fit, postcode4-fit, capaciteit en commerciële beschikbaarheid.
-- Ranking gebruikt een uitlegbare 0-100 score met vaste componenten: service, regio, verificatie, response performance, win rate, response time, workload en fairness.
+- Ranking gebruikt een uitlegbare 0-100 score met vaste componenten: service, regio, verificatie, purchase/accept performance, win rate, response time, workload en fairness.
 - Fairness gebruikt recente exposure (offers/purchases) als zachte boost/penalty; fitfactoren blijven dominant.
 - Exclusive: één actieve offer tegelijk met expiry → fallback naar volgende kandidaat.
 - Shared: batch-offers met configureerbare batchsize, slotcontrole (`max_buyers`) en sluiting bij sold-out.
@@ -195,7 +195,7 @@ De huidige structuur is voorbereid op:
 
 ## KPI-berekening
 
-- Admin dashboard toont volume, lifecycle-statussen, leadkwaliteit en ratio's (acceptatiepercentage/winrate) op basis van echte databasewaarden.
+- Admin dashboard toont volume, lifecycle-statussen, leadkwaliteit en ratio's op basis van echte databasewaarden: viewRate (viewed/offers), purchaseRate (purchases/offers), declineRate, expiryRate en winRate.
 - Professional dashboard toont uitsluitend eigen KPI's uit eigen assignments en progressiestatussen.
 - Attribution KPI toont leads per source/medium op basis van opgeslagen leadattributie.
 

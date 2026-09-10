@@ -190,9 +190,10 @@ export default async function AdminLeadDetailPage({
                         <p className="font-medium">#{candidate.rankPosition} {candidate.companyName}</p>
                         <div className="flex items-center gap-2">
                           <StatusBadge value={candidate.status} />
-                          <p className="font-semibold">{candidate.rankingScore}/100</p>
+                          <p className="font-semibold">{candidate.rankingScore === null ? "—" : `${candidate.rankingScore}/100`}</p>
                         </div>
                       </div>
+                      {candidate.scoreBreakdown.admin_override === true ? <p className="mt-1 text-xs font-medium text-muted-foreground">Handmatig toegevoegd</p> : null}
                       <p className="mt-2 text-xs text-muted-foreground">Breakdown: {JSON.stringify(candidate.scoreBreakdown)}</p>
                       {candidate.offerExpiresAt ? <p className="text-xs text-muted-foreground">Verloopt: {formatDate(candidate.offerExpiresAt)}</p> : null}
                       {candidate.declineReason ? <p className="text-xs text-muted-foreground">Reden: {candidate.declineReason}</p> : null}

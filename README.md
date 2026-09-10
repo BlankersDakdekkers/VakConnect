@@ -217,6 +217,7 @@ Deze repository bevat geen echte testaccounts. Maak lokaal in Supabase zelf mini
 - Nieuwe distributielaag gebruikt `lead_distribution_runs`, `lead_distribution_candidates` en `professional_distribution_settings`.
 - Eligibility blijft objectief en server-side: actieve professional + dienst + regio + commerciële beschikbaarheid + capaciteit + niet al gekocht.
 - Ranking is uitlegbaar 0-100 met centrale gewichten in `lib/distribution/config.ts`; per kandidaat wordt `score_breakdown` opgeslagen.
+- `response_performance` in de ranking gebruikt purchase/accept-rate (`purchases / offersReceived`), terwijl view-rate apart wordt gemeten.
 - Fairness gebruikt recente offer- en purchase-exposure als lichte boost/penalty, zonder service/regio-fit te overrulen.
 - Offer windows zijn configureerbaar: exclusive geeft één actieve offer tegelijk, shared werkt in batches met slotcontrole.
 - Fallback loopt automatisch bij decline/expiry via de centrale engine in `lib/distribution/engine.ts`.

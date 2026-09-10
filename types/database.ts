@@ -294,7 +294,7 @@ export interface LeadDistributionCandidate {
   lead_id: string;
   professional_id: string;
   rank_position: number;
-  ranking_score: number;
+  ranking_score: number | null;
   score_breakdown: Json;
   eligibility_reason: Json;
   status: LeadDistributionCandidateStatus;
@@ -502,7 +502,7 @@ export interface Database {
       };
       lead_distribution_candidates: {
         Row: LeadDistributionCandidate;
-        Insert: Partial<LeadDistributionCandidate> & Pick<LeadDistributionCandidate, "distribution_run_id" | "lead_id" | "professional_id" | "rank_position" | "ranking_score">;
+        Insert: Partial<LeadDistributionCandidate> & Pick<LeadDistributionCandidate, "distribution_run_id" | "lead_id" | "professional_id" | "rank_position">;
         Update: Partial<LeadDistributionCandidate>;
       };
       professional_distribution_settings: {
