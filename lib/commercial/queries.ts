@@ -78,11 +78,14 @@ export interface ProfessionalLeadMarketListItem {
   assignmentStatus: string | null;
   purchaseStatus: LeadPurchaseStatus | null;
   purchasedAt: string | null;
+  offerStatus: string | null;
+  offerExpiresAt: string | null;
+  offerState: "nieuw_aanbod" | "bekeken" | "verloopt_bijna" | "gesloten" | "gekocht";
   createdAt: string;
 }
 
 export interface ProfessionalLeadMarketDetail {
-  mode: "preview" | "assigned-preview" | "unlocked";
+  mode: "preview" | "assigned-preview" | "unlocked" | "closed";
   state: "available" | "purchased" | "closed";
   commercial: {
     commercialType: LeadCommercialType;
@@ -110,6 +113,11 @@ export interface ProfessionalLeadMarketDetail {
   assignment: {
     id: string | null;
     status: string | null;
+  };
+  distributionOffer: {
+    id: string | null;
+    status: string | null;
+    offerExpiresAt: string | null;
   };
   detail: Awaited<ReturnType<typeof getProfessionalLeadDetail>> | null;
 }
@@ -259,13 +267,14 @@ export async function getProfessionalWalletOverview(professionalId: string) {
 export async function getProfessionalLeadMarketplace(professionalId: string) {
   const supabase = createAdminSupabaseClient();
   const rules = await getActivePricingRules();
-  const [{ data: matchRows, error: matchError }, { data: assignmentRows, error: assignmentError }, { data: purchaseRows, error: purchaseError }] = await Promise.all([
+  const [{ data: matchRows, error: matchError }, { data: assignmentRows, error: assignmentError }, { data: purchaseRows, error: purchaseError }, { data: candidateRows, error: candidateError }] = await Promise.all([
     supabase.from("lead_matches").select("lead_id").eq("professional_id", professionalId),
     supabase.from("lead_assignments").select("id, lead_id, status, lead_purchase_id").eq("professional_id", professionalId),
     supabase.from("lead_purchases").select("id, lead_id, status, purchased_at").eq("professional_id", professionalId),
+    supabase.from("lead_distribution_candidates").select("id, lead_id, status, offer_expires_at, created_at").eq("professional_id", professionalId).order("created_at", { ascending: false }),
   ]);
 
-  if (matchError || assignmentError || purchaseError) {
+  if (matchError || assignmentError || purchaseError || candidateError) {
     throw new Error("De leadmarkt kon niet worden geladen.");
   }
 
@@ -273,6 +282,7 @@ export async function getProfessionalLeadMarketplace(professionalId: string) {
     ...((matchRows ?? []) as Array<{ lead_id: string }>).map((row) => row.lead_id),
     ...((assignmentRows ?? []) as Array<{ lead_id: string }>).map((row) => row.lead_id),
     ...((purchaseRows ?? []) as Array<{ lead_id: string }>).map((row) => row.lead_id),
+    ...((candidateRows ?? []) as Array<{ lead_id: string }>).map((row) => row.lead_id),
   ]));
 
   if (leadIds.length === 0) {
@@ -291,10 +301,24 @@ export async function getProfessionalLeadMarketplace(professionalId: string) {
 
   const assignmentMap = new Map(((assignmentRows ?? []) as Array<Record<string, unknown>>).map((row) => [String(row.lead_id), row]));
   const purchaseMap = new Map(((purchaseRows ?? []) as Array<Record<string, unknown>>).map((row) => [String(row.lead_id), row]));
+  const candidateMap = new Map(((candidateRows ?? []) as Array<Record<string, unknown>>).map((row) => [String(row.lead_id), row]));
 
   return ((leadRows ?? []) as Array<Record<string, unknown>>).map((row) => {
     const service = firstOf(row.service as Pick<Service, "name" | "slug"> | Array<Pick<Service, "name" | "slug">>);
     const purchase = purchaseMap.get(String(row.id));
+    const candidate = candidateMap.get(String(row.id));
+    const offerStatus = (candidate?.status as string | undefined) ?? null;
+    const offerExpiresAt = (candidate?.offer_expires_at as string | undefined) ?? null;
+    const msUntilExpiry = offerExpiresAt ? new Date(offerExpiresAt).getTime() - Date.now() : null;
+    const offerState: ProfessionalLeadMarketListItem["offerState"] = purchase?.status === "purchased"
+      ? "gekocht"
+      : offerStatus === "offered" && msUntilExpiry !== null && msUntilExpiry <= 30 * 60_000
+        ? "verloopt_bijna"
+      : offerStatus === "viewed"
+        ? "bekeken"
+      : offerStatus === "offered"
+        ? "nieuw_aanbod"
+      : "gesloten";
     const resolvedPrice = resolveLeadPrice({
       serviceId: String(row.service_id),
       serviceSlug: service?.slug ?? null,
@@ -334,6 +358,9 @@ export async function getProfessionalLeadMarketplace(professionalId: string) {
       assignmentStatus: (assignmentMap.get(String(row.id))?.status as string | undefined) ?? null,
       purchaseStatus: (purchase?.status as LeadPurchaseStatus | undefined) ?? null,
       purchasedAt: (purchase?.purchased_at as string | undefined) ?? null,
+      offerStatus,
+      offerExpiresAt,
+      offerState,
       createdAt: String(row.created_at),
     };
   }).sort((left, right) => right.createdAt.localeCompare(left.createdAt));
@@ -342,7 +369,7 @@ export async function getProfessionalLeadMarketplace(professionalId: string) {
 export async function getProfessionalLeadMarketDetail(leadId: string, professionalId: string, actorUserId?: string) {
   const supabase = createAdminSupabaseClient();
   const rules = await getActivePricingRules();
-  const [{ data: leadRow, error: leadError }, { data: assignment }, { data: purchase }, { data: wallet }] = await Promise.all([
+  const [{ data: leadRow, error: leadError }, { data: assignment }, { data: purchase }, { data: wallet }, { data: offer }] = await Promise.all([
     supabase
       .from("leads")
       .select("id, public_reference, description, urgency, lead_score, city, postal_code, service_id, subservice_slug, created_at, commercial_type, price_credits, max_buyers, buyers_count, sales_status, service:services(name, slug)")
@@ -351,6 +378,7 @@ export async function getProfessionalLeadMarketDetail(leadId: string, profession
     supabase.from("lead_assignments").select("id, status, lead_purchase_id").eq("lead_id", leadId).eq("professional_id", professionalId).maybeSingle(),
     supabase.from("lead_purchases").select("id, status, purchased_at").eq("lead_id", leadId).eq("professional_id", professionalId).maybeSingle(),
     supabase.from("professional_wallets").select("cached_balance").eq("professional_id", professionalId).maybeSingle(),
+    supabase.from("lead_distribution_candidates").select("id, status, offered_at, offer_expires_at, viewed_at").eq("lead_id", leadId).eq("professional_id", professionalId).order("created_at", { ascending: false }).limit(1).maybeSingle(),
   ]);
 
   if (leadError) {
@@ -362,7 +390,7 @@ export async function getProfessionalLeadMarketDetail(leadId: string, profession
   }
 
   const { data: match } = await supabase.from("lead_matches").select("id").eq("lead_id", leadId).eq("professional_id", professionalId).maybeSingle();
-  if (!match && !assignment && !purchase) {
+  if (!match && !assignment && !purchase && !offer) {
     return null;
   }
 
@@ -391,10 +419,15 @@ export async function getProfessionalLeadMarketDetail(leadId: string, profession
     maxBuyers: resolvedPrice.maxBuyers,
   });
   const remainingSlots = Math.max(0, resolvedPrice.maxBuyers - toNumber(leadRow.buyers_count));
+  const hasActiveOffer = Boolean(offer && (
+    String(offer.status) === "purchased"
+      || (["offered", "viewed"].includes(String(offer.status))
+        && (!offer.offer_expires_at || new Date(String(offer.offer_expires_at)).getTime() > Date.now()))
+  ));
   const detail = canViewContact ? await getProfessionalLeadDetail(leadId, professionalId, actorUserId) : null;
 
   return {
-    mode: canViewContact ? "unlocked" : assignment ? "assigned-preview" : "preview",
+    mode: canViewContact ? "unlocked" : assignment ? "assigned-preview" : hasActiveOffer ? "preview" : "closed",
     state,
     commercial: {
       commercialType: leadRow.commercial_type as LeadCommercialType,
@@ -422,6 +455,11 @@ export async function getProfessionalLeadMarketDetail(leadId: string, profession
     assignment: {
       id: assignment?.id ?? null,
       status: assignment?.status ?? null,
+    },
+    distributionOffer: {
+      id: offer?.id ?? null,
+      status: offer?.status ?? null,
+      offerExpiresAt: (offer?.offer_expires_at as string | undefined) ?? null,
     },
     detail,
   } satisfies ProfessionalLeadMarketDetail;

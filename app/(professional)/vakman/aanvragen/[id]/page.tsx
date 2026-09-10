@@ -8,11 +8,21 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { formatCredits, getCommercialTypeLabel } from "@/lib/commercial/labels";
 import { purchaseLeadAction } from "@/lib/commercial/actions";
+import { declineDistributionOfferAction, viewDistributionOfferAction } from "@/lib/distribution/actions";
 import { getProfessionalLeadMarketDetail } from "@/lib/commercial/queries";
 import { requireProfessionalUser } from "@/lib/auth/helpers";
 import { respondToAssignmentAction, updateLeadProgressAction } from "@/lib/leads/actions";
 import { formatDate, formatFileSize, formatPostalCode } from "@/lib/utils";
-import { leadLossReasonValues, leadProgressStatusValues } from "@/lib/validation";
+import { declineReasonValues, leadLossReasonValues, leadProgressStatusValues } from "@/lib/validation";
+
+const declineReasonLabels: Record<(typeof declineReasonValues)[number], string> = {
+  te_ver: "Te ver",
+  geen_capaciteit: "Geen capaciteit",
+  klus_past_niet: "Klus past niet",
+  prijs_te_hoog: "Prijs te hoog",
+  timing_past_niet: "Timing past niet",
+  anders: "Anders",
+};
 
 export default async function ProfessionalLeadDetailPage({
   params,
@@ -31,6 +41,8 @@ export default async function ProfessionalLeadDetailPage({
   if (!marketLead) {
     notFound();
   }
+  const canPurchaseFromOffer = !marketLead.distributionOffer.id
+    || (marketLead.mode === "preview" && ["offered", "viewed"].includes(marketLead.distributionOffer.status ?? ""));
 
   const confirmationToken = crypto.randomUUID();
 
@@ -52,6 +64,7 @@ export default async function ProfessionalLeadDetailPage({
               <StatusBadge value={marketLead.commercial.salesStatus} />
               <StatusBadge value={marketLead.preview.urgency} />
               {marketLead.assignment.status ? <StatusBadge value={marketLead.assignment.status} /> : null}
+              {marketLead.distributionOffer.status ? <StatusBadge value={marketLead.distributionOffer.status} /> : null}
             </div>
             <div className="grid gap-4 md:grid-cols-2">
               <div>
@@ -63,6 +76,7 @@ export default async function ProfessionalLeadDetailPage({
                 <p className="text-sm text-muted-foreground">Regio</p>
                 <p className="mt-1 font-medium">{marketLead.preview.city ?? `Postcodegebied ${marketLead.preview.postalCodePrefix}`}</p>
                 <p className="text-sm text-muted-foreground">Ingediend op {formatDate(marketLead.preview.createdAt)}</p>
+                {marketLead.distributionOffer.offerExpiresAt ? <p className="text-sm text-muted-foreground">Offer verloopt op {formatDate(marketLead.distributionOffer.offerExpiresAt)}</p> : null}
               </div>
             </div>
             <p className="text-sm leading-7 text-muted-foreground">{marketLead.preview.summary}</p>
@@ -150,6 +164,16 @@ export default async function ProfessionalLeadDetailPage({
           </div>
 
           {marketLead.mode === "preview" ? (
+            <>
+            {marketLead.distributionOffer.id && marketLead.distributionOffer.status === "offered" ? (
+              <form action={viewDistributionOfferAction} className="space-y-3">
+                <input type="hidden" name="candidate_id" value={marketLead.distributionOffer.id} />
+                <input type="hidden" name="redirect_to" value={`/vakman/aanvragen/${marketLead.preview.leadId}`} />
+                <SubmitButton variant="secondary" className="w-full" pendingLabel="Offer openen...">
+                  Markeer als bekeken
+                </SubmitButton>
+              </form>
+            ) : null}
             <form action={purchaseLeadAction} className="space-y-3">
               <input type="hidden" name="lead_id" value={marketLead.preview.leadId} />
               <input type="hidden" name="idempotency_key" value={confirmationToken} />
@@ -157,12 +181,29 @@ export default async function ProfessionalLeadDetailPage({
               <p className="rounded-2xl bg-surface-muted px-4 py-3 text-sm text-muted-foreground">
                 Controleer lead, prijs, saldo en type voordat je doorgaat. De prijs wordt altijd server-side opnieuw berekend.
               </p>
-              <SubmitButton className="w-full" disabled={marketLead.state !== "available" || marketLead.commercial.balanceAfterPurchase < 0} pendingLabel="Aankoop wordt verwerkt...">
+              <SubmitButton className="w-full" disabled={marketLead.state !== "available" || marketLead.commercial.balanceAfterPurchase < 0 || !canPurchaseFromOffer} pendingLabel="Aankoop wordt verwerkt...">
                 Bevestig aankoop
               </SubmitButton>
               {marketLead.commercial.balanceAfterPurchase < 0 ? (
                 <p className="text-sm text-danger">Onvoldoende saldo. Benodigd: {formatCredits(marketLead.commercial.priceCredits)}, huidig: {formatCredits(marketLead.commercial.currentBalance)}. Credits kopen wordt binnenkort beschikbaar.</p>
               ) : null}
+            </form>
+            </>
+          ) : null}
+
+          {(marketLead.mode === "preview" && marketLead.distributionOffer.id && ["offered", "viewed"].includes(marketLead.distributionOffer.status ?? "")) ? (
+            <form action={declineDistributionOfferAction} className="space-y-3">
+              <input type="hidden" name="candidate_id" value={marketLead.distributionOffer.id} />
+              <input type="hidden" name="redirect_to" value={`/vakman/aanvragen/${marketLead.preview.leadId}`} />
+              <label className="block text-sm font-medium text-foreground" htmlFor="decline-reason">Reden van weigeren</label>
+              <Select id="decline-reason" name="reason" defaultValue="te_ver" aria-label="Kies weigerreden voor dit aanbod">
+                {declineReasonValues.map((value) => (
+                  <option key={value} value={value}>{declineReasonLabels[value]}</option>
+                ))}
+              </Select>
+              <SubmitButton className="w-full" variant="secondary" pendingLabel="Aanbod wordt geweigerd...">
+                Aanbod weigeren
+              </SubmitButton>
             </form>
           ) : null}
 
@@ -201,6 +242,11 @@ export default async function ProfessionalLeadDetailPage({
               </Select>
               <SubmitButton className="w-full" variant="secondary" pendingLabel="Voortgang wordt bijgewerkt...">Voortgang bijwerken</SubmitButton>
             </form>
+          ) : null}
+          {marketLead.mode === "closed" ? (
+            <p className="rounded-2xl bg-surface-muted px-4 py-3 text-sm text-muted-foreground">
+              Dit aanbod is gesloten of verlopen. Nieuwe offers verschijnen op je aanvragenoverzicht.
+            </p>
           ) : null}
         </Card>
       </div>

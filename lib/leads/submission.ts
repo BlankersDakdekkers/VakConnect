@@ -2,6 +2,7 @@ import "server-only";
 import { LeadSubmissionError } from "@/lib/leads/errors";
 import { scoreLead } from "@/lib/leads/scoring";
 import { refreshLeadMatchesForLead } from "@/lib/matching";
+import { startLeadDistribution } from "@/lib/distribution/engine";
 import type { DynamicAnswerValue, ServiceQuestionDefinition } from "@/lib/validation";
 import { createLeadSubmissionSchema } from "@/lib/validation/leads";
 import { getActiveServiceQuestionDefinitions } from "@/lib/services/queries";
@@ -300,6 +301,12 @@ export async function createLeadSubmission(formData: FormData) {
       activityType: "lead_matches_refreshed",
       metadata: { match_count: matches.length },
     });
+
+    try {
+      await startLeadDistribution(lead.id, null);
+    } catch (distributionError) {
+      console.error("Lead distributie kon niet automatisch worden gestart", distributionError);
+    }
 
     if (anonymousSessionId) {
       try {

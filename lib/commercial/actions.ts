@@ -51,6 +51,8 @@ export async function purchaseLeadAction(formData: FormData) {
             ? "Deze lead is eerder terugbetaald en kan in deze fase niet opnieuw worden gekocht."
         : error.message.includes("LEAD_SOLD_OUT") || error.message.includes("LEAD_NOT_AVAILABLE")
           ? "Deze lead is niet meer beschikbaar."
+        : error.message.includes("LEAD_OFFER_NOT_ACTIVE")
+          ? "Je offer is verlopen of nog niet actief. Wacht op een nieuw aanbod."
         : error.message.includes("LEAD_MATCH_REQUIRED")
           ? "Je account komt niet in aanmerking voor deze lead."
           : "De leadaankoop kon niet worden afgerond.";
@@ -62,6 +64,7 @@ export async function purchaseLeadAction(formData: FormData) {
   revalidatePath("/vakman/credits");
   revalidatePath(`/vakman/aanvragen/${payload.data.leadId}`);
   revalidatePath("/admin");
+  revalidatePath("/admin/distributie");
   revalidatePath(`/admin/leads/${payload.data.leadId}`);
   redirectWithMessage(`/vakman/aanvragen/${payload.data.leadId}`, "success", "Lead succesvol gekocht en contactgegevens zijn vrijgegeven.");
 }
@@ -103,6 +106,7 @@ export async function applyAdminWalletMutationAction(formData: FormData) {
 
   revalidatePath("/admin");
   revalidatePath("/admin/credits");
+  revalidatePath("/admin/distributie");
   revalidatePath(`/admin/vakmannen/${payload.data.professionalId}`);
   revalidatePath("/vakman/credits");
   redirectWithMessage(payload.data.redirectTo, "success", "Wallettransactie opgeslagen in het ledger.");
