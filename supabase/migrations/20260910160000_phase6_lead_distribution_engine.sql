@@ -164,29 +164,32 @@ security definer
 set search_path = public, pg_temp
 as $$
 declare
-  has_distribution_candidates boolean;
-  has_active_offer boolean;
+  active_run_id uuid;
+  active_candidate_id uuid;
 begin
-  select exists (
-    select 1
-    from public.lead_distribution_candidates c
-    where c.lead_id = new.lead_id
-  ) into has_distribution_candidates;
+  select r.id
+  into active_run_id
+  from public.lead_distribution_runs r
+  where r.lead_id = new.lead_id
+    and r.status in ('pending', 'active')
+  order by r.created_at desc
+  limit 1;
 
-  if not has_distribution_candidates then
+  if active_run_id is null then
     return new;
   end if;
 
-  select exists (
-    select 1
-    from public.lead_distribution_candidates c
-    where c.lead_id = new.lead_id
-      and c.professional_id = new.professional_id
-      and c.status in ('offered', 'viewed')
-      and (c.offer_expires_at is null or c.offer_expires_at >= timezone('utc', now()))
-  ) into has_active_offer;
+  select c.id
+  into active_candidate_id
+  from public.lead_distribution_candidates c
+  where c.lead_id = new.lead_id
+    and c.professional_id = new.professional_id
+    and c.distribution_run_id = active_run_id
+    and c.status in ('offered', 'viewed')
+    and (c.offer_expires_at is null or c.offer_expires_at >= timezone('utc', now()))
+  for update;
 
-  if not has_active_offer then
+  if active_candidate_id is null then
     raise exception 'LEAD_OFFER_NOT_ACTIVE';
   end if;
 
