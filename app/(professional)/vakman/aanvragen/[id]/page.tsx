@@ -15,6 +15,15 @@ import { respondToAssignmentAction, updateLeadProgressAction } from "@/lib/leads
 import { formatDate, formatFileSize, formatPostalCode } from "@/lib/utils";
 import { declineReasonValues, leadLossReasonValues, leadProgressStatusValues } from "@/lib/validation";
 
+const declineReasonLabels: Record<(typeof declineReasonValues)[number], string> = {
+  te_ver: "Te ver",
+  geen_capaciteit: "Geen capaciteit",
+  klus_past_niet: "Klus past niet",
+  prijs_te_hoog: "Prijs te hoog",
+  timing_past_niet: "Timing past niet",
+  anders: "Anders",
+};
+
 export default async function ProfessionalLeadDetailPage({
   params,
   searchParams,
@@ -188,9 +197,10 @@ export default async function ProfessionalLeadDetailPage({
             <form action={declineDistributionOfferAction} className="space-y-3">
               <input type="hidden" name="candidate_id" value={marketLead.distributionOffer.id} />
               <input type="hidden" name="redirect_to" value={`/vakman/aanvragen/${marketLead.preview.leadId}`} />
-              <Select name="reason" defaultValue="te_ver" aria-label="Kies weigerreden voor dit aanbod">
+              <label className="block text-sm font-medium text-foreground" htmlFor="decline-reason">Reden van weigeren</label>
+              <Select id="decline-reason" name="reason" defaultValue="te_ver" aria-label="Kies weigerreden voor dit aanbod">
                 {declineReasonValues.map((value) => (
-                  <option key={value} value={value}>{value}</option>
+                  <option key={value} value={value}>{declineReasonLabels[value]}</option>
                 ))}
               </Select>
               <SubmitButton className="w-full" variant="secondary" pendingLabel="Aanbod wordt geweigerd...">

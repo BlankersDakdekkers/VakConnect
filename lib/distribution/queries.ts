@@ -210,11 +210,14 @@ export async function getProfessionalDistributionOffer(leadId: string) {
   if (!professional?.id) {
     return null;
   }
+  const nowIso = new Date().toISOString();
   const { data } = await supabase
     .from("lead_distribution_candidates")
     .select("id, status, offer_expires_at, offered_at")
     .eq("professional_id", professional.id)
     .eq("lead_id", leadId)
+    .in("status", ["offered", "viewed"])
+    .or(`offer_expires_at.is.null,offer_expires_at.gte.${nowIso}`)
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();

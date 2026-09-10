@@ -24,6 +24,7 @@ test("phase6 migration enforces privacy and secure purchase gating", () => {
   assert.match(migrationSql, /raise exception 'LEAD_OFFER_NOT_ACTIVE'/);
   assert.match(migrationSql, /create trigger enforce_active_offer_for_purchase_on_update/);
   assert.match(migrationSql, /create trigger sync_distribution_after_purchase_on_update/);
+  assert.match(migrationSql, /for update/);
   assert.match(migrationSql, /create policy "professionals read own distribution candidates"/);
   assert.match(migrationSql, /create policy "admins manage distribution candidates"/);
 });
@@ -162,4 +163,16 @@ test("engine blokkeert admin requeue voor purchased kandidaten", () => {
   assert.match(engineSource, /function canAdminRequeueCandidate/);
   assert.match(engineSource, /status !== "purchased"/);
   assert.match(engineSource, /Handmatige override is niet toegestaan voor een reeds gekochte kandidaat/);
+});
+
+test("engine voorkomt verlopen offer-view en activeert alleen queued kandidaten", () => {
+  assert.match(engineSource, /offer_expires_at/);
+  assert.match(engineSource, /candidate\.offer_expires_at[\s\S]*Date\.now\(\)/);
+  assert.match(engineSource, /\.eq\("status", "queued"\)/);
+  assert.doesNotMatch(engineSource, /upsert\(\s*toOffer\.map/);
+});
+
+test("engine gebruikt unique-index conflict als idempotente bron voor run-start", () => {
+  assert.match(engineSource, /runError\?\.code !== "23505"/);
+  assert.match(engineSource, /return concurrentRun\.id/);
 });

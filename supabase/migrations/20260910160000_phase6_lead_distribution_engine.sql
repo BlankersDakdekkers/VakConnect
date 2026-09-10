@@ -226,7 +226,8 @@ begin
   where lead_id = new.lead_id
     and status in ('pending', 'active')
   order by created_at desc
-  limit 1;
+  limit 1
+  for update;
 
   if run_row is null then
     return new;
