@@ -211,34 +211,37 @@ security definer
 set search_path = public, pg_temp
 as $$
 declare
-  run_row record;
   lead_row record;
   purchased_count integer;
   should_close boolean := false;
+  touched_run_ids uuid[];
 begin
   if new.status <> 'purchased' then
     return new;
   end if;
 
-  select *
-  into run_row
+  perform 1
   from public.lead_distribution_runs
   where lead_id = new.lead_id
     and status in ('pending', 'active')
-  order by created_at desc
-  limit 1
   for update;
 
-  if run_row is null then
+  with touched as (
+    update public.lead_distribution_candidates c
+    set status = 'purchased',
+        purchased_at = coalesce(c.purchased_at, new.purchased_at)
+    where c.lead_id = new.lead_id
+      and c.professional_id = new.professional_id
+      and c.status in ('offered', 'viewed', 'purchased')
+    returning c.distribution_run_id
+  )
+  select array_agg(distinct touched.distribution_run_id)
+  into touched_run_ids
+  from touched;
+
+  if touched_run_ids is null or array_length(touched_run_ids, 1) is null then
     return new;
   end if;
-
-  update public.lead_distribution_candidates
-  set status = 'purchased',
-      purchased_at = coalesce(purchased_at, new.purchased_at)
-  where distribution_run_id = run_row.id
-    and professional_id = new.professional_id
-    and status in ('offered', 'viewed', 'purchased');
 
   select commercial_type, max_buyers
   into lead_row
@@ -257,18 +260,19 @@ begin
     update public.lead_distribution_candidates
     set status = 'skipped',
         skipped_at = coalesce(skipped_at, timezone('utc', now()))
-    where distribution_run_id = run_row.id
+    where lead_id = new.lead_id
       and professional_id <> new.professional_id
       and status in ('queued', 'offered', 'viewed');
 
     update public.lead_distribution_runs
     set status = 'completed',
         completed_at = timezone('utc', now())
-    where id = run_row.id;
+    where lead_id = new.lead_id
+      and status in ('pending', 'active');
   else
     update public.lead_distribution_runs
     set status = 'active'
-    where id = run_row.id
+    where id = any(touched_run_ids)
       and status = 'pending';
   end if;
 

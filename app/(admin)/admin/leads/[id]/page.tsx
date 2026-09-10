@@ -197,11 +197,13 @@ export default async function AdminLeadDetailPage({
                       <p className="mt-2 text-xs text-muted-foreground">Breakdown: {JSON.stringify(candidate.scoreBreakdown)}</p>
                       {candidate.offerExpiresAt ? <p className="text-xs text-muted-foreground">Verloopt: {formatDate(candidate.offerExpiresAt)}</p> : null}
                       {candidate.declineReason ? <p className="text-xs text-muted-foreground">Reden: {candidate.declineReason}</p> : null}
-                      <form action={skipDistributionCandidateAction} className="mt-3">
-                        <input type="hidden" name="candidate_id" value={candidate.id} />
-                        <input type="hidden" name="redirect_to" value={`/admin/leads/${lead.id}`} />
-                        <SubmitButton variant="secondary" pendingLabel="Overslaan...">Skip kandidaat</SubmitButton>
-                      </form>
+                      {["queued", "offered", "viewed"].includes(candidate.status) ? (
+                        <form action={skipDistributionCandidateAction} className="mt-3">
+                          <input type="hidden" name="candidate_id" value={candidate.id} />
+                          <input type="hidden" name="redirect_to" value={`/admin/leads/${lead.id}`} />
+                          <SubmitButton variant="secondary" pendingLabel="Overslaan...">Skip kandidaat</SubmitButton>
+                        </form>
+                      ) : null}
                     </div>
                   ))}
                 </div>

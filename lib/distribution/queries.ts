@@ -220,8 +220,7 @@ export async function getProfessionalDistributionOffer(leadId: string) {
     .select("id, status, offer_expires_at, offered_at")
     .eq("professional_id", professional.id)
     .eq("lead_id", leadId)
-    .in("status", ["offered", "viewed"])
-    .or(`offer_expires_at.is.null,offer_expires_at.gte.${nowIso}`)
+    .or(`and(status.in.(offered,viewed),offer_expires_at.is.null),and(status.in.(offered,viewed),offer_expires_at.gte.${nowIso})`)
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle();

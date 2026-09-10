@@ -42,7 +42,7 @@ export default async function ProfessionalLeadDetailPage({
     notFound();
   }
   const canPurchaseFromOffer = !marketLead.distributionOffer.id
-    || ["offered", "viewed"].includes(marketLead.distributionOffer.status ?? "");
+    || (marketLead.mode === "preview" && ["offered", "viewed"].includes(marketLead.distributionOffer.status ?? ""));
 
   const confirmationToken = crypto.randomUUID();
 

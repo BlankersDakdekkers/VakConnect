@@ -395,11 +395,7 @@ export async function startLeadDistribution(leadId: string, actorUserId?: string
     .filter((candidate) => !candidate.alreadyPurchased)
     .filter((candidate) => {
       if (candidate.settings.paused) {
-        const pauseUntilTs = candidate.settings.pauseUntil ? new Date(candidate.settings.pauseUntil).getTime() : 0;
-        if (pauseUntilTs === 0) {
-          return false;
-        }
-        return pauseUntilTs < Date.now();
+        return false;
       }
       return true;
     })
