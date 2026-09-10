@@ -8,11 +8,12 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { formatCredits, getCommercialTypeLabel } from "@/lib/commercial/labels";
 import { purchaseLeadAction } from "@/lib/commercial/actions";
+import { declineDistributionOfferAction } from "@/lib/distribution/actions";
 import { getProfessionalLeadMarketDetail } from "@/lib/commercial/queries";
 import { requireProfessionalUser } from "@/lib/auth/helpers";
 import { respondToAssignmentAction, updateLeadProgressAction } from "@/lib/leads/actions";
 import { formatDate, formatFileSize, formatPostalCode } from "@/lib/utils";
-import { leadLossReasonValues, leadProgressStatusValues } from "@/lib/validation";
+import { declineReasonValues, leadLossReasonValues, leadProgressStatusValues } from "@/lib/validation";
 
 export default async function ProfessionalLeadDetailPage({
   params,
@@ -52,6 +53,7 @@ export default async function ProfessionalLeadDetailPage({
               <StatusBadge value={marketLead.commercial.salesStatus} />
               <StatusBadge value={marketLead.preview.urgency} />
               {marketLead.assignment.status ? <StatusBadge value={marketLead.assignment.status} /> : null}
+              {marketLead.distributionOffer.status ? <StatusBadge value={marketLead.distributionOffer.status} /> : null}
             </div>
             <div className="grid gap-4 md:grid-cols-2">
               <div>
@@ -63,6 +65,7 @@ export default async function ProfessionalLeadDetailPage({
                 <p className="text-sm text-muted-foreground">Regio</p>
                 <p className="mt-1 font-medium">{marketLead.preview.city ?? `Postcodegebied ${marketLead.preview.postalCodePrefix}`}</p>
                 <p className="text-sm text-muted-foreground">Ingediend op {formatDate(marketLead.preview.createdAt)}</p>
+                {marketLead.distributionOffer.offerExpiresAt ? <p className="text-sm text-muted-foreground">Offer verloopt op {formatDate(marketLead.distributionOffer.offerExpiresAt)}</p> : null}
               </div>
             </div>
             <p className="text-sm leading-7 text-muted-foreground">{marketLead.preview.summary}</p>
@@ -166,6 +169,21 @@ export default async function ProfessionalLeadDetailPage({
             </form>
           ) : null}
 
+          {(marketLead.mode === "preview" && marketLead.distributionOffer.id) ? (
+            <form action={declineDistributionOfferAction} className="space-y-3">
+              <input type="hidden" name="candidate_id" value={marketLead.distributionOffer.id} />
+              <input type="hidden" name="redirect_to" value={`/vakman/aanvragen/${marketLead.preview.leadId}`} />
+              <Select name="reason" defaultValue="te_ver">
+                {declineReasonValues.map((value) => (
+                  <option key={value} value={value}>{value}</option>
+                ))}
+              </Select>
+              <SubmitButton className="w-full" variant="secondary" pendingLabel="Aanbod wordt geweigerd...">
+                Aanbod weigeren
+              </SubmitButton>
+            </form>
+          ) : null}
+
           {marketLead.mode === "assigned-preview" ? (
             <div className="space-y-3">
               <p className="rounded-2xl bg-surface-muted px-4 py-3 text-sm text-muted-foreground">Deze lead is direct aan jou toegewezen. Contact unlockt zodra je de assignment accepteert.</p>
@@ -201,6 +219,11 @@ export default async function ProfessionalLeadDetailPage({
               </Select>
               <SubmitButton className="w-full" variant="secondary" pendingLabel="Voortgang wordt bijgewerkt...">Voortgang bijwerken</SubmitButton>
             </form>
+          ) : null}
+          {marketLead.mode === "closed" ? (
+            <p className="rounded-2xl bg-surface-muted px-4 py-3 text-sm text-muted-foreground">
+              Dit aanbod is gesloten of verlopen. Nieuwe offers verschijnen op je aanvragenoverzicht.
+            </p>
           ) : null}
         </Card>
       </div>

@@ -212,6 +212,18 @@ Deze repository bevat geen echte testaccounts. Maak lokaal in Supabase zelf mini
   - `/admin/lead-prijzen` voor prijsregelbeheer.
   - `/admin/leads/[id]` bevat commerciële instellingen, purchases en refundactie.
 
+## Slimme distributie-engine (Prompt 10)
+
+- Nieuwe distributielaag gebruikt `lead_distribution_runs`, `lead_distribution_candidates` en `professional_distribution_settings`.
+- Eligibility blijft objectief en server-side: actieve professional + dienst + regio + commerciële beschikbaarheid + capaciteit + niet al gekocht.
+- Ranking is uitlegbaar 0-100 met centrale gewichten in `lib/distribution/config.ts`; per kandidaat wordt `score_breakdown` opgeslagen.
+- Fairness gebruikt recente offer- en purchase-exposure als lichte boost/penalty, zonder service/regio-fit te overrulen.
+- Offer windows zijn configureerbaar: exclusive geeft één actieve offer tegelijk, shared werkt in batches met slotcontrole.
+- Fallback loopt automatisch bij decline/expiry via de centrale engine in `lib/distribution/engine.ts`.
+- Expiry-verwerking kan periodiek draaien via `POST /api/internal/distribution/process` met `DISTRIBUTION_CRON_SECRET`.
+- Refunds openen niet automatisch opnieuw; admin kan expliciet requeueen via `/admin/distributie` of op leaddetail.
+- Professional ziet alleen eigen offers en geen rankings van anderen; pre-purchase data blijft PII-vrij.
+
 ## Aanvullende documentatie
 
 - `docs/ARCHITECTURE.md`

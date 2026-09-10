@@ -10,6 +10,8 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { formatCredits } from "@/lib/commercial/labels";
 import { getAdminLeadCommercialDetail } from "@/lib/commercial/queries";
+import { addManualDistributionOfferAction, requeueLeadDistributionAction, skipDistributionCandidateAction, startDistributionRunAction } from "@/lib/distribution/actions";
+import { getLeadDistributionDetail } from "@/lib/distribution/queries";
 import { refundLeadPurchaseAction, updateLeadCommercialSettingsAction } from "@/lib/commercial/actions";
 import { assignLeadAction, updateLeadStatusAction } from "@/lib/leads/actions";
 import { getAdminLeadDetail } from "@/lib/leads/queries";
@@ -50,7 +52,7 @@ export default async function AdminLeadDetailPage({
   const query = await searchParams;
   const success = typeof query.success === "string" ? query.success : undefined;
   const error = typeof query.error === "string" ? query.error : undefined;
-  const [lead, commercial] = await Promise.all([getAdminLeadDetail(id), getAdminLeadCommercialDetail(id)]);
+  const [lead, commercial, distribution] = await Promise.all([getAdminLeadDetail(id), getAdminLeadCommercialDetail(id), getLeadDistributionDetail(id)]);
 
   if (!lead) {
     notFound();
@@ -169,6 +171,54 @@ export default async function AdminLeadDetailPage({
               </div>
             ) : (
               <p className="text-sm text-muted-foreground">Er is nog geen actieve professional gevonden met een passend werkgebied.</p>
+            )}
+          </Card>
+
+          <Card className="space-y-4">
+            <h2 className="text-lg font-semibold tracking-tight">Distributie</h2>
+            {distribution.run ? (
+              <div className="space-y-4">
+                <div className="flex flex-wrap items-center gap-3">
+                  <StatusBadge value={distribution.run.status} />
+                  <StatusBadge value={distribution.run.commercialType} />
+                  <p className="rounded-full bg-surface-muted px-3 py-1 text-xs font-medium">Strategie {distribution.run.strategyVersion}</p>
+                </div>
+                <div className="space-y-3">
+                  {distribution.candidates.map((candidate) => (
+                    <div key={candidate.id} className="rounded-3xl bg-surface-muted p-4 text-sm">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <p className="font-medium">#{candidate.rankPosition} {candidate.companyName}</p>
+                        <div className="flex items-center gap-2">
+                          <StatusBadge value={candidate.status} />
+                          <p className="font-semibold">{candidate.rankingScore}/100</p>
+                        </div>
+                      </div>
+                      <p className="mt-2 text-xs text-muted-foreground">Breakdown: {JSON.stringify(candidate.scoreBreakdown)}</p>
+                      {candidate.offerExpiresAt ? <p className="text-xs text-muted-foreground">Verloopt: {formatDate(candidate.offerExpiresAt)}</p> : null}
+                      {candidate.declineReason ? <p className="text-xs text-muted-foreground">Reden: {candidate.declineReason}</p> : null}
+                      <form action={skipDistributionCandidateAction} className="mt-3">
+                        <input type="hidden" name="candidate_id" value={candidate.id} />
+                        <input type="hidden" name="redirect_to" value={`/admin/leads/${lead.id}`} />
+                        <SubmitButton variant="secondary" pendingLabel="Overslaan...">Skip kandidaat</SubmitButton>
+                      </form>
+                    </div>
+                  ))}
+                </div>
+                <form action={requeueLeadDistributionAction}>
+                  <input type="hidden" name="lead_id" value={lead.id} />
+                  <input type="hidden" name="redirect_to" value={`/admin/leads/${lead.id}`} />
+                  <SubmitButton variant="secondary" pendingLabel="Requeue...">Requeue lead</SubmitButton>
+                </form>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <p className="text-sm text-muted-foreground">Nog geen distributierun voor deze lead.</p>
+                <form action={startDistributionRunAction}>
+                  <input type="hidden" name="lead_id" value={lead.id} />
+                  <input type="hidden" name="redirect_to" value={`/admin/leads/${lead.id}`} />
+                  <SubmitButton pendingLabel="Run starten...">Start distributie</SubmitButton>
+                </form>
+              </div>
             )}
           </Card>
 
@@ -312,6 +362,25 @@ export default async function AdminLeadDetailPage({
                 </Select>
               </FormField>
               <SubmitButton pendingLabel="Lead wordt toegewezen...">Toewijzen</SubmitButton>
+            </form>
+          </Card>
+
+          <Card className="space-y-4">
+            <h2 className="text-lg font-semibold tracking-tight">Admin override offer</h2>
+            <form action={addManualDistributionOfferAction} className="space-y-4">
+              <input type="hidden" name="lead_id" value={lead.id} />
+              <input type="hidden" name="redirect_to" value={`/admin/leads/${lead.id}`} />
+              <FormField id="distribution_professional_id" label="Bied direct aan vakman">
+                <Select id="distribution_professional_id" name="professional_id" defaultValue="">
+                  <option value="">Selecteer een vakman</option>
+                  {assignableProfessionals.map((professional) => (
+                    <option key={professional.id} value={professional.id}>
+                      {professional.company_name}
+                    </option>
+                  ))}
+                </Select>
+              </FormField>
+              <SubmitButton pendingLabel="Offer versturen...">Direct offeren</SubmitButton>
             </form>
           </Card>
 

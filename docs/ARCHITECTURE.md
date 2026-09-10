@@ -20,13 +20,14 @@ VakConnect is opgezet als een Next.js App Router applicatie met TypeScript stric
 - `lib/professionals` bevat admin-querylogica en mutaties voor vakmannen.
 - `lib/services` bevat querylogica en mutaties voor diensten plus intakebeheer.
 - `lib/matching` bevat pure matchingtypes en database-gedreven matchgeneratie.
+- `lib/distribution` bevat eligibility-, ranking-, fairness- en offer-window logica plus fallback-engine.
 - `lib/storage` bevat veilige upload- en signed URL-logica voor leadafbeeldingen.
 - `lib/validation` bevat Zod-schema's voor lead submission, intakevragen, antwoorden, scoring en matching.
 - `types` bevat domeintypes voor rollen, leads, services en professionals.
 
 ## Databaseconcepten
 
-De basis bestaat uit de tabellen `professionals`, `services`, `service_questions`, `service_question_options`, `professional_services`, `professional_service_areas`, `leads`, `lead_answers`, `lead_images`, `lead_matches`, `lead_assignments`, `analytics_events`, `lead_activity`, `professional_wallets`, `wallet_transactions`, `lead_pricing_rules`, `lead_purchases` en `commercial_audit_log`.
+De basis bestaat uit de tabellen `professionals`, `services`, `service_questions`, `service_question_options`, `professional_services`, `professional_service_areas`, `leads`, `lead_answers`, `lead_images`, `lead_matches`, `lead_assignments`, `analytics_events`, `lead_activity`, `professional_wallets`, `wallet_transactions`, `lead_pricing_rules`, `lead_purchases`, `commercial_audit_log`, `lead_distribution_runs`, `lead_distribution_candidates` en `professional_distribution_settings`.
 
 Belangrijke keuzes:
 
@@ -36,6 +37,9 @@ Belangrijke keuzes:
 - `service_questions.slug` is uniek binnen een dienst.
 - `lead_answers` houdt dienstspecifieke intake generiek buiten de `leads`-tabel.
 - `lead_matches` bewaart potentiële geschikte vakmannen; `lead_purchases` bewaart commerciële aankopen; `lead_assignments` bewaart daadwerkelijke operationele leadrelaties.
+- `lead_distribution_runs` versieert distributiestrategie per lead (`strategy_version`) en borgt idempotency via maximaal één actieve run per lead.
+- `lead_distribution_candidates` bewaart rankpositie, score, breakdown, offerstatus en offerwindow per kandidaat zonder duplicatie van lead-PII.
+- `professional_distribution_settings` beheert capaciteitslimieten zoals `max_open_offers`, `max_active_assignments` en tijdelijke pause.
 - `wallet_transactions` is een immutable ledger; `professional_wallets.cached_balance` is alleen een transactioneel bijgewerkte cache.
 - Nieuwe wallets starten op `0` credits; eventuele testcredits worden alleen via expliciete seed- of admintransacties toegevoegd.
 - `leads` bewaart commerciële verkoopstatus via `commercial_type`, `price_credits`, `max_buyers`, `buyers_count`, `sales_status` en optionele `subservice_slug`.
@@ -60,6 +64,7 @@ RLS is geactiveerd op alle relevante domeintabellen.
 - Admins worden in de normale client herkend via `is_admin()` op basis van JWT metadata.
 - Professionals kunnen alleen hun eigen `professionals`, `professional_services`, `professional_service_areas` en `lead_assignments` lezen.
 - Professionals kunnen alleen hun eigen `professional_wallets`, `wallet_transactions` en `lead_purchases` lezen.
+- Professionals kunnen alleen hun eigen distributiekandidaten lezen/updaten en nooit rankingdetails van andere professionals zien.
 - Professionals kunnen alleen `leads`, `lead_images`, `lead_answers` en `lead_activity` direct lezen na `can_professional_view_lead_contact(...)`, dus pas na geldige purchase of geaccepteerde directe assignment.
 - Professionals kunnen alleen eigen `lead_matches` lezen wanneer dat server-side nodig is; ze zien geen matches van andere vakmannen.
 - Professionals kunnen assignments niet creëren; alleen admins of server-side service-role logica kunnen toewijzen.
@@ -80,6 +85,7 @@ Admin-mutaties verlopen server-side na een admin-sessiecheck. De admin-RPC's geb
 9. Admin beoordeelt de lead en kan commerciële instellingen beheren of handmatig toewijzen via `lead_assignments`.
 10. Professionals zien voor gematchte leads alleen beperkte marktmetadata.
 11. `purchase_lead` voert de commerciële acceptatie atomair uit: eligibility-check, prijsresolutie, walletdebit, purchase-record, assignment unlock en sales-status update.
+12. De distributie-engine start een run, rankt kandidaten met breakdown, activeert offer windows en doet fallback bij decline/expiry.
 
 ## Assignment lifecycle
 
@@ -114,6 +120,16 @@ Admin-mutaties verlopen server-side na een admin-sessiecheck. De admin-RPC's geb
 - ten minste één `professional_service_area.postal_code_prefix` matcht met de leadpostcode
 
 Iedere match bevat `professional_id`, `match_score` en `reasons`. In de commerciële flow is `lead_matches` de toegangsvoorwaarde tot de leadmarkt, `lead_purchases` het financiële beslismoment en `lead_assignments` de operationele vervolgrelatie.
+
+## Distributie-opzet (Prompt 10)
+
+- Eligibility wordt centraal beoordeeld op status, verificatie, service-fit, postcode4-fit, capaciteit en commerciële beschikbaarheid.
+- Ranking gebruikt een uitlegbare 0-100 score met vaste componenten: service, regio, verificatie, response performance, win rate, response time, workload en fairness.
+- Fairness gebruikt recente exposure (offers/purchases) als zachte boost/penalty; fitfactoren blijven dominant.
+- Exclusive: één actieve offer tegelijk met expiry → fallback naar volgende kandidaat.
+- Shared: batch-offers met configureerbare batchsize, slotcontrole (`max_buyers`) en sluiting bij sold-out.
+- Expiry/decline/purchase events worden als `lead_activity` gelogd voor audittrail en admin-inzicht.
+- Exhausted runs krijgen expliciet status `exhausted`; requeue gebeurt alleen via admin override.
 
 ## Wallet- en pricing-opzet
 

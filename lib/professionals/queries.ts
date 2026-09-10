@@ -22,6 +22,12 @@ export interface ProfessionalDetail extends ProfessionalListItem {
     assignmentsAccepted: number;
     assignmentsWon: number;
     assignmentsLost: number;
+    offersReceived: number;
+    offersViewed: number;
+    offersDeclined: number;
+    offersExpired: number;
+    offersPurchased: number;
+    averageResponseHours: number;
   };
 }
 
@@ -104,12 +110,26 @@ export async function getAdminProfessionalDetail(id: string) {
   const serviceLinks = (data.professional_services ?? []) as Array<Record<string, unknown>>;
   const areas = (data.professional_service_areas ?? []) as Array<{ id: string; postal_code_prefix: string }>;
 
-  const [totalAssignments, acceptedAssignments, wonAssignments, lostAssignments] = await Promise.all([
+  const [totalAssignments, acceptedAssignments, wonAssignments, lostAssignments, candidateRows] = await Promise.all([
     supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("professional_id", id),
     supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("professional_id", id).eq("status", "accepted"),
     supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("professional_id", id).eq("progress_status", "won"),
     supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("professional_id", id).eq("progress_status", "lost"),
+    supabase.from("lead_distribution_candidates").select("status, offered_at, viewed_at, declined_at, purchased_at").eq("professional_id", id),
   ]);
+
+  const offers = (candidateRows.data ?? []) as Array<Record<string, unknown>>;
+  const responseHours = offers
+    .map((row) => {
+      const offeredAt = row.offered_at ? new Date(String(row.offered_at)).getTime() : 0;
+      const respondedAt = row.viewed_at || row.declined_at || row.purchased_at;
+      if (!offeredAt || !respondedAt) {
+        return null;
+      }
+      const diff = (new Date(String(respondedAt)).getTime() - offeredAt) / (1000 * 60 * 60);
+      return diff >= 0 ? diff : null;
+    })
+    .filter((value): value is number => value !== null);
 
   const mappedServiceLinks = serviceLinks.flatMap((serviceLink) => {
     const service = firstOf(serviceLink.service as Service | Service[]);
@@ -149,6 +169,12 @@ export async function getAdminProfessionalDetail(id: string) {
       assignmentsAccepted: acceptedAssignments.count ?? 0,
       assignmentsWon: wonAssignments.count ?? 0,
       assignmentsLost: lostAssignments.count ?? 0,
+      offersReceived: offers.length,
+      offersViewed: offers.filter((row) => row.status === "viewed").length,
+      offersDeclined: offers.filter((row) => row.status === "declined").length,
+      offersExpired: offers.filter((row) => row.status === "expired").length,
+      offersPurchased: offers.filter((row) => row.status === "purchased").length,
+      averageResponseHours: responseHours.length ? Number((responseHours.reduce((sum, value) => sum + value, 0) / responseHours.length).toFixed(1)) : 0,
     },
   } as ProfessionalDetail;
 }

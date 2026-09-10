@@ -27,6 +27,7 @@ export default async function ProfessionalAssignmentsPage() {
                 <th className="py-3">Prijs</th>
                 <th className="py-3">Type</th>
                 <th className="py-3">Status</th>
+                <th className="py-3">Offer</th>
                 <th className="py-3">Resterende plekken</th>
               </tr>
             </thead>
@@ -49,6 +50,13 @@ export default async function ProfessionalAssignmentsPage() {
                       <StatusBadge value={lead.state} />
                       {lead.purchaseStatus ? <StatusBadge value={lead.purchaseStatus} /> : null}
                       {lead.assignmentStatus ? <StatusBadge value={lead.assignmentStatus} /> : null}
+                    </div>
+                  </td>
+                  <td className="py-4">
+                    <div className="space-y-1">
+                      {lead.offerStatus ? <StatusBadge value={lead.offerStatus} /> : <span className="text-muted-foreground">gesloten</span>}
+                      <p className="text-xs text-muted-foreground">{lead.offerState.replaceAll("_", " ")}</p>
+                      {lead.offerExpiresAt ? <p className="text-xs text-muted-foreground">tot {formatDate(lead.offerExpiresAt)}</p> : null}
                     </div>
                   </td>
                   <td className="py-4 text-muted-foreground">
