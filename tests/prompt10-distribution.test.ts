@@ -155,7 +155,7 @@ test("scoring breakdown blijft uitlegbaar per component", () => {
   assert.ok(extreme.breakdown.fairness <= 10);
 });
 
-test("engine gebruikt DB-level claim en run-activatie RPC voor concurrency-safe expiry/fallback", () => {
+test("engine gebruikt database claim en run activatie RPC voor veilige concurrency bij expiry en fallback", () => {
   assert.match(engineSource, /claim_expired_distribution_candidates/);
   assert.match(engineSource, /activate_lead_distribution_run/);
   assert.match(engineSource, /const runIds = new Set<string>\(\)/);

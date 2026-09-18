@@ -117,11 +117,13 @@ export default async function AdminDistributionPage({
                   <td className="py-4 text-muted-foreground">{run.candidateCount} (live {run.offeredCount}, gekocht {run.purchasedCount})</td>
                   <td className="py-4 text-muted-foreground">{formatDate(run.startedAt)}</td>
                   <td className="py-4 space-y-2">
-                    <form action={pauseDistributionRunAction}>
-                      <input type="hidden" name="run_id" value={run.id} />
-                      <input type="hidden" name="redirect_to" value="/admin/distributie" />
-                      <SubmitButton variant="ghost" pendingLabel="Pauzeren...">Pause</SubmitButton>
-                    </form>
+                    {["pending", "active"].includes(run.status) ? (
+                      <form action={pauseDistributionRunAction}>
+                        <input type="hidden" name="run_id" value={run.id} />
+                        <input type="hidden" name="redirect_to" value="/admin/distributie" />
+                        <SubmitButton variant="ghost" pendingLabel="Pauzeren...">Pause</SubmitButton>
+                      </form>
+                    ) : null}
                     <form action={requeueLeadDistributionAction}>
                       <input type="hidden" name="lead_id" value={run.leadId} />
                       <input type="hidden" name="redirect_to" value="/admin/distributie" />

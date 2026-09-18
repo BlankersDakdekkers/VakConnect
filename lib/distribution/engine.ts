@@ -395,7 +395,11 @@ export async function startLeadDistribution(leadId: string, actorUserId?: string
     .filter((candidate) => !candidate.alreadyPurchased)
     .filter((candidate) => {
       if (candidate.settings.paused) {
-        return false;
+        const pauseUntilTs = candidate.settings.pauseUntil ? new Date(candidate.settings.pauseUntil).getTime() : 0;
+        if (pauseUntilTs <= 0) {
+          return false;
+        }
+        return pauseUntilTs <= Date.now();
       }
       return true;
     })
@@ -613,11 +617,15 @@ export async function adminPauseDistributionRun(runId: string, actorUserId?: str
   const supabase = createAdminSupabaseClient();
   const { data: run } = await supabase
     .from("lead_distribution_runs")
-    .select("id, lead_id")
+    .select("id, lead_id, status")
     .eq("id", runId)
     .maybeSingle();
 
   if (!run) {
+    return;
+  }
+
+  if (!["pending", "active"].includes(String(run.status))) {
     return;
   }
 
