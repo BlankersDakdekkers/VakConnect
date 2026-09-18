@@ -104,6 +104,12 @@ export default async function AdminProfessionalDetailPage({
               <p>Geaccepteerd: <strong>{professional.stats.assignmentsAccepted}</strong></p>
               <p>Gewonnen: <strong>{professional.stats.assignmentsWon}</strong></p>
               <p>Verloren: <strong>{professional.stats.assignmentsLost}</strong></p>
+              <p>Offers ontvangen: <strong>{professional.stats.offersReceived}</strong></p>
+              <p>Offers bekeken: <strong>{professional.stats.offersViewed}</strong></p>
+              <p>Offers geweigerd: <strong>{professional.stats.offersDeclined}</strong></p>
+              <p>Offers verlopen: <strong>{professional.stats.offersExpired}</strong></p>
+              <p>Offers gekocht: <strong>{professional.stats.offersPurchased}</strong></p>
+              <p>Gem. responstijd (uren): <strong>{professional.stats.averageResponseHours}</strong></p>
             </div>
           </Card>
         </div>

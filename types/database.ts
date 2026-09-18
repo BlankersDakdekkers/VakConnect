@@ -21,13 +21,22 @@ export type LeadActivityType =
   | "assignment_accepted"
   | "assignment_rejected"
   | "progress_updated"
-  | "loss_reason_recorded";
+  | "loss_reason_recorded"
+  | "distribution_started"
+  | "candidate_offered"
+  | "candidate_skipped"
+  | "candidate_declined"
+  | "candidate_expired"
+  | "distribution_exhausted"
+  | "distribution_admin_override";
 export type LeadUrgency = "normal" | "urgent";
 export type LeadPreferredTiming = "asap" | "few_weeks" | "one_to_three_months" | "later" | "unknown";
 export type LeadAssignmentStatus = "pending" | "viewed" | "accepted" | "rejected";
 export type LeadCommercialType = "shared" | "exclusive";
 export type LeadSalesStatus = "unavailable" | "available" | "partially_sold" | "sold_out" | "closed";
 export type LeadPurchaseStatus = "purchased" | "refunded" | "cancelled";
+export type LeadDistributionRunStatus = "pending" | "active" | "completed" | "cancelled" | "exhausted";
+export type LeadDistributionCandidateStatus = "queued" | "offered" | "viewed" | "declined" | "expired" | "purchased" | "skipped";
 export type WalletTransactionType =
   | "credit_purchase"
   | "lead_purchase"
@@ -268,6 +277,50 @@ export interface CommercialAuditLog {
   created_at: string;
 }
 
+export interface LeadDistributionRun {
+  id: string;
+  lead_id: string;
+  commercial_type: LeadCommercialType;
+  status: LeadDistributionRunStatus;
+  strategy_version: string;
+  started_at: string;
+  completed_at: string | null;
+  created_at: string;
+}
+
+export interface LeadDistributionCandidate {
+  id: string;
+  distribution_run_id: string;
+  lead_id: string;
+  professional_id: string;
+  rank_position: number;
+  ranking_score: number | null;
+  score_breakdown: Json;
+  eligibility_reason: Json;
+  status: LeadDistributionCandidateStatus;
+  offered_at: string | null;
+  offer_expires_at: string | null;
+  viewed_at: string | null;
+  expired_at: string | null;
+  skipped_at: string | null;
+  declined_at: string | null;
+  purchased_at: string | null;
+  decline_reason: string | null;
+  created_at: string;
+}
+
+export interface ProfessionalDistributionSettings {
+  professional_id: string;
+  max_open_offers: number;
+  max_active_assignments: number;
+  paused: boolean;
+  pause_until: string | null;
+  preferred_lead_types: Json;
+  auto_accept_enabled: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 
 export interface SeoLocation {
   id: string;
@@ -441,6 +494,21 @@ export interface Database {
         Row: CommercialAuditLog;
         Insert: Partial<CommercialAuditLog> & Pick<CommercialAuditLog, "entity_type" | "entity_id" | "action">;
         Update: never;
+      };
+      lead_distribution_runs: {
+        Row: LeadDistributionRun;
+        Insert: Partial<LeadDistributionRun> & Pick<LeadDistributionRun, "lead_id" | "commercial_type">;
+        Update: Partial<LeadDistributionRun>;
+      };
+      lead_distribution_candidates: {
+        Row: LeadDistributionCandidate;
+        Insert: Partial<LeadDistributionCandidate> & Pick<LeadDistributionCandidate, "distribution_run_id" | "lead_id" | "professional_id" | "rank_position">;
+        Update: Partial<LeadDistributionCandidate>;
+      };
+      professional_distribution_settings: {
+        Row: ProfessionalDistributionSettings;
+        Insert: Partial<ProfessionalDistributionSettings> & Pick<ProfessionalDistributionSettings, "professional_id">;
+        Update: Partial<ProfessionalDistributionSettings>;
       };
       contact_submissions: {
         Row: ContactSubmission;
