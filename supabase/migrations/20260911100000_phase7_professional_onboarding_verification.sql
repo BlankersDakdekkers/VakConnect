@@ -578,8 +578,19 @@ grant execute on function public.track_professional_document_audit_after_change(
 
 update public.professionals
 set onboarding_started_at = coalesce(onboarding_started_at, created_at),
-    onboarding_status = case when verification_status = 'verified' then 'approved' when status = 'pending' then 'submitted' else 'not_started' end,
-    onboarding_step = case when verification_status = 'verified' then 'review' else 'company' end,
+    onboarding_status = (
+      case
+        when verification_status = 'verified' then 'approved'
+        when status = 'pending' then 'submitted'
+        else 'not_started'
+      end
+    )::professional_onboarding_status,
+    onboarding_step = (
+      case
+        when verification_status = 'verified' then 'review'
+        else 'company'
+      end
+    )::professional_onboarding_step,
     onboarding_completion = case when verification_status = 'verified' then 100 else 0 end,
     quality_score = case when verification_status = 'verified' then 90 else 0 end,
     updated_at = timezone('utc', now())

@@ -6,9 +6,11 @@ import { buildProfessionalDocumentPath, validateProfessionalDocument } from "../
 import { evaluateDistributionEligibility } from "../lib/distribution/scoring.ts";
 
 const migrationSql = readFileSync("/home/runner/work/VakConnect/VakConnect/supabase/migrations/20260911100000_phase7_professional_onboarding_verification.sql", "utf8");
+const hardeningMigrationSql = readFileSync("/home/runner/work/VakConnect/VakConnect/supabase/migrations/20260911110000_phase7_professional_onboarding_security_hardening.sql", "utf8");
 const onboardingPageSource = readFileSync("/home/runner/work/VakConnect/VakConnect/app/(professional)/vakman/onboarding/page.tsx", "utf8");
 const verificationPageSource = readFileSync("/home/runner/work/VakConnect/VakConnect/app/(admin)/admin/verificatie/page.tsx", "utf8");
 const documentStorageSource = readFileSync("/home/runner/work/VakConnect/VakConnect/lib/storage/professional-documents.ts", "utf8");
+const actionsSource = readFileSync("/home/runner/work/VakConnect/VakConnect/lib/professionals/actions.ts", "utf8");
 const engineSource = readFileSync("/home/runner/work/VakConnect/VakConnect/lib/distribution/engine.ts", "utf8");
 
 test("phase7 migration adds onboarding, verification, document and audit schema", () => {
@@ -125,9 +127,34 @@ test("prompt11 UI surfaces exist for onboarding and admin verification", () => {
 });
 
 test("document storage and distribution engine use private signed access and onboarding gating", () => {
+  assert.match(documentStorageSource, /requireAdminUser/);
+  assert.match(documentStorageSource, /from\("professional_documents"\)/);
   assert.match(documentStorageSource, /createSignedUrl/);
   assert.match(engineSource, /evaluateDistributionEligibility/);
   assert.match(engineSource, /candidate\.onboardingStatus === "approved"/);
   assert.match(engineSource, /candidate\.qualityScore/);
   assert.match(engineSource, /availabilityStatus !== "unavailable"/);
+});
+
+test("hardening migration removes direct professional document deletes and narrows function execution", () => {
+  assert.match(hardeningMigrationSql, /drop policy if exists "professionals delete own pending documents"/);
+  assert.match(hardeningMigrationSql, /drop policy if exists "professionals delete own professional document storage"/);
+  assert.match(hardeningMigrationSql, /revoke all on function public\.append_professional_audit_log/);
+  assert.match(hardeningMigrationSql, /revoke all on function public\.enqueue_professional_notification/);
+  assert.match(hardeningMigrationSql, /grant execute on function public\.transition_own_professional_onboarding/);
+  assert.match(hardeningMigrationSql, /grant execute on function public\.delete_own_pending_professional_document/);
+});
+
+test("server actions use controlled onboarding transitions and storage cleanup flow", () => {
+  assert.match(actionsSource, /rpc\("transition_own_professional_onboarding"/);
+  assert.match(actionsSource, /rpc\("delete_own_pending_professional_document"/);
+  assert.match(actionsSource, /createAdminSupabaseClient\(\)/);
+  assert.match(actionsSource, /adminSupabase\.storage\.from\(professionalDocumentsBucket\)\.remove/);
+});
+
+test("signed document urls require admin and resolve by document id instead of raw path", async () => {
+  assert.match(documentStorageSource, /await dependencies\.requireAdminUser\(\)/);
+  assert.match(documentStorageSource, /from\("professional_documents"\)\s*\.select\("storage_path"\)\s*\.eq\("id", documentId\)/);
+  assert.match(documentStorageSource, /createSignedUrl\(String\(document\.storage_path\)/);
+  assert.doesNotMatch(documentStorageSource, /createSignedProfessionalDocumentUrl\(path:/);
 });

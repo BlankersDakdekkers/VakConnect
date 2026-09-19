@@ -57,6 +57,20 @@ function optionalDateValue(value: string | null | undefined) {
   return value ? new Date(value).toISOString() : null;
 }
 
+async function transitionOwnOnboardingState(
+  targetStep: ProfessionalOnboardingStep,
+  options?: { submitForReview?: boolean },
+) {
+  const supabase = await createServerSupabaseClient();
+  const { error } = await supabase.rpc("transition_own_professional_onboarding", {
+    target_step: targetStep,
+    submit_for_review: options?.submitForReview ?? false,
+  });
+  if (error) {
+    throw new Error("Onboardingstatus kon niet veilig worden bijgewerkt.");
+  }
+}
+
 async function revalidateProfessionalSurfaces(professionalId: string) {
   revalidatePath("/vakman");
   revalidatePath("/vakman/onboarding");
@@ -138,8 +152,6 @@ async function saveCompanyStep(professionalId: string, formData: FormData) {
     postal_code: payload.data.postalCode.toUpperCase(),
     city: payload.data.city,
     province: payload.data.province,
-    onboarding_status: "in_progress",
-    onboarding_step: "contact",
     updated_at: new Date().toISOString(),
   }).eq("id", professionalId);
   if (error) throw new Error("Bedrijfsgegevens konden niet worden opgeslagen.");
@@ -157,8 +169,6 @@ async function saveContactStep(professionalId: string, formData: FormData) {
     contact_name: payload.data.contactName,
     phone: payload.data.phone,
     website: payload.data.website || null,
-    onboarding_status: "in_progress",
-    onboarding_step: "services",
     updated_at: new Date().toISOString(),
   }).eq("id", professionalId);
   if (error) throw new Error("Contactgegevens konden niet worden opgeslagen.");
@@ -178,8 +188,6 @@ async function saveExperienceStep(professionalId: string, formData: FormData) {
     team_size: payload.data.teamSize,
     specialties: payload.data.specialties,
     description: payload.data.description,
-    onboarding_status: "in_progress",
-    onboarding_step: "capacity",
     updated_at: new Date().toISOString(),
   }).eq("id", professionalId);
   if (error) throw new Error("Ervaring kon niet worden opgeslagen.");
@@ -257,7 +265,12 @@ async function saveProfileSection(professionalId: string, formData: FormData) {
   if (error) throw new Error("Profiel kon niet worden opgeslagen.");
 }
 
-async function saveOnboardingStep(professionalId: string, step: ProfessionalOnboardingStep, formData: FormData) {
+async function saveOnboardingStep(
+  professionalId: string,
+  step: ProfessionalOnboardingStep,
+  formData: FormData,
+  options?: { targetStep?: ProfessionalOnboardingStep },
+) {
   await ensureDistributionSettingsForProfessional(professionalId);
   switch (step) {
     case "company":
@@ -281,6 +294,7 @@ async function saveOnboardingStep(professionalId: string, step: ProfessionalOnbo
     case "review":
       break;
   }
+  await transitionOwnOnboardingState(options?.targetStep ?? step);
   return refreshProfessionalDerivedState(professionalId);
 }
 
@@ -529,7 +543,7 @@ export async function autosaveProfessionalOnboardingStepAction(formData: FormDat
     return { ok: false, message: payload.error.issues[0]?.message ?? "Autosave mislukt." };
   }
   try {
-    await saveOnboardingStep(user.professional.id, payload.data.step, formData);
+    await saveOnboardingStep(user.professional.id, payload.data.step, formData, { targetStep: payload.data.step });
     await revalidateProfessionalSurfaces(user.professional.id);
     return { ok: true, message: "Wijzigingen opgeslagen." };
   } catch (error) {
@@ -547,7 +561,9 @@ export async function saveProfessionalOnboardingStepAction(formData: FormData) {
   });
   if (!payload.success) redirectWithMessage("/vakman/onboarding", "error", payload.error.issues[0]?.message ?? "Stap kon niet worden opgeslagen.");
   try {
-    await saveOnboardingStep(user.professional.id, payload.data.step, formData);
+    await saveOnboardingStep(user.professional.id, payload.data.step, formData, {
+      targetStep: payload.data.nextStep ?? payload.data.step,
+    });
   } catch (error) {
     redirectWithMessage(`/vakman/onboarding?step=${payload.data.step}`, "error", error instanceof Error ? error.message : "Stap kon niet worden opgeslagen.");
   }
@@ -563,16 +579,12 @@ export async function submitProfessionalOnboardingAction(formData: FormData) {
   if (!detail || !detail.canSubmit) {
     redirectWithMessage(payload.data.redirectTo ?? "/vakman/onboarding?step=review", "error", "Vul eerst alle verplichte stappen en documenten aan.");
   }
-  const supabase = createAdminSupabaseClient();
-  const { error } = await supabase.from("professionals").update({
-    onboarding_status: "submitted",
-    onboarding_step: "review",
-    submitted_for_review_at: new Date().toISOString(),
-    verification_status: detail.verification_status === "verified" ? "verified" : "pending",
-    updated_at: new Date().toISOString(),
-  }).eq("id", user.professional.id);
-  if (error) redirectWithMessage(payload.data.redirectTo ?? "/vakman/onboarding?step=review", "error", "Profiel kon niet worden ingediend.");
-  await refreshProfessionalDerivedState(user.professional.id);
+  try {
+    await transitionOwnOnboardingState("review", { submitForReview: true });
+    await refreshProfessionalDerivedState(user.professional.id);
+  } catch (error) {
+    redirectWithMessage(payload.data.redirectTo ?? "/vakman/onboarding?step=review", "error", error instanceof Error ? error.message : "Profiel kon niet worden ingediend.");
+  }
   await revalidateProfessionalSurfaces(user.professional.id);
   redirectWithMessage(payload.data.redirectTo ?? "/vakman", "success", "Profiel is ingediend voor review.");
 }
@@ -613,6 +625,7 @@ export async function uploadProfessionalDocumentAction(formData: FormData) {
   if (existingApproved?.id) {
     await supabase.from("professional_documents").update({ archived_at: new Date().toISOString(), superseded_by_document_id: documentId }).eq("id", existingApproved.id).eq("professional_id", user.professional.id);
   }
+  await transitionOwnOnboardingState("documents");
   await refreshProfessionalDerivedState(user.professional.id);
   await revalidateProfessionalSurfaces(user.professional.id);
   redirectWithMessage(payload.data.redirectTo ?? "/vakman/onboarding?step=documents", "success", "Document geüpload.");
@@ -623,12 +636,16 @@ export async function deleteProfessionalDocumentAction(formData: FormData) {
   const payload = professionalDocumentDeleteSchema.safeParse({ documentId: formData.get("document_id"), redirectTo: formData.get("redirect_to") });
   if (!payload.success) redirectWithMessage("/vakman/onboarding?step=documents", "error", "Document kon niet worden verwijderd.");
   const supabase = await createServerSupabaseClient();
-  const { data: document, error } = await supabase.from("professional_documents").select("id, storage_path, verification_status").eq("id", payload.data.documentId).eq("professional_id", user.professional.id).maybeSingle();
-  if (error || !document) redirectWithMessage(payload.data.redirectTo ?? "/vakman/onboarding?step=documents", "error", "Document kon niet worden gevonden.");
-  if (document.verification_status === "approved") redirectWithMessage(payload.data.redirectTo ?? "/vakman/onboarding?step=documents", "error", "Goedgekeurde documenten kunnen alleen via vervanging worden bijgewerkt.");
-  const { error: deleteError } = await supabase.from("professional_documents").delete().eq("id", document.id).eq("professional_id", user.professional.id);
-  if (deleteError) redirectWithMessage(payload.data.redirectTo ?? "/vakman/onboarding?step=documents", "error", "Document kon niet worden verwijderd.");
-  await supabase.storage.from(professionalDocumentsBucket).remove([String(document.storage_path)]);
+  const { data: storagePath, error } = await supabase.rpc("delete_own_pending_professional_document", {
+    target_document_id: payload.data.documentId,
+  });
+  if (error || !storagePath) {
+    redirectWithMessage(payload.data.redirectTo ?? "/vakman/onboarding?step=documents", "error", "Document kon niet worden verwijderd.");
+  }
+
+  const adminSupabase = createAdminSupabaseClient();
+  await adminSupabase.storage.from(professionalDocumentsBucket).remove([String(storagePath)]);
+  await transitionOwnOnboardingState("documents");
   await refreshProfessionalDerivedState(user.professional.id);
   await revalidateProfessionalSurfaces(user.professional.id);
   redirectWithMessage(payload.data.redirectTo ?? "/vakman/onboarding?step=documents", "success", "Document verwijderd.");
@@ -747,6 +764,7 @@ export async function updateOwnProfessionalAreaAction(formData: FormData) {
     radius_km: payload.data.radiusKm ?? null,
   }, { onConflict: "professional_id,postal_code_prefix" });
   if (error) redirectWithMessage(payload.data.redirectTo ?? "/vakman/onboarding?step=areas", "error", "Werkgebied kon niet worden opgeslagen.");
+  await transitionOwnOnboardingState("areas");
   await refreshProfessionalDerivedState(user.professional.id);
   await revalidateProfessionalSurfaces(user.professional.id);
   redirectWithMessage(payload.data.redirectTo ?? "/vakman/onboarding?step=areas", "success", "Werkgebied opgeslagen.");

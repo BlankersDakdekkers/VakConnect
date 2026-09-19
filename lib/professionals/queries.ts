@@ -371,7 +371,7 @@ export async function getAdminProfessionalDetail(id: string) {
   const stats = await loadProfessionalStats(id);
   const signedDocuments = await Promise.all(documents.map(async (document) => ({
     ...document,
-    signedUrl: await createSignedProfessionalDocumentUrl(document.storage_path),
+    signedUrl: await createSignedProfessionalDocumentUrl(document.id),
   })));
 
   return {
