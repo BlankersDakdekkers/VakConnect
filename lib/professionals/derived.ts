@@ -48,7 +48,6 @@ export async function refreshProfessionalDerivedState(professionalId: string) {
       btwNumber: (data.btw_number as string | null) ?? null,
       identityType: (data.identity_type as string | null) ?? null,
       addressLine1: (data.address_line_1 as string | null) ?? null,
-      addressLine2: (data.address_line_2 as string | null) ?? null,
       postalCode: (data.postal_code as string | null) ?? null,
       city: (data.city as string | null) ?? null,
       province: (data.province as string | null) ?? null,

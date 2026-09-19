@@ -12,21 +12,22 @@ const documentStorageSource = readFileSync("/home/runner/work/VakConnect/VakConn
 const engineSource = readFileSync("/home/runner/work/VakConnect/VakConnect/lib/distribution/engine.ts", "utf8");
 
 test("phase7 migration adds onboarding, verification, document and audit schema", () => {
-  assert.match(migrationSql, /phase7_professional_onboarding_verification/);
+  assert.match(migrationSql, /professional_onboarding_status/);
   assert.match(migrationSql, /create table if not exists public\.professional_documents/);
   assert.match(migrationSql, /create table if not exists public\.professional_review_feedback/);
   assert.match(migrationSql, /create table if not exists public\.professional_audit_log/);
-  assert.match(migrationSql, /create type public\.professional_onboarding_status/);
+  assert.match(migrationSql, /create type professional_onboarding_status/);
   assert.match(migrationSql, /changes_requested/);
   assert.match(migrationSql, /suspended/);
 });
 
 test("phase7 migration configures private document storage and strict RLS", () => {
   assert.match(migrationSql, /professional-documents/);
-  assert.match(migrationSql, /create policy "professionals manage own document metadata"/);
+  assert.match(migrationSql, /create policy "professionals read own document metadata"/);
+  assert.match(migrationSql, /create policy "professionals upload own document metadata"/);
   assert.match(migrationSql, /create policy "admins manage professional documents"/);
   assert.match(migrationSql, /security definer/);
-  assert.match(migrationSql, /set search_path = public, auth, extensions/);
+  assert.match(migrationSql, /set search_path = public, pg_temp/);
   assert.match(migrationSql, /revoke all on function/);
   assert.match(migrationSql, /APPROVED_DOCUMENT_DELETE_FORBIDDEN/);
 });

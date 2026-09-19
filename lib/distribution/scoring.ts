@@ -19,7 +19,7 @@ export interface DistributionEligibilityInput {
 }
 
 export interface DistributionScoreInput {
-  verification: "verified" | "pending" | "unverified";
+  verification: "verified" | "pending" | "unverified" | "changes_requested" | "rejected" | "suspended";
   purchaseRate: number;
   winRate: number;
   avgResponseHours: number;

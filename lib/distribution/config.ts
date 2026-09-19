@@ -1,5 +1,5 @@
 import type { LeadCommercialType } from "@/types/database";
-import { minimumProfessionalQualityScore } from "@/lib/professionals/onboarding";
+import { minimumProfessionalQualityScore } from "../professionals/onboarding.ts";
 
 export const distributionStrategyVersion = "v2" as const;
 
@@ -29,7 +29,7 @@ export const distributionConfig = {
     fairness: 10,
   },
   eligibleLeadStatuses: ["new", "qualified", "matched", "assigned", "accepted"] as const,
-  allowedVerification: ["verified"] as const,
+  allowedVerification: ["verified"] as readonly string[],
 };
 
 export function getOfferWindowMinutes(type: LeadCommercialType) {

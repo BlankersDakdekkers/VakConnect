@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdminUser, requireProfessionalUser } from "@/lib/auth/helpers";
-import { distributionConfig, ensureDistributionSettingsForProfessional } from "@/lib/distribution/engine";
+import { ensureDistributionSettingsForProfessional } from "@/lib/distribution/engine";
 import { refreshProfessionalDerivedState } from "@/lib/professionals/derived";
 import { getAdminProfessionalDetail } from "@/lib/professionals/queries";
 import { buildProfessionalDocumentPath, professionalDocumentsBucket, validateProfessionalDocument } from "@/lib/storage/professional-documents";
@@ -34,7 +34,7 @@ import {
   professionalVerificationDecisionSchema,
   professionalVerificationStatusUpdateSchema,
 } from "@/lib/validation/professionals";
-import type { LeadCommercialType, ProfessionalOnboardingStep } from "@/types/database";
+import type { ProfessionalOnboardingStep } from "@/types/database";
 
 function redirectWithMessage(path: string, key: "error" | "success", message: string): never {
   const search = new URLSearchParams({ [key]: message });
@@ -477,7 +477,7 @@ export async function addProfessionalAreaAction(formData: FormData) {
   if (!payload.success) redirectWithMessage("/admin/vakmannen", "error", payload.error.issues[0]?.message ?? "Werkgebied kon niet worden toegevoegd.");
   const professionalId = payload.data.professionalId;
   if (!professionalId) redirectWithMessage(payload.data.redirectTo ?? "/admin/vakmannen", "error", "Vakman ontbreekt voor dit werkgebied.");
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const { error } = await supabase.from("professional_service_areas").upsert({
     professional_id: professionalId,
     postal_code_prefix: payload.data.postalCodePrefix,
@@ -585,7 +585,7 @@ export async function uploadProfessionalDocumentAction(formData: FormData) {
     expiresAt: textValue(formData.get("expires_at")),
     redirectTo: formData.get("redirect_to"),
   });
-  if (!payload.success) redirectWithMessage(payload.data?.redirectTo ?? "/vakman/onboarding?step=documents", "error", payload.error.issues[0]?.message ?? "Document kon niet worden geüpload.");
+  if (!payload.success) redirectWithMessage("/vakman/onboarding?step=documents", "error", payload.error.issues[0]?.message ?? "Document kon niet worden geüpload.");
   const file = formData.get("file");
   if (!(file instanceof File)) redirectWithMessage(payload.data.redirectTo ?? "/vakman/onboarding?step=documents", "error", "Selecteer een document.");
 
@@ -684,7 +684,7 @@ export async function reviewProfessionalVerificationAction(formData: FormData) {
   const admin = await requireAdminUser();
   const payload = professionalVerificationDecisionSchema.safeParse({
     professionalId: formData.get("professional_id"),
-    action: formData.get("action"),
+    action: formData.get("decision"),
     reason: formData.get("reason"),
     redirectTo: formData.get("redirect_to"),
   });
@@ -737,7 +737,7 @@ export async function updateOwnProfessionalAreaAction(formData: FormData) {
     radiusKm: formData.get("radius_km") || undefined,
     redirectTo: formData.get("redirect_to") || "/vakman/onboarding?step=areas",
   });
-  if (!payload.success) redirectWithMessage(payload.data?.redirectTo ?? "/vakman/onboarding?step=areas", "error", payload.error.issues[0]?.message ?? "Werkgebied kon niet worden opgeslagen.");
+  if (!payload.success) redirectWithMessage("/vakman/onboarding?step=areas", "error", payload.error.issues[0]?.message ?? "Werkgebied kon niet worden opgeslagen.");
   const supabase = await createServerSupabaseClient();
   const { error } = await supabase.from("professional_service_areas").upsert({
     professional_id: user.professional.id,

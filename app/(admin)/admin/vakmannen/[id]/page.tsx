@@ -21,8 +21,10 @@ import {
 } from "@/lib/professionals/actions";
 import { getAdminProfessionalDetail } from "@/lib/professionals/queries";
 import { getAdminServices } from "@/lib/services/queries";
-import { professionalReviewFeedbackSectionValues, professionalReviewFeedbackStatusValues, professionalStatusValues, professionalVerificationDecisionValues, professionalVerificationDocumentStatusValues, professionalVerificationStatusValues } from "@/lib/validation";
+import { professionalDocumentVerificationStatusValues, professionalReviewFeedbackStatusValues, professionalReviewSectionValues, professionalStatusValues, professionalVerificationStatusValues } from "@/lib/validation";
 import { formatDate } from "@/lib/utils";
+
+const professionalVerificationDecisionValues = ["verify", "changes_requested", "reject", "suspend"] as const;
 
 export default async function AdminProfessionalDetailPage({ params, searchParams }: Readonly<{ params: Promise<{ id: string }>; searchParams: Promise<Record<string, string | string[] | undefined>>; }>) {
   const { id } = await params;
@@ -137,7 +139,7 @@ export default async function AdminProfessionalDetailPage({ params, searchParams
                     <input type="hidden" name="document_id" value={document.id} />
                     <input type="hidden" name="professional_id" value={professional.id} />
                     <input type="hidden" name="redirect_to" value={`/admin/vakmannen/${professional.id}`} />
-                    <Select name="verification_status" defaultValue={document.verification_status}>{professionalVerificationDocumentStatusValues.map((value) => <option key={value} value={value}>{value}</option>)}</Select>
+                    <Select name="verification_status" defaultValue={document.verification_status}>{professionalDocumentVerificationStatusValues.map((value) => <option key={value} value={value}>{value}</option>)}</Select>
                     <Input name="rejection_reason" placeholder="Reden bij reject/expired" defaultValue={document.rejection_reason ?? ""} />
                     <SubmitButton variant="secondary" pendingLabel="...">Review opslaan</SubmitButton>
                   </form>
@@ -152,7 +154,7 @@ export default async function AdminProfessionalDetailPage({ params, searchParams
           <form action={createProfessionalReviewFeedbackAction} className="space-y-4">
             <input type="hidden" name="professional_id" value={professional.id} />
             <input type="hidden" name="redirect_to" value={`/admin/vakmannen/${professional.id}`} />
-            <Select name="section" defaultValue="company">{professionalReviewFeedbackSectionValues.map((value) => <option key={value} value={value}>{value}</option>)}</Select>
+            <Select name="section" defaultValue="company">{professionalReviewSectionValues.map((value) => <option key={value} value={value}>{value}</option>)}</Select>
             <Select name="status" defaultValue="open">{professionalReviewFeedbackStatusValues.map((value) => <option key={value} value={value}>{value}</option>)}</Select>
             <Textarea name="message" placeholder="Feedback per sectie" required />
             <SubmitButton pendingLabel="Opslaan...">Feedback toevoegen</SubmitButton>

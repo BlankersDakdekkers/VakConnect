@@ -8,8 +8,8 @@ import type {
   ProfessionalOnboardingStep,
   ProfessionalReviewSection,
   ProfessionalVerificationStatus,
-} from "@/types/database";
-import { minimumProfessionalQualityScore as minimumQualityScoreConstant } from "@/lib/validation/constants";
+} from "../../types/database.ts";
+import { minimumProfessionalQualityScore as minimumQualityScoreConstant } from "../validation/constants.ts";
 
 export const professionalOnboardingSteps: Array<{
   key: ProfessionalOnboardingStep;
