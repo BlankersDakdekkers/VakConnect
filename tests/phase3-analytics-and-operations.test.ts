@@ -53,9 +53,22 @@ test("analytics metadata sanitizer verwijdert PII-velden", () => {
 
 test("professional profiel self-service beperkt velden", () => {
   const payload = professionalProfileUpdateSchema.parse({
+    companyName: "Vakbedrijf Breda",
+    tradeName: "Vakbedrijf",
+    identityType: "zzp",
     contactName: "Piet Jansen",
     phone: "0612345678",
+    kvkNumber: "12345678",
+    btwNumber: "NL123456789B01",
     website: "https://vakbedrijf.nl",
+    addressLine1: "Markt 1",
+    addressLine2: "",
+    postalCode: "4811AB",
+    city: "Breda",
+    province: "Noord-Brabant",
+    yearsExperience: 8,
+    teamSize: 2,
+    specialties: ["dakrenovatie"],
     description: "Specialist in dakrenovatie",
   });
 

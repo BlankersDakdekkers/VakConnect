@@ -355,3 +355,12 @@ Lokale URL-structuur blijft ongewijzigd:
 - audit trail in `seo_audit_log` logt status/publish mutaties (record, actor, actie, vorige/nieuwe status, timestamp).
 - provinciehubs beschikbaar via `/regios/{provincie}` met minimale dekkingsdrempel; sitemap neemt alleen gepubliceerde/indexeerbare routes én geldige provinciehubs op.
 - geen auto-AI generatie: drafts starten leeg en vragen redactionele invulling.
+
+## Professional onboarding & verificatie (Prompt 11)
+
+- `/vakman/onboarding` bevat een wizard met veilige autosave voor bedrijf, contact, diensten, werkgebieden, ervaring, capaciteit, documenten en review/submission.
+- `professionals` gebruikt nu aparte onboarding- en verificatielifecycles inclusief `onboarding_status`, `onboarding_step`, completion, submission timestamps en profielkwaliteit.
+- `professional_documents`, `professional_document_requirements`, `professional_review_feedback`, `professional_audit_log` en `professional_notification_events` ondersteunen documentreview, changes-requested flows, audittrail en eventvoorbereiding.
+- Documentuploads gebruiken de private bucket `professional-documents`, server-side allowlists, veilige paden en korte admin signed URLs.
+- `/admin/verificatie` en `/admin/vakmannen/[id]` bieden reviewqueue, documentreview, feedback per sectie en verificatie-acties (`verify`, `changes_requested`, `reject`, `suspend`).
+- Distributie-eligibility vereist nu complete onboarding, verified status, voldoende quality score en beschikbare capaciteit naast de bestaande Prompt 10-criteria.

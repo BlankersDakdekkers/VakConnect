@@ -39,7 +39,7 @@ export async function getCurrentAppUser(): Promise<CurrentAppUser | null> {
   if (role === "professional") {
     const { data: professionalData } = await supabase
       .from("professionals")
-      .select("id, auth_user_id, company_name, contact_name, email, phone, kvk_number, website, description, status, verification_status, created_at, updated_at")
+      .select("id, auth_user_id, company_name, trade_name, contact_name, email, phone, kvk_number, btw_number, website, description, identity_type, address_line_1, address_line_2, postal_code, city, province, years_experience, team_size, specialties, status, verification_status, verification_status_reason, onboarding_status, onboarding_step, onboarding_completion, onboarding_started_at, onboarding_completed_at, submitted_for_review_at, quality_score, quality_breakdown, last_critical_change_at, created_at, updated_at")
       .eq("auth_user_id", data.user.id)
       .maybeSingle();
 

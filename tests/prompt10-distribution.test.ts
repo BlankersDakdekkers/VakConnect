@@ -69,33 +69,49 @@ test("ranking score favors better performance and fairness boost without hidden 
 test("eligibility blocks wrong service/area, inactive, paused and open-offer overflow", () => {
   const eligible = evaluateDistributionEligibility({
     professionalActive: true,
+    onboardingComplete: true,
     verificationAllowed: true,
     serviceActive: true,
     areaMatch: true,
     paused: false,
+    availabilityAvailable: true,
     alreadyPurchased: false,
     leadCommerciallyAvailable: true,
     openOffers: 2,
     maxOpenOffers: 5,
+    activeAssignments: 1,
+    maxActiveAssignments: 5,
+    qualityScore: 80,
+    minimumQualityScore: 70,
   });
   assert.equal(eligible.eligible, true);
 
   const base = {
     professionalActive: true,
+    onboardingComplete: true,
     verificationAllowed: true,
     serviceActive: true,
     areaMatch: true,
     paused: false,
+    availabilityAvailable: true,
     alreadyPurchased: false,
     leadCommerciallyAvailable: true,
     openOffers: 2,
     maxOpenOffers: 5,
+    activeAssignments: 1,
+    maxActiveAssignments: 5,
+    qualityScore: 80,
+    minimumQualityScore: 70,
   };
   assert.equal(evaluateDistributionEligibility({ ...base, professionalActive: false }).eligible, false);
+  assert.equal(evaluateDistributionEligibility({ ...base, onboardingComplete: false }).eligible, false);
   assert.equal(evaluateDistributionEligibility({ ...base, serviceActive: false }).eligible, false);
   assert.equal(evaluateDistributionEligibility({ ...base, areaMatch: false }).eligible, false);
   assert.equal(evaluateDistributionEligibility({ ...base, paused: true }).eligible, false);
+  assert.equal(evaluateDistributionEligibility({ ...base, availabilityAvailable: false }).eligible, false);
   assert.equal(evaluateDistributionEligibility({ ...base, openOffers: 5 }).eligible, false);
+  assert.equal(evaluateDistributionEligibility({ ...base, activeAssignments: 5 }).eligible, false);
+  assert.equal(evaluateDistributionEligibility({ ...base, qualityScore: 60 }).eligible, false);
   assert.equal(evaluateDistributionEligibility({ ...base, verificationAllowed: false }).eligible, false);
   assert.equal(evaluateDistributionEligibility({ ...base, alreadyPurchased: true }).eligible, false);
   assert.equal(evaluateDistributionEligibility({ ...base, leadCommerciallyAvailable: false }).eligible, false);
