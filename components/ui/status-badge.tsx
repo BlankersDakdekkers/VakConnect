@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 const variantClasses: Record<string, string> = {
   active: "border-success/20 bg-success/10 text-success",
   accepted: "border-success/20 bg-success/10 text-success",
+  approved: "border-success/20 bg-success/10 text-success",
   available: "border-success/20 bg-success/10 text-success",
   assigned: "border-primary/20 bg-primary/10 text-primary",
   matched: "border-primary/20 bg-primary/10 text-primary",
@@ -32,6 +33,9 @@ const variantClasses: Record<string, string> = {
   lost: "border-border bg-slate-100 text-slate-700",
   closed: "border-border bg-slate-100 text-slate-700",
   inactive: "border-border bg-slate-100 text-slate-700",
+  changes_requested: "border-accent/20 bg-amber-50 text-amber-700",
+  submitted: "border-sky-200 bg-sky-50 text-sky-700",
+  limited: "border-accent/20 bg-amber-50 text-amber-700",
   contacted: "border-sky-200 bg-sky-50 text-sky-700",
   consistent: "border-success/20 bg-success/10 text-success",
   inconsistent: "border-danger/20 bg-red-50 text-danger",

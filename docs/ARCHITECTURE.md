@@ -441,3 +441,16 @@ Uitkomst wordt geclassificeerd als `onvoldoende`, `redelijk` of `goed` en gebrui
 - `seo_audit_log` registreert status- en publishmutaties met actor/tijd.
 - `app/sitemap.ts` blijft filteren op live/indexeerbare records + geldige provinciehubs.
 - Zolang routeaantallen ruim onder limieten blijven, volstaat één sitemap; bij grotere groei kan worden opgeschaald naar sitemap-index met gesplitste bestanden.
+
+## Prompt 11: onboarding, kwaliteit, documenten en verificatie
+
+- `professionals` blijft het enige profielmodel en is uitgebreid met onboardingstatus, huidige wizardstap, completion, submissionmomenten, quality-score en critical-change timestamps.
+- `professional_services` en `professional_service_areas` blijven de canonieke koppelingen voor diensten en regio, nu met extra ervarings-, specialisatie- en leadtypevoorkeurvelden zonder parallel model.
+- `professional_distribution_settings` bevat nu ook availability (`available`, `limited`, `unavailable`), pause/pause_until en capaciteitsgrenzen die direct door de distributie-engine worden hergebruikt.
+- `lib/professionals/onboarding.ts` centraliseert wizardstappen, deterministische kwaliteitsscore, submit gates en distribution gates zodat businesslogica niet over UI, SQL en distributiecode wordt gedupliceerd.
+- `professional_documents` bewaart alleen metadata; binaire bestanden staan in private Supabase Storage onder `professionals/{professionalId}/documents/{documentId}/...` en worden alleen via korte signed URLs voor admin review ontsloten.
+- `professional_review_feedback` modelleert feedback per sectie voor changes-requested flows; kritieke profielwijzigingen kunnen verificatie terugzetten naar `pending` of `changes_requested`.
+- `professional_audit_log` registreert onboarding started/completed/submitted, documentevents, verificatiebesluiten en critical profile changes; `professional_notification_events` bewaart interne event-hooks zonder mailprovider.
+- `/vakman`, `/vakman/profiel` en `/vakman/onboarding` tonen onboardingstatus, quality score, availability, documenten en feedback voor self-service binnen RLS-grenzen.
+- `/admin/verificatie` en `/admin/vakmannen/[id]` vormen samen de adminreviewlaag voor filters, checklist, documenten, audit en verificatieacties.
+- Distributie (Prompt 10) leest de Prompt 11-gates via gedeelde scoring/eligibility helpers: incomplete onboarding, rejected/suspended, paused/unavailable en lage quality blokkeren eligibility, terwijl verified professionals hun bonus behouden.

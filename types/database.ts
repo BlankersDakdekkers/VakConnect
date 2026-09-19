@@ -1,6 +1,28 @@
 export type AppRole = "admin" | "professional";
 export type ProfessionalStatus = "pending" | "active" | "paused" | "suspended";
-export type ProfessionalVerificationStatus = "unverified" | "pending" | "verified" | "rejected";
+export type ProfessionalVerificationStatus = "unverified" | "pending" | "verified" | "changes_requested" | "rejected" | "suspended";
+export type ProfessionalOnboardingStatus = "not_started" | "in_progress" | "submitted" | "approved" | "changes_requested" | "rejected";
+export type ProfessionalOnboardingStep = "company" | "contact" | "services" | "areas" | "experience" | "capacity" | "documents" | "review";
+export type ProfessionalIdentityType = "zzp" | "eenmanszaak" | "vof" | "bv" | "overig";
+export type ProfessionalAvailabilityStatus = "available" | "limited" | "unavailable";
+export type ProfessionalDocumentType = "kvk_extract" | "liability_insurance" | "certification" | "identity_or_authority" | "other";
+export type ProfessionalDocumentVerificationStatus = "pending" | "approved" | "rejected" | "expired";
+export type ProfessionalDocumentRequirementLevel = "required" | "recommended" | "optional";
+export type ProfessionalReviewSection = "company" | "contact" | "services" | "areas" | "experience" | "capacity" | "documents" | "review" | "verification";
+export type ProfessionalReviewFeedbackStatus = "open" | "resolved";
+export type ProfessionalAuditEventType =
+  | "onboarding_started"
+  | "step_completed"
+  | "onboarding_submitted"
+  | "document_uploaded"
+  | "document_removed"
+  | "document_reviewed"
+  | "verification_approved"
+  | "changes_requested"
+  | "verification_rejected"
+  | "verification_suspended"
+  | "critical_profile_change";
+export type ProfessionalNotificationEventType = "onboarding_submitted" | "verification_approved" | "changes_requested" | "verification_rejected";
 export type LeadStatus =
   | "new"
   | "qualified"
@@ -66,14 +88,35 @@ export interface Professional {
   id: string;
   auth_user_id: string | null;
   company_name: string;
+  trade_name: string | null;
   contact_name: string;
   email: string;
   phone: string;
   kvk_number: string | null;
+  btw_number: string | null;
   website: string | null;
   description: string | null;
+  identity_type: ProfessionalIdentityType | null;
+  address_line_1: string | null;
+  address_line_2: string | null;
+  postal_code: string | null;
+  city: string | null;
+  province: string | null;
+  years_experience: number | null;
+  team_size: number | null;
+  specialties: string[];
   status: ProfessionalStatus;
   verification_status: ProfessionalVerificationStatus;
+  verification_status_reason: string | null;
+  onboarding_status: ProfessionalOnboardingStatus;
+  onboarding_step: ProfessionalOnboardingStep;
+  onboarding_completion: number;
+  onboarding_started_at: string | null;
+  onboarding_completed_at: string | null;
+  submitted_for_review_at: string | null;
+  quality_score: number;
+  quality_breakdown: Json;
+  last_critical_change_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -315,12 +358,73 @@ export interface ProfessionalDistributionSettings {
   max_active_assignments: number;
   paused: boolean;
   pause_until: string | null;
-  preferred_lead_types: Json;
+  preferred_lead_types: LeadCommercialType[];
   auto_accept_enabled: boolean;
+  availability_status: ProfessionalAvailabilityStatus;
+  available_from: string | null;
+  unavailable_until: string | null;
   created_at: string;
   updated_at: string;
 }
 
+export interface ProfessionalDocument {
+  id: string;
+  professional_id: string;
+  document_type: ProfessionalDocumentType;
+  storage_path: string;
+  original_filename: string;
+  mime_type: string;
+  file_size: number;
+  verification_status: ProfessionalDocumentVerificationStatus;
+  rejection_reason: string | null;
+  uploaded_at: string;
+  reviewed_at: string | null;
+  reviewed_by: string | null;
+  expires_at: string | null;
+  archived_at: string | null;
+  superseded_by_document_id: string | null;
+  created_at: string;
+}
+
+export interface ProfessionalDocumentRequirement {
+  id: string;
+  service_id: string | null;
+  document_type: ProfessionalDocumentType;
+  requirement_level: ProfessionalDocumentRequirementLevel;
+  display_name: string;
+  description: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProfessionalReviewFeedback {
+  id: string;
+  professional_id: string;
+  section: ProfessionalReviewSection;
+  message: string;
+  status: ProfessionalReviewFeedbackStatus;
+  created_by: string | null;
+  created_at: string;
+  resolved_at: string | null;
+}
+
+export interface ProfessionalAuditLog {
+  id: string;
+  professional_id: string;
+  actor_user_id: string | null;
+  event_type: ProfessionalAuditEventType;
+  metadata: Json;
+  created_at: string;
+}
+
+export interface ProfessionalNotificationEvent {
+  id: string;
+  professional_id: string;
+  event_type: ProfessionalNotificationEventType;
+  payload: Json;
+  processed_at: string | null;
+  created_at: string;
+}
 
 export interface SeoLocation {
   id: string;
@@ -399,15 +503,24 @@ export interface Database {
           professional_id: string;
           service_id: string;
           active: boolean;
+          years_experience: number;
+          specialization_summary: string | null;
+          preferred_lead_type: LeadCommercialType | null;
           created_at: string;
         };
         Insert: {
           professional_id: string;
           service_id: string;
           active?: boolean;
+          years_experience?: number;
+          specialization_summary?: string | null;
+          preferred_lead_type?: LeadCommercialType | null;
         };
         Update: {
           active?: boolean;
+          years_experience?: number;
+          specialization_summary?: string | null;
+          preferred_lead_type?: LeadCommercialType | null;
         };
       };
       professional_service_areas: {
@@ -415,29 +528,27 @@ export interface Database {
           id: string;
           professional_id: string;
           postal_code_prefix: string;
+          city: string | null;
+          province: string | null;
+          radius_km: number | null;
           created_at: string;
         };
         Insert: {
           professional_id: string;
           postal_code_prefix: string;
+          city?: string | null;
+          province?: string | null;
+          radius_km?: number | null;
         };
-        Update: never;
+        Update: {
+          city?: string | null;
+          province?: string | null;
+          radius_km?: number | null;
+        };
       };
       leads: {
         Row: Lead;
-        Insert: Partial<Lead> &
-          Pick<
-            Lead,
-            | "service_id"
-            | "first_name"
-            | "last_name"
-            | "email"
-            | "phone"
-            | "postal_code"
-            | "house_number"
-            | "description"
-            | "urgency"
-          >;
+        Insert: Partial<Lead> & Pick<Lead, "service_id" | "first_name" | "last_name" | "email" | "phone" | "postal_code" | "house_number" | "description" | "urgency">;
         Update: Partial<Lead>;
       };
       lead_images: {
@@ -509,6 +620,31 @@ export interface Database {
         Row: ProfessionalDistributionSettings;
         Insert: Partial<ProfessionalDistributionSettings> & Pick<ProfessionalDistributionSettings, "professional_id">;
         Update: Partial<ProfessionalDistributionSettings>;
+      };
+      professional_documents: {
+        Row: ProfessionalDocument;
+        Insert: Partial<ProfessionalDocument> & Pick<ProfessionalDocument, "professional_id" | "document_type" | "storage_path" | "original_filename" | "mime_type" | "file_size">;
+        Update: Partial<ProfessionalDocument>;
+      };
+      professional_document_requirements: {
+        Row: ProfessionalDocumentRequirement;
+        Insert: Partial<ProfessionalDocumentRequirement> & Pick<ProfessionalDocumentRequirement, "document_type" | "requirement_level" | "display_name">;
+        Update: Partial<ProfessionalDocumentRequirement>;
+      };
+      professional_review_feedback: {
+        Row: ProfessionalReviewFeedback;
+        Insert: Partial<ProfessionalReviewFeedback> & Pick<ProfessionalReviewFeedback, "professional_id" | "section" | "message">;
+        Update: Partial<ProfessionalReviewFeedback>;
+      };
+      professional_audit_log: {
+        Row: ProfessionalAuditLog;
+        Insert: Partial<ProfessionalAuditLog> & Pick<ProfessionalAuditLog, "professional_id" | "event_type">;
+        Update: never;
+      };
+      professional_notification_events: {
+        Row: ProfessionalNotificationEvent;
+        Insert: Partial<ProfessionalNotificationEvent> & Pick<ProfessionalNotificationEvent, "professional_id" | "event_type">;
+        Update: Partial<ProfessionalNotificationEvent>;
       };
       contact_submissions: {
         Row: ContactSubmission;

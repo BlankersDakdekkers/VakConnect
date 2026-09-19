@@ -62,6 +62,10 @@ export async function submitProfessionalApplicationAction(formData: FormData) {
       description: payload.data.description,
       status: "pending",
       verification_status: "pending",
+      onboarding_status: "submitted",
+      onboarding_step: "review",
+      onboarding_completion: 60,
+      submitted_for_review_at: new Date().toISOString(),
       auth_user_id: null,
     })
     .select("id")

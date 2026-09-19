@@ -2,14 +2,20 @@ import { distributionConfig } from "./config.ts";
 
 export interface DistributionEligibilityInput {
   professionalActive: boolean;
+  onboardingComplete: boolean;
   verificationAllowed: boolean;
   serviceActive: boolean;
   areaMatch: boolean;
   paused: boolean;
+  availabilityAvailable: boolean;
   alreadyPurchased: boolean;
   leadCommerciallyAvailable: boolean;
   openOffers: number;
   maxOpenOffers: number;
+  activeAssignments: number;
+  maxActiveAssignments: number;
+  qualityScore: number;
+  minimumQualityScore: number;
 }
 
 export interface DistributionScoreInput {
@@ -24,24 +30,34 @@ export interface DistributionScoreInput {
 export function evaluateDistributionEligibility(input: DistributionEligibilityInput) {
   const reasons: Record<string, boolean | number> = {
     professional_active: input.professionalActive,
+    onboarding_complete: input.onboardingComplete,
     verification_allowed: input.verificationAllowed,
     service_active: input.serviceActive,
     area_match: input.areaMatch,
     paused: input.paused,
+    availability_available: input.availabilityAvailable,
     already_purchased: input.alreadyPurchased,
     lead_commercially_available: input.leadCommerciallyAvailable,
     open_offers: input.openOffers,
     max_open_offers: input.maxOpenOffers,
+    active_assignments: input.activeAssignments,
+    max_active_assignments: input.maxActiveAssignments,
+    quality_score: input.qualityScore,
+    minimum_quality_score: input.minimumQualityScore,
   };
 
   const eligible = input.professionalActive
+    && input.onboardingComplete
     && input.verificationAllowed
     && input.serviceActive
     && input.areaMatch
     && !input.paused
+    && input.availabilityAvailable
     && !input.alreadyPurchased
     && input.leadCommerciallyAvailable
-    && input.openOffers < input.maxOpenOffers;
+    && input.openOffers < input.maxOpenOffers
+    && input.activeAssignments < input.maxActiveAssignments
+    && input.qualityScore >= input.minimumQualityScore;
 
   return { eligible, reasons };
 }

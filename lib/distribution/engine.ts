@@ -3,18 +3,21 @@ import "server-only";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { distributionConfig, distributionStrategyVersion } from "@/lib/distribution/config";
-import { calculateDistributionScore } from "@/lib/distribution/scoring";
+import { calculateDistributionScore, evaluateDistributionEligibility } from "@/lib/distribution/scoring";
 import type { Json, LeadCommercialType, ProfessionalVerificationStatus } from "@/types/database";
 
 interface DistributionCandidateInput {
   professionalId: string;
   companyName: string;
   verificationStatus: ProfessionalVerificationStatus;
+  onboardingStatus: string;
+  qualityScore: number;
   settings: {
     maxOpenOffers: number;
     maxActiveAssignments: number;
     paused: boolean;
     pauseUntil: string | null;
+    availabilityStatus: string;
   };
   stats: {
     openOffers: number;
@@ -172,12 +175,13 @@ async function loadEligiblePool(leadId: string) {
         company_name,
         status,
         verification_status,
+        onboarding_status,
+        quality_score,
         professional_services!inner(service_id, active),
         professional_service_areas!inner(postal_code_prefix),
-        professional_distribution_settings(max_open_offers, max_active_assignments, paused, pause_until)
+        professional_distribution_settings(max_open_offers, max_active_assignments, paused, pause_until, availability_status, available_from, unavailable_until)
       `)
       .eq("status", "active")
-      .in("verification_status", [...distributionConfig.allowedVerification])
       .eq("professional_services.service_id", String(lead.service_id))
       .eq("professional_services.active", true)
       .eq("professional_service_areas.postal_code_prefix", String(lead.postal_code).slice(0, 4)),
@@ -325,11 +329,14 @@ async function loadEligiblePool(leadId: string) {
       professionalId: String(row.id),
       companyName: String(row.company_name),
       verificationStatus: row.verification_status as ProfessionalVerificationStatus,
+      onboardingStatus: String(row.onboarding_status ?? "not_started"),
+      qualityScore: toNumber(row.quality_score, 0),
       settings: {
         maxOpenOffers,
         maxActiveAssignments,
         paused: Boolean(settings?.paused),
         pauseUntil: (settings?.pause_until as string | null) ?? null,
+        availabilityStatus: String(settings?.availability_status ?? "available"),
       },
       stats,
       alreadyPurchased: purchasedSet.has(String(row.id)),
@@ -392,22 +399,34 @@ export async function startLeadDistribution(leadId: string, actorUserId?: string
   const averageRecentOffers = average(baseCandidates.map((candidate) => candidate.stats.offersReceived));
 
   const eligibleCandidates = baseCandidates
-    .filter((candidate) => !candidate.alreadyPurchased)
-    .filter((candidate) => {
-      if (candidate.settings.paused) {
-        const pauseUntilTs = candidate.settings.pauseUntil ? new Date(candidate.settings.pauseUntil).getTime() : 0;
-        if (pauseUntilTs <= 0) {
-          return false;
-        }
-        return pauseUntilTs <= Date.now();
-      }
-      return true;
+    .map((candidate) => {
+      const pauseStillActive = candidate.settings.paused
+        ? !candidate.settings.pauseUntil || new Date(candidate.settings.pauseUntil).getTime() > Date.now()
+        : false;
+      const eligibility = evaluateDistributionEligibility({
+        professionalActive: true,
+        onboardingComplete: candidate.onboardingStatus === "approved",
+        verificationAllowed: distributionConfig.allowedVerification.includes(candidate.verificationStatus),
+        serviceActive: true,
+        areaMatch: true,
+        paused: pauseStillActive,
+        availabilityAvailable: candidate.settings.availabilityStatus !== "unavailable",
+        alreadyPurchased: candidate.alreadyPurchased,
+        leadCommerciallyAvailable: true,
+        openOffers: candidate.stats.openOffers,
+        maxOpenOffers: candidate.settings.maxOpenOffers,
+        activeAssignments: candidate.stats.activeAssignments,
+        maxActiveAssignments: candidate.settings.maxActiveAssignments,
+        qualityScore: candidate.qualityScore,
+        minimumQualityScore: distributionConfig.minProfessionalQualityScore,
+      });
+      return { candidate, eligibility };
     })
-    .filter((candidate) => candidate.stats.openOffers < candidate.settings.maxOpenOffers)
-    .filter((candidate) => candidate.stats.activeAssignments < candidate.settings.maxActiveAssignments)
-    .map((candidate) => ({
-      candidate,
-      scored: buildScore(candidate, averageRecentOffers),
+    .filter((entry) => entry.eligibility.eligible)
+    .map((entry) => ({
+      candidate: entry.candidate,
+      eligibility: entry.eligibility,
+      scored: buildScore(entry.candidate, averageRecentOffers),
     }))
     .sort((left, right) => right.scored.score - left.scored.score || left.candidate.companyName.localeCompare(right.candidate.companyName))
     .slice(0, distributionConfig.maxCandidates);
@@ -464,14 +483,7 @@ export async function startLeadDistribution(leadId: string, actorUserId?: string
         rank_position: index + 1,
         ranking_score: entry.scored.score,
         score_breakdown: entry.scored.breakdown,
-        eligibility_reason: {
-          open_offers: entry.candidate.stats.openOffers,
-          max_open_offers: entry.candidate.settings.maxOpenOffers,
-          active_assignments: entry.candidate.stats.activeAssignments,
-          max_active_assignments: entry.candidate.settings.maxActiveAssignments,
-          paused: entry.candidate.settings.paused,
-          already_purchased: false,
-        },
+        eligibility_reason: entry.eligibility.reasons,
       })),
       { onConflict: "distribution_run_id,professional_id", ignoreDuplicates: true },
     );
