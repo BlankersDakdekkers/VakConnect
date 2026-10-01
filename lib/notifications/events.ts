@@ -42,10 +42,10 @@ export async function createNotificationEvent(input: {
   if (input.professionalId && category && !input.critical && input.channelType === "in_app") {
     const { data: preference } = await supabase
       .from("professional_notification_preferences")
-      .select(category)
+      .select(`in_app_enabled, ${category}`)
       .eq("professional_id", input.professionalId)
       .maybeSingle();
-    if (preference && preference[category] === false) {
+    if (preference && (preference.in_app_enabled === false || preference[category] === false)) {
       return { id: null, created: false };
     }
   }
