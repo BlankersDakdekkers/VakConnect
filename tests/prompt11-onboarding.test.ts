@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import { calculateProfessionalQuality, getProfessionalQualityLabel, minimumProfessionalQualityScore } from "../lib/professionals/onboarding.ts";
 import { buildProfessionalDocumentPath, validateProfessionalDocument } from "../lib/storage/professional-document-utils.ts";
-import { evaluateDistributionEligibility } from "../lib/distribution/scoring.ts";
+import { evaluateDistributionCandidateEligibility, evaluateDistributionEligibility, isDistributionPauseActive } from "../lib/distribution/scoring.ts";
 
 const migrationSql = readFileSync("/home/runner/work/VakConnect/VakConnect/supabase/migrations/20260911100000_phase7_professional_onboarding_verification.sql", "utf8");
 const hardeningMigrationSql = readFileSync("/home/runner/work/VakConnect/VakConnect/supabase/migrations/20260911110000_phase7_professional_onboarding_security_hardening.sql", "utf8");
@@ -12,6 +12,8 @@ const verificationPageSource = readFileSync("/home/runner/work/VakConnect/VakCon
 const documentStorageSource = readFileSync("/home/runner/work/VakConnect/VakConnect/lib/storage/professional-documents.ts", "utf8");
 const actionsSource = readFileSync("/home/runner/work/VakConnect/VakConnect/lib/professionals/actions.ts", "utf8");
 const engineSource = readFileSync("/home/runner/work/VakConnect/VakConnect/lib/distribution/engine.ts", "utf8");
+const scoringSource = readFileSync("/home/runner/work/VakConnect/VakConnect/lib/distribution/scoring.ts", "utf8");
+const postMergeHardeningSql = readFileSync("/home/runner/work/VakConnect/VakConnect/supabase/migrations/20260919104000_prompt11_post_merge_hardening.sql", "utf8");
 
 test("phase7 migration adds onboarding, verification, document and audit schema", () => {
   assert.match(migrationSql, /professional_onboarding_status/);
@@ -130,10 +132,11 @@ test("document storage and distribution engine use private signed access and onb
   assert.match(documentStorageSource, /requireAdminUser/);
   assert.match(documentStorageSource, /from\("professional_documents"\)/);
   assert.match(documentStorageSource, /createSignedUrl/);
-  assert.match(engineSource, /evaluateDistributionEligibility/);
-  assert.match(engineSource, /candidate\.onboardingStatus === "approved"/);
-  assert.match(engineSource, /candidate\.qualityScore/);
-  assert.match(engineSource, /availabilityStatus !== "unavailable"/);
+  assert.match(engineSource, /evaluateDistributionCandidateEligibility\(candidate, now\)/);
+  assert.doesNotMatch(engineSource, /availabilityStatus !== "unavailable"/);
+  assert.match(scoringSource, /candidate\.onboardingStatus === "approved"/);
+  assert.match(scoringSource, /candidate\.qualityScore/);
+  assert.match(scoringSource, /availabilityStatus === "available"/);
 });
 
 test("hardening migration removes direct professional document deletes and narrows function execution", () => {
@@ -154,7 +157,83 @@ test("server actions use controlled onboarding transitions and storage cleanup f
 
 test("signed document urls require admin and resolve by document id instead of raw path", async () => {
   assert.match(documentStorageSource, /await dependencies\.requireAdminUser\(\)/);
-  assert.match(documentStorageSource, /from\("professional_documents"\)\s*\.select\("storage_path"\)\s*\.eq\("id", documentId\)/);
+  assert.match(documentStorageSource, /from\("professional_documents"\)\s*\.select\("id, professional_id, storage_path"\)\s*\.eq\("id", documentId\)/);
+  assert.match(documentStorageSource, /isOwnedProfessionalDocumentPath\(document\.storage_path, document\.professional_id, document\.id\)/);
   assert.match(documentStorageSource, /createSignedUrl\(String\(document\.storage_path\)/);
+  const adminCheckIndex = documentStorageSource.indexOf("await dependencies.requireAdminUser()");
+  const lookupIndex = documentStorageSource.indexOf('from("professional_documents")');
+  const signIndex = documentStorageSource.indexOf("createSignedUrl(");
+  assert.ok(adminCheckIndex >= 0 && adminCheckIndex < lookupIndex && lookupIndex < signIndex);
   assert.doesNotMatch(documentStorageSource, /createSignedProfessionalDocumentUrl\(path:/);
+});
+
+const baseCandidate = {
+  professionalStatus: "active",
+  onboardingStatus: "approved",
+  verificationStatus: "verified",
+  qualityScore: minimumProfessionalQualityScore,
+  alreadyPurchased: false,
+  settings: {
+    paused: false,
+    pauseUntil: null,
+    availabilityStatus: "available",
+    maxOpenOffers: 4,
+    maxActiveAssignments: 4,
+  },
+  stats: { openOffers: 0, activeAssignments: 0 },
+};
+
+test("candidate eligibility requires availability exactly available and approved onboarding", () => {
+  assert.equal(evaluateDistributionCandidateEligibility(baseCandidate).eligible, true);
+
+  for (const availabilityStatus of ["limited", "unavailable", "", "AVAILABLE"]) {
+    assert.equal(
+      evaluateDistributionCandidateEligibility({ ...baseCandidate, settings: { ...baseCandidate.settings, availabilityStatus } }).eligible,
+      false,
+      `availability ${availabilityStatus} must block new offers`,
+    );
+  }
+
+  for (const onboardingStatus of ["not_started", "in_progress", "submitted", "changes_requested", "rejected"]) {
+    assert.equal(evaluateDistributionCandidateEligibility({ ...baseCandidate, onboardingStatus }).eligible, false, `onboarding ${onboardingStatus} must block new offers`);
+  }
+
+  for (const verificationStatus of ["unverified", "pending", "changes_requested", "rejected", "suspended"]) {
+    assert.equal(evaluateDistributionCandidateEligibility({ ...baseCandidate, verificationStatus }).eligible, false, `verification ${verificationStatus} must block new offers`);
+  }
+
+  for (const professionalStatus of ["pending", "paused", "suspended"]) {
+    assert.equal(evaluateDistributionCandidateEligibility({ ...baseCandidate, professionalStatus }).eligible, false, `status ${professionalStatus} must block new offers`);
+  }
+
+  assert.equal(evaluateDistributionCandidateEligibility({ ...baseCandidate, qualityScore: minimumProfessionalQualityScore - 1 }).eligible, false);
+  assert.equal(evaluateDistributionCandidateEligibility({ ...baseCandidate, alreadyPurchased: true }).eligible, false);
+  assert.equal(evaluateDistributionCandidateEligibility({ ...baseCandidate, stats: { openOffers: 4, activeAssignments: 0 } }).eligible, false);
+  assert.equal(evaluateDistributionCandidateEligibility({ ...baseCandidate, stats: { openOffers: 0, activeAssignments: 4 } }).eligible, false);
+});
+
+test("candidate eligibility honours pauses until they expire", () => {
+  const now = new Date("2026-09-19T10:00:00.000Z");
+  const pausedIndefinitely = { ...baseCandidate, settings: { ...baseCandidate.settings, paused: true, pauseUntil: null } };
+  const pausedUntilFuture = { ...baseCandidate, settings: { ...baseCandidate.settings, paused: true, pauseUntil: "2026-09-20T10:00:00.000Z" } };
+  const pausedUntilPast = { ...baseCandidate, settings: { ...baseCandidate.settings, paused: true, pauseUntil: "2026-09-18T10:00:00.000Z" } };
+  const pausedInvalidDate = { ...baseCandidate, settings: { ...baseCandidate.settings, paused: true, pauseUntil: "not-a-date" } };
+
+  assert.equal(evaluateDistributionCandidateEligibility(pausedIndefinitely, now).eligible, false);
+  assert.equal(evaluateDistributionCandidateEligibility(pausedUntilFuture, now).eligible, false);
+  assert.equal(evaluateDistributionCandidateEligibility(pausedUntilPast, now).eligible, true);
+  assert.equal(evaluateDistributionCandidateEligibility(pausedInvalidDate, now).eligible, false);
+  assert.equal(isDistributionPauseActive(false, "2026-09-20T10:00:00.000Z", now), false);
+});
+
+test("post-merge hardening migration fixes submit fall-through and locks document binding", () => {
+  assert.match(postMergeHardeningSql, /return next;\s*return;\s*end if;/);
+  assert.match(postMergeHardeningSql, /create trigger enforce_professional_document_integrity\s+before insert or update on public\.professional_documents/);
+  assert.match(postMergeHardeningSql, /PROFESSIONAL_DOCUMENT_PATH_NOT_OWNED/);
+  assert.match(postMergeHardeningSql, /PROFESSIONAL_DOCUMENT_BINDING_IMMUTABLE/);
+  assert.match(postMergeHardeningSql, /PROFESSIONAL_DOCUMENT_REVIEW_FIELDS_IMMUTABLE/);
+  assert.match(postMergeHardeningSql, /old\.auth_user_id is distinct from auth\.uid\(\)/);
+  assert.match(postMergeHardeningSql, /revoke all on function public\.enforce_professional_self_update\(\) from public, anon, authenticated, service_role/);
+  assert.match(postMergeHardeningSql, /revoke all on function public\.protect_professional_document_delete\(\) from public, anon, authenticated, service_role/);
+  assert.doesNotMatch(postMergeHardeningSql, /create policy "professionals delete own/);
 });

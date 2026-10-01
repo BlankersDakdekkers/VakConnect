@@ -62,6 +62,59 @@ export function evaluateDistributionEligibility(input: DistributionEligibilityIn
   return { eligible, reasons };
 }
 
+export interface DistributionCandidateEligibilityInput {
+  professionalStatus: string;
+  onboardingStatus: string;
+  verificationStatus: string;
+  qualityScore: number;
+  alreadyPurchased: boolean;
+  settings: {
+    paused: boolean;
+    pauseUntil: string | null;
+    availabilityStatus: string;
+    maxOpenOffers: number;
+    maxActiveAssignments: number;
+  };
+  stats: {
+    openOffers: number;
+    activeAssignments: number;
+  };
+}
+
+export function isDistributionPauseActive(paused: boolean, pauseUntil: string | null, now: Date = new Date()) {
+  if (!paused) {
+    return false;
+  }
+  if (!pauseUntil) {
+    return true;
+  }
+  const pauseUntilTime = new Date(pauseUntil).getTime();
+  return Number.isNaN(pauseUntilTime) || pauseUntilTime > now.getTime();
+}
+
+export function evaluateDistributionCandidateEligibility(
+  candidate: DistributionCandidateEligibilityInput,
+  now: Date = new Date(),
+) {
+  return evaluateDistributionEligibility({
+    professionalActive: candidate.professionalStatus === "active",
+    onboardingComplete: candidate.onboardingStatus === "approved",
+    verificationAllowed: distributionConfig.allowedVerification.includes(candidate.verificationStatus),
+    serviceActive: true,
+    areaMatch: true,
+    paused: isDistributionPauseActive(candidate.settings.paused, candidate.settings.pauseUntil, now),
+    availabilityAvailable: candidate.settings.availabilityStatus === "available",
+    alreadyPurchased: candidate.alreadyPurchased,
+    leadCommerciallyAvailable: true,
+    openOffers: candidate.stats.openOffers,
+    maxOpenOffers: candidate.settings.maxOpenOffers,
+    activeAssignments: candidate.stats.activeAssignments,
+    maxActiveAssignments: candidate.settings.maxActiveAssignments,
+    qualityScore: candidate.qualityScore,
+    minimumQualityScore: distributionConfig.minProfessionalQualityScore,
+  });
+}
+
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }

@@ -3,12 +3,13 @@ import "server-only";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { distributionConfig, distributionStrategyVersion } from "@/lib/distribution/config";
-import { calculateDistributionScore, evaluateDistributionEligibility } from "@/lib/distribution/scoring";
+import { calculateDistributionScore, evaluateDistributionCandidateEligibility } from "@/lib/distribution/scoring";
 import type { Json, LeadCommercialType, ProfessionalVerificationStatus } from "@/types/database";
 
 interface DistributionCandidateInput {
   professionalId: string;
   companyName: string;
+  professionalStatus: string;
   verificationStatus: ProfessionalVerificationStatus;
   onboardingStatus: string;
   qualityScore: number;
@@ -328,6 +329,7 @@ async function loadEligiblePool(leadId: string) {
     return {
       professionalId: String(row.id),
       companyName: String(row.company_name),
+      professionalStatus: String(row.status ?? "pending"),
       verificationStatus: row.verification_status as ProfessionalVerificationStatus,
       onboardingStatus: String(row.onboarding_status ?? "not_started"),
       qualityScore: toNumber(row.quality_score, 0),
@@ -400,26 +402,7 @@ export async function startLeadDistribution(leadId: string, actorUserId?: string
 
   const eligibleCandidates = baseCandidates
     .map((candidate) => {
-      const pauseStillActive = candidate.settings.paused
-        ? !candidate.settings.pauseUntil || new Date(candidate.settings.pauseUntil).getTime() > Date.now()
-        : false;
-      const eligibility = evaluateDistributionEligibility({
-        professionalActive: true,
-        onboardingComplete: candidate.onboardingStatus === "approved",
-        verificationAllowed: distributionConfig.allowedVerification.includes(candidate.verificationStatus),
-        serviceActive: true,
-        areaMatch: true,
-        paused: pauseStillActive,
-        availabilityAvailable: candidate.settings.availabilityStatus !== "unavailable",
-        alreadyPurchased: candidate.alreadyPurchased,
-        leadCommerciallyAvailable: true,
-        openOffers: candidate.stats.openOffers,
-        maxOpenOffers: candidate.settings.maxOpenOffers,
-        activeAssignments: candidate.stats.activeAssignments,
-        maxActiveAssignments: candidate.settings.maxActiveAssignments,
-        qualityScore: candidate.qualityScore,
-        minimumQualityScore: distributionConfig.minProfessionalQualityScore,
-      });
+      const eligibility = evaluateDistributionCandidateEligibility(candidate, now);
       return { candidate, eligibility };
     })
     .filter((entry) => entry.eligibility.eligible)
