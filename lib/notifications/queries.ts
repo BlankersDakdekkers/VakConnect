@@ -48,10 +48,10 @@ export async function getAdminNotifications() {
     .is("professional_id", null)
     .eq("channel_type", "system")
     .eq("status", "delivered")
-    .order("created_at", { ascending: true })
+    .order("created_at", { ascending: false })
     .limit(100);
   if (error) throw new Error("Operationele meldingen konden niet worden geladen.");
-  return (data ?? []) as NotificationListItem[];
+  return ((data ?? []) as NotificationListItem[]).reverse();
 }
 
 export async function getOperationalDashboard() {

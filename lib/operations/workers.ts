@@ -392,7 +392,8 @@ export async function processReminderChecks() {
       .limit(250);
     if (leadsError) throw new Error("Onverdeelde leads konden niet worden gecontroleerd.");
     for (const lead of unprocessedLeads ?? []) {
-      const { count } = await supabase.from("lead_distribution_runs").select("id", { count: "exact", head: true }).eq("lead_id", String(lead.id));
+      const { count, error: runError } = await supabase.from("lead_distribution_runs").select("id", { count: "exact", head: true }).eq("lead_id", String(lead.id));
+      if (runError) throw new Error("Distributieruns konden niet worden gecontroleerd.");
       if (count) continue;
       try {
         await createNotificationEvent({
@@ -422,11 +423,12 @@ export async function processReminderChecks() {
       .limit(250);
     if (staleRunsError) throw new Error("Distributieruns konden niet worden gecontroleerd.");
     for (const run of staleRuns ?? []) {
-      const { count } = await supabase
+      const { count, error: purchaseError } = await supabase
         .from("lead_purchases")
         .select("id", { count: "exact", head: true })
         .eq("lead_id", String(run.lead_id))
         .eq("status", "purchased");
+      if (purchaseError) throw new Error("Leadaankopen konden niet worden gecontroleerd.");
       if (count) continue;
       const exhausted = run.status === "exhausted";
       try {
