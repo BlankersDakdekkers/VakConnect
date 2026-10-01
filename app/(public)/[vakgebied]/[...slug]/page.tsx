@@ -107,7 +107,7 @@ export default async function ServiceOrLocalPage({
   const localLinks = await getLocalLinksForServiceSub(vakgebied, slug[0]);
   const relatedLinks = [...resolved.serviceSubPage.relatedLinks, ...localLinks].filter(
     (link, index, list) => list.findIndex((candidate) => candidate.href === link.href) === index,
-  );
+  ).slice(0, 5);
 
   return <ServiceContentPage page={{ ...resolved.serviceSubPage, relatedLinks }} />;
 }

@@ -120,6 +120,11 @@ export function ServiceContentPage({ page }: Readonly<{ page: ServiceContentPage
               </li>
             ))}
           </ol>
+          {page.path.split("/").length === 3 ? (
+            <Link href="/hoe-werkt-het" className="inline-block text-sm font-medium underline underline-offset-2">
+              Bekijk hoe VakConnect werkt
+            </Link>
+          ) : null}
         </Card>
       </section>
 
