@@ -126,6 +126,16 @@ test("servicepagina's hebben metadata, canonical pad en CTA-tekst", () => {
     assert.ok(page.description.length > 40);
     assert.ok(page.cta.label.length > 8);
   }
+
+  const mainPages = Object.values(serviceMainPages);
+  assert.equal(new Set(mainPages.map((page) => page.title)).size, mainPages.length, "Hoofdpagina-meta titles moeten uniek zijn");
+  assert.equal(new Set(mainPages.map((page) => page.description)).size, mainPages.length, "Hoofdpagina-meta descriptions moeten uniek zijn");
+  for (const page of mainPages) {
+    assert.ok(page.title.length <= 60, `Meta title te lang op ${page.path}`);
+    assert.ok(page.description.length <= 160, `Meta description te lang op ${page.path}`);
+    assert.ok(page.relatedLinks.some((link) => link.href === "/hoe-werkt-het"), `Link naar uitleg ontbreekt op ${page.path}`);
+    assert.ok(page.relatedLinks.some((link) => link.href === "/kosten"), `Link naar kosten ontbreekt op ${page.path}`);
+  }
 });
 
 test("servicepagina's hebben voldoende inhoudelijke diepgang en niet-thin hoofdcontent", () => {
@@ -349,5 +359,6 @@ test("publieke vakman-aanmelding forceert pending status server-side", () => {
 
 test("servicepagina component bevat CTA naar /aanvraag", () => {
   const componentSource = readFileSync(join(repoRoot, "components/public/service-content-page.tsx"), "utf8");
-  assert.equal(componentSource.includes('href="/aanvraag"'), true);
+  assert.equal((componentSource.match(/<h1\b/g) ?? []).length, 1);
+  assert.ok((componentSource.match(/href="\/aanvraag"/g) ?? []).length >= 3, "CTA ontbreekt bovenaan, in de inhoud of onderaan");
 });

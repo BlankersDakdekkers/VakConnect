@@ -22,42 +22,42 @@ const popularServiceClusters: EditorialCluster[] = [
   {
     href: "/dakdekker",
     title: "Dakdekker",
-    description: "Voor lekkage, dakonderhoud, reparatie of renovatie van een plat of hellend dak.",
+    description: "Laat daklekkage, dakpannen, een plat dak of renovatie beoordelen en bespreek een passende aanpak.",
   },
   {
     href: "/schilder",
     title: "Schilder",
-    description: "Voor binnen- en buitenschilderwerk, houtwerk en het herstellen van schilderwerk.",
+    description: "Van muren en plafonds binnen tot onderhoud van buitenkozijnen en ander houtwerk.",
   },
   {
     href: "/loodgieter",
     title: "Loodgieter",
-    description: "Voor lekkages, sanitair, leidingwerk en problemen met afvoer of riolering.",
+    description: "Bespreek lekkage, leidingen, sanitair of een afvoerprobleem met een passende loodgieter.",
   },
   {
     href: "/elektricien",
     title: "Elektricien",
-    description: "Voor elektra, verlichting, storingen en aanpassingen aan de groepenkast.",
+    description: "Zoek hulp bij elektra-storingen, een groepenkast, verlichting of nieuwe aansluitingen.",
   },
   {
     href: "/kozijnen",
     title: "Kozijnen",
-    description: "Voor het vervangen, plaatsen of herstellen van kozijnen, ramen en deuren.",
+    description: "Vergelijk herstel of vervanging van raam- en deurkozijnen in hout, kunststof of aluminium.",
   },
   {
     href: "/badkamer",
     title: "Badkamer",
-    description: "Voor een badkamerrenovatie, nieuw sanitair, tegelwerk of een inloopdouche.",
+    description: "Breng renovatie, sanitair, tegelwerk en de benodigde installaties voor je badkamer in kaart.",
   },
   {
     href: "/isolatie",
     title: "Isolatie",
-    description: "Voor dak-, vloer-, gevel- of spouwmuurisolatie en advies over de aanpak.",
+    description: "Bekijk dak-, vloer-, spouw- en gevelisolatie met aandacht voor constructie en ventilatie.",
   },
   {
     href: "/verbouwing",
     title: "Verbouwing",
-    description: "Voor een aanbouw, uitbouw, zolderverbouwing of renovatie van je woning.",
+    description: "Plan een aanbouw, zolder-, keuken- of badkamerverbouwing of een bredere woningrenovatie.",
   },
 ];
 

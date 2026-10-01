@@ -56,6 +56,13 @@ export const serviceMainContent: Record<string, ServiceContentPageData> = {
         ],
       },
       {
+        heading: "Dakwerk combineren met isolatie",
+        paragraphs: [
+          "Als dakbedekking wordt vernieuwd, kan het een geschikt moment zijn om isolatie en aansluitingen mee te beoordelen. De keuze hangt af van de bestaande dakopbouw, de gewenste binnenafwerking en de staat van constructie en ventilatie.",
+          "Bespreek vooraf wie dakwerk uitvoert en wie de isolatie beoordeelt. Afstemming voorkomt dat nieuwe lagen of aansluitingen elkaar in de weg zitten en maakt duidelijk welke werkzaamheden in welke fase worden uitgevoerd.",
+        ],
+      },
+      {
         heading: "Zo helpt VakConnect bij een dakklus",
         paragraphs: [
           "Je beschrijft wat er aan het dak moet gebeuren, waar je de schade ziet en welke daksoort of materialen bekend zijn. Foto’s vanaf een veilige plek, eerdere reparaties en informatie over bereikbaarheid geven extra context; een vakman kan daarna beoordelen of de aanvraag bij zijn werk past.",
@@ -154,6 +161,20 @@ export const serviceMainContent: Record<string, ServiceContentPageData> = {
         ],
       },
       {
+        heading: "Gevelwerk en de staat van de ondergrond",
+        paragraphs: [
+          "Schilderwerk aan een gevel kan samengaan met herstel van houtwerk, kitnaden of andere aansluitingen. De ondergrond en bereikbaarheid moeten eerst worden beoordeeld; soms is een timmerman of gevelspecialist nodig voordat de schilder kan afwerken.",
+          "Vermeld welke geveldelen je wilt laten behandelen en of er scheuren, vocht of loszittende verf zichtbaar zijn. Dan kan de vakman aangeven welke voorbereiding en eventuele aanvullende expertise nodig is.",
+        ],
+      },
+      {
+        heading: "Schilderwerk plannen na herstel of verbouwing",
+        paragraphs: [
+          "Nieuwe verf kan pas worden aangebracht als reparaties, stucwerk of houtrotherstel gereed zijn en de ondergrond geschikt is. Stem de volgorde af met de aannemer of andere uitvoerders en bespreek welke delen eerst moeten drogen of worden gecontroleerd.",
+          "Geef aan of meubels aanwezig blijven, ruimtes in gebruik zijn en wanneer de woning beschikbaar is. Dat helpt de schilder om bescherming, toegang en werkvolgorde mee te nemen in de planning.",
+        ],
+      },
+      {
         heading: "Zo helpt VakConnect bij schilderwerk",
         paragraphs: [
           "In je aanvraag noteer je binnen- of buitenwerk, de onderdelen, de geschatte omvang en de huidige staat van het schilderwerk. Foto’s van beschadigingen en informatie over eerdere verflagen maken het eerste gesprek concreter; vermeld ook of kleur en materiaal al zijn gekozen.",
@@ -246,6 +267,13 @@ export const serviceMainContent: Record<string, ServiceContentPageData> = {
           "Voor het vervangen van een kraan, toilet, wastafel of douche kan een loodgieter de water- en afvoeraansluitingen verzorgen. Geef aan of het bestaande sanitair wordt vervangen op dezelfde plek of dat je een andere indeling wilt. Verplaatsen van leidingen kan extra werk betekenen en moet worden afgestemd met andere disciplines.",
           "Een badkamerrenovatie omvat vaak ook tegelwerk, elektra, ventilatie en waterdichting. De loodgieter is één van de betrokken vakmensen; plan de volgorde met degene die de renovatie coördineert. Voor werkzaamheden aan elektrische installaties schakel je een geschikte elektricien in.",
           "Bij een keukenverbouwing kunnen aanpassing van waterleiding en afvoer nodig zijn voor een nieuwe spoelbak, vaatwasser of andere opstelling. Deel de gewenste indeling en productinformatie zodra die bekend is.",
+        ],
+      },
+      {
+        heading: "Waterleiding vervangen of uitbreiden",
+        paragraphs: [
+          "Bij een verbouwing kan een bestaande waterleiding worden aangepast om een extra kraan, toestel of sanitaire voorziening te plaatsen. De route, het materiaal en de staat van het huidige leidingwerk bepalen mede welke werkzaamheden nodig zijn.",
+          "Geef aan waar het nieuwe aansluitpunt moet komen en welke wand- of vloerafwerking aanwezig is. Bespreek ook wie opengebroken delen herstelt en hoe de nieuwe aansluiting wordt gecontroleerd voordat de ruimte wordt afgewerkt.",
         ],
       },
       {
@@ -351,6 +379,13 @@ export const serviceMainContent: Record<string, ServiceContentPageData> = {
           "Extra stopcontacten of andere verlichting kunnen het gebruik van een ruimte verbeteren. De route van bekabeling, de bestaande installatie en de gewenste plaats bepalen hoeveel werk nodig is. Maak duidelijk of de afwerking na het aanbrengen van kabels ook onderdeel van de klus moet zijn.",
           "In keuken en badkamer moet de elektrotechnische uitvoering aansluiten op de ruimte, plaatsing van apparaten en de overige werkzaamheden. Laat een vakbekwame elektricien beoordelen wat passend en veilig is, en stem de planning af met loodgieter, tegelzetter of keukenmonteur.",
           "Bij spots, buitenverlichting en slimme bediening spelen ook type armatuur, bediening en bestaande bedrading mee. Deel waar de lichtpunten moeten komen en welke producten je al hebt gekozen.",
+        ],
+      },
+      {
+        heading: "Elektra tijdens een keuken- of badkamerrenovatie",
+        paragraphs: [
+          "Bij een nieuwe keukenindeling kunnen apparaten, werkbladverlichting en stopcontacten op andere plekken nodig zijn. In een badkamer moeten verlichting, ventilatie en aansluitingen passen bij de ruimte en de plaats van sanitair.",
+          "Leg posities en productkeuzes vroeg vast en stem kabelroutes af met loodgieter, keukenmonteur of tegelzetter. Laat de elektricien aangeven wat op basis van de bestaande installatie mogelijk is.",
         ],
       },
       {
@@ -466,6 +501,13 @@ export const serviceMainContent: Record<string, ServiceContentPageData> = {
         ],
       },
       {
+        heading: "Materiaalkeuze en onderhoud op lange termijn",
+        paragraphs: [
+          "Een kozijnkeuze heeft gevolgen voor de uitstraling, het onderhoud en de aansluiting op de woning. Hout kan periodiek schilderwerk vragen; kunststof en aluminium hebben andere reinigings- en onderhoudspunten. Vergelijk de eigenschappen van concrete profielen in plaats van alleen de materiaalnaam.",
+          "Bespreek hoe kleur, glas, ventilatie en hang- en sluitwerk bij elkaar passen. Zo wordt een keuze niet alleen op uiterlijk gebaseerd, maar ook op gebruik en de bestaande gevel.",
+        ],
+      },
+      {
         heading: "Zo helpt VakConnect bij kozijnen",
         paragraphs: [
           "Geef aan of je herstel, glasvervanging, renovatie of nieuwe kozijnen zoekt. Noteer het aantal ramen en deuren, materiaalvoorkeur, zichtbare schade, gewenste isolatie en of binnen- of buitenafwerking moet worden meegenomen.",
@@ -567,6 +609,13 @@ export const serviceMainContent: Record<string, ServiceContentPageData> = {
           "Een badkamer wordt doorgaans in stappen opgebouwd: eerst worden bestaande onderdelen verwijderd en leidingen of elektra aangepast, daarna volgen ondergrond en waterdichting, tegelwerk en montage van sanitair en accessoires. De exacte volgorde hangt af van de gekozen oplossing en afspraken tussen vakmensen.",
           "Denk vooraf na over toegang tot de woning, gebruik van een tweede badkamer en opslag van materialen. Bespreek ook wie puin afvoert, de ruimte beschermt en de eindcontrole verzorgt.",
           "De doorlooptijd is afhankelijk van omvang, materiaalbeschikbaarheid, droogtijden en eventuele verrassingen in de bestaande ruimte. Vraag om een planning die rekening houdt met de specifieke klus, zonder uit te gaan van een vaste standaardduur.",
+        ],
+      },
+      {
+        heading: "Coördinatie van meerdere disciplines",
+        paragraphs: [
+          "Een badkamerrenovatie kan door één partij worden georganiseerd of door jou met afzonderlijke vakmensen worden gepland. In beide gevallen moet helder zijn wie de volgorde bewaakt, wanneer keuzes moeten worden gemaakt en wie controleert of aansluitingen gereed zijn voor de volgende stap.",
+          "Leg afspraken over levering, toegang, afval en wijzigingen vast. Een duidelijke taakverdeling maakt het makkelijker om verwachtingen te bespreken als werk van de ene discipline invloed heeft op een andere.",
         ],
       },
       {
@@ -675,6 +724,13 @@ export const serviceMainContent: Record<string, ServiceContentPageData> = {
         ],
       },
       {
+        heading: "Glas en kozijnen als aanvullende verbetering",
+        paragraphs: [
+          "Bij een bredere aanpak van de gebouwschil kunnen glas en kozijnen naast dak-, vloer- of gevelisolatie in beeld komen. Een passend nieuw kozijn of glas kan comfort beïnvloeden, maar moet aansluiten op de bestaande gevel en de manier waarop de woning wordt geventileerd.",
+          "Vraag welke verbetering bij het onderzochte bouwdeel hoort en welke onderdelen een aparte klus vormen. Zo kun je keuzes en offertes beter uit elkaar houden en de volgorde van werkzaamheden afstemmen.",
+        ],
+      },
+      {
         heading: "Zo helpt VakConnect bij isolatiewerk",
         paragraphs: [
           "Beschrijf welk bouwdeel je wilt isoleren, wat je aanleiding is en wat je weet over de huidige constructie. Vermeld eerdere maatregelen, vochtproblemen, bereikbaarheid en of je al een inspectie of advies hebt ontvangen.",
@@ -768,6 +824,13 @@ export const serviceMainContent: Record<string, ServiceContentPageData> = {
           "Een keukenverbouwing kan bestaan uit nieuwe kasten en apparatuur op dezelfde plek, maar ook uit verplaatsing van water, afvoer, elektra of wanden. Deel de gewenste indeling en apparatuur zodat aansluitingen en montage samen kunnen worden gepland.",
           "Een badkamer vraagt vaak om loodgieterswerk, elektra, waterdichting, tegelwerk en montage. Beslis vroeg welke onderdelen behouden blijven en bespreek wie de verschillende werkzaamheden coördineert.",
           "Timmerwerk, binnenwanden en afwerking kunnen op hun beurt invloed hebben op deuren, vloeren, verlichting en ventilatie. Werk een ruimte niet alleen op uiterlijk uit; denk ook aan gebruik, onderhoud en bereikbaarheid van installaties.",
+        ],
+      },
+      {
+        heading: "Voorbereiding en vergunningen tijdig onderzoeken",
+        paragraphs: [
+          "Voor grotere aanpassingen kunnen tekeningen, constructief advies of overleg met de gemeente nodig zijn. Of een vergunning of melding van toepassing is, hangt af van de aard van het werk, woning en lokale regels. Controleer dit voor jouw plan in plaats van uit te gaan van een algemene regel.",
+          "Deel in je aanvraag wat al is uitgezocht en welke vragen nog openstaan. Een vakman kan aangeven welke aanvullende deskundigheid nodig is, maar formele eisen controleer je bij de gemeente of een bevoegde adviseur.",
         ],
       },
       {

@@ -42,27 +42,50 @@ export function ServiceContentPage({ page }: Readonly<{ page: ServiceContentPage
             <p key={paragraph}>{paragraph}</p>
           ))}
         </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link href="/aanvraag" className={buttonClassName({ variant: "primary", size: "lg" })}>
+            {page.cta.label}
+          </Link>
+          <p className="max-w-2xl text-sm text-muted-foreground">
+            VakConnect gebruikt je klus en regio om passende professionals te zoeken. Een vakman beoordeelt zelf de aanvraag; jij kiest hoe je verdergaat.
+          </p>
+        </div>
       </section>
 
       <div className="space-y-4">
-        {page.sections.map((section) => (
-          <section key={section.heading}>
-            <Card className={sectionStyles[section.type ?? "default"]}>
-              <h2 className="text-2xl font-semibold tracking-tight">{section.heading}</h2>
-              {section.paragraphs.map((paragraph) => (
-                <p key={paragraph} className="text-sm leading-7 text-muted-foreground">
-                  {paragraph}
-                </p>
-              ))}
-              {section.bullets?.length ? (
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  {section.bullets.map((bullet) => (
-                    <li key={bullet}>• {bullet}</li>
-                  ))}
-                </ul>
-              ) : null}
-            </Card>
-          </section>
+        {page.sections.map((section, index) => (
+          <div key={section.heading} className="space-y-4">
+            <section>
+              <Card className={sectionStyles[section.type ?? "default"]}>
+                <h2 className="text-2xl font-semibold tracking-tight">{section.heading}</h2>
+                {section.paragraphs.map((paragraph) => (
+                  <p key={paragraph} className="text-sm leading-7 text-muted-foreground">
+                    {paragraph}
+                  </p>
+                ))}
+                {section.bullets?.length ? (
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    {section.bullets.map((bullet) => (
+                      <li key={bullet}>• {bullet}</li>
+                    ))}
+                  </ul>
+                ) : null}
+              </Card>
+            </section>
+            {index === 2 ? (
+              <section>
+                <Card className="flex flex-col gap-3 bg-surface-muted sm:flex-row sm:items-center sm:justify-between">
+                  <div className="space-y-1">
+                    <h2 className="text-lg font-semibold">Weet je wat er moet gebeuren?</h2>
+                    <p className="text-sm text-muted-foreground">Beschrijf je klus en regio; een passende vakman beoordeelt de aanvraag.</p>
+                  </div>
+                  <Link href="/aanvraag" className={buttonClassName({ variant: "primary", size: "lg" })}>
+                    Plaats je klus
+                  </Link>
+                </Card>
+              </section>
+            ) : null}
+          </div>
         ))}
       </div>
 
@@ -83,7 +106,7 @@ export function ServiceContentPage({ page }: Readonly<{ page: ServiceContentPage
               <li key={factor}>• {factor}</li>
             ))}
           </ul>
-          <p className="text-sm text-muted-foreground">Indicatieve bedragen verschillen per situatie. Deel je klusdetails via VakConnect voor een passende opvolging.</p>
+          <p className="text-sm text-muted-foreground">De uiteindelijke prijs hangt af van de situatie en afgesproken werkzaamheden. Vraag om een offerte waarin scope en eventuele extra’s duidelijk staan.</p>
         </Card>
         <Card className="space-y-3">
           <h2 className="text-2xl font-semibold tracking-tight">Hoe VakConnect werkt</h2>
@@ -98,7 +121,7 @@ export function ServiceContentPage({ page }: Readonly<{ page: ServiceContentPage
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-2xl font-semibold tracking-tight">Relevante pagina’s</h2>
+        <h2 className="text-2xl font-semibold tracking-tight">Subdiensten en verdere informatie</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {page.relatedLinks.map((link) => (
             <Link key={link.href} href={link.href} className="rounded-2xl border bg-surface px-4 py-3 transition hover:bg-surface-muted">
