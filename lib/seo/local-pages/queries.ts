@@ -114,7 +114,9 @@ function toCorpusItem(row: SeoLocalPageWithLocation): LocalPageTextCorpusItem {
   const fallback = fallbackByPath.get(row.canonical_path);
   const intro = coerceStringArray(row.local_intro, fallback?.page.intro ?? []);
   const sections = coerceServiceSections(row.local_sections);
+  const faqs = coerceFaqs(row.faqs);
   const resolvedSections = sections.length ? sections : fallback?.page.sections ?? [];
+  const resolvedFaqs = faqs.length ? faqs : fallback?.page.faqs ?? [];
   const serviceName = serviceNameMap[row.service_slug] ?? humanizeSlug(row.service_slug);
   const subserviceName = row.subservice_slug
     ? subserviceMap.get(`${row.service_slug}/${row.subservice_slug}`) ?? humanizeSlug(row.subservice_slug)
@@ -135,6 +137,7 @@ function toCorpusItem(row: SeoLocalPageWithLocation): LocalPageTextCorpusItem {
     fullText: [
       ...intro,
       ...resolvedSections.flatMap((section) => [section.heading, ...section.paragraphs, ...(section.bullets ?? [])]),
+      ...resolvedFaqs.flatMap((faq) => [faq.question, faq.answer]),
     ].join(" "),
     title: fallback?.page.title ?? metadata.title,
     description: fallback?.page.description ?? metadata.description,
@@ -403,6 +406,7 @@ export async function getSeoLocalPages() {
         fullText: [
           ...page.page.intro,
           ...page.page.sections.flatMap((section) => [section.heading, ...section.paragraphs, ...(section.bullets ?? [])]),
+          ...page.page.faqs.flatMap((faq) => [faq.question, faq.answer]),
         ].join(" "),
         title: page.page.title,
         description: page.page.description,
@@ -679,6 +683,7 @@ export async function getSeoPageTextCorpus(serviceSlug: string, excludeId?: stri
         fullText: [
           ...page.page.intro,
           ...page.page.sections.flatMap((section) => [section.heading, ...section.paragraphs, ...(section.bullets ?? [])]),
+          ...page.page.faqs.flatMap((faq) => [faq.question, faq.answer]),
         ].join(" "),
         title: page.page.title,
         description: page.page.description,

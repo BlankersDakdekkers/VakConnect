@@ -44,12 +44,17 @@ export async function generateMetadata({
   const resolved = await resolvePublicServiceRoute(vakgebied, slug);
 
   if (!resolved) {
-    return {};
+    notFound();
   }
 
   if (resolved.type === "local") {
-    if (!resolved.localPage.published || resolved.localPage.contentStatus !== "published") {
-      return {};
+    if (
+      !resolved.localPage.published ||
+      !resolved.localPage.indexable ||
+      !resolved.localPage.publishable ||
+      resolved.localPage.contentStatus !== "published"
+    ) {
+      notFound();
     }
 
     return buildPageMetadata({

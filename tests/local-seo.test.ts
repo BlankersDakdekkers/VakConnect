@@ -356,6 +356,16 @@ test("representatieve Prompt 6 routes blijven aanwezig in lokale dataset", () =>
   }
 });
 
+test("ongeldige lokale combinaties krijgen een not-found UI en vallen niet terug op algemene content", () => {
+  const routeSource = readFileSync("/home/runner/work/VakConnect/VakConnect/app/(public)/[vakgebied]/[...slug]/page.tsx", "utf8");
+  const querySource = readFileSync("/home/runner/work/VakConnect/VakConnect/lib/seo/local-pages/queries.ts", "utf8");
+  const notFoundSource = readFileSync("/home/runner/work/VakConnect/VakConnect/app/not-found.tsx", "utf8");
+
+  assert.match(routeSource, /if \(!resolved\)\s*\{\s*notFound\(\);/);
+  assert.match(querySource, /return null;/);
+  assert.match(notFoundSource, /Pagina niet gevonden/);
+});
+
 test("bulk create defaults staan op draft/unpublished/non-indexable in actioncode", () => {
   const actionsSource = readFileSync("/home/runner/work/VakConnect/VakConnect/lib/seo/actions.ts", "utf8");
   assert.match(actionsSource, /content_status: "draft"/);
@@ -366,10 +376,13 @@ test("bulk create defaults staan op draft/unpublished/non-indexable in actioncod
 
 test("admin lokaal pagina gebruikt server-side paginering en statusbulkacties", () => {
   const listSource = readFileSync("/home/runner/work/VakConnect/VakConnect/app/(admin)/admin/seo/lokaal/page.tsx", "utf8");
+  const detailSource = readFileSync("/home/runner/work/VakConnect/VakConnect/app/(admin)/admin/seo/lokaal/[id]/page.tsx", "utf8");
   assert.match(listSource, /pageSize/);
   assert.match(listSource, /bulkUpdateSeoLocalStatusAction/);
   assert.match(listSource, /quality_lt/);
   assert.match(listSource, /coverage/);
+  assert.match(listSource, /Quality waarschuwingen/);
+  assert.match(detailSource, /Quality warnings/);
 });
 
 test("provinciehubs route en querylaag bestaan", () => {
