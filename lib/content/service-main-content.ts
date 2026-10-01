@@ -113,7 +113,7 @@ export const serviceMainContent: Record<string, ServiceContentPageData> = {
       { question: "Wat is het verschil tussen reparatie en renovatie?", answer: "Reparatie richt zich op een afgebakend gebrek. Bij verspreide slijtage of meerdere zwakke plekken kan deelrenovatie of vervanging logischer zijn; inspectie geeft inzicht in de staat van het hele dak." },
       { question: "Hoe vind ik een dakdekker in mijn regio?", answer: "Beschrijf je dakklus en regio op VakConnect. De matching zoekt naar passende professionals; een vakman bepaalt zelf of de opdracht aansluit en jij kiest hoe je verdergaat." },
     ],
-    cta: { title: "Laat je dakklus helder beoordelen", description: "Beschrijf wat je ziet, welk daktype je hebt en of je herstel, inspectie of renovatie overweegt.", label: "Beschrijf je dakklus" },
+    cta: { title: "Laat je dakklus helder beoordelen", description: "Beschrijf wat je ziet, welk daktype je hebt en of je herstel, inspectie of renovatie overweegt.", label: "Beschrijf je dakklus", serviceSlug: "dakdekker" },
   },
   schilder: {
     path: "/schilder",
@@ -221,7 +221,7 @@ export const serviceMainContent: Record<string, ServiceContentPageData> = {
       { question: "Wat is het verschil tussen onderhoud en een volledige schilderbeurt?", answer: "Onderhoud richt zich vaak op intacte verflagen met plaatselijk herstel en nieuwe afwerking. Bij omvangrijke schade of loslatende lagen kan meer voorbereiding of het verwijderen van oude verf nodig zijn." },
       { question: "Hoe vergelijk ik schilders?", answer: "Zorg dat offertes dezelfde ruimtes, onderdelen, voorbereiding en afwerking omvatten. Bespreek materiaal, herstelwerk, planning en wat er gebeurt als tijdens de voorbereiding extra schade zichtbaar wordt." },
     ],
-    cta: { title: "Beschrijf het schilderwerk dat je wilt laten doen", description: "Vermeld de onderdelen, binnen of buiten, en wat je ziet aan de huidige verf- en ondergrond.", label: "Plaats je schilderklus" },
+    cta: { title: "Beschrijf het schilderwerk dat je wilt laten doen", description: "Vermeld de onderdelen, binnen of buiten, en wat je ziet aan de huidige verf- en ondergrond.", label: "Plaats je schilderklus", serviceSlug: "schilder" },
   },
   loodgieter: {
     path: "/loodgieter",
@@ -333,7 +333,7 @@ export const serviceMainContent: Record<string, ServiceContentPageData> = {
       { question: "Werkt een loodgieter ook in badkamer en keuken?", answer: "Veel loodgieters verzorgen water- en afvoeraansluitingen voor sanitair en keukens. Bij grotere verbouwingen zijn vaak ook andere vakmensen nodig; bespreek vooraf wie welke werkzaamheden uitvoert." },
       { question: "Hoe snel kan een loodgieter beschikbaar zijn?", answer: "Beschikbaarheid hangt af van regio, type klus en planning van professionals. VakConnect kan geen vaste reactietijd beloven; vermeld in je aanvraag als de situatie dringend is." },
     ],
-    cta: { title: "Vertel wat er aan water of afvoer speelt", description: "Omschrijf de klacht, de ruimte en wat je al hebt gezien. De oorzaak hoeft nog niet bekend te zijn.", label: "Vind een loodgieter" },
+    cta: { title: "Vertel wat er aan water of afvoer speelt", description: "Omschrijf de klacht, de ruimte en wat je al hebt gezien. De oorzaak hoeft nog niet bekend te zijn.", label: "Vind een loodgieter", serviceSlug: "loodgieter" },
   },
   elektricien: {
     path: "/elektricien",
@@ -445,7 +445,7 @@ export const serviceMainContent: Record<string, ServiceContentPageData> = {
       { question: "Kan elke elektricien een laadpaal aansluiten?", answer: "Niet iedere elektricien biedt dezelfde diensten. Vraag naar ervaring met het laadpunt, de vereiste expertise of certificering en of de bestaande installatie eerst moet worden beoordeeld." },
       { question: "Wanneer is specialistische certificering nodig?", answer: "Dat hangt af van het type installatie en werkzaamheden, bijvoorbeeld bij bepaalde laad- of gasgerelateerde systemen. Vraag de professional welke bevoegdheid voor jouw specifieke klus vereist is en controleer die informatie." },
     ],
-    cta: { title: "Omschrijf je elektrawerk veilig en duidelijk", description: "Vermeld of het om een storing of geplande uitbreiding gaat en welke ruimte of apparatuur betrokken is.", label: "Start je aanvraag" },
+    cta: { title: "Omschrijf je elektrawerk veilig en duidelijk", description: "Vermeld of het om een storing of geplande uitbreiding gaat en welke ruimte of apparatuur betrokken is.", label: "Start je aanvraag", serviceSlug: "elektricien" },
   },
   kozijnen: {
     path: "/kozijnen",
@@ -556,7 +556,7 @@ export const serviceMainContent: Record<string, ServiceContentPageData> = {
       { question: "Kan ik alleen het glas laten vervangen?", answer: "Soms kan bestaand kozijn nieuw glas dragen, maar dat hangt af van profiel, staat en beschikbare ruimte. Een vakman kan beoordelen of glasvervanging mogelijk is zonder het kozijn te vervangen." },
       { question: "Hoe lang duurt montage?", answer: "De duur verschilt met het aantal kozijnen, maatwerk, bereikbaarheid en benodigde afwerking. Vraag de uitvoerder om een planning voor jouw woning; er is geen vaste montageduur voor iedere klus." },
     ],
-    cta: { title: "Bespreek de juiste kozijnoplossing voor je woning", description: "Vertel wat je wilt verbeteren en welke ramen, deuren of materialen het betreft.", label: "Beschrijf je kozijnklus" },
+    cta: { title: "Bespreek de juiste kozijnoplossing voor je woning", description: "Vertel wat je wilt verbeteren en welke ramen, deuren of materialen het betreft.", label: "Beschrijf je kozijnklus", serviceSlug: "kozijnen" },
   },
   badkamer: {
     path: "/badkamer",
@@ -668,7 +668,7 @@ export const serviceMainContent: Record<string, ServiceContentPageData> = {
       { question: "Kunnen leidingen worden verlegd?", answer: "Vaak kan een nieuwe indeling aanpassing van leidingen vragen, maar haalbaarheid hangt af van constructie, afvoer en beschikbare ruimte. Laat de situatie beoordelen voordat je de indeling definitief maakt." },
       { question: "Moet ventilatie worden aangepast?", answer: "Niet altijd, maar de ventilatie verdient aandacht bij een renovatie, vooral als de ruimte vochtig blijft of de indeling verandert. Bespreek afvoer en luchttoevoer met de betrokken vakman." },
     ],
-    cta: { title: "Breng je badkamerplannen in kaart", description: "Beschrijf wat je wilt vernieuwen, welke onderdelen blijven en of de indeling verandert.", label: "Start je badkamerklus" },
+    cta: { title: "Breng je badkamerplannen in kaart", description: "Beschrijf wat je wilt vernieuwen, welke onderdelen blijven en of de indeling verandert.", label: "Start je badkamerklus", serviceSlug: "badkamer-verbouwen" },
   },
   isolatie: {
     path: "/isolatie",
@@ -779,7 +779,7 @@ export const serviceMainContent: Record<string, ServiceContentPageData> = {
       { question: "Kan elk dak worden geïsoleerd?", answer: "Niet elke dakopbouw laat dezelfde methode toe. Type dak, ruimte, bestaande lagen en vochtgedrag bepalen welke oplossingen onderzocht kunnen worden." },
       { question: "Welke vakman heb ik nodig?", answer: "Zoek een specialist die ervaring heeft met het bouwdeel dat je wilt isoleren en de geschiktheid vooraf beoordeelt. Bij combinatie met dak- of kozijnwerk kunnen meerdere vakgebieden betrokken zijn." },
     ],
-    cta: { title: "Ontdek welke isolatieklus bij je woning past", description: "Vertel welk bouwdeel je wilt verbeteren en wat je al weet over de constructie en ventilatie.", label: "Beschrijf je isolatieklus" },
+    cta: { title: "Ontdek welke isolatieklus bij je woning past", description: "Vertel welk bouwdeel je wilt verbeteren en wat je al weet over de constructie en ventilatie.", label: "Beschrijf je isolatieklus", serviceSlug: "isolatie" },
   },
   verbouwing: {
     path: "/verbouwing",
@@ -890,6 +890,6 @@ export const serviceMainContent: Record<string, ServiceContentPageData> = {
       { question: "Hoe plan ik meerdere disciplines?", answer: "Breng afhankelijkheden en werkvolgorde vooraf in kaart en spreek af wie de planning coördineert. Leg verantwoordelijkheden, wijzigingen en oplevermomenten vast." },
       { question: "Hoe vergelijk ik verbouwingsoffertes?", answer: "Vergelijk dezelfde werkzaamheden, materialen, afwerking, uitsluitingen, planning en afspraken over meerwerk. Een laag totaalbedrag is lastig te beoordelen als scopes verschillen." },
     ],
-    cta: { title: "Zet je verbouwplan om in een duidelijke aanvraag", description: "Beschrijf het gewenste resultaat, de betrokken ruimtes en wat al bekend is over planning en uitvoering.", label: "Beschrijf je verbouwing" },
+    cta: { title: "Zet je verbouwplan om in een duidelijke aanvraag", description: "Beschrijf het gewenste resultaat, de betrokken ruimtes en wat al bekend is over planning en uitvoering.", label: "Beschrijf je verbouwing", serviceSlug: "verbouwing" },
   },
 };

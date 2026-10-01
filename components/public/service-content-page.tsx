@@ -25,6 +25,9 @@ function Breadcrumbs({ items }: Readonly<{ items: ServiceContentPageData["breadc
 }
 
 export function ServiceContentPage({ page }: Readonly<{ page: ServiceContentPageData }>) {
+  const applicationHref = page.cta.serviceSlug
+    ? `/aanvraag?dienst=${encodeURIComponent(page.cta.serviceSlug)}`
+    : "/aanvraag";
   const sectionStyles: Record<NonNullable<ServiceContentPageData["sections"][number]["type"]>, string> = {
     default: "space-y-3",
     info: "space-y-3 border-blue-200 bg-blue-50",
@@ -36,14 +39,14 @@ export function ServiceContentPage({ page }: Readonly<{ page: ServiceContentPage
       <Breadcrumbs items={page.breadcrumbs} />
 
       <section className="space-y-4">
-        <h1 className="text-4xl font-semibold tracking-tight text-balance">{page.h1}</h1>
+        <h1 className="break-words text-4xl font-semibold tracking-tight text-balance">{page.h1}</h1>
         <div className="max-w-3xl space-y-3 text-muted-foreground">
           {page.intro.map((paragraph) => (
             <p key={paragraph}>{paragraph}</p>
           ))}
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <Link href="/aanvraag" className={buttonClassName({ variant: "primary", size: "lg" })}>
+          <Link href={applicationHref} className={buttonClassName({ variant: "primary", size: "lg" })}>
             {page.cta.label}
           </Link>
           <p className="max-w-2xl text-sm text-muted-foreground">
@@ -57,7 +60,7 @@ export function ServiceContentPage({ page }: Readonly<{ page: ServiceContentPage
           <div key={section.heading} className="space-y-4">
             <section>
               <Card className={sectionStyles[section.type ?? "default"]}>
-                <h2 className="text-2xl font-semibold tracking-tight">{section.heading}</h2>
+                <h2 className="break-words text-2xl font-semibold tracking-tight">{section.heading}</h2>
                 {section.paragraphs.map((paragraph) => (
                   <p key={paragraph} className="text-sm leading-7 text-muted-foreground">
                     {paragraph}
@@ -76,10 +79,10 @@ export function ServiceContentPage({ page }: Readonly<{ page: ServiceContentPage
               <section>
                 <Card className="flex flex-col gap-3 bg-surface-muted sm:flex-row sm:items-center sm:justify-between">
                   <div className="space-y-1">
-                    <h2 className="text-lg font-semibold">Weet je wat er moet gebeuren?</h2>
+                    <h2 className="break-words text-lg font-semibold">Weet je wat er moet gebeuren?</h2>
                     <p className="text-sm text-muted-foreground">Beschrijf je klus en regio; een passende vakman beoordeelt de aanvraag.</p>
                   </div>
-                  <Link href="/aanvraag" className={buttonClassName({ variant: "primary", size: "lg" })}>
+                  <Link href={applicationHref} className={buttonClassName({ variant: "primary", size: "lg" })}>
                     Plaats je klus
                   </Link>
                 </Card>
@@ -92,7 +95,7 @@ export function ServiceContentPage({ page }: Readonly<{ page: ServiceContentPage
       {page.warning ? (
         <section>
           <Card className="space-y-3 border-amber-200 bg-amber-50">
-            <h2 className="text-xl font-semibold tracking-tight text-amber-900">{page.warning.title}</h2>
+            <h2 className="break-words text-xl font-semibold tracking-tight text-amber-900">{page.warning.title}</h2>
             <p className="text-sm leading-7 text-amber-900/90">{page.warning.body}</p>
           </Card>
         </section>
@@ -100,7 +103,7 @@ export function ServiceContentPage({ page }: Readonly<{ page: ServiceContentPage
 
       <section className="grid gap-4 lg:grid-cols-2">
         <Card className="space-y-3">
-          <h2 className="text-2xl font-semibold tracking-tight">Kostenfactoren</h2>
+          <h2 className="break-words text-2xl font-semibold tracking-tight">Kostenfactoren</h2>
           <ul className="space-y-2 text-sm text-muted-foreground">
             {page.costFactors.map((factor) => (
               <li key={factor}>• {factor}</li>
@@ -109,7 +112,7 @@ export function ServiceContentPage({ page }: Readonly<{ page: ServiceContentPage
           <p className="text-sm text-muted-foreground">De uiteindelijke prijs hangt af van de situatie en afgesproken werkzaamheden. Vraag om een offerte waarin scope en eventuele extra’s duidelijk staan.</p>
         </Card>
         <Card className="space-y-3">
-          <h2 className="text-2xl font-semibold tracking-tight">Hoe VakConnect werkt</h2>
+          <h2 className="break-words text-2xl font-semibold tracking-tight">Hoe VakConnect werkt</h2>
           <ol className="space-y-2 text-sm text-muted-foreground">
             {page.processSteps.map((step, index) => (
               <li key={step}>
@@ -121,7 +124,7 @@ export function ServiceContentPage({ page }: Readonly<{ page: ServiceContentPage
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-2xl font-semibold tracking-tight">Subdiensten en verdere informatie</h2>
+        <h2 className="break-words text-2xl font-semibold tracking-tight">Subdiensten en verdere informatie</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {page.relatedLinks.map((link) => (
             <Link key={link.href} href={link.href} className="rounded-2xl border bg-surface px-4 py-3 transition hover:bg-surface-muted">
@@ -133,11 +136,11 @@ export function ServiceContentPage({ page }: Readonly<{ page: ServiceContentPage
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-2xl font-semibold tracking-tight">Veelgestelde vragen</h2>
+        <h2 className="break-words text-2xl font-semibold tracking-tight">Veelgestelde vragen</h2>
         <div className="grid gap-4 md:grid-cols-2">
           {page.faqs.map((item) => (
             <Card key={item.question} className="space-y-2">
-              <h3 className="font-semibold">{item.question}</h3>
+              <h3 className="break-words font-semibold">{item.question}</h3>
               <p className="text-sm leading-7 text-muted-foreground">{item.answer}</p>
             </Card>
           ))}
@@ -146,10 +149,10 @@ export function ServiceContentPage({ page }: Readonly<{ page: ServiceContentPage
 
       <section>
         <Card className="space-y-4 bg-primary text-primary-foreground">
-          <h2 className="text-2xl font-semibold tracking-tight">{page.cta.title}</h2>
+          <h2 className="break-words text-2xl font-semibold tracking-tight">{page.cta.title}</h2>
           <p className="text-sm leading-7 text-primary-foreground/90">{page.cta.description}</p>
           <div className="flex flex-wrap gap-3">
-            <Link href="/aanvraag" className={buttonClassName({ variant: "secondary", size: "lg", className: "border-white/25 bg-white text-primary hover:bg-slate-100" })}>
+            <Link href={applicationHref} className={buttonClassName({ variant: "secondary", size: "lg", className: "border-white/25 bg-white text-primary hover:bg-slate-100" })}>
               {page.cta.label}
             </Link>
             {page.cta.secondaryHref && page.cta.secondaryLabel ? (

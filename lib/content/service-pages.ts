@@ -25,6 +25,7 @@ export type ServiceContentPageData = {
     title: string;
     description: string;
     label: string;
+    serviceSlug?: string;
     secondaryLabel?: string;
     secondaryHref?: string;
   };
