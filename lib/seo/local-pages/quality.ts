@@ -72,7 +72,7 @@ function normalize(value: string, cityNames: string[] = []) {
   for (const cityName of [...new Set(cityNames)].sort((left, right) => right.length - left.length)) {
     const normalizedName = stripAccents(cityName).trim().toLowerCase();
     if (!normalizedName) continue;
-    const pattern = escapeRegExp(normalizedName).replace(/\\\s+/g, "[-\\s]+");
+    const pattern = escapeRegExp(normalizedName).replace(/\s+/g, "[-\\s]+");
     result = result.replace(new RegExp(`(^|[^a-z0-9])${pattern}(?=$|[^a-z0-9])`, "g"), "$1plaats");
   }
 
@@ -103,6 +103,40 @@ function sectionText(sections: ServiceSection[]) {
 
 function countWords(value: string) {
   return stripAccents(value).match(/[a-z0-9]+(?:['-][a-z0-9]+)*/gi)?.length ?? 0;
+}
+
+export function hasLocalContext(input: {
+  text: string;
+  cityName: string;
+  regionLabel?: string | null;
+  localFacts: string[];
+}) {
+  const normalizedText = normalize(input.text);
+  const cityNeutralText = normalize(input.text, [input.cityName]);
+  const cityName = normalize(input.cityName);
+  const regionLabel = input.regionLabel ? normalize(input.regionLabel) : "";
+  const mentionsLocation = (cityName.length > 0 && normalizedText.includes(cityName)) || (regionLabel.length > 0 && normalizedText.includes(regionLabel));
+  if (!mentionsLocation) return false;
+
+  return input.localFacts.some((fact) => {
+    const normalizedFact = normalize(fact, [input.cityName]);
+    return normalizedFact.length >= 40 && cityNeutralText.includes(normalizedFact);
+  });
+}
+
+export function hasUniqueLocalMetadata(input: {
+  title: string;
+  description: string;
+  serviceSlug: string;
+  currentId?: string;
+  existingCorpus: LocalPageTextCorpusItem[];
+}) {
+  return !input.existingCorpus.some(
+    (item) =>
+      item.serviceSlug === input.serviceSlug &&
+      item.id !== input.currentId &&
+      ((item.title && item.title === input.title) || (item.description && item.description === input.description)),
+  );
 }
 
 export function detectDuplicateRisk(input: {
@@ -238,6 +272,8 @@ export function calculateLocalQualityScore(input: {
   if (!hasLocalContext) warnings.push("Geen lokale context");
   if (input.relatedLinksCount < 3) warnings.push("Minder dan 3 interne links");
   if (!hasCta) warnings.push("CTA ontbreekt");
+  if (input.title && input.title.length > 60) warnings.push("Meta title te lang");
+  if (input.description && input.description.length > 160) warnings.push("Meta description te lang");
   if (hasPlaceholder) warnings.push("Placeholder of niet-onderbouwde lokale claim gevonden");
   if (input.duplicateRisk === "high") warnings.push("Te veel overlap met andere stadspagina");
   else if (input.duplicateRisk === "medium") warnings.push("Mogelijke overlap met andere stadspagina; redactionele review nodig");

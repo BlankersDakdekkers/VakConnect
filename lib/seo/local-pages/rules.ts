@@ -8,8 +8,30 @@ export function hasSlugCollisionWithSubservice(serviceSlug: string, citySlug: st
   return serviceSubSlugs.some((item) => item.vakgebied === serviceSlug && item.subdienst === citySlug);
 }
 
+export function isValidSeoStatusTransition(input: {
+  previousStatus: string | null;
+  nextStatus: string;
+  nextPublished: boolean;
+  contentChanged: boolean;
+}) {
+  if (!input.previousStatus) {
+    return input.nextStatus === "draft" && !input.nextPublished;
+  }
+
+  if (input.previousStatus === input.nextStatus) {
+    return !(input.previousStatus === "published" && input.contentChanged);
+  }
+
+  if (input.previousStatus === "draft" && input.nextStatus === "review") return !input.nextPublished;
+  if (input.previousStatus === "review" && input.nextStatus === "approved") return !input.nextPublished;
+  if (input.previousStatus === "approved" && input.nextStatus === "published") return input.nextPublished;
+  if (input.previousStatus === "published" && ["approved", "review"].includes(input.nextStatus)) return !input.nextPublished;
+  return false;
+}
+
 export function validatePublishSafety(input: {
   locationPublished: boolean;
+  locationIndexable: boolean;
   localPublished: boolean;
   indexable: boolean;
   contentStatus: string;
@@ -23,11 +45,13 @@ export function validatePublishSafety(input: {
   qualityScore?: number;
   contentWordCount: number;
   hasMetadata: boolean;
+  metadataWithinLimits: boolean;
   hasUniqueMetadata: boolean;
   hasH1: boolean;
   hasCta: boolean;
   hasLocalContext: boolean;
   relatedLinksCount: number;
+  relatedLinkHrefs: string[];
   hasPlaceholder: boolean;
   duplicateRisk?: SeoDuplicateRisk;
   coverageStatus?: SeoCoverageStatus;
@@ -38,6 +62,10 @@ export function validatePublishSafety(input: {
 
   if (!input.locationPublished) {
     return { ok: false as const, reason: "Locatie moet published zijn voordat lokale pagina gepubliceerd wordt." };
+  }
+
+  if (!input.locationIndexable) {
+    return { ok: false as const, reason: "Locatie moet indexeerbaar zijn voordat de lokale pagina gepubliceerd kan worden." };
   }
 
   if (input.contentStatus !== "published") {
@@ -84,7 +112,7 @@ export function validatePublishSafety(input: {
     return { ok: false as const, reason: "Content te kort: er zijn minimaal 250 inhoudelijke woorden nodig." };
   }
 
-  if (!input.hasMetadata || !input.hasUniqueMetadata) {
+  if (!input.hasMetadata || !input.metadataWithinLimits || !input.hasUniqueMetadata) {
     return { ok: false as const, reason: "Meta title en description moeten aanwezig en uniek zijn." };
   }
 
@@ -102,6 +130,15 @@ export function validatePublishSafety(input: {
 
   if (input.relatedLinksCount < 3) {
     return { ok: false as const, reason: "Minimaal 3 relevante interne links zijn verplicht." };
+  }
+
+  const requiredLinks = [
+    `/${input.serviceSlug}`,
+    "/aanvraag",
+    ...(input.subserviceSlug ? [`/${input.serviceSlug}/${input.subserviceSlug}`, `/${input.serviceSlug}/${input.citySlug}`] : []),
+  ];
+  if (requiredLinks.some((href) => !input.relatedLinkHrefs.includes(href))) {
+    return { ok: false as const, reason: "Link terug naar de hoofdservice, relevante subservice of aanvraag ontbreekt." };
   }
 
   if (input.hasPlaceholder) {
@@ -128,6 +165,7 @@ export function isSitemapEligible(input: {
   published: boolean;
   indexable: boolean;
   contentStatus: string;
+  qualityPassed: boolean;
 }) {
-  return input.locationPublished && input.published && input.indexable && input.contentStatus === "published";
+  return input.locationPublished && input.published && input.indexable && input.contentStatus === "published" && input.qualityPassed;
 }

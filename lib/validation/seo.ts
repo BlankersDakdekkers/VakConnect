@@ -79,12 +79,16 @@ export const seoLocalPageInputSchema = z
     redirectTo: z.string().startsWith("/admin/seo"),
   })
   .superRefine((value, ctx) => {
-    if (["draft", "review"].includes(value.contentStatus) && value.indexable) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["indexable"], message: "Draft/review pagina's mogen niet indexeerbaar zijn." });
+    if (value.contentStatus !== "published" && value.indexable) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["indexable"], message: "Niet-gepubliceerde pagina's mogen niet indexeerbaar zijn." });
     }
 
     if (value.published && value.contentStatus !== "published") {
       ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["contentStatus"], message: "Alleen status published mag gepubliceerd worden." });
+    }
+
+    if (value.contentStatus === "published" && (!value.published || !value.indexable)) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["published"], message: "Status published vereist gepubliceerd en indexable." });
     }
   });
 

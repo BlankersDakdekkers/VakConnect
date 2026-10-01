@@ -1,5 +1,6 @@
 import type { ServiceContentPageData, ServiceFaq, ServiceLink, ServiceSection } from "./service-pages.ts";
 import { allLocations, getLocation, getLocationsByTier, getPublishedLocations, type CityTier } from "./locations.ts";
+import { buildLocalPageMetadata } from "../seo/local-pages/metadata.ts";
 
 export type LocalServiceSlug = "dakdekker" | "loodgieter" | "schilder" | "elektricien" | "kozijnen" | "badkamer" | "isolatie" | "verbouwing";
 
@@ -250,8 +251,14 @@ function buildLocalIntro(profile: ServiceProfile, citySlug: string, subserviceSl
 
   const subservice = subserviceSlug ? profile.subservices[subserviceSlug] : undefined;
   const introTopic = subservice ? subservice.name.toLowerCase() : profile.serviceName.toLowerCase();
+  const introVariants = [
+    `Zoek je een ${introTopic} in ${location.name}? VakConnect helpt je klus en regio helder te beschrijven, zodat passende vakmensen de aanvraag kunnen beoordelen.`,
+    `Voor ${introTopic} in ${location.name} maakt een duidelijke omschrijving van de klus het verschil. VakConnect gebruikt de dienst en regio om passende vakmensen te zoeken.`,
+    `Een ${introTopic} nodig in ${location.name}? Deel wat er aan de hand is en welke planning past; VakConnect helpt de aanvraag bij vakmensen onder de aandacht te brengen.`,
+  ];
+  const introVariant = hash(`${profile.serviceSlug}-${citySlug}-${subserviceSlug ?? "main"}`) % introVariants.length;
   return [
-    `Zoek je een ${introTopic} in ${location.name}? VakConnect helpt je om je aanvraag inhoudelijk scherp neer te zetten voor een betere match.`,
+    introVariants[introVariant],
     `${location.introFacts[0]} ${subservice ? subservice.focus : profile.localTaskSummary}`,
   ];
 }
@@ -465,7 +472,11 @@ function buildLocalPage(config: LocalPageConfig): LocalServicePage {
 
   const profile = serviceProfiles[config.serviceSlug];
   const subservice = config.subserviceSlug ? profile.subservices[config.subserviceSlug] : undefined;
-  const contextLabel = subservice ? `${subservice.name.toLowerCase()} in ${location.name}` : `${profile.serviceName.toLowerCase()} in ${location.name}`;
+  const metadata = buildLocalPageMetadata({
+    serviceName: profile.serviceName,
+    cityName: location.name,
+    subserviceName: subservice?.name,
+  });
 
   const publishedMainRouteSet = new Set(
     localServicePageConfigs
@@ -490,15 +501,15 @@ function buildLocalPage(config: LocalPageConfig): LocalServicePage {
 
   const page: ServiceContentPageData = {
     path: config.canonicalPath,
-    title: `${subservice ? `${subservice.name} in ${location.name}` : `${profile.serviceName} in ${location.name}`} nodig? Vind een passende vakman via VakConnect`,
-    description: `Lokale uitleg over ${contextLabel}, inclusief woningcontext, planning, prijsfactoren en aanvraagtips voor ${location.name}.`,
+    title: metadata.title,
+    description: metadata.description,
     keywords: [
       `${serviceNameMap[profile.serviceSlug].toLowerCase()} ${location.name}`,
       `${location.name.toLowerCase()} ${serviceNameMap[profile.serviceSlug].toLowerCase()}`,
       subservice ? `${subservice.name.toLowerCase()} ${location.name}` : `${profile.serviceName.toLowerCase()} regio ${location.name}`,
       "VakConnect",
     ],
-    h1: `${subservice ? subservice.name : profile.serviceName} in ${location.name} nodig? Vind een passende vakman via VakConnect`,
+    h1: subservice ? `${subservice.name} in ${location.name} laten oplossen?` : `${profile.serviceName} in ${location.name} nodig?`,
     intro: config.localIntro,
     breadcrumbs: [
       { label: "Home", href: "/" },
@@ -515,7 +526,7 @@ function buildLocalPage(config: LocalPageConfig): LocalServicePage {
     cta: {
       title: `Vind een passende ${subservice ? subservice.name.toLowerCase() : profile.serviceName.toLowerCase()} in ${location.name}`,
       description: `Plaats je aanvraag voor ${location.name} met voldoende details over situatie, planning en bereikbaarheid.`,
-      label: profile.ctaLabel,
+      label: "Plaats je klus",
       secondaryLabel: "Start aanvraag",
       secondaryHref: "/aanvraag",
     },

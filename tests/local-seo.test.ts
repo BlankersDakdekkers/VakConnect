@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import { allLocations } from "../lib/content/locations.ts";
 import { localServicePageConfigs } from "../lib/content/local-service-pages.ts";
-import { hasSlugCollisionWithSubservice, isSitemapEligible, validatePublishSafety } from "../lib/seo/local-pages/rules.ts";
+import { hasSlugCollisionWithSubservice, isSitemapEligible, isValidSeoStatusTransition, validatePublishSafety } from "../lib/seo/local-pages/rules.ts";
 import { detectDuplicateRisk } from "../lib/seo/local-pages/quality.ts";
 import { getRevalidationTargets } from "../lib/seo/revalidation-targets.ts";
 
@@ -52,22 +52,37 @@ test("city slug collision met subdienst wordt gedetecteerd", () => {
 });
 
 test("publish workflow bepaalt sitemap eligibility", () => {
-  assert.equal(isSitemapEligible({ locationPublished: true, published: false, indexable: true, contentStatus: "published" }), false);
-  assert.equal(isSitemapEligible({ locationPublished: true, published: true, indexable: true, contentStatus: "review" }), false);
-  assert.equal(isSitemapEligible({ locationPublished: true, published: true, indexable: true, contentStatus: "published" }), true);
+  assert.equal(isSitemapEligible({ locationPublished: true, published: false, indexable: true, contentStatus: "published", qualityPassed: true }), false);
+  assert.equal(isSitemapEligible({ locationPublished: true, published: true, indexable: true, contentStatus: "review", qualityPassed: true }), false);
+  assert.equal(isSitemapEligible({ locationPublished: true, published: true, indexable: true, contentStatus: "published", qualityPassed: false }), false);
+  assert.equal(isSitemapEligible({ locationPublished: true, published: true, indexable: true, contentStatus: "published", qualityPassed: true }), true);
 });
 
 test("publish safety blokkeert ongeldige content", () => {
   const invalid = validatePublishSafety({
     locationPublished: true,
+    locationIndexable: true,
     localPublished: true,
     indexable: true,
     contentStatus: "published",
     canonicalPath: "/dakdekker/breda",
+    serviceSlug: "dakdekker",
+    subserviceSlug: null,
+    citySlug: "breda",
     localIntro: ["te kort"],
     localSections: [{ heading: "Test", paragraphs: ["Te kort"] }],
     faqs: [],
     qualityScore: 10,
+    contentWordCount: 0,
+    hasMetadata: false,
+    metadataWithinLimits: false,
+    hasUniqueMetadata: false,
+    hasH1: false,
+    hasCta: false,
+    hasLocalContext: false,
+    relatedLinksCount: 0,
+    relatedLinkHrefs: [],
+    hasPlaceholder: true,
     duplicateRisk: "high",
     coverageStatus: "none",
   });
@@ -77,12 +92,57 @@ test("publish safety blokkeert ongeldige content", () => {
 
 test("duplicate detector signaleert exacte intro duplicatie", () => {
   const duplicate = detectDuplicateRisk({
-    intro: ["Exact dezelfde intro tekst"],
+    intro: ["Zoek je een dakdekker in Breda? Deel de situatie en gewenste planning."],
     sections: [{ heading: "Sectie", paragraphs: ["Unieke paragraaf voor deze pagina."] }],
-    existingCorpus: ["Exact dezelfde intro tekst"],
+    serviceSlug: "dakdekker",
+    subserviceSlug: null,
+    cityName: "Breda",
+    cityNames: ["Breda", "Tilburg"],
+    existingCorpus: [
+      {
+        serviceSlug: "dakdekker",
+        subserviceSlug: null,
+        cityName: "Tilburg",
+        citySlug: "tilburg",
+        intro: "Zoek je een dakdekker in Tilburg? Deel de situatie en gewenste planning.",
+        fullText: "Zoek je een dakdekker in Tilburg? Deel de situatie en gewenste planning.",
+      },
+    ],
   });
 
   assert.equal(duplicate.level, "high");
+  assert.match(duplicate.reason, /plaatsnaam-normalisatie/);
+});
+
+test("city-neutral duplicate detector scopes comparison to matching service intent", () => {
+  const result = detectDuplicateRisk({
+    intro: ["Zoek je een loodgieter in Breda? Deel de situatie en planning."],
+    sections: [{ heading: "Werkzaamheden", paragraphs: ["Omschrijf leidingwerk, toegang en gewenste planning zodat een vakman de aanvraag kan beoordelen."] }],
+    serviceSlug: "loodgieter",
+    subserviceSlug: null,
+    cityName: "Breda",
+    cityNames: ["Breda", "Tilburg"],
+    existingCorpus: [
+      {
+        serviceSlug: "dakdekker",
+        subserviceSlug: null,
+        cityName: "Tilburg",
+        citySlug: "tilburg",
+        intro: "Zoek je een dakdekker in Tilburg? Deel de situatie en planning.",
+        fullText: "Zoek je een dakdekker in Tilburg? Deel de situatie en planning.",
+      },
+    ],
+  });
+
+  assert.equal(result.level, "low");
+});
+
+test("status workflow vereist approved vooraf, en gewijzigde live content moet opnieuw reviewed worden", () => {
+  assert.equal(isValidSeoStatusTransition({ previousStatus: null, nextStatus: "draft", nextPublished: false, contentChanged: false }), true);
+  assert.equal(isValidSeoStatusTransition({ previousStatus: "draft", nextStatus: "published", nextPublished: true, contentChanged: false }), false);
+  assert.equal(isValidSeoStatusTransition({ previousStatus: "approved", nextStatus: "published", nextPublished: true, contentChanged: false }), true);
+  assert.equal(isValidSeoStatusTransition({ previousStatus: "published", nextStatus: "published", nextPublished: true, contentChanged: true }), false);
+  assert.equal(isValidSeoStatusTransition({ previousStatus: "published", nextStatus: "review", nextPublished: false, contentChanged: true }), true);
 });
 
 test("local draftsets bevatten gecontroleerde schaalgrootte", () => {
