@@ -430,6 +430,216 @@ const editorialSubPages: Record<string, EditorialSubPage> = {
       ["Wat vermeld ik over meerdere trage afvoeren?", "Noem alle betrokken toestellen; daarmee kan de vakman beoordelen of het probleem in een gedeeld traject zit."]
     ]
   },
+  "elektricien/groepenkast": {
+    title: "Groepenkast laten vervangen? | VakConnect",
+    description: "Oude groepenkast of extra groepen nodig? Lees over aardlek, belasting en veilige vervanging en vind een elektricien via VakConnect.",
+    h1: "Groepenkast laten vervangen?",
+    lead: "Een nieuwe kookplaat, verbouwing of terugkerende uitval kan vragen om beoordeling van de groepenkast. Laat uitbreiding en vervanging veilig door een elektricien onderzoeken.",
+    details: [
+      "De groepenkast verdeelt elektriciteit over groepen en bevat beveiligingen. Vervangen kan nodig zijn bij veroudering of gewijzigde belasting; soms is een gerichte uitbreiding voldoende. De bestaande installatie bepaalt welke oplossing past.",
+      "Regelmatig uitvallende groepen, weinig ruimte voor extra aansluitingen of plannen voor inductie en laadvoorzieningen zijn redenen voor beoordeling. Een storing is niet automatisch een defect van de groepenkast: ook apparatuur of bedrading kan meespelen.",
+      "De benodigde capaciteit hangt af van huidige groepen, aardlekbeveiliging en nieuwe apparaten. Voor een kookplaat kan een passende kookgroep of andere voorziening nodig zijn; laat dit bepalen op basis van aansluiting en apparatuur.",
+      "Een elektricien inventariseert de installatie en bespreekt indeling, beveiliging en eventuele aanpassing van de aansluiting. De uitvoering en controles horen bij een deskundige; ga niet zelf in een groepenkast aan de slag.",
+      "Vraag welke groepen, aardlekvoorzieningen en labels worden geleverd en wat er na het werk wordt getest. Spreek af of aanpassing van bedrading, meteromgeving of netaansluiting buiten de opdracht valt.",
+      "Noteer de aanwezige groepen en beoogde apparaten zonder de kast open te maken. Een foto van de buitenkant en omschrijving van storingen helpen bij het eerste gesprek.",
+      "Aantal groepen, staat van bedrading, beschikbare ruimte, nieuwe apparaten en benodigde aanpassingen bepalen de kosten. Laat materialen, testen en eventuele aanvullende werkzaamheden afzonderlijk vermelden."
+    ],
+    faqs: [
+      ["Moet de hele groepenkast weg voor één extra groep?", "Niet altijd. De beschikbare ruimte en staat van de installatie bepalen of uitbreiding mogelijk en verantwoord is."],
+      ["Is een uitvallende aardlek altijd een defecte kast?", "Nee. Ook aangesloten apparatuur of bedrading kan de beveiliging laten aanspreken. Laat de oorzaak veilig onderzoeken."],
+      ["Welke informatie helpt bij inductie?", "Geef type kookplaat en huidige aansluiting door; de elektricien bepaalt welke groep en voorzieningen passend zijn."],
+      ["Mag ik de groepenkast zelf aanpassen?", "Werk in een groepenkast brengt ernstige risico's mee. Laat beoordeling, uitvoering en controle aan een deskundige elektricien over."]
+    ]
+  },
+  "elektricien/storing": {
+    title: "Elektrische storing laten onderzoeken? | VakConnect",
+    description: "Stroomuitval in huis of terugkerende aardlekstoring? Lees over veilige diagnose en vraag een elektricien aan via VakConnect.",
+    h1: "Elektrische storing laten onderzoeken?",
+    lead: "Valt een deel van de woning uit of komt een storing steeds terug? Beschrijf wat niet meer werkt en of er warmte, geur of vocht bij betrokken is.",
+    details: [
+      "Storingsonderzoek zoekt uit of het probleem zit bij de groep, aangesloten apparatuur, bedrading of een beveiliging. De zichtbare uitval zegt niet altijd waar de fout ontstaat.",
+      "Terugkerende uitval, knipperende verlichting of een stopcontact dat warm wordt vraagt beoordeling. Bij brandlucht of zichtbare beschadiging is veiligheid leidend: gebruik de betrokken installatie niet en laat een deskundige kijken.",
+      "Overbelasting, een defect apparaat, beschadigde kabel of vocht kan een groep of aardlek doen uitschakelen. Uitval in meerdere ruimtes kan op een gedeelde groep wijzen; de elektricien moet de oorzaak zorgvuldig afbakenen.",
+      "Een specialist onderzoekt veilig de betrokken delen en bespreekt reparatie of vervanging. Een nieuwe groepenkast is niet automatisch de oplossing; eerst moet duidelijk zijn of de fout in de kast, bedrading of een apparaat zit.",
+      "Vraag wat het storingsonderzoek omvat en hoe herstel na de diagnose wordt aangeboden. Maak afspraken over vervolgwerk als delen achter muren of plafonds niet direct bereikbaar zijn.",
+      "Noteer welke kamers en apparaten betrokken zijn, sinds wanneer de storing optreedt en of recent iets is geïnstalleerd. Open geen elektrische onderdelen en ga bij verdachte warmte of geur niet experimenteren.",
+      "Diagnosetijd, bereikbaarheid van bedrading, onderdelen en eventuele herstelwerkzaamheden aan wand of kast beïnvloeden de kosten. Laat onderzoek en reparatie apart omschrijven."
+    ],
+    faqs: [
+      ["Waarom valt alleen één deel van het huis uit?", "Dat deel kan op dezelfde groep zijn aangesloten. Een elektricien onderzoekt of de beveiliging, bedrading of een aangesloten apparaat de oorzaak is."],
+      ["Is terugkerende aardlekuitval gevaarlijk?", "Het is een signaal dat onderzoek verdient. Vocht, beschadiging of een defect apparaat kan de beveiliging laten aanspreken."],
+      ["Moet ik meteen de groepenkast vervangen?", "Nee, zonder diagnose staat niet vast waar de fout zit. Laat eerst de oorzaak bepalen."],
+      ["Wat meld ik bij brandlucht?", "Geef de locatie en betrokken installatie duidelijk door, gebruik het verdachte onderdeel niet en laat de veiligheid professioneel beoordelen."]
+    ]
+  },
+  "elektricien/stopcontacten": {
+    title: "Stopcontacten laten plaatsen? | VakConnect",
+    description: "Extra stopcontacten of oude aansluitingen vervangen? Lees over positie, belasting en veilige aanleg via VakConnect.",
+    h1: "Stopcontacten laten plaatsen?",
+    lead: "Extra aansluitpunten in een keuken of werkruimte vragen om een plan voor locatie én belasting. Beschrijf waar je stroom nodig hebt en welke apparaten je wilt gebruiken.",
+    details: [
+      "Een stopcontact bijplaatsen of vervangen lijkt klein, maar de aanwezige groep, leidingroute en wandopbouw bepalen de klus. De elektricien controleert of de bestaande installatie de gewenste uitbreiding ondersteunt.",
+      "Een tekort aan aansluitpunten, versleten contactdozen of een nieuwe ruimte-indeling zijn redenen voor aanleg. In vochtige ruimtes gelden extra aandachtspunten voor positie en bescherming; laat een deskundige de mogelijkheden bepalen.",
+      "Meerdere zware apparaten op dezelfde groep kunnen problemen geven. Een slechte verbinding of beschadigd contact kan warm worden; bij verkleuring of brandlucht is veilig laten beoordelen verstandiger dan alleen een nieuw afdekraam plaatsen.",
+      "Een elektricien bespreekt posities, aantal punten, zichtbare of weggewerkte aanleg en eventuele uitbreiding van groepen. Bij een keukenplan is afstemming met meubels en apparaten belangrijk voordat wanden worden afgewerkt.",
+      "Laat per punt benoemen of er sleuven, leidingen en herstel van wandafwerking nodig zijn. Vraag ook of bestaande aarding en beveiliging worden gecontroleerd en wat buiten het voorstel valt.",
+      "Markeer gewenste plekken op een plattegrond en vermeld apparaten die tegelijk gebruikt worden. Foto's van de wand en groepenkast buitenzijde helpen; laat de technische beoordeling aan de elektricien.",
+      "Aantal punten, afstand tot bestaande installatie, wandmateriaal, wijze van wegwerken en eventueel extra groepwerk bepalen de kosten. Vergelijk offertes inclusief afwerking, niet alleen contactdozen."
+    ],
+    faqs: [
+      ["Kan ik overal een stopcontact bij laten plaatsen?", "Niet zonder beoordeling. De beschikbare leidingroute, groep en eisen voor de ruimte bepalen wat passend is."],
+      ["Heb ik voor een nieuw keukenapparaat een extra groep nodig?", "Dat hangt af van het apparaat en de bestaande belasting; laat een elektricien de installatie beoordelen."],
+      ["Is sleufherstel inbegrepen?", "Niet vanzelf. Spreek af wie de wand opent en na aanleg afwerkt."],
+      ["Hoe geef ik de gewenste posities door?", "Een eenvoudige plattegrond met meubels en apparaten helpt de elektricien de punten logisch te plaatsen."]
+    ]
+  },
+  "elektricien/verlichting": {
+    title: "Verlichting laten aanleggen? | VakConnect",
+    description: "Nieuwe verlichting of lichtpunten plannen? Lees over schakeling, aansluitingen en afwerking en vind een elektricien via VakConnect.",
+    h1: "Verlichting laten aanleggen?",
+    lead: "Een extra plafondpunt of nieuwe spots beïnvloeden ook schakelaars en kabelroutes. Geef door waar je licht wilt en welke ruimte het betreft.",
+    details: [
+      "Verlichtingswerk kan gaan om een armatuur aansluiten, extra lichtpunten maken of de schakeling aanpassen. De bestaande bedrading en de gekozen armaturen bepalen wat mogelijk is zonder groter installatiewerk.",
+      "Bij een nieuwe indeling, donkere werkplek of renovatie is het verstandig lichtpunten vroeg te plannen. In badkamer en buitenruimte vraagt de locatie om passende bescherming tegen vocht.",
+      "Knipperen of uitvallen hoeft niet alleen aan de lamp te liggen; aansluiting, schakelaar of dimmer kan een rol spelen. Bij terugkerende elektrische klachten is onderzoek nodig voor je alleen armaturen vervangt.",
+      "Een elektricien bespreekt plaats, bediening, aansluiting en veilige montage. Voor inbouwspots moet onder meer de aanwezige plafondruimte en het gekozen armatuur passen; laat dit vóór de definitieve afwerking toetsen.",
+      "Vraag of armaturen, schakelaars, dimmers, nieuwe kabels en gaten in het plafond zijn inbegrepen. Maak afspraken over afwerking van sleuven en eventueel herstel van stuc- of schilderwerk.",
+      "Gebruik een plattegrond met lichtpunten en schakelaars, en vermeld het type plafond. Deel productspecificaties van gekozen lampen als die beschikbaar zijn.",
+      "Aantal punten, kabelroute, plafondopbouw, bedieningswensen en afwerking sturen de kosten. Werk in een afgewerkt plafond kan meer voorbereiding vragen dan in een open verbouwing."
+    ],
+    faqs: [
+      ["Kunnen spots in ieder plafond?", "Niet altijd. Ruimte, materiaal en gekozen armaturen moeten eerst worden beoordeeld."],
+      ["Waarom knipperen lampen op een dimmer?", "Armatuur en dimmer kunnen niet bij elkaar passen of er kan een aansluitprobleem zijn. Laat de oorzaak onderzoeken."],
+      ["Zijn lampen bij de aanleg inbegrepen?", "Dat spreek je vooraf af; noteer wie armaturen levert en welke montage en schakelaars in de offerte staan."],
+      ["Wanneer plan ik verlichting bij renovatie?", "Bij voorkeur vóór plafonds en wanden definitief worden gesloten, zodat kabelroutes en schakelaars goed kunnen worden afgestemd."]
+    ]
+  },
+  "elektricien/krachtstroom": {
+    title: "Krachtstroom laten aanleggen? | VakConnect",
+    description: "Zwaardere apparatuur aansluiten? Lees over netaansluiting, groepenkast en deskundige aanleg van krachtstroom via VakConnect.",
+    h1: "Krachtstroom laten aanleggen?",
+    lead: "Een machine of andere zware verbruiker vraagt mogelijk een andere elektrische voorziening dan een normaal stopcontact. Laat apparaat en bestaande aansluiting vooraf beoordelen.",
+    details: [
+      "Krachtstroom is geen losse contactdoos zonder verdere context. De benodigde aansluiting hangt af van de specificaties van de verbruiker, de huidige netaansluiting en de beveiliging in de groepenkast.",
+      "Nieuwe werkplaatsapparatuur of een verbouwing met zwaardere elektrische belasting kan aanleiding zijn. Controleer eerst wat het apparaat werkelijk vraagt; niet elke kookplaat of laadvoorziening vraagt dezelfde aanpak.",
+      "Een bestaande installatie kan onvoldoende ruimte of capaciteit hebben. Ook afstand tot de gebruiksplek en kabelroute tellen mee. De elektricien beoordeelt of een aanpassing van de netaansluiting nodig is.",
+      "Een erkend deskundige voor de elektrische werkzaamheden plant groepen, beveiliging en aanleg op basis van de installatie. Aanpassingen aan de aansluiting zelf kunnen afstemming met de netbeheerder vereisen.",
+      "Vraag welke werkzaamheden in de groepenkast en welke kabelroute in de offerte zitten. Bespreek hoe de nieuwe voorziening wordt gecontroleerd en wie eventuele netbeheerderstappen regelt.",
+      "Verstrek het typeplaatje of de technische gegevens van het apparaat en foto's van de huidige situatie zonder kasten te openen. Meld ook andere geplande grote verbruikers.",
+      "Netaansluiting, capaciteit van de kast, lengte en ligging van kabels, afwerking en eventuele externe aanpassingen beïnvloeden de kosten. Laat externe kosten en installatiewerk gescheiden toelichten."
+    ],
+    faqs: [
+      ["Heeft elke inductiekookplaat krachtstroom nodig?", "Nee, aansluitvereisten verschillen. Laat de specificaties van het toestel en je installatie samen beoordelen."],
+      ["Moet de netbeheerder iets aanpassen?", "Dat hangt af van de huidige netaansluiting en benodigde capaciteit. De elektricien kan aangeven of afstemming nodig is."],
+      ["Kan krachtstroom op een bestaande groep?", "Een passende beveiliging en installatie zijn noodzakelijk; laat dit uitsluitend door een deskundige bepalen."],
+      ["Welke gegevens helpen bij de aanvraag?", "Stuur de technische gegevens van de verbruiker, gewenste locatie en informatie over andere zware apparaten."]
+    ]
+  },
+  "kozijnen/kunststof-kozijnen": {
+    title: "Kunststof kozijnen laten plaatsen? | VakConnect",
+    description: "Kunststof kozijnen overwegen? Lees over glaskeuze, ventilatie, sparingen en montage en beschrijf je project via VakConnect.",
+    h1: "Kunststof kozijnen laten plaatsen?",
+    lead: "Nieuwe kozijnen veranderen uitstraling, glas en bediening van je ramen. Beschrijf welke openingen je wilt aanpakken en wat je belangrijk vindt aan onderhoud en ventilatie.",
+    details: [
+      "Bij kunststof kozijnen gaat het om profiel, glas, beslag en de aansluiting op de bestaande gevel. De juiste maat en montage zijn minstens zo belangrijk als het gekozen materiaal voor gebruik en comfort.",
+      "Tocht, moeilijk sluitende ramen of een wens voor minder onderhoud kunnen redenen zijn om te vervangen. Kijk ook naar de staat van de huidige kozijnen: soms is herstel of alleen glasvervanging nog een optie.",
+      "De bestaande sparing, vensterbank en gevelafwerking bepalen hoe het nieuwe kozijn kan worden geplaatst. Glaskeuze beïnvloedt onder meer comfort en gewicht; bespreek opties zonder een vaste besparingsclaim te verwachten.",
+      "Een leverancier meet in en bespreekt draaiwijze, verdeling en glas. Ventilatie verdient aandacht als naden straks beter sluiten. De montage moet aansluiten op de gevel en omgaan met bestaande waterkering en afwerking.",
+      "Vraag welk glas, beslag, ventilatievoorziening en binnen- en buitenafwerking zijn inbegrepen. Laat de demontage en afvoer van oude kozijnen en herstel rond de sparingen vastleggen.",
+      "Tel ramen en deuren, noteer afmetingen bij benadering en maak foto's van gevel en binnenzijde. Geef aan of een gevelwijziging of afwijkende kleur onderdeel van je plannen is.",
+      "Aantal en afmetingen, profielindeling, glas, bereikbaarheid, montage in bestaande sparingen en herstel van gevel of binnenwand bepalen de kosten. Vergelijk offertes met dezelfde specificaties."
+    ],
+    faqs: [
+      ["Hebben kunststof kozijnen geen onderhoud?", "Ze vragen doorgaans ander onderhoud dan hout; schoonhouden en controleren van beslag en afdichtingen blijven belangrijk."],
+      ["Moet ik ventilatie opnieuw regelen?", "Betere kierdichting verandert de luchttoevoer. Bespreek hoe voldoende ventilatie in de ruimte behouden blijft."],
+      ["Kan ieder bestaand kozijn zonder gevelwerk worden vervangen?", "Niet altijd. De maatvoering en staat van de sparing bepalen welke aanpassing en afwerking nodig zijn."],
+      ["Kan ik zelf het glas kiezen?", "Ja, bespreek comfort, gebruik en gewicht met de vakman zodat profiel, beslag en glas bij elkaar passen."]
+    ]
+  },
+  "kozijnen/houten-kozijnen": {
+    title: "Houten kozijnen laten herstellen of plaatsen? | VakConnect",
+    description: "Houtrot of tocht bij houten kozijnen? Vergelijk herstel, schilderwerk en vervanging en vraag een specialist aan via VakConnect.",
+    h1: "Houten kozijnen laten herstellen of plaatsen?",
+    lead: "Hout geeft veel mogelijkheden voor herstel en detaillering, maar vocht kan onder verf ongemerkt schade veroorzaken. Beschrijf welke delen zacht, beschadigd of moeilijk sluitend zijn.",
+    details: [
+      "Houten kozijnen kunnen worden onderhouden, plaatselijk hersteld of vervangen. De keuze hangt af van de staat van dorpels, stijlen, verbindingen en de gewenste glas- en ventilatieoplossing.",
+      "Loslatende verf, open naden en zachte onderdorpels zijn redenen om de staat te laten beoordelen. Een kozijn dat scheef trekt of moeilijk sluit, kan ook een probleem met de aansluiting of constructie hebben.",
+      "Vocht kan via kitnaden, glaslatten of horizontale delen binnendringen. Alleen opnieuw schilderen helpt niet als er houtrot onder de laag zit. Laat schade vóór een besluit over vervangen in kaart brengen.",
+      "Een vakman bespreekt wat lokaal kan worden gerepareerd en waar vernieuwen verstandiger is. Schilderwerk beschermt het herstelde hout; spreek af wie dat verzorgt. Bij een karakteristiek of beschermd pand kunnen eisen voor uiterlijk gelden.",
+      "Vraag welke delen daadwerkelijk worden vervangen of gerepareerd en hoe aansluitingen op gevel en glas worden afgewerkt. Vergelijk niet alleen materiaalprijzen, maar ook het toekomstige onderhoud.",
+      "Maak foto's van onderdorpels en naden, noteer eerder herstel en vertel of behoud van de bestaande uitstraling belangrijk is. Geef aan of het gebouw bijzondere regels kent als dat bekend is.",
+      "Omvang van houtrot, profielwerk, glaskeuze, schilderwerk en bereikbaarheid bepalen de kosten. Een offerte voor plaatselijk herstel heeft een andere scope dan die voor een volledig nieuw kozijn."
+    ],
+    faqs: [
+      ["Is houtrot altijd reden om het kozijn te vervangen?", "Nee, plaatselijk herstel kan soms. Bij grote schade aan meerdere dragende delen kan vervangen logischer zijn."],
+      ["Is schilderwerk inbegrepen na houtreparatie?", "Niet automatisch. Leg vast hoe het herstelde deel wordt beschermd en wie de eindafwerking doet."],
+      ["Kan ik in een karakteristieke woning zomaar veranderen?", "Bij beschermde panden of bijzondere gevels kunnen regels gelden. Laat de toepasselijke situatie vooraf controleren."],
+      ["Wat maakt onderhoud belangrijk?", "Open naden en beschadigde verflagen laten vocht bij het hout komen; regelmatige controle helpt beginnende schade te herkennen."]
+    ]
+  },
+  "kozijnen/aluminium-kozijnen": {
+    title: "Aluminium kozijnen laten plaatsen? | VakConnect",
+    description: "Aluminium kozijnen overwegen voor nieuwe ramen of een uitbouw? Lees over profiel, glas, montage en afwerking via VakConnect.",
+    h1: "Aluminium kozijnen laten plaatsen?",
+    lead: "Bij aluminium kozijnen bepalen maatvoering, glas en aansluiting op de gevel het eindresultaat. Beschrijf of het om vervanging in een bestaande opening of nieuwbouw gaat.",
+    details: [
+      "Aluminium kozijnen worden gekozen voor een bepaalde uitstraling en indeling van grote of kleine glasvlakken. Het profiel moet passen bij het gewenste glas, de bediening en de bestaande bouwkundige opening.",
+      "Bij verouderde kozijnen, een nieuw gevelontwerp of een uitbouw kan aluminium een optie zijn. Vergelijk het materiaal met andere mogelijkheden op uitstraling, onderhoud en technische aansluiting, niet op een algemene besparingsbelofte.",
+      "Een bestaande sparing kan scheef zijn of beschadigde randen hebben. Glasgewicht, dorpel en ventilatie beïnvloeden welke oplossing geschikt is en hoeveel voorbereidend werk nodig wordt.",
+      "De vakman meet in, bepaalt profielindeling en stemt de plaatsing af op waterkering en luchtdichte aansluiting. In een uitbouw moet de kozijnkeuze vroeg worden afgestemd met constructie en dak.",
+      "Vraag om specificaties van profiel, glas, beslag en eventuele ventilatie. Leg vast wie oude kozijnen verwijdert, gevelaansluitingen afwerkt en schade rond de opening herstelt.",
+      "Lever foto's, globale maten en je wensen voor kleur, draaibare delen en drempel aan. Geef door of de opening verandert: dat kan bouwkundige beoordeling en andere regels meebrengen.",
+      "Afmetingen, glasoppervlak, profielindeling, montagehoogte en afwerking van de sparing bepalen de kosten. Een nieuw gevelgat is een andere opdracht dan vervanging op dezelfde plek."
+    ],
+    faqs: [
+      ["Passen aluminium kozijnen in iedere bestaande sparing?", "De opening moet worden ingemeten en de aansluiting beoordeeld; aanpassing van omliggend werk kan nodig zijn."],
+      ["Zijn grote glasvlakken altijd mogelijk?", "Afmetingen, constructie, gewicht en type glas bepalen wat verantwoord is. Laat het ontwerp daarop toetsen."],
+      ["Hoe houd ik ventilatie in de ruimte?", "Bespreek toevoer en bestaande ventilatie bij een beter sluitend nieuw kozijn."],
+      ["Welke onderdelen moeten in de offerte staan?", "Profiel, glas, beslag, montage, oude kozijnen afvoeren en afwerking aan binnen- en buitenzijde."]
+    ]
+  },
+  "kozijnen/kozijnen-vervangen": {
+    title: "Kozijnen laten vervangen? | VakConnect",
+    description: "Kozijnen versleten of tocht in huis? Lees wanneer herstel nog past en wat vervanging, glas en montage bepalen via VakConnect.",
+    h1: "Kozijnen laten vervangen?",
+    lead: "Bij houtrot, blijvende tocht of slecht sluitende ramen is vervanging een optie, maar niet altijd de enige. Beschrijf wat je huidige kozijnen mankeert en wat je wilt verbeteren.",
+    details: [
+      "Kozijnen vervangen betekent oude elementen verwijderen en nieuwe passend monteren in de gevel. Materiaalkeuze, glas, ventilatie en herstel van aansluitingen horen bij dezelfde afweging.",
+      "Als herstel van dorpels of beslag niet meer voldoende is, kan vervangen logisch zijn. Ook een renovatie met andere raamindeling vraagt vroeg om inzicht in de bestaande sparingen en gevel.",
+      "Tocht kan komen van afdichtingen, glas of de aansluiting rondom het kozijn. Houtrot kan plaatselijk zijn; laat daarom beoordelen of een beperkte reparatie, glasvervanging of volledige wissel het probleem werkelijk aanpakt.",
+      "Een specialist meet in, bespreekt materiaal, bediening en glas en plant demontage en montage. Bij aanpassing van openingen kunnen constructieve en gemeentelijke aandachtspunten spelen.",
+      "Vraag wat er gebeurt met binnenvensterbanken, gevelafwerking, schilderwerk en oude kozijnen. Ventilatie en waterdichte aansluiting zijn net zo belangrijk als een mooi nieuw profiel.",
+      "Tel de elementen, maak foto's van schade en geef aan welke ramen moeten kunnen openen. Meld eventuele plannen voor gevelisolatie, zodat aansluitingen niet los van elkaar worden beoordeeld.",
+      "Aantal kozijnen, afmetingen, materiaal, glas, hoogte en afwerking van binnen- en buitenzijde bepalen de kosten. Laat eventueel metsel- of stucwerk als aparte post opnemen."
+    ],
+    faqs: [
+      ["Moet een tochtend kozijn altijd worden vervangen?", "Nee. Onderzoek eerst of afdichtingen, glas of een aansluiting hersteld kunnen worden."],
+      ["Wordt het metselwerk beschadigd bij vervanging?", "Dat hangt af van de bestaande montage. Spreek vooraf af welke afwerking en herstel in de opdracht zitten."],
+      ["Wat kies ik eerst: materiaal of glas?", "Beide keuzes hangen samen met gebruik, uitstraling en bestaande opening; bespreek ze tegelijk met de specialist."],
+      ["Blijft ventilatie na vervanging voldoende?", "Betere kierdichting vraagt aandacht voor toevoer van frisse lucht. Neem ventilatie mee in het ontwerp."]
+    ]
+  },
+  "kozijnen/ramen-en-deuren": {
+    title: "Ramen en deuren laten vernieuwen? | VakConnect",
+    description: "Nieuwe ramen of buitendeuren nodig? Lees over bediening, beglazing, drempels en aansluiting en vraag een vakman aan via VakConnect.",
+    h1: "Ramen en deuren laten vernieuwen?",
+    lead: "Een raam dat niet goed opent of een buitendeur die tocht vraagt om een afweging tussen beslagherstel, glas en vervanging. Beschrijf per opening het probleem.",
+    details: [
+      "Ramen en deuren combineren kozijn, bewegend deel, glas en beslag. Goed gebruik vraagt correcte maatvoering en montage; een mooi profiel alleen lost een scheef sluitende opening niet op.",
+      "Klemmende ramen, tochtende buitendeuren of verouderd glas zijn aanleiding voor beoordeling. Geef aan of je alleen beter gebruik wilt of ook een andere indeling van de gevel.",
+      "Slijtage van scharnieren, afdichtingen en drempels kan lijken op een defect kozijn. Vocht onder een deur kan komen van de waterkering bij de dorpel; laat de oorzaak eerst bepalen.",
+      "Een vakman vergelijkt herstel van beslag en rubbers met een nieuw raam of deur. Bij vervanging bespreek je draairichting, veiligheid, glas en ventilatie binnen de bestaande opening.",
+      "Vraag of sluitwerk, dorpel, beglazing en afwerking van binnenzijde in de offerte staan. Nieuwe buitendeuren vragen aandacht voor waterdichte aansluiting en toegankelijkheid van de entree.",
+      "Maak een overzicht van aantallen en draairichtingen en noteer waar het klemt of tocht. Foto's van drempels en aansluitingen maken het verschil tussen reparatie en nieuw werk inzichtelijk.",
+      "Afmetingen, type glas, beslag, drempels, bereikbaarheid en staat van sparingen bepalen de kosten. Splits reparatie van volledige vervanging bij het vergelijken van opties."
+    ],
+    faqs: [
+      ["Is een klemmend raam altijd aan vervanging toe?", "Nee, beslag of afstelling kan de oorzaak zijn. Laat eerst de staat van raam en kozijn controleren."],
+      ["Kan ik alleen de buitendeur vervangen?", "Dat hangt af van maatvoering en staat van het bestaande kozijn; een specialist kan de aansluiting beoordelen."],
+      ["Welke keuzes zijn belangrijk voor een nieuwe deur?", "Denk aan draairichting, sluitwerk, drempel, glas en aansluiting op de gevel."],
+      ["Wat als er vocht bij de drempel komt?", "Laat waterkering en aansluiting onderzoeken voordat alleen een afdichting of nieuw deurblad wordt gekozen."]
+    ]
+  },
 };
 
 export function getEditorialSubPage(slug: string, fallback: ServiceContentPageData): ServiceContentPageData {
