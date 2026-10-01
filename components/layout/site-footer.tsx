@@ -1,49 +1,47 @@
 import Link from "next/link";
+import { getPopularServiceClusters } from "@/lib/content/service-cards";
 
 export function SiteFooter() {
+  const serviceLinks = getPopularServiceClusters();
+
   return (
     <footer className="border-t bg-slate-950 text-slate-200">
-      <div className="container-shell grid gap-8 py-12 md:grid-cols-2 xl:grid-cols-[1.2fr_1fr_1fr_1fr_1fr]">
+      <div className="container-shell grid gap-8 py-12 sm:grid-cols-2 xl:grid-cols-[1.2fr_1fr_1fr_1fr_1fr]">
         <div className="space-y-3">
           <p className="text-lg font-semibold">VakConnect</p>
           <p className="max-w-sm text-sm text-slate-400">
-            Vind de juiste vakman voor jouw klus via een duidelijke intake en gerichte lokale matching.
+            Beschrijf je klus één keer. VakConnect helpt je een passende vakman in jouw regio te vinden.
           </p>
         </div>
         <div className="space-y-3 text-sm text-slate-400">
-          <p className="font-medium text-slate-100">Consumenten</p>
+          <p className="font-medium text-slate-100">Consument</p>
           <div className="flex flex-col gap-2">
-            <Link href="/diensten">Diensten</Link>
-            <Link href="/regios">Regio&apos;s</Link>
             <Link href="/hoe-werkt-het">Hoe het werkt</Link>
-            <Link href="/aanvraag">Aanvraag starten</Link>
+            <Link href="/aanvraag">Plaats je klus</Link>
             <Link href="/kosten">Kosten</Link>
+            <Link href="/regios">Regio&apos;s</Link>
           </div>
         </div>
         <div className="space-y-3 text-sm text-slate-400">
-          <p className="font-medium text-slate-100">VakConnect</p>
+          <p className="font-medium text-slate-100">Vakmannen</p>
           <div className="flex flex-col gap-2">
             <Link href="/voor-vakmannen">Voor vakmannen</Link>
             <Link href="/aanmelden-vakman">Aanmelden vakman</Link>
+            <Link href="/login">Inloggen</Link>
+          </div>
+        </div>
+        <div className="space-y-3 text-sm text-slate-400">
+          <p className="font-medium text-slate-100">Diensten</p>
+          <div className="flex flex-col gap-2">
+            {serviceLinks.map((service) => <Link key={service.href} href={service.href}>{service.title}</Link>)}
+          </div>
+        </div>
+        <div className="space-y-3 text-sm text-slate-400">
+          <p className="font-medium text-slate-100">VakConnect & juridisch</p>
+          <div className="flex flex-col gap-2">
             <Link href="/over-vakconnect">Over VakConnect</Link>
             <Link href="/contact">Contact</Link>
-          </div>
-        </div>
-        <div className="space-y-3 text-sm text-slate-400">
-          <p className="font-medium text-slate-100">Vakgebieden</p>
-          <div className="flex flex-col gap-2">
-            <Link href="/dakdekker">Dakdekker</Link>
-            <Link href="/schilder">Schilder</Link>
-            <Link href="/loodgieter">Loodgieter</Link>
-            <Link href="/elektricien">Elektricien</Link>
-            <Link href="/verbouwing">Verbouwing</Link>
-          </div>
-        </div>
-        <div className="space-y-3 text-sm text-slate-400">
-          <p className="font-medium text-slate-100">Juridisch</p>
-          <div className="flex flex-col gap-2">
             <Link href="/privacy">Privacy</Link>
-            <Link href="/login">Inloggen</Link>
           </div>
         </div>
       </div>

@@ -11,7 +11,7 @@ import { submitContactFormAction } from "@/lib/public/actions";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Contact",
-  description: "Neem contact op met VakConnect voor vragen van consumenten, vakmannen en algemene onderwerpen.",
+  description: "Neem contact op met VakConnect over je aanvraag, vakman-aanmelding, account, verificatie of een technisch probleem.",
   path: "/contact",
   keywords: ["contact vakconnect", "vraag stellen vakconnect"],
 });
@@ -29,14 +29,21 @@ export default async function ContactPage({
     <div className="container-shell space-y-10 py-14">
       <nav className="text-sm text-muted-foreground"><Link href="/">Home</Link> / Contact</nav>
       <section className="space-y-4">
-        <h1 className="text-4xl font-semibold tracking-tight">Contact</h1>
-        <p className="max-w-3xl text-muted-foreground">Heb je een vraag als consument, vakman of over VakConnect in het algemeen? Laat een bericht achter.</p>
+        <p className="text-sm font-medium text-primary">We helpen je op weg</p>
+        <h1 className="text-4xl font-semibold tracking-tight">Waar kunnen we je mee helpen?</h1>
+        <p className="max-w-3xl leading-7 text-muted-foreground">
+          Stel een vraag over je aanvraag, aanmelden als vakman, account of verificatie. Ook voor een technisch probleem kun je hieronder een bericht sturen.
+        </p>
       </section>
 
       {success ? <p className="rounded-2xl border border-success/30 bg-green-50 px-4 py-3 text-sm text-success">{success}</p> : null}
       {error ? <p className="rounded-2xl border border-danger/30 bg-red-50 px-4 py-3 text-sm text-danger">{error}</p> : null}
 
       <Card className="space-y-6">
+        <div className="space-y-2">
+          <h2 className="text-xl font-semibold">Stuur VakConnect een bericht</h2>
+          <p className="text-sm leading-6 text-muted-foreground">Kies het onderwerp dat het beste past. Vermeld bij een technisch probleem wat er gebeurde en op welke pagina.</p>
+        </div>
         <form action={submitContactFormAction} className="grid gap-4 md:grid-cols-2">
           <input
             type="text"
@@ -51,7 +58,7 @@ export default async function ContactPage({
             <Select id="reason" name="reason" required>
               <option value="consument">Consumentenvraag</option>
               <option value="vakman">Vraag als vakman</option>
-              <option value="algemeen">Algemene vraag</option>
+              <option value="algemeen">Account, verificatie of technisch probleem</option>
             </Select>
           </FormField>
           <FormField id="name" label="Naam"><Input id="name" name="name" required /></FormField>
@@ -67,7 +74,9 @@ export default async function ContactPage({
         </form>
       </Card>
 
-      <p className="text-sm text-muted-foreground">Liever direct mailen? {siteConfig.contactEmail}</p>
+      <p className="text-sm text-muted-foreground">
+        Liever direct mailen? <a className="text-primary underline underline-offset-4" href={`mailto:${siteConfig.contactEmail}`}>{siteConfig.contactEmail}</a>
+      </p>
     </div>
   );
 }
