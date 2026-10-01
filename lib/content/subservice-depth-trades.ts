@@ -6,42 +6,42 @@ export const tradeDepthSections: Record<string, ServiceSection[]> = {
       heading: "Het verloop van de lekkage vastleggen",
       paragraphs: [
         "Een plek die uitsluitend na langdurige regen zichtbaar wordt, geeft andere aanwijzingen dan druppels die bij korte buien optreden. Schrijf op wanneer de eerste verkleuring verscheen, hoe snel die groter wordt en of het plafond tussendoor opdroogt. Deze tijdlijn helpt een dakdekker om een actieve waterroute te onderscheiden van vocht dat al langer in de constructie aanwezig is.",
-        "Verplaats meubels en kwetsbare spullen uit de buurt van binnendringend water en leg de zichtbare schade vast zonder het plafond of de dakbedekking zelf open te maken. Meld ook natte plekken nabij elektrische voorzieningen; die situatie vraagt een veilige beoordeling. Bewaar foto's op verschillende dagen, zodat het verschil tussen nieuwe inwatering en een oude vlek bespreekbaar blijft."
+        "Verplaats kwetsbare spullen uit de buurt van binnendringend water en fotografeer de schade zonder plafond of dakbedekking te openen. Meld vocht nabij elektra voor een veilige beoordeling. Foto's op verschillende dagen tonen of een oude vlek opnieuw groeit."
       ]
     },
     {
       heading: "Gericht onderzoek zonder voorbarige reparatie",
       paragraphs: [
         "Bespreek vooraf of de vakman zowel vanaf de binnenzijde als aan de buitenzijde kan inspecteren, en welke onderdelen bereikbaar zijn. Een lek dat naast een dakraam verschijnt, hoeft niet aan het raam zelf te liggen. Vraag om de vermoedelijke route van het water uit te leggen, inclusief wat wel en niet is bekeken, voordat een reparatie wordt gekozen.",
-        "Soms is een eerste bezoek vooral bedoeld om de inwatering te beperken en informatie te verzamelen. Vraag dan expliciet welke conclusie al vaststaat en welk vervolgonderzoek nog nodig is. Laat een tijdelijk uitgevoerde maatregel apart beschrijven van de duurzame oplossing, zodat een later bezoek niet automatisch als afgerond herstel wordt beschouwd."
+        "Een eerste bezoek kan vooral inwatering beperken en informatie opleveren. Vraag wat al vaststaat en welk onderzoek nog nodig is. Laat een tijdelijke maatregel apart beschrijven van definitief herstel, zodat duidelijk blijft wat nog moet gebeuren."
       ]
     },
     {
       heading: "De omvang van schade onder het dak",
       paragraphs: [
         "Als water enige tijd door de dakopbouw heeft gelopen, kunnen isolatie, hout en binnenafwerking verschillend reageren. Een droge plek aan het oppervlak bewijst niet dat alle lagen erachter droog zijn. Vraag of na het stoppen van de lekkage nog inspectie of droging nodig is en wie beoordeelt wanneer afwerking weer kan worden gesloten.",
-        "Een aangetast deel vervangen is iets anders dan het volledige dak vernieuwen. Vraag de dakdekker welke waarnemingen een plaatselijke reparatie ondersteunen en wanneer meerdere zwakke details tegelijk aangepakt moeten worden. Houd rekening met onzekerheid zolang onderliggende lagen niet zichtbaar zijn; spreek af hoe extra werk wordt onderbouwd en goedgekeurd."
+        "Een aangetast deel vervangen verschilt van het hele dak vernieuwen. Vraag welke waarnemingen lokaal herstel ondersteunen en wanneer meerdere details aandacht vragen. Zolang onderliggende lagen niet zichtbaar zijn, moet aanvullend werk worden onderbouwd en goedgekeurd."
       ]
     },
     {
       heading: "Herstel en controle op elkaar laten aansluiten",
       paragraphs: [
         "Laat aangeven op welk dakdeel de werkzaamheden plaatsvinden en of aangrenzende onderdelen na herstel weer waterdicht aansluiten. Bij een eerdere reparatie op dezelfde plek is het nuttig te weten wat destijds is vervangen, niet alleen dat er ooit werk is gedaan. Een vervolgklacht kan anders ten onrechte worden toegeschreven aan hetzelfde onderdeel.",
-        "Vraag hoe het resultaat wordt gecontroleerd en welke bevindingen je schriftelijk krijgt. Een controle direct na het werk kan niet elk weersafhankelijk probleem zichtbaar maken; leg daarom vast wat je moet melden als de vochtplek bij een volgende bui toch verandert. Spreek ook af wie verantwoordelijk is voor eventuele afzonderlijke binnenreparaties."
+        "Vraag hoe het resultaat wordt gecontroleerd en welke bevindingen je krijgt. Niet elk weersafhankelijk probleem is direct zichtbaar; spreek af wat je meldt als de vlek na regen verandert. Leg ook vast wie binnenreparaties uitvoert."
       ]
     },
     {
       heading: "Een aanvraag die diagnose mogelijk maakt",
       paragraphs: [
-        "Vermeld of het om een woning, aanbouw of dakkapel gaat, welke ruimtes bereikbaar zijn en of de dakbedekking recent is aangepast. Ook een verbouwing vlak voor het ontstaan van de klacht is relevante context. Geef aan of de plek bij één bui ontstond of geleidelijk erger werd, zonder zelf een definitieve oorzaak te claimen.",
-        "Vraag offertes niet alleen op een bedrag te vergelijken: controleer of toegang, onderzoek, herstelmateriaal en mogelijke vervolginspectie zijn inbegrepen. Als schade aan plafond of isolatie buiten de opdracht valt, laat dat ondubbelzinnig opschrijven. Zo blijft duidelijk welke beslissing na het vinden van de lekbron nog bij jou ligt."
+        "Vermeld of de klacht een woning, aanbouw of dakkapel betreft, welke ruimtes bereikbaar zijn en of recent is verbouwd. Geef aan of de plek bij één bui ontstond of geleidelijk groeide, zonder zelf een oorzaak vast te stellen.",
+        "Vergelijk in offertes of toegang, onderzoek, materialen en vervolginspectie zijn inbegrepen. Laat expliciet noteren als herstel van plafond of isolatie buiten de opdracht valt. Zo weet je wat na het vinden van de lekbron nog afzonderlijk besloten moet worden."
       ]
     },
     {
       heading: "Afstemmen met bewoners en betrokken partijen",
       paragraphs: [
-        "Bij een gedeeld dak kan onderzoek toegang tot een andere woning of toestemming van een beheerder vragen. Meld wie eigenaar is en wie de vakman binnenlaat. Noteer wanneer meerdere woningen dezelfde klacht hebben; dat kan op één gedeelde oorzaak wijzen.",
-        "Bewaar afspraken en vermeld welke werkzaamheden al zijn uitgevoerd. Geef bevindingen over de lekbron door aan wie binnenafwerking herstelt. Bespreek wie controleert of het dak droog blijft voordat plafond of isolatie opnieuw wordt afgewerkt."
+        "Bij een gedeeld dak kan toegang tot een andere woning of toestemming nodig zijn. Meld wie eigenaar is en wie toegang regelt. Klachten in meerdere woningen kunnen op één oorzaak wijzen.",
+        "Bewaar afspraken over eerder werk en geef de bevindingen door aan wie binnenafwerking herstelt. Bespreek wie controleert of het dak droog blijft voordat plafond of isolatie opnieuw wordt afgewerkt."
       ]
     }
   ],
