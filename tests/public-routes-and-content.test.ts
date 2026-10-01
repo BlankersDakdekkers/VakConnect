@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import test from "node:test";
-import { getEditorialClusters, getServiceDetailHref } from "../lib/content/service-cards.ts";
+import { getEditorialClusters, getPopularServiceClusters, getServiceDetailHref } from "../lib/content/service-cards.ts";
 import { getAllServicePages, serviceMainPages, serviceSubPages, getAllServiceRoutes } from "../lib/content/service-pages.ts";
 import { localServicePageConfigs } from "../lib/content/local-service-pages.ts";
 import { publicContactSchema, publicProfessionalApplicationSchema } from "../lib/validation/public.ts";
@@ -229,6 +229,70 @@ test("service detail route helper geeft bekende mappings terug", () => {
   assert.equal(getServiceDetailHref("dakdekker"), "/dakdekker");
   assert.equal(getServiceDetailHref("badkamer-verbouwen"), "/badkamer");
   assert.equal(getServiceDetailHref("onbekend"), undefined);
+});
+
+test("homepage en dienstenoverzicht linken naar alle acht hoofdvakgebieden", () => {
+  const expectedClusters = [
+    "/dakdekker",
+    "/schilder",
+    "/loodgieter",
+    "/elektricien",
+    "/kozijnen",
+    "/badkamer",
+    "/isolatie",
+    "/verbouwing",
+  ];
+  const popularClusters = getPopularServiceClusters();
+  const routeSet = new Set(getAllServiceRoutes());
+
+  assert.deepEqual(popularClusters.map((cluster) => cluster.href), expectedClusters);
+  for (const cluster of popularClusters) {
+    assert.equal(routeSet.has(cluster.href), true, `Hoofdvakgebied ontbreekt: ${cluster.href}`);
+    assert.ok(cluster.description.length > 40, `Vakgebied heeft te weinig uitleg: ${cluster.href}`);
+  }
+
+  const homeSource = readFileSync(join(repoRoot, "app/(public)/page.tsx"), "utf8");
+  const servicesSource = readFileSync(join(repoRoot, "app/(public)/diensten/page.tsx"), "utf8");
+  assert.match(homeSource, /href="\/aanvraag"/);
+  assert.match(homeSource, /href="\/hoe-werkt-het"/);
+  assert.match(servicesSource, /getPopularServiceClusters/);
+});
+
+test("publieke kernpagina's hebben één H1, metadata en de bedoelde primaire CTA", () => {
+  const pages = [
+    ["app/(public)/page.tsx", "/aanvraag"],
+    ["app/(public)/hoe-werkt-het/page.tsx", "/aanvraag"],
+    ["app/(public)/diensten/page.tsx", "/aanvraag"],
+    ["app/(public)/voor-vakmannen/page.tsx", "/aanmelden-vakman"],
+    ["app/(public)/aanmelden-vakman/page.tsx", "submitProfessionalApplicationAction"],
+    ["app/(public)/kosten/page.tsx", "/aanvraag"],
+    ["app/(public)/over-vakconnect/page.tsx", "/aanvraag"],
+    ["app/(public)/contact/page.tsx", "submitContactFormAction"],
+  ];
+
+  for (const [path, expectedCta] of pages) {
+    const source = readFileSync(join(repoRoot, path), "utf8");
+    assert.equal((source.match(/<h1\b/g) ?? []).length, 1, `Verwacht één H1 op ${path}`);
+    assert.match(source, /export const metadata: Metadata = buildPageMetadata/);
+    assert.ok(source.includes(expectedCta), `Primaire CTA ontbreekt op ${path}`);
+    const description = source.match(/description:\s*"([^"]+)"/)?.[1];
+    assert.ok(description, `Meta description ontbreekt op ${path}`);
+    assert.ok(description.length <= 160, `Meta description te lang op ${path}`);
+  }
+});
+
+test("publieke contact- en vakmanformulieren behouden hun serveracties en velden", () => {
+  const contactSource = readFileSync(join(repoRoot, "app/(public)/contact/page.tsx"), "utf8");
+  const applicationSource = readFileSync(join(repoRoot, "app/(public)/aanmelden-vakman/page.tsx"), "utf8");
+
+  assert.match(contactSource, /action=\{submitContactFormAction\}/);
+  for (const field of ["reason", "name", "email", "phone", "message", "website"]) {
+    assert.match(contactSource, new RegExp(`name="${field}"`), `Contactveld ontbreekt: ${field}`);
+  }
+  assert.match(applicationSource, /action=\{submitProfessionalApplicationAction\}/);
+  for (const field of ["company_name", "contact_name", "email", "phone", "kvk_number", "website", "description", "service_ids", "postal_code_prefixes"]) {
+    assert.match(applicationSource, new RegExp(`name="${field}"`), `Aanmeldveld ontbreekt: ${field}`);
+  }
 });
 
 test("sitemap bevat publieke routes en geen protected routes", () => {

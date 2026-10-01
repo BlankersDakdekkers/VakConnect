@@ -4,8 +4,7 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 export const siteConfig = {
   name: "VakConnect",
-  description:
-    "VakConnect koppelt consumenten aan geschikte lokale vakmensen met een schaalbare lead marketplace-basis.",
+  description: "Vind een passende vakman voor jouw klus met een duidelijke aanvraag en matching op dienst en regio.",
   url: baseUrl,
   contactEmail: "info@vakconnect.nl",
 };
