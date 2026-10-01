@@ -1,4 +1,5 @@
 import { serviceMainContent } from "./service-main-content.ts";
+import { getEditorialSubPage } from "./service-sub-content.ts";
 
 export type ServiceSection = {
   heading: string;
@@ -9326,7 +9327,7 @@ export const serviceMainPages: Record<string, ServiceContentPageData> = Object.f
 );
 
 export const serviceSubPages: Record<string, ServiceContentPageData> = Object.fromEntries(
-  Object.entries(rawServiceSubPages).map(([slug, page]) => [slug, { ...page, costFactors: withFallbackCosts(page.costFactors) }]),
+  Object.entries(rawServiceSubPages).map(([slug, page]) => [slug, getEditorialSubPage(slug, { ...page, costFactors: withFallbackCosts(page.costFactors) })]),
 );
 
 export const serviceMainSlugs = Object.keys(rawServiceMainPages);
