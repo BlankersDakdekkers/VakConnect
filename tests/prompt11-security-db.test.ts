@@ -398,6 +398,54 @@ test("notification inbox enforces ownership, read-only fields and atomic worker 
   assert.match(unauthorizedClaim, /permission denied/i);
   assert.equal(harness.run(database, `select count(*) from public.claim_pending_notification_events(10);`, { dbRole: "service_role" }), "1");
   assert.equal(harness.run(database, `select count(*) from public.claim_pending_notification_events(10);`, { dbRole: "service_role" }), "0");
+
+  const expiredDocumentId = randomUUID();
+  harness.run(database, `
+    insert into public.professional_documents (
+      id, professional_id, document_type, storage_path, original_filename, mime_type, file_size, verification_status, expires_at
+    ) values (
+      ${sqlLiteral(expiredDocumentId)}, ${sqlLiteral(professionalA)}, 'other',
+      ${sqlLiteral(`professionals/${professionalA}/documents/${expiredDocumentId}/expired.pdf`)},
+      'expired.pdf', 'application/pdf', 128, 'pending', now() - interval '1 day'
+    );
+  `);
+  assert.equal(harness.run(database, `select count(*) from public.claim_expired_professional_documents(10);`, { dbRole: "service_role" }), "1");
+  assert.equal(harness.run(database, `select count(*) from public.claim_expired_professional_documents(10);`, { dbRole: "service_role" }), "0");
+});
+
+test("expired recommended documents do not revoke verification while required documents trigger review", { concurrency: false }, async (t) => {
+  const isolated = await createIsolatedDatabase(t, "prompt12_document_requirements");
+  if (!isolated) return;
+
+  const { harness, database } = isolated;
+  const userId = randomUUID();
+  const professionalId = randomUUID();
+  const recommendedDocumentId = randomUUID();
+  const requiredDocumentId = randomUUID();
+  seedProfessional(harness, database, professionalId, userId, "requirements@example.com", "Dakbedrijf Requirements");
+  harness.run(database, `update public.professionals set verification_status = 'verified' where id = ${sqlLiteral(professionalId)};`);
+
+  harness.run(database, `
+    insert into public.professional_documents (
+      id, professional_id, document_type, storage_path, original_filename, mime_type, file_size, verification_status
+    ) values (
+      ${sqlLiteral(recommendedDocumentId)}, ${sqlLiteral(professionalId)}, 'liability_insurance',
+      ${sqlLiteral(`professionals/${professionalId}/documents/${recommendedDocumentId}/recommended.pdf`)},
+      'recommended.pdf', 'application/pdf', 128, 'pending'
+    );
+  `);
+  assert.equal(harness.run(database, `select verification_status from public.professionals where id = ${sqlLiteral(professionalId)};`), "verified");
+
+  harness.run(database, `
+    insert into public.professional_documents (
+      id, professional_id, document_type, storage_path, original_filename, mime_type, file_size, verification_status
+    ) values (
+      ${sqlLiteral(requiredDocumentId)}, ${sqlLiteral(professionalId)}, 'kvk_extract',
+      ${sqlLiteral(`professionals/${professionalId}/documents/${requiredDocumentId}/required.pdf`)},
+      'required.pdf', 'application/pdf', 128, 'pending'
+    );
+  `);
+  assert.equal(harness.run(database, `select verification_status from public.professionals where id = ${sqlLiteral(professionalId)};`), "pending");
 });
 
 test("approved document storage cannot be deleted directly while pending documents can be deleted through the controlled flow", { concurrency: false }, async (t) => {

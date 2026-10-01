@@ -23,6 +23,8 @@ test("notification claims use database row locking and service-role-only executi
   assert.match(migration, /for update skip locked/i);
   assert.match(migration, /revoke all on function public\.claim_pending_notification_events\(integer\) from public, anon, authenticated/);
   assert.match(migration, /grant execute on function public\.claim_pending_notification_events\(integer\) to service_role/);
+  assert.match(migration, /claim_expired_professional_documents/);
+  assert.match(migration, /grant execute on function public\.claim_expired_professional_documents\(integer\) to service_role/);
 });
 
 test("notification preferences keep all external channels disabled", () => {

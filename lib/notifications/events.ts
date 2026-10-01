@@ -6,8 +6,31 @@ import type {
   NotificationChannelType,
   ProfessionalNotificationEventType,
 } from "@/types/database";
+import { professionalNotificationEventTypes } from "@/types/database";
 
 type NotificationCategory = "lead_offer_notifications" | "verification_notifications" | "document_notifications" | "progress_reminders";
+
+function safePayload(input: Record<string, Json | undefined>): Record<string, Json> {
+  const title = input.title;
+  const description = input.description;
+  const href = input.href;
+  if (typeof title !== "string" || title.length > 120 || typeof description !== "string" || description.length > 240) {
+    throw new Error("Notificatie-inhoud is ongeldig.");
+  }
+  const payload: Record<string, Json> = { title: title.trim(), description: description.trim() };
+  if (typeof href === "string") {
+    try {
+      const url = new URL(href, "https://vakconnect.invalid");
+      if (url.origin !== "https://vakconnect.invalid" || !url.pathname.startsWith("/")) {
+        throw new Error("Notificatie-link is ongeldig.");
+      }
+      payload.href = `${url.pathname}${url.search}${url.hash}`;
+    } catch {
+      throw new Error("Notificatie-link is ongeldig.");
+    }
+  }
+  return payload;
+}
 
 const categoryByEvent: Partial<Record<ProfessionalNotificationEventType, NotificationCategory>> = {
   lead_offer_received: "lead_offer_notifications",
@@ -36,8 +59,15 @@ export async function createNotificationEvent(input: {
   scheduledFor?: string | null;
   critical?: boolean;
 }) {
+  if (!professionalNotificationEventTypes.includes(input.eventType)
+    || (input.channelType !== "in_app" && input.channelType !== "system")
+    || !input.deduplicationKey.trim()
+    || input.deduplicationKey.length > 240) {
+    throw new Error("Notificatie-invoer is ongeldig.");
+  }
   const supabase = createAdminSupabaseClient();
   const category = categoryByEvent[input.eventType];
+  const payload = safePayload(input.payload);
 
   if (input.professionalId && category && !input.critical && input.channelType === "in_app") {
     const { data: preference } = await supabase
@@ -59,7 +89,7 @@ export async function createNotificationEvent(input: {
       lead_id: input.leadId ?? null,
       event_type: input.eventType,
       channel_type: input.channelType,
-      payload: input.payload,
+      payload,
       status: scheduledFor ? "pending" : "delivered",
       scheduled_for: scheduledFor,
       processed_at: scheduledFor ? null : new Date().toISOString(),

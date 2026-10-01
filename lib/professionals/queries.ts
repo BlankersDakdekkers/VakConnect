@@ -258,6 +258,8 @@ function calculateFromRow(row: Record<string, unknown>) {
     reviewed_at: (document.reviewed_at as string | null) ?? null,
     reviewed_by: (document.reviewed_by as string | null) ?? null,
     expires_at: (document.expires_at as string | null) ?? null,
+    expiry_processed_at: (document.expiry_processed_at as string | null) ?? null,
+    expiry_processing_started_at: (document.expiry_processing_started_at as string | null) ?? null,
     archived_at: (document.archived_at as string | null) ?? null,
     superseded_by_document_id: (document.superseded_by_document_id as string | null) ?? null,
     created_at: String(document.created_at ?? document.uploaded_at),

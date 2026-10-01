@@ -406,6 +406,8 @@ export interface ProfessionalDocument {
   reviewed_at: string | null;
   reviewed_by: string | null;
   expires_at: string | null;
+  expiry_processed_at: string | null;
+  expiry_processing_started_at: string | null;
   archived_at: string | null;
   superseded_by_document_id: string | null;
   created_at: string;

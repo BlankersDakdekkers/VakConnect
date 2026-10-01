@@ -64,6 +64,18 @@ alter table public.professional_notification_events
   add constraint professional_notification_events_payload_object_check
     check (jsonb_typeof(payload) = 'object');
 
+alter table public.professional_notification_events
+  alter column processed_at set default timezone('utc', now());
+
+alter table public.professional_documents
+  add column if not exists expiry_processed_at timestamptz,
+  add column if not exists expiry_processing_started_at timestamptz;
+
+update public.professional_notification_events
+set processed_at = created_at
+where status = 'delivered'
+  and processed_at is null;
+
 create unique index if not exists professional_notification_events_deduplication_key_idx
   on public.professional_notification_events (deduplication_key)
   where deduplication_key is not null;
@@ -214,6 +226,11 @@ begin
 end;
 $$;
 
+drop trigger if exists touch_professional_verification_on_document_update on public.professional_documents;
+create trigger touch_professional_verification_on_document_update
+  after update of verification_status, expires_at, archived_at on public.professional_documents
+  for each row execute function public.touch_professional_verification_on_document_change();
+
 create or replace function public.notify_professional_document_rejection()
 returns trigger
 language plpgsql
@@ -288,6 +305,41 @@ create trigger notify_professional_suspension
   after update of verification_status on public.professionals
   for each row execute function public.notify_professional_suspension();
 
+create or replace function public.enqueue_professional_notification(
+  target_professional_id uuid,
+  target_event_type professional_notification_event_type,
+  payload jsonb default '{}'::jsonb
+)
+returns uuid
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  inserted_id uuid;
+begin
+  insert into public.professional_notification_events (
+    professional_id,
+    event_type,
+    channel_type,
+    payload,
+    status,
+    processed_at
+  )
+  values (
+    target_professional_id,
+    target_event_type,
+    'in_app',
+    coalesce(payload, '{}'::jsonb),
+    'delivered',
+    timezone('utc', now())
+  )
+  returning id into inserted_id;
+
+  return inserted_id;
+end;
+$$;
+
 create or replace function public.claim_pending_notification_events(max_count integer default 100)
 returns setof public.professional_notification_events
 language plpgsql
@@ -295,6 +347,15 @@ security definer
 set search_path = public, pg_temp
 as $$
 begin
+  update public.professional_notification_events
+  set status = 'failed',
+      failed_at = timezone('utc', now()),
+      processing_started_at = null,
+      last_error = 'retry_exhausted'
+  where status = 'processing'
+    and processing_started_at < timezone('utc', now()) - interval '15 minutes'
+    and attempt_count >= max_attempts;
+
   return query
   with locked as (
     select event.id
@@ -325,10 +386,45 @@ begin
 end;
 $$;
 
+create or replace function public.claim_expired_professional_documents(max_count integer default 100)
+returns setof public.professional_documents
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+begin
+  return query
+  with locked as (
+    select document.id
+    from public.professional_documents document
+    where document.archived_at is null
+      and document.expires_at <= timezone('utc', now())
+      and document.expiry_processed_at is null
+      and document.verification_status in ('pending', 'approved', 'expired')
+      and (
+        document.expiry_processing_started_at is null
+        or document.expiry_processing_started_at < timezone('utc', now()) - interval '15 minutes'
+      )
+    order by document.expires_at, document.id
+    for update skip locked
+    limit greatest(1, least(coalesce(max_count, 100), 500))
+  ),
+  claimed as (
+    update public.professional_documents document
+    set expiry_processing_started_at = timezone('utc', now())
+    where document.id in (select locked.id from locked)
+    returning document.*
+  )
+  select claimed.* from claimed;
+end;
+$$;
+
 revoke all on function public.claim_pending_notification_events(integer) from public, anon, authenticated;
+revoke all on function public.claim_expired_professional_documents(integer) from public, anon, authenticated;
 revoke all on function public.notify_professional_document_rejection() from public, anon, authenticated, service_role;
 revoke all on function public.notify_professional_suspension() from public, anon, authenticated, service_role;
 grant execute on function public.claim_pending_notification_events(integer) to service_role;
+grant execute on function public.claim_expired_professional_documents(integer) to service_role;
 
 revoke all on table public.operational_settings, public.operational_worker_runs from anon, authenticated;
 grant select on table public.operational_settings, public.operational_worker_runs to authenticated;

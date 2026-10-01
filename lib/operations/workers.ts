@@ -1,6 +1,8 @@
 import "server-only";
 
 import { refreshProfessionalDerivedState } from "@/lib/professionals/derived";
+import { activateOffersForRun } from "@/lib/distribution/engine";
+import { addLeadActivity } from "@/lib/leads/activity";
 import { createNotificationEvent } from "@/lib/notifications/events";
 import { finishWorkerRun, startWorkerRun } from "@/lib/notifications/worker";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
@@ -48,6 +50,9 @@ async function isRequiredDocument(professionalId: string, documentType: string) 
     supabase.from("professional_document_requirements").select("service_id").eq("document_type", documentType).eq("requirement_level", "required"),
     supabase.from("professional_services").select("service_id").eq("professional_id", professionalId).eq("active", true),
   ]);
+  if (requirements.error || services.error) {
+    throw new Error("Documentvereisten konden niet worden gecontroleerd.");
+  }
   const activeServiceIds = new Set((services.data ?? []).map((row) => String(row.service_id)));
   return (requirements.data ?? []).some((row) => row.service_id === null || activeServiceIds.has(String(row.service_id)));
 }
@@ -57,65 +62,119 @@ export async function processDocumentExpiry() {
     const supabase = createAdminSupabaseClient();
     const settings = await getOperationalSettings();
     const maxDays = Math.max(...settings.documentExpiryReminderDays, 0);
-    const { data: documents, error } = await supabase
-      .from("professional_documents")
-      .select("id, professional_id, document_type, expires_at, verification_status")
-      .is("archived_at", null)
-      .not("expires_at", "is", null)
-      .lte("expires_at", new Date(Date.now() + maxDays * dayMs).toISOString())
-      .in("verification_status", ["pending", "approved"]);
-    if (error) throw new Error("Documentvervaldata kon niet worden geladen.");
+    const now = new Date();
+    const [reminderResult, expiryResult] = await Promise.all([
+      supabase
+        .from("professional_documents")
+        .select("id, professional_id, document_type, expires_at, verification_status, expiry_processed_at, expiry_processing_started_at")
+        .is("archived_at", null)
+        .not("expires_at", "is", null)
+        .gt("expires_at", now.toISOString())
+        .lte("expires_at", new Date(now.getTime() + maxDays * dayMs).toISOString())
+        .in("verification_status", ["pending", "approved"])
+        .order("expires_at", { ascending: true })
+        .limit(500),
+      supabase.rpc("claim_expired_professional_documents", { max_count: 200 }),
+    ]);
+    if (reminderResult.error || expiryResult.error) {
+      throw new Error("Documentvervaldata kon niet worden geladen.");
+    }
+    const documents = [
+      ...(reminderResult.data ?? []),
+      ...((expiryResult.data ?? []) as Array<Record<string, unknown>>),
+    ];
 
     let processed = 0;
     let failed = 0;
-    const refreshedProfessionals = new Set<string>();
     for (const row of documents ?? []) {
       try {
         const document = safeRow(row);
         const id = String(document.id);
         const professionalId = String(document.professional_id);
         const expiresAt = new Date(String(document.expires_at)).getTime();
+        const expiresAtIso = new Date(expiresAt).toISOString();
         const daysRemaining = Math.ceil((expiresAt - Date.now()) / dayMs);
+        const expiryLease = typeof document.expiry_processing_started_at === "string" ? document.expiry_processing_started_at : null;
         const required = await isRequiredDocument(professionalId, String(document.document_type));
 
         if (daysRemaining <= 0) {
-          const { data: expired, error: expireError } = await supabase
-            .from("professional_documents")
-            .update({ verification_status: "expired" })
-            .eq("id", id)
-            .in("verification_status", ["pending", "approved"])
-            .select("id")
-            .maybeSingle();
-          if (expireError) throw new Error("Documentstatus kon niet worden bijgewerkt.");
-          if (expired) {
+          if (!expiryLease) continue;
+          if (document.verification_status !== "expired") {
+            const { error: expireError } = await supabase
+              .from("professional_documents")
+              .update({ verification_status: "expired" })
+              .eq("id", id)
+              .in("verification_status", ["pending", "approved"]);
+            if (expireError) throw new Error("Documentstatus kon niet worden bijgewerkt.");
+          }
+
+          await createNotificationEvent({
+            professionalId,
+            eventType: "document_expired",
+            channelType: "in_app",
+            critical: required,
+            deduplicationKey: `document-expired:${id}`,
+            payload: {
+              title: "Document verlopen",
+              description: required ? "Een vereist document is verlopen. Werk je profiel bij om verificatie te herstellen." : "Een document is verlopen. Bekijk of vervanging nodig is.",
+              href: "/vakman/profiel",
+            },
+          });
+
+          if (required) {
             await createNotificationEvent({
-              professionalId,
-              eventType: "document_expired",
-              channelType: "in_app",
-              critical: required,
-              deduplicationKey: `document-expired:${id}`,
+              eventType: "document_expiry_attention",
+              channelType: "system",
+              deduplicationKey: `document-expiry-attention:${id}`,
+              critical: true,
               payload: {
-                title: "Document verlopen",
-                description: required ? "Een vereist document is verlopen. Werk je profiel bij om verificatie te herstellen." : "Een document is verlopen. Bekijk of vervanging nodig is.",
-                href: "/vakman/profiel",
+                title: "Vereist document verlopen",
+                description: "Een vereist professioneel document is verlopen.",
+                href: `/admin/vakmannen/${professionalId}`,
               },
             });
-            if (required) {
-              await createNotificationEvent({
-                eventType: "document_expiry_attention",
-                channelType: "system",
-                deduplicationKey: `document-expiry-attention:${id}`,
-                critical: true,
-                payload: {
-                  title: "Vereist document verlopen",
-                  description: "Een vereist professioneel document is verlopen.",
-                  href: `/admin/vakmannen/${professionalId}`,
-                },
+            const { data: skippedCandidates, error: candidateError } = await supabase
+              .from("lead_distribution_candidates")
+              .update({ status: "skipped", skipped_at: new Date().toISOString() })
+              .eq("professional_id", professionalId)
+              .in("status", ["offered", "viewed"])
+              .select("id, lead_id, distribution_run_id");
+            if (candidateError) throw new Error("Lead offers konden niet opnieuw worden beoordeeld.");
+            const affectedRuns = new Set((skippedCandidates ?? []).map((candidate) => String(candidate.distribution_run_id)));
+            for (const candidate of skippedCandidates ?? []) {
+              await addLeadActivity({
+                leadId: String(candidate.lead_id),
+                professionalId,
+                activityType: "candidate_skipped",
+                metadata: { candidate_id: String(candidate.id), reason: "required_document_expired" },
               });
-              refreshedProfessionals.add(professionalId);
             }
-            processed += 1;
+            const { data: previouslySkipped, error: skippedError } = await supabase
+              .from("lead_distribution_candidates")
+              .select("distribution_run_id")
+              .eq("professional_id", professionalId)
+              .eq("status", "skipped")
+              .gte("skipped_at", expiresAtIso);
+            if (skippedError) throw new Error("Distributieruns konden niet opnieuw worden beoordeeld.");
+            for (const candidate of previouslySkipped ?? []) affectedRuns.add(String(candidate.distribution_run_id));
+
+            await refreshProfessionalDerivedState(professionalId);
+            for (const runId of affectedRuns) await activateOffersForRun(runId);
           }
+
+          const { data: completed, error: processedError } = await supabase
+            .from("professional_documents")
+            .update({
+              expiry_processed_at: new Date().toISOString(),
+              expiry_processing_started_at: null,
+            })
+            .eq("id", id)
+            .eq("expiry_processing_started_at", expiryLease)
+            .is("expiry_processed_at", null)
+            .select("id");
+          if (processedError) throw new Error("Documentvervalverwerking kon niet worden afgerond.");
+          if (completed?.length) processed += 1;
+          else failed += 1;
         } else {
           for (const reminderDays of settings.documentExpiryReminderDays) {
             if (daysRemaining <= reminderDays) {
@@ -138,14 +197,7 @@ export async function processDocumentExpiry() {
         failed += 1;
       }
     }
-    for (const professionalId of refreshedProfessionals) {
-      try {
-        await refreshProfessionalDerivedState(professionalId);
-      } catch {
-        failed += 1;
-      }
-    }
-    return { processed, failed, metadata: { refreshedProfessionalCount: refreshedProfessionals.size } };
+    return { processed, failed, metadata: { checkedDocumentCount: documents?.length ?? 0 } };
   });
 }
 
@@ -276,6 +328,7 @@ export async function processReminderChecks() {
     const { data: newAssignments, error: newAssignmentsError } = await supabase
       .from("lead_assignments")
       .select("id, lead_id, professional_id")
+      .in("status", ["accepted", "pending", "viewed"])
       .gte("assigned_at", assignmentsCreatedSince)
       .limit(500);
     if (newAssignmentsError) throw new Error("Nieuwe opdrachten konden niet worden gecontroleerd.");

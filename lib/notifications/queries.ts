@@ -91,6 +91,22 @@ export async function getOperationalDashboard() {
     supabase.from("operational_worker_runs").select("id", { count: "exact", head: true }).in("status", ["failed", "partial"]).gte("started_at", dayAgo),
     supabase.from("operational_worker_runs").select("id, worker_type, started_at, finished_at, status, claimed_count, processed_count, failed_count, error_summary").order("started_at", { ascending: false }).limit(10),
   ]);
+  if ([
+    pendingReviews,
+    expiringDocuments,
+    expiredDocuments,
+    exhaustedRuns,
+    oldLeads,
+    oldRuns,
+    requirements,
+    activeServices,
+    staleAssignments,
+    failedNotifications,
+    failedWorkers,
+    latestRuns,
+  ].some((result) => result.error)) {
+    throw new Error("Operationeel overzicht kon niet volledig worden geladen.");
+  }
 
   const serviceIdsByProfessional = new Map<string, Set<string>>();
   for (const service of activeServices.data ?? []) {
@@ -106,12 +122,14 @@ export async function getOperationalDashboard() {
 
   let unmatchedLeadCount = 0;
   for (const lead of oldLeads.data ?? []) {
-    const { count } = await supabase.from("lead_distribution_runs").select("id", { count: "exact", head: true }).eq("lead_id", String(lead.id));
+    const { count, error } = await supabase.from("lead_distribution_runs").select("id", { count: "exact", head: true }).eq("lead_id", String(lead.id));
+    if (error) throw new Error("Onverdeelde leads konden niet worden geteld.");
     if (!count) unmatchedLeadCount += 1;
   }
   let noPurchaseLeadCount = 0;
   for (const run of oldRuns.data ?? []) {
-    const { count } = await supabase.from("lead_purchases").select("id", { count: "exact", head: true }).eq("lead_id", String(run.lead_id)).eq("status", "purchased");
+    const { count, error } = await supabase.from("lead_purchases").select("id", { count: "exact", head: true }).eq("lead_id", String(run.lead_id)).eq("status", "purchased");
+    if (error) throw new Error("Leads zonder aankoop konden niet worden geteld.");
     if (!count) noPurchaseLeadCount += 1;
   }
 
