@@ -149,11 +149,46 @@ test("servicepagina's hebben voldoende inhoudelijke diepgang en niet-thin hoofdc
   }
 
   for (const page of Object.values(serviceSubPages)) {
-    const totalChars = page.intro.join(" ").length + page.sections.flatMap((section) => section.paragraphs).join(" ").length;
+    const totalChars = [
+      ...page.intro,
+      ...page.sections.flatMap((section) => section.paragraphs),
+      ...page.costFactors,
+      ...page.faqs.map((faq) => faq.answer),
+      page.cta.description,
+    ].join(" ").length;
     assert.ok(page.h1.length > 20, `H1 ontbreekt of is te kort op ${page.path}`);
     assert.ok(page.sections.length >= 7, `Te weinig secties op subdienstpagina ${page.path}`);
     assert.ok(page.faqs.length >= 4, `Te weinig FAQ-items op subdienstpagina ${page.path}`);
     assert.ok(totalChars >= 2200, `Subdienstpagina is te dun: ${page.path}`);
+  }
+});
+
+test("alle bestaande subdiensten hebben unieke intentie, werkende links en ondersteunde intake-prefill", () => {
+  const pages = Object.values(serviceSubPages);
+  const routes = new Set(getAllServiceRoutes());
+  const supportedIntakeServices = new Set(["dakdekker", "schilder", "loodgieter", "elektricien", "isolatie", "badkamer-verbouwen"]);
+  assert.deepEqual(new Set(pages.map((page) => page.path)), new Set(expectedSubRoutes));
+  assert.equal(new Set(pages.map((page) => page.title)).size, pages.length);
+  assert.equal(new Set(pages.map((page) => page.description)).size, pages.length);
+
+  for (const page of pages) {
+    const parent = `/${page.path.split("/")[1]}`;
+    assert.ok(page.title.length <= 60, `Meta title te lang: ${page.path}`);
+    assert.ok(page.description.length <= 160, `Meta description te lang: ${page.path}`);
+    assert.equal(page.breadcrumbs.at(-2)?.href, parent, `Parent breadcrumb ontbreekt: ${page.path}`);
+    assert.ok(page.relatedLinks.length >= 2 && page.relatedLinks.length <= 5, `Gerelateerde diensten ontbreken: ${page.path}`);
+    for (const link of page.relatedLinks) {
+      assert.ok(routes.has(link.href), `Onbekende subdienst ${link.href}: ${page.path}`);
+      assert.notEqual(link.href, page.path, `Zelflink op ${page.path}`);
+    }
+    if (page.cta.serviceSlug) {
+      assert.ok(supportedIntakeServices.has(page.cta.serviceSlug), `Ongeldige intake-prefill: ${page.path}`);
+    }
+    assert.equal(page.sections.length >= 7, true, `Niet genoeg vakinhoud: ${page.path}`);
+    assert.ok(page.faqs.length >= 4 && page.faqs.length <= 6, `FAQ-dekking onvoldoende: ${page.path}`);
+    assert.equal(new Set(page.faqs.map((faq) => faq.question)).size, page.faqs.length, `Dubbele FAQ op ${page.path}`);
+    const text = [...page.intro, ...page.sections.flatMap((section) => section.paragraphs), ...page.faqs.map((faq) => faq.answer)].join(" ");
+    assert.doesNotMatch(text, /lorem ipsum|TODO|AggregateRating|binnen (?:24|48) uur|€\s*\d+/i, `Ongewenste claim of placeholder: ${page.path}`);
   }
 });
 
