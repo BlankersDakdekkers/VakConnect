@@ -296,62 +296,6 @@ export async function processReminderChecks() {
       }
     }
 
-    const recentlyExpiredSince = isoBefore(dayMs);
-    const { data: expiredOffers, error: expiredOfferError } = await supabase
-      .from("lead_distribution_candidates")
-      .select("id, lead_id, professional_id")
-      .eq("status", "expired")
-      .gte("expired_at", recentlyExpiredSince)
-      .limit(500);
-    if (expiredOfferError) throw new Error("Verlopen lead offers konden niet worden gecontroleerd.");
-    for (const row of expiredOffers ?? []) {
-      try {
-        await createNotificationEvent({
-          professionalId: String(row.professional_id),
-          leadId: String(row.lead_id),
-          eventType: "lead_offer_expired",
-          channelType: "in_app",
-          deduplicationKey: `lead-offer-expired:${String(row.id)}`,
-          payload: {
-            title: "Lead offer verlopen",
-            description: "De reactietermijn voor dit aanbod is verstreken.",
-            href: "/vakman/aanvragen",
-          },
-        });
-        processed += 1;
-      } catch {
-        failed += 1;
-      }
-    }
-
-    const assignmentsCreatedSince = isoBefore(dayMs);
-    const { data: newAssignments, error: newAssignmentsError } = await supabase
-      .from("lead_assignments")
-      .select("id, lead_id, professional_id")
-      .in("status", ["accepted", "pending", "viewed"])
-      .gte("assigned_at", assignmentsCreatedSince)
-      .limit(500);
-    if (newAssignmentsError) throw new Error("Nieuwe opdrachten konden niet worden gecontroleerd.");
-    for (const row of newAssignments ?? []) {
-      try {
-        await createNotificationEvent({
-          professionalId: String(row.professional_id),
-          leadId: String(row.lead_id),
-          eventType: "lead_assignment_created",
-          channelType: "in_app",
-          deduplicationKey: `lead-assignment-created:${String(row.id)}`,
-          payload: {
-            title: "Nieuwe opdracht",
-            description: "Er staat een nieuwe leadopdracht voor je klaar.",
-            href: `/vakman/aanvragen/${String(row.lead_id)}`,
-          },
-        });
-        processed += 1;
-      } catch {
-        failed += 1;
-      }
-    }
-
     const assignmentCutoff = isoBefore(settings.progressReminderDelayDays * dayMs);
     const { data: assignments, error: assignmentError } = await supabase
       .from("lead_assignments")

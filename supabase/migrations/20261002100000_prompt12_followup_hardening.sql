@@ -169,7 +169,7 @@ begin
       ),
       'delivered',
       timezone('utc', now()),
-      'distribution-exhausted:' || new.id::text
+      'distribution-exhausted:' || new.lead_id::text || ':' || new.id::text
     )
     on conflict (deduplication_key) where deduplication_key is not null do nothing;
   end if;

@@ -13,18 +13,27 @@ export type NotificationListItem = {
   lead_id: string | null;
 };
 
-export async function getProfessionalNotifications(professionalId: string) {
+export async function getProfessionalNotifications(professionalId: string, requestedPage = 1) {
+  const pageSize = 25;
+  const page = Number.isSafeInteger(requestedPage) ? Math.max(1, requestedPage) : 1;
   const supabase = createAdminSupabaseClient();
-  const { data, error } = await supabase
+  const { data, count, error } = await supabase
     .from("professional_notification_events")
-    .select("id, event_type, payload, created_at, read_at, lead_id")
+    .select("id, event_type, payload, created_at, read_at, lead_id", { count: "exact" })
     .eq("professional_id", professionalId)
     .eq("status", "delivered")
     .eq("channel_type", "in_app")
     .order("created_at", { ascending: false })
-    .limit(100);
+    .range((page - 1) * pageSize, page * pageSize - 1);
   if (error) throw new Error("Notificaties konden niet worden geladen.");
-  return (data ?? []) as NotificationListItem[];
+  const total = count ?? 0;
+  return {
+    items: (data ?? []) as NotificationListItem[],
+    page,
+    pageSize,
+    total,
+    pageCount: Math.max(1, Math.ceil(total / pageSize)),
+  };
 }
 
 export async function getProfessionalUnreadNotificationCount(professionalId: string) {
@@ -40,24 +49,34 @@ export async function getProfessionalUnreadNotificationCount(professionalId: str
   return count ?? 0;
 }
 
-export async function getAdminNotifications() {
+export async function getAdminNotifications(requestedPage = 1) {
+  const pageSize = 25;
+  const page = Number.isSafeInteger(requestedPage) ? Math.max(1, requestedPage) : 1;
   const supabase = createAdminSupabaseClient();
-  const { data, error } = await supabase
+  const { data, count, error } = await supabase
     .from("professional_notification_events")
-    .select("id, event_type, payload, created_at, read_at, lead_id")
+    .select("id, event_type, payload, created_at, read_at, lead_id", { count: "exact" })
     .is("professional_id", null)
     .eq("channel_type", "system")
     .eq("status", "delivered")
     .order("created_at", { ascending: false })
-    .limit(100);
+    .range((page - 1) * pageSize, page * pageSize - 1);
   if (error) throw new Error("Operationele meldingen konden niet worden geladen.");
-  return ((data ?? []) as NotificationListItem[]).reverse();
+  const total = count ?? 0;
+  return {
+    items: (data ?? []) as NotificationListItem[],
+    page,
+    pageSize,
+    total,
+    pageCount: Math.max(1, Math.ceil(total / pageSize)),
+  };
 }
 
 export async function getOperationalDashboard() {
   const supabase = createAdminSupabaseClient();
   const settings = await getOperationalSettings();
   const slaCutoff = new Date(Date.now() - settings.verificationSlaHours.breach * 60 * 60_000).toISOString();
+  const feedbackCutoff = new Date(Date.now() - settings.changesRequestedReminderHours * 60 * 60_000).toISOString();
   const documentCutoff = new Date(Date.now() + Math.max(...settings.documentExpiryReminderDays, 0) * 24 * 60 * 60_000).toISOString();
   const assignmentCutoff = new Date(Date.now() - settings.staleLeadThresholds.assignmentProgressDays * 24 * 60 * 60_000).toISOString();
   const unmatchedCutoff = new Date(Date.now() - settings.staleLeadThresholds.noDistributionMinutes * 60_000).toISOString();
@@ -66,6 +85,7 @@ export async function getOperationalDashboard() {
 
   const [
     pendingReviews,
+    changesRequestedFeedback,
     expiringDocuments,
     expiredDocuments,
     exhaustedRuns,
@@ -79,6 +99,7 @@ export async function getOperationalDashboard() {
     latestRuns,
   ] = await Promise.all([
     supabase.from("professionals").select("id", { count: "exact", head: true }).eq("onboarding_status", "submitted").lte("submitted_for_review_at", slaCutoff),
+    supabase.from("professional_review_feedback").select("id, professional_id, section, created_at", { count: "exact" }).eq("status", "open").lte("created_at", feedbackCutoff).order("created_at", { ascending: true }).limit(10),
     supabase.from("professional_documents").select("id", { count: "exact", head: true }).is("archived_at", null).in("verification_status", ["pending", "approved"]).gt("expires_at", new Date().toISOString()).lte("expires_at", documentCutoff),
     supabase.from("professional_documents").select("id, professional_id, document_type").is("archived_at", null).eq("verification_status", "expired"),
     supabase.from("lead_distribution_runs").select("id", { count: "exact", head: true }).eq("status", "exhausted"),
@@ -93,6 +114,7 @@ export async function getOperationalDashboard() {
   ]);
   if ([
     pendingReviews,
+    changesRequestedFeedback,
     expiringDocuments,
     expiredDocuments,
     exhaustedRuns,
@@ -107,6 +129,20 @@ export async function getOperationalDashboard() {
   ].some((result) => result.error)) {
     throw new Error("Operationeel overzicht kon niet volledig worden geladen.");
   }
+
+  const feedbackProfessionalIds = [...new Set((changesRequestedFeedback.data ?? []).map((feedback) => String(feedback.professional_id)))];
+  const feedbackProfessionals = feedbackProfessionalIds.length
+    ? await supabase.from("professionals").select("id, company_name").in("id", feedbackProfessionalIds)
+    : { data: [], error: null };
+  if (feedbackProfessionals.error) throw new Error("Openstaande reviewfeedback kon niet worden geladen.");
+  const companyByProfessionalId = new Map((feedbackProfessionals.data ?? []).map((professional) => [String(professional.id), String(professional.company_name)]));
+  const changesRequestedQueue = (changesRequestedFeedback.data ?? []).map((feedback) => ({
+    id: String(feedback.id),
+    professionalId: String(feedback.professional_id),
+    companyName: companyByProfessionalId.get(String(feedback.professional_id)) ?? "Vakman",
+    section: String(feedback.section),
+    createdAt: String(feedback.created_at),
+  }));
 
   const serviceIdsByProfessional = new Map<string, Set<string>>();
   for (const service of activeServices.data ?? []) {
@@ -135,6 +171,7 @@ export async function getOperationalDashboard() {
 
   const counts = {
     pendingReviews: pendingReviews.count ?? 0,
+    changesRequested: changesRequestedFeedback.count ?? 0,
     expiringDocuments: expiringDocuments.count ?? 0,
     expiredRequiredDocuments: expiredRequiredCount,
     exhaustedRuns: exhaustedRuns.count ?? 0,
@@ -152,5 +189,6 @@ export async function getOperationalDashboard() {
     counts,
     health,
     latestRuns: latestRuns.data ?? [],
+    changesRequestedQueue,
   };
 }

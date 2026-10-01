@@ -225,6 +225,18 @@ Deze repository bevat geen echte testaccounts. Maak lokaal in Supabase zelf mini
 - Refunds openen niet automatisch opnieuw; admin kan expliciet requeueen via `/admin/distributie` of op leaddetail.
 - Professional ziet alleen eigen offers en geen rankings van anderen; pre-purchase data blijft PII-vrij.
 
+## Notificaties en operationele automatisering (Prompt 12)
+
+- `professional_notification_events` is de centrale event-outbox en inbox voor in-app professionalmeldingen en admin/systemalerts. Events gebruiken `pending → processing → delivered/failed` (of `cancelled`); voor in-app geldt `delivered` als beschikbaar in de inbox.
+- `deduplication_key` is uniek. Database-triggers maken offer-, expiry-, assignment- en exhausted-run-events in dezelfde transactie als de lifecyclewijziging; retries en herhaalde worker-runs leveren daarom geen tweede melding op.
+- `/vakman/notificaties` en `/admin/notificaties` tonen gepagineerde inboxen. Professionals wijzigen alleen `read_at` op hun eigen meldingen; admins kunnen uitsluitend de leesstatus van systemmeldingen wijzigen. Preferences ondersteunen in-app categorieën; externe kanalen blijven uitgeschakeld.
+- Workers zijn provider- en queue-agnostisch, gebruiken POST met `x-worker-secret`, registreren runs in `operational_worker_runs` en claimen notificaties/documentverval atomair met `FOR UPDATE SKIP LOCKED`. Mislukte notification deliveries worden opnieuw gepland met exponentiële backoff tot `max_attempts`; secrets en PII staan niet in workerresponses of foutlogs.
+- `POST /api/internal/notifications/process`, `/api/internal/reminders/process`, `/api/internal/documents/expiry` en `/api/internal/operations/check` verwerken respectievelijk event delivery, SLA/lead reminders, documentverval en operationele checks. De bestaande `/api/internal/distribution/process` blijft de offer-expiry/fallback worker.
+- Documentreminders worden 30 en 7 dagen voor verloop idempotent aangemaakt. Een verlopen required document zet een verified professional terug naar beoordeling, ververst derived quality/eligibility en slaat actieve aanbiedingen over; recommended documenten krijgen reminders maar blokkeren distributie niet.
+- De verificatiecontrole signaleert ingediende reviews na 24/48 uur intern. Open feedback krijgt na de ingestelde termijn een reminder; feedback wordt bij resubmission of een ander verificatiebesluit als opgelost gemarkeerd.
+- `/admin/operatie` toont SLA-/feedbackqueues, verlopen vereiste documenten, stale leads, distributie en worker health. Thresholds staan in `operational_settings`; oude worker- en inboxrecords zijn voorbereid op latere retentie, zonder automatische verwijdering.
+- Pre-purchase offermeldingen bevatten geen contact- of exacte adresgegevens. Email, SMS en WhatsApp zijn alleen toekomstige channel types; er is nog geen providerintegratie of externe verzending.
+
 ## Aanvullende documentatie
 
 - `docs/ARCHITECTURE.md`

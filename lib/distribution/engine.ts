@@ -4,7 +4,6 @@ import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { distributionConfig, distributionStrategyVersion } from "@/lib/distribution/config";
 import { calculateDistributionScore, evaluateDistributionCandidateEligibility } from "@/lib/distribution/scoring";
-import { createNotificationEvent } from "@/lib/notifications/events";
 import type { Json, LeadCommercialType, ProfessionalVerificationStatus } from "@/types/database";
 
 interface DistributionCandidateInput {
@@ -375,18 +374,6 @@ export async function activateOffersForRun(runId: string) {
       await appendDistributionActivity(String(row.lead_id), "candidate_offered", String(row.professional_id), {
         candidate_id: String(row.candidate_id),
         run_id: runId,
-      });
-      await createNotificationEvent({
-        professionalId: String(row.professional_id),
-        leadId: String(row.lead_id),
-        eventType: "lead_offer_received",
-        channelType: "in_app",
-        deduplicationKey: `lead-offer-received:${String(row.candidate_id)}`,
-        payload: {
-          title: "Nieuw lead offer",
-          description: "Je hebt een nieuw lead-aanbod ontvangen.",
-          href: "/vakman/aanvragen",
-        },
       });
     }
     if (row.action === "exhausted" && row.lead_id) {

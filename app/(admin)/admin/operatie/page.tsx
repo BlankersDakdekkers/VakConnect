@@ -12,6 +12,7 @@ const healthLabels = {
 
 const metricLinks = {
   pendingReviews: "/admin/verificatie?filter=submitted&sort=oldest",
+  changesRequested: "/admin/verificatie?filter=changes_requested&sort=oldest",
   expiringDocuments: "/admin/vakmannen",
   expiredRequiredDocuments: "/admin/vakmannen",
   exhaustedRuns: "/admin/distributie?status=exhausted",
@@ -24,6 +25,7 @@ const metricLinks = {
 
 const metricLabels = {
   pendingReviews: "Verificaties boven SLA",
+  changesRequested: "Open feedback boven herinneringstermijn",
   expiringDocuments: "Binnenkort verlopende documenten",
   expiredRequiredDocuments: "Verlopen vereiste documenten",
   exhaustedRuns: "Uitgeputte distributieruns",
@@ -63,6 +65,24 @@ export default async function AdminOperationsPage() {
           </Card>
         ))}
       </div>
+      <Card className="space-y-4">
+        <PageHeader title="Open feedback" description="Wijzigingsverzoeken die langer dan de ingestelde remindertermijn openstaan." />
+        {!dashboard.changesRequestedQueue.length ? (
+          <p className="text-sm text-muted-foreground">Geen verlopen feedbackreminders.</p>
+        ) : (
+          <ul className="divide-y">
+            {dashboard.changesRequestedQueue.map((item) => (
+              <li key={item.id} className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm">
+                <div>
+                  <Link href={`/admin/vakmannen/${item.professionalId}`} className="font-medium text-primary hover:underline">{item.companyName}</Link>
+                  <p className="text-muted-foreground">{item.section} · {formatDate(item.createdAt)}</p>
+                </div>
+                <Link href={`/admin/vakmannen/${item.professionalId}`} className="font-medium text-primary hover:underline">Open feedback</Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
       <Card className="space-y-4">
         <PageHeader title="Worker runs" description="Recente achtergrondruns, verwerking en veilige foutstatus." />
         <div className="overflow-x-auto">

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { markAllNotificationsReadAction, markNotificationReadAction } from "@/lib/notifications/actions";
-import { getProfessionalNotifications } from "@/lib/notifications/queries";
+import { getProfessionalNotifications, getProfessionalUnreadNotificationCount } from "@/lib/notifications/queries";
 import { requireProfessionalUser } from "@/lib/auth/helpers";
 import { formatDate } from "@/lib/utils";
 import type { ProfessionalNotificationEventType } from "@/types/database";
@@ -46,10 +46,19 @@ function safeInternalHref(value: unknown) {
   }
 }
 
-export default async function ProfessionalNotificationsPage() {
+export default async function ProfessionalNotificationsPage({
+  searchParams,
+}: Readonly<{
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}>) {
   const user = await requireProfessionalUser();
-  const notifications = await getProfessionalNotifications(user.professional.id);
-  const unreadCount = notifications.filter((notification) => !notification.read_at).length;
+  const params = await searchParams;
+  const requestedPage = typeof params.page === "string" ? Number(params.page) : 1;
+  const [notificationPage, unreadCount] = await Promise.all([
+    getProfessionalNotifications(user.professional.id, requestedPage),
+    getProfessionalUnreadNotificationCount(user.professional.id),
+  ]);
+  const notifications = notificationPage.items;
 
   return (
     <div className="space-y-6">
@@ -92,6 +101,13 @@ export default async function ProfessionalNotificationsPage() {
           })}
         </div>
       )}
+      {notificationPage.pageCount > 1 ? (
+        <nav aria-label="Paginering notificaties" className="flex items-center justify-between">
+          <Link aria-disabled={notificationPage.page <= 1} className={`rounded-full border px-4 py-2 text-sm ${notificationPage.page <= 1 ? "pointer-events-none opacity-50" : "hover:bg-surface-muted"}`} href={`/vakman/notificaties?page=${notificationPage.page - 1}`}>Vorige</Link>
+          <span className="text-sm text-muted-foreground">Pagina {notificationPage.page} van {notificationPage.pageCount}</span>
+          <Link aria-disabled={notificationPage.page >= notificationPage.pageCount} className={`rounded-full border px-4 py-2 text-sm ${notificationPage.page >= notificationPage.pageCount ? "pointer-events-none opacity-50" : "hover:bg-surface-muted"}`} href={`/vakman/notificaties?page=${notificationPage.page + 1}`}>Volgende</Link>
+        </nav>
+      ) : null}
     </div>
   );
 }

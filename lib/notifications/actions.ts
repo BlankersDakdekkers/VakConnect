@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireProfessionalUser } from "@/lib/auth/helpers";
+import { requireAdminUser, requireProfessionalUser } from "@/lib/auth/helpers";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export async function markNotificationReadAction(formData: FormData) {
@@ -32,6 +32,23 @@ export async function markAllNotificationsReadAction() {
     .is("read_at", null);
   revalidatePath("/vakman");
   revalidatePath("/vakman/notificaties");
+}
+
+export async function markAdminNotificationReadAction(formData: FormData) {
+  await requireAdminUser();
+  const notificationId = String(formData.get("notification_id") ?? "");
+  if (!/^[0-9a-f-]{36}$/i.test(notificationId)) return;
+  const supabase = await createServerSupabaseClient();
+  await supabase
+    .from("professional_notification_events")
+    .update({ read_at: new Date().toISOString() })
+    .eq("id", notificationId)
+    .is("professional_id", null)
+    .eq("channel_type", "system")
+    .eq("status", "delivered")
+    .is("read_at", null);
+  revalidatePath("/admin/notificaties");
+  revalidatePath("/admin/operatie");
 }
 
 export async function saveNotificationPreferencesAction(formData: FormData) {
