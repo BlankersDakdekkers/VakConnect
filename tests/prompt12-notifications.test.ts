@@ -4,6 +4,10 @@ import test from "node:test";
 
 const repoRoot = "/home/runner/work/VakConnect/VakConnect";
 const migration = readFileSync(`${repoRoot}/supabase/migrations/20261001100000_prompt12_notifications_operations.sql`, "utf8");
+const followUpMigration = readFileSync(`${repoRoot}/supabase/migrations/20261002100000_prompt12_followup_hardening.sql`, "utf8");
+const notificationQueries = readFileSync(`${repoRoot}/lib/notifications/queries.ts`, "utf8");
+const distributionEngine = readFileSync(`${repoRoot}/lib/distribution/engine.ts`, "utf8");
+const operationsDashboard = readFileSync(`${repoRoot}/app/(admin)/admin/operatie/page.tsx`, "utf8");
 const notificationWorker = readFileSync(`${repoRoot}/app/api/internal/notifications/process/route.ts`, "utf8");
 const operationsWorker = readFileSync(`${repoRoot}/app/api/internal/operations/check/route.ts`, "utf8");
 const documentWorker = readFileSync(`${repoRoot}/app/api/internal/documents/expiry/route.ts`, "utf8");
@@ -37,4 +41,19 @@ test("all internal Prompt 12 processing routes expose POST handlers only", () =>
     assert.match(source, /export async function POST\(request: Request\)/);
     assert.doesNotMatch(source, /export async function GET/);
   }
+});
+
+test("notification inboxes are paginated and the operations dashboard exposes delayed feedback", () => {
+  assert.match(notificationQueries, /\.range\(\(page - 1\) \* pageSize, page \* pageSize - 1\)/);
+  assert.match(operationsDashboard, /Open feedback/);
+  assert.match(operationsDashboard, /changesRequestedQueue\.map/);
+});
+
+test("distribution lifecycle notifications are transactional database hooks with fixed search paths", () => {
+  assert.match(followUpMigration, /create trigger notify_distribution_candidate_lifecycle/i);
+  assert.match(followUpMigration, /create trigger notify_lead_assignment_created/i);
+  assert.match(followUpMigration, /create trigger notify_distribution_run_exhausted/i);
+  assert.match(followUpMigration, /set search_path = public, pg_temp/i);
+  assert.match(followUpMigration, /revoke all on function public\.notify_lead_assignment_created\(\) from public, anon, authenticated, service_role/i);
+  assert.doesNotMatch(distributionEngine, /eventType:\s*"lead_offer_received"/);
 });

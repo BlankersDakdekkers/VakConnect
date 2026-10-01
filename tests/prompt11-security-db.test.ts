@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 import { existsSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -40,6 +40,7 @@ type Harness = {
   createDatabase: (name: string) => string;
   dropDatabase: (name: string) => void;
   run: (database: string, sql: string, context?: SessionContext) => string;
+  runConcurrent: (database: string, sql: string, context?: SessionContext) => Promise<{ ok: boolean; stdout: string; stderr: string }>;
   queryRowJson: <T>(database: string, selectSql: string, context?: SessionContext) => T;
   expectError: (database: string, sql: string, context?: SessionContext) => string;
 };
@@ -101,6 +102,17 @@ function startHarness(): Harness | null {
   const connectionArgs = (database: string) => ["-h", "127.0.0.1", "-p", port, "-U", "postgres", "-d", database];
   const run = (database: string, sql: string, context?: SessionContext) =>
     execProgram(psqlPath, [...connectionArgs(database), "-X", "-q", "-A", "-t", "-v", "ON_ERROR_STOP=1", "-c", `${buildSessionPreamble(context)}\n${stripTrailingSemicolon(sql)}`], env).trim();
+  const runConcurrent = (database: string, sql: string, context?: SessionContext) => new Promise<{ ok: boolean; stdout: string; stderr: string }>((resolve) => {
+    const child = spawn(psqlPath, [...connectionArgs(database), "-X", "-q", "-A", "-t", "-v", "ON_ERROR_STOP=1", "-c", `${buildSessionPreamble(context)}\n${stripTrailingSemicolon(sql)}`], {
+      env: { ...process.env, ...env },
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    let stdout = "";
+    let stderr = "";
+    child.stdout.on("data", (chunk) => { stdout += String(chunk); });
+    child.stderr.on("data", (chunk) => { stderr += String(chunk); });
+    child.on("close", (code) => resolve({ ok: code === 0, stdout: stdout.trim(), stderr: stderr.trim() }));
+  });
   const queryRowJson = <T>(database: string, selectSql: string, context?: SessionContext) =>
     JSON.parse(run(database, `select row_to_json(result)::text from (${stripTrailingSemicolon(selectSql)}) result`, context)) as T;
   const expectError = (database: string, sql: string, context?: SessionContext) => {
@@ -193,6 +205,7 @@ function startHarness(): Harness | null {
       execProgram(dropdbPath, ["-h", "127.0.0.1", "-p", port, "-U", "postgres", "--if-exists", name], env);
     },
     run,
+    runConcurrent,
     queryRowJson,
     expectError,
   };
@@ -352,6 +365,7 @@ test("notification inbox enforces ownership, read-only fields and atomic worker 
   const notificationId = randomUUID();
   const systemNotificationId = randomUUID();
   const pendingNotificationId = randomUUID();
+  const concurrentlyLockedNotificationId = randomUUID();
   const contextA = buildUserContext(userA, "professional");
   const contextB = buildUserContext(userB, "professional");
   seedProfessional(harness, database, professionalA, userA, "notifications-a@example.com", "Dakbedrijf Notifications A");
@@ -419,24 +433,43 @@ test("notification inbox enforces ownership, read-only fields and atomic worker 
     update public.professional_notification_events
     set status = 'failed', scheduled_for = now() + interval '1 hour'
     where id = ${sqlLiteral(pendingNotificationId)};
-  `, { dbRole: "service_role" });
+  `, { dbRole: "postgres", requestRole: "service_role" });
   assert.equal(harness.run(database, `select count(*) from public.claim_pending_notification_events(10);`, { dbRole: "service_role" }), "0");
   harness.run(database, `
     update public.professional_notification_events
     set scheduled_for = now() - interval '1 second'
     where id = ${sqlLiteral(pendingNotificationId)};
-  `, { dbRole: "service_role" });
+  `, { dbRole: "postgres", requestRole: "service_role" });
   assert.equal(harness.run(database, `select count(*) from public.claim_pending_notification_events(10);`, { dbRole: "service_role" }), "1");
   harness.run(database, `
     update public.professional_notification_events
     set status = 'failed', scheduled_for = now() - interval '1 second'
     where id = ${sqlLiteral(pendingNotificationId)};
-  `, { dbRole: "service_role" });
+  `, { dbRole: "postgres", requestRole: "service_role" });
   assert.equal(harness.run(database, `select count(*) from public.claim_pending_notification_events(10);`, { dbRole: "service_role" }), "0");
   assert.equal(harness.run(database, `
     select status || ':' || attempt_count::text
     from public.professional_notification_events where id = ${sqlLiteral(pendingNotificationId)};
   `), "failed:2");
+  harness.run(database, `
+    insert into public.professional_notification_events (
+      id, professional_id, event_type, channel_type, payload, status
+    ) values (
+      ${sqlLiteral(concurrentlyLockedNotificationId)}, ${sqlLiteral(professionalA)}, 'operational_alert', 'in_app', '{}'::jsonb, 'pending'
+    );
+  `);
+  const lockPromise = harness.runConcurrent(database, `
+    begin;
+    select id from public.professional_notification_events
+    where id = ${sqlLiteral(concurrentlyLockedNotificationId)} for update;
+    select pg_sleep(1);
+    commit;
+  `);
+  await new Promise((resolve) => setTimeout(resolve, 150));
+  assert.equal(harness.run(database, `select count(*) from public.claim_pending_notification_events(10);`, { dbRole: "service_role" }), "0");
+  const lockResult = await lockPromise;
+  assert.equal(lockResult.ok, true, lockResult.stderr);
+  assert.equal(harness.run(database, `select count(*) from public.claim_pending_notification_events(10);`, { dbRole: "service_role" }), "1");
 
   const expiredDocumentId = randomUUID();
   harness.run(database, `
@@ -502,8 +535,9 @@ test("distribution lifecycle hooks enqueue private idempotent professional and a
   const professionalContext = buildUserContext(userId, "professional");
   seedProfessional(harness, database, professionalId, userId, "distribution-events@example.com", "Dakbedrijf Distribution Events");
   harness.run(database, `
-    insert into public.services (id, name, slug, active)
-    values (${sqlLiteral(serviceId)}, 'Dakreparatie', 'dakreparatie-events', true);
+    grant select on public.professionals to authenticated;
+    insert into public.services (id, name, slug, category, active)
+    values (${sqlLiteral(serviceId)}, 'Dakreparatie', 'dakreparatie-events', 'Dakwerk', true);
     insert into public.leads (
       id, public_reference, service_id, first_name, last_name, email, phone, postal_code,
       house_number, city, description, urgency, status, lead_score, commercial_type,
@@ -511,7 +545,8 @@ test("distribution lifecycle hooks enqueue private idempotent professional and a
     ) values (
       ${sqlLiteral(leadId)}, 'VC-${leadId.slice(0, 8).toUpperCase()}', ${sqlLiteral(serviceId)},
       'Test', 'Lead', 'private@example.com', '0612345678', '1234AB', '10', 'Amsterdam',
-      'Test lead', 'normal', 'matched', 80, 'exclusive', 1, 0, 'available', 'dakreparatie'
+      'Er is sprake van een dringende dakreparatie met voldoende testdetails voor deze leadflow.',
+      'normal', 'matched', 80, 'exclusive', 1, 0, 'available', 'dakreparatie'
     );
     insert into public.lead_distribution_runs (id, lead_id, commercial_type, status)
     values (${sqlLiteral(runId)}, ${sqlLiteral(leadId)}, 'exclusive', 'active');
@@ -564,14 +599,17 @@ test("distribution lifecycle hooks enqueue private idempotent professional and a
     where event_type = 'distribution_exhausted';
   `);
   harness.run(database, `
-    update public.professional_notification_events set read_at = now()
+    update public.professional_notification_events set read_at = '2026-01-01T00:00:00Z'::timestamptz
     where id = ${sqlLiteral(systemEventId)};
   `, harness.adminContext);
-  const unauthorizedAdminRead = harness.expectError(database, `
+  harness.run(database, `
     update public.professional_notification_events set read_at = now()
     where id = ${sqlLiteral(systemEventId)};
   `, professionalContext);
-  assert.match(unauthorizedAdminRead, /row-level security|permission denied/i);
+  assert.equal(harness.run(database, `
+    select (read_at = '2026-01-01T00:00:00Z'::timestamptz)::text
+    from public.professional_notification_events where id = ${sqlLiteral(systemEventId)};
+  `), "true");
 });
 
 test("approved document storage cannot be deleted directly while pending documents can be deleted through the controlled flow", { concurrency: false }, async (t) => {
@@ -687,11 +725,12 @@ test("onboarding submit returns exactly once and resubmit after changes_requeste
 
   harness.run(
     database,
-    `update public.professionals set onboarding_status = 'changes_requested', verification_status = 'changes_requested' where id = ${sqlLiteral(professionalId)};
-     insert into public.professional_review_feedback (professional_id, section, message, status)
-     values (${sqlLiteral(professionalId)}, 'review', 'Upload een bijgewerkt document.', 'open');`,
-    harness.adminContext,
-  );
+    `    update public.professionals set onboarding_status = 'changes_requested', verification_status = 'changes_requested' where id = ${sqlLiteral(professionalId)};
+  `, harness.adminContext);
+  harness.run(database, `
+    insert into public.professional_review_feedback (professional_id, section, message, status)
+    values (${sqlLiteral(professionalId)}, 'review', 'Upload een bijgewerkt document.', 'open');
+  `);
 
   const resubmitted = harness.queryRowJson<TransitionRow>(
     database,
