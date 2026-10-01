@@ -21,6 +21,7 @@ const migrationFiles = [
   "supabase/migrations/20260910160000_phase6_lead_distribution_engine.sql",
   "supabase/migrations/20260911100000_phase7_professional_onboarding_verification.sql",
   "supabase/migrations/20260911110000_phase7_professional_onboarding_security_hardening.sql",
+  "supabase/migrations/20260919104000_prompt11_post_merge_hardening.sql",
 ].map((file) => join(repoRoot, file));
 
 type AppRole = "admin" | "professional" | null;
@@ -391,4 +392,265 @@ test("approved document storage cannot be deleted directly while pending documen
   );
   assert.equal(counts.pending_count, 0);
   assert.equal(counts.approved_count, 1);
+});
+
+type TransitionRow = {
+  professional_id: string;
+  onboarding_status: string;
+  onboarding_step: string;
+  submitted_for_review_at: string | null;
+};
+
+function grantSupabaseTableDefaults(harness: Harness, database: string) {
+  harness.run(database, `
+    grant usage on schema public to authenticated;
+    grant select, insert, update, delete on public.professionals, public.professional_documents to authenticated;
+  `);
+}
+
+function walkOnboardingToReview(harness: Harness, database: string, context: SessionContext) {
+  for (const step of ["company", "contact", "services", "areas", "experience", "capacity", "documents", "review"]) {
+    harness.run(database, `select * from public.transition_own_professional_onboarding('${step}', false);`, context);
+  }
+}
+
+test("onboarding submit returns exactly once and resubmit after changes_requested stays submitted", { concurrency: false }, async (t) => {
+  const isolated = await createIsolatedDatabase(t, "prompt11_resubmit");
+  if (!isolated) return;
+
+  const { harness, database } = isolated;
+  const userId = randomUUID();
+  const professionalId = randomUUID();
+  const context = buildUserContext(userId, "professional");
+  seedProfessional(harness, database, professionalId, userId, "resubmit@example.com", "Dakbedrijf Resubmit");
+  grantSupabaseTableDefaults(harness, database);
+
+  walkOnboardingToReview(harness, database, context);
+
+  const submittedRows = harness.run(
+    database,
+    `select count(*)::int from public.transition_own_professional_onboarding('review', true);`,
+    context,
+  );
+  assert.equal(submittedRows, "1");
+
+  const afterSubmit = harness.queryRowJson<{ onboarding_status: string; verification_status: string; submitted_for_review_at: string | null }>(
+    database,
+    `select onboarding_status, verification_status, submitted_for_review_at from public.professionals where id = ${sqlLiteral(professionalId)}`,
+  );
+  assert.equal(afterSubmit.onboarding_status, "submitted");
+  assert.equal(afterSubmit.verification_status, "pending");
+  assert.notEqual(afterSubmit.submitted_for_review_at, null);
+
+  const doubleSubmit = harness.expectError(
+    database,
+    `select * from public.transition_own_professional_onboarding('review', true);`,
+    context,
+  );
+  assert.match(doubleSubmit, /INVALID_ONBOARDING_SUBMIT_STATE/);
+
+  harness.run(
+    database,
+    `update public.professionals set onboarding_status = 'changes_requested', verification_status = 'changes_requested' where id = ${sqlLiteral(professionalId)};`,
+    harness.adminContext,
+  );
+
+  const resubmitted = harness.queryRowJson<TransitionRow>(
+    database,
+    `select * from public.transition_own_professional_onboarding('review', true);`,
+    context,
+  );
+  assert.equal(resubmitted.onboarding_status, "submitted");
+  assert.equal(resubmitted.onboarding_step, "review");
+  assert.notEqual(resubmitted.submitted_for_review_at, null);
+
+  const persisted = harness.queryRowJson<{ onboarding_status: string; submitted_for_review_at: string | null }>(
+    database,
+    `select onboarding_status, submitted_for_review_at from public.professionals where id = ${sqlLiteral(professionalId)}`,
+  );
+  assert.equal(persisted.onboarding_status, "submitted");
+  assert.notEqual(persisted.submitted_for_review_at, null);
+
+  harness.run(
+    database,
+    `update public.professionals set onboarding_status = 'changes_requested', verification_status = 'changes_requested' where id = ${sqlLiteral(professionalId)};`,
+    harness.adminContext,
+  );
+  const restarted = harness.queryRowJson<TransitionRow>(
+    database,
+    `select * from public.transition_own_professional_onboarding('company', false);`,
+    context,
+  );
+  assert.equal(restarted.onboarding_status, "in_progress");
+  assert.equal(restarted.onboarding_step, "review");
+  assert.equal(restarted.submitted_for_review_at, null);
+
+  const approveSelf = harness.expectError(
+    database,
+    `update public.professionals set onboarding_status = 'approved' where id = ${sqlLiteral(professionalId)};`,
+    context,
+  );
+  assert.match(approveSelf, /PROFESSIONAL_ADMIN_FIELDS_IMMUTABLE|permission denied/i);
+
+  const qualityEscalation = harness.expectError(
+    database,
+    `update public.professionals set quality_score = 100 where id = ${sqlLiteral(professionalId)};`,
+    context,
+  );
+  assert.match(qualityEscalation, /PROFESSIONAL_ADMIN_FIELDS_IMMUTABLE|permission denied/i);
+});
+
+test("document metadata cannot spoof storage paths, self-approve or be rebound to another professional", { concurrency: false }, async (t) => {
+  const isolated = await createIsolatedDatabase(t, "prompt11_document_paths");
+  if (!isolated) return;
+
+  const { harness, database } = isolated;
+  const userA = randomUUID();
+  const userB = randomUUID();
+  const professionalA = randomUUID();
+  const professionalB = randomUUID();
+  const contextA = buildUserContext(userA, "professional");
+  seedProfessional(harness, database, professionalA, userA, "patha@example.com", "Dakbedrijf Pad A");
+  seedProfessional(harness, database, professionalB, userB, "pathb@example.com", "Dakbedrijf Pad B");
+  grantSupabaseTableDefaults(harness, database);
+
+  const insertDocument = (documentId: string, ownerId: string, storagePath: string, status = "pending") => `
+    insert into public.professional_documents (
+      id, professional_id, document_type, storage_path, original_filename, mime_type, file_size, verification_status
+    ) values (
+      ${sqlLiteral(documentId)}, ${sqlLiteral(ownerId)}, 'other', ${sqlLiteral(storagePath)}, 'doc.pdf', 'application/pdf', 128, ${sqlLiteral(status)}
+    );
+  `;
+
+  const spoofedDocumentId = randomUUID();
+  const spoofedPath = harness.expectError(
+    database,
+    insertDocument(spoofedDocumentId, professionalA, `professionals/${professionalB}/documents/${spoofedDocumentId}/doc.pdf`),
+    contextA,
+  );
+  assert.match(spoofedPath, /PROFESSIONAL_DOCUMENT_PATH_NOT_OWNED|row-level security/i);
+
+  const mismatchedDocumentId = randomUUID();
+  const mismatchedDocument = harness.expectError(
+    database,
+    insertDocument(mismatchedDocumentId, professionalA, `professionals/${professionalA}/documents/${randomUUID()}/doc.pdf`),
+    contextA,
+  );
+  assert.match(mismatchedDocument, /PROFESSIONAL_DOCUMENT_PATH_NOT_OWNED|row-level security/i);
+
+  const traversalDocumentId = randomUUID();
+  const traversal = harness.expectError(
+    database,
+    insertDocument(traversalDocumentId, professionalA, `professionals/${professionalA}/documents/${traversalDocumentId}/../../${professionalB}/doc.pdf`),
+    contextA,
+  );
+  assert.match(traversal, /PROFESSIONAL_DOCUMENT_PATH_NOT_OWNED|row-level security/i);
+
+  const selfApprovedId = randomUUID();
+  const selfApproved = harness.expectError(
+    database,
+    insertDocument(selfApprovedId, professionalA, `professionals/${professionalA}/documents/${selfApprovedId}/doc.pdf`, "approved"),
+    contextA,
+  );
+  assert.match(selfApproved, /PROFESSIONAL_DOCUMENT_REVIEW_FIELDS_IMMUTABLE|row-level security/i);
+
+  const otherOwnerId = randomUUID();
+  const otherOwner = harness.expectError(
+    database,
+    insertDocument(otherOwnerId, professionalB, `professionals/${professionalB}/documents/${otherOwnerId}/doc.pdf`),
+    contextA,
+  );
+  assert.match(otherOwner, /row-level security|PROFESSIONAL_DOCUMENT/i);
+
+  const validDocumentId = randomUUID();
+  const validPath = `professionals/${professionalA}/documents/${validDocumentId}/doc.pdf`;
+  harness.run(database, insertDocument(validDocumentId, professionalA, validPath), contextA);
+
+  const adminSpoofId = randomUUID();
+  const adminSpoof = harness.expectError(
+    database,
+    insertDocument(adminSpoofId, professionalA, `professionals/${professionalB}/documents/${adminSpoofId}/doc.pdf`),
+    harness.adminContext,
+  );
+  assert.match(adminSpoof, /PROFESSIONAL_DOCUMENT_PATH_NOT_OWNED/);
+
+  const rebind = harness.expectError(
+    database,
+    `update public.professional_documents set professional_id = ${sqlLiteral(professionalB)} where id = ${sqlLiteral(validDocumentId)};`,
+    harness.adminContext,
+  );
+  assert.match(rebind, /PROFESSIONAL_DOCUMENT_BINDING_IMMUTABLE/);
+
+  const repath = harness.expectError(
+    database,
+    `update public.professional_documents set storage_path = ${sqlLiteral(`professionals/${professionalB}/documents/${validDocumentId}/doc.pdf`)} where id = ${sqlLiteral(validDocumentId)};`,
+    harness.adminContext,
+  );
+  assert.match(repath, /PROFESSIONAL_DOCUMENT_BINDING_IMMUTABLE/);
+
+  harness.run(
+    database,
+    `update public.professional_documents set verification_status = 'approved', reviewed_at = timezone('utc', now()) where id = ${sqlLiteral(validDocumentId)};`,
+    harness.adminContext,
+  );
+
+  const approvedDelete = harness.expectError(
+    database,
+    `select public.delete_own_pending_professional_document(${sqlLiteral(validDocumentId)});`,
+    contextA,
+  );
+  assert.match(approvedDelete, /DOCUMENT_DELETE_FORBIDDEN/);
+
+  const directDelete = harness.run(
+    database,
+    `with removed as (delete from public.professional_documents where id = ${sqlLiteral(validDocumentId)} returning id) select count(*)::int from removed;`,
+    contextA,
+  );
+  assert.equal(directDelete, "0");
+
+  const ownership = harness.queryRowJson<{ owned: boolean; null_owner: boolean; null_path: boolean }>(
+    database,
+    `select
+      public.professional_document_storage_path_is_owned(${sqlLiteral(validPath)}, ${sqlLiteral(professionalA)}) as owned,
+      public.professional_document_storage_path_is_owned(${sqlLiteral(validPath)}, null) as null_owner,
+      public.professional_document_storage_path_is_owned(null, ${sqlLiteral(professionalA)}) as null_path`,
+  );
+  assert.deepEqual(ownership, { owned: true, null_owner: false, null_path: false });
+});
+
+test("trigger-only helpers are not executable by authenticated users", { concurrency: false }, async (t) => {
+  const isolated = await createIsolatedDatabase(t, "prompt11_privileges");
+  if (!isolated) return;
+
+  const { harness, database } = isolated;
+  const privileges = harness.queryRowJson<Record<string, boolean>>(
+    database,
+    `select
+      has_function_privilege('authenticated', 'public.enforce_professional_self_update()', 'execute') as self_update,
+      has_function_privilege('authenticated', 'public.protect_professional_document_delete()', 'execute') as document_delete,
+      has_function_privilege('authenticated', 'public.enforce_professional_document_integrity()', 'execute') as document_integrity,
+      has_function_privilege('authenticated', 'public.touch_professional_verification_on_document_change()', 'execute') as touch_verification,
+      has_function_privilege('authenticated', 'public.track_professional_audit_after_change()', 'execute') as audit_trigger,
+      has_function_privilege('authenticated', 'public.track_professional_document_audit_after_change()', 'execute') as document_audit_trigger,
+      has_function_privilege('authenticated', 'public.append_professional_audit_log(uuid, uuid, professional_audit_event_type, jsonb)', 'execute') as append_audit,
+      has_function_privilege('authenticated', 'public.enqueue_professional_notification(uuid, professional_notification_event_type, jsonb)', 'execute') as enqueue_notification,
+      has_function_privilege('anon', 'public.transition_own_professional_onboarding(professional_onboarding_step, boolean)', 'execute') as anon_transition,
+      has_function_privilege('anon', 'public.delete_own_pending_professional_document(uuid)', 'execute') as anon_delete,
+      has_function_privilege('authenticated', 'public.transition_own_professional_onboarding(professional_onboarding_step, boolean)', 'execute') as authenticated_transition,
+      has_function_privilege('authenticated', 'public.delete_own_pending_professional_document(uuid)', 'execute') as authenticated_delete`,
+  );
+  assert.deepEqual(privileges, {
+    self_update: false,
+    document_delete: false,
+    document_integrity: false,
+    touch_verification: false,
+    audit_trigger: false,
+    document_audit_trigger: false,
+    append_audit: false,
+    enqueue_notification: false,
+    anon_transition: false,
+    anon_delete: false,
+    authenticated_transition: true,
+    authenticated_delete: true,
+  });
 });
