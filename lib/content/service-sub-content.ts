@@ -1,4 +1,5 @@
 import type { ServiceContentPageData } from "./service-pages.ts";
+import { homeDepthSections } from "./subservice-depth-home.ts";
 
 type EditorialSubPage = {
   title: string;
@@ -1051,7 +1052,8 @@ export function getEditorialSubPage(slug: string, fallback: ServiceContentPageDa
     intro: [content.lead],
     sections: [
       ...content.details.map((text, index) => ({ heading: headings[index], paragraphs: [text] })),
-      { heading: "Praktische afweging voor jouw situatie", paragraphs: [practicalNotes[slug]] }
+      { heading: "Praktische afweging voor jouw situatie", paragraphs: [practicalNotes[slug]] },
+      ...(homeDepthSections[slug] ?? [])
     ],
     faqs: content.faqs.map(([question, answer]) => ({ question, answer })),
     relatedLinks: (() => {
