@@ -25,7 +25,7 @@ export default async function AdminSeoDashboardPage() {
   ];
 
   const warnings = pages
-    .filter((page) => page.qualityLabel === "onvoldoende" || page.duplicateRisk !== "low")
+    .filter((page) => page.qualityWarnings.length > 0 || page.coverageStatus === "none")
     .sort((a, b) => a.qualityScore - b.qualityScore)
     .slice(0, 12);
 
@@ -65,6 +65,7 @@ export default async function AdminSeoDashboardPage() {
                 <th className="py-3">Status</th>
                 <th className="py-3">Quality</th>
                 <th className="py-3">Duplicatie</th>
+                <th className="py-3">Quality warnings</th>
               </tr>
             </thead>
             <tbody>
@@ -78,6 +79,7 @@ export default async function AdminSeoDashboardPage() {
                   <td className="py-3">{page.contentStatus}</td>
                   <td className="py-3">{page.qualityScore} ({page.qualityLabel})</td>
                   <td className="py-3">{page.duplicateRisk}</td>
+                  <td className="py-3 text-xs">{page.qualityWarnings.slice(0, 2).join("; ") || "Geen"}</td>
                 </tr>
               ))}
             </tbody>

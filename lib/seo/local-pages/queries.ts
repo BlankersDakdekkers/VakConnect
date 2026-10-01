@@ -38,6 +38,15 @@ function humanizeSlug(value: string) {
     .join(" ");
 }
 
+function slugifyProvince(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 const serviceNameMap: Record<string, string> = {
   dakdekker: "Dakdekker",
   loodgieter: "Loodgieter",
@@ -118,6 +127,10 @@ function toCorpusItem(row: SeoLocalPageWithLocation): LocalPageTextCorpusItem {
     subserviceSlug: row.subservice_slug,
     cityName: row.location.name,
     citySlug: row.location.slug,
+    canonicalPath: row.canonical_path,
+    published: row.published,
+    indexable: row.indexable,
+    contentStatus: row.content_status,
     intro: intro.join(" "),
     fullText: [
       ...intro,
@@ -134,7 +147,19 @@ function toPage(row: SeoLocalPageWithLocation, corpus: LocalPageTextCorpusItem[]
   const sections = coerceServiceSections(row.local_sections);
   const faqs = coerceFaqs(row.faqs);
   const relatedServiceLinks = coerceServiceLinks(row.related_service_links);
-  const relatedLocalCitySlugs = coerceStringArray(row.related_local_links, []);
+  const publishedNearbyCities = new Set(
+    corpus
+      .filter(
+        (item) =>
+          item.serviceSlug === row.service_slug &&
+          item.subserviceSlug === null &&
+          item.published &&
+          item.indexable &&
+          item.contentStatus === "published",
+      )
+      .map((item) => item.citySlug),
+  );
+  const relatedLocalCitySlugs = coerceStringArray(row.related_local_links, []).filter((citySlug) => publishedNearbyCities.has(citySlug)).slice(0, 4);
 
   const relatedLocalLinks = relatedLocalCitySlugs.map((citySlug) => ({
     href: `/${row.service_slug}/${citySlug}`,
@@ -175,7 +200,7 @@ function toPage(row: SeoLocalPageWithLocation, corpus: LocalPageTextCorpusItem[]
       fallback?.page.cta ?? {
         title: `Vind een passende ${serviceName.toLowerCase()} in ${row.location.name}`,
         description: `Plaats je aanvraag voor ${row.location.name} met relevante details en planning.`,
-        label: "Start aanvraag",
+        label: "Plaats je klus",
         secondaryLabel: "Hoe werkt het",
         secondaryHref: "/hoe-werkt-het",
       },
@@ -279,6 +304,64 @@ function toPage(row: SeoLocalPageWithLocation, corpus: LocalPageTextCorpusItem[]
   };
 }
 
+function addProvinceHubLinks(
+  pages: DatabaseBackedLocalPage[],
+  locations: Array<Pick<SeoLocation, "slug" | "province" | "published" | "indexable">>,
+) {
+  const locationsBySlug = new Map(locations.map((location) => [location.slug, location]));
+  const localPaths = new Set(pages.map((page) => page.canonicalPath));
+  const eligiblePages = pages.filter((page) => {
+    const location = locationsBySlug.get(page.citySlug);
+    return Boolean(
+      location &&
+        isSitemapEligible({
+          locationPublished: location.published,
+          published: page.published,
+          indexable: page.indexable,
+          contentStatus: page.contentStatus,
+          qualityPassed: page.publishable,
+        }),
+    );
+  });
+  const eligiblePaths = new Set(eligiblePages.map((page) => page.canonicalPath));
+  const qualifyingPageCounts = new Map<string, number>();
+
+  for (const page of eligiblePages) {
+    const location = locationsBySlug.get(page.citySlug);
+    if (location) {
+      const provinceSlug = slugifyProvince(location.province);
+      qualifyingPageCounts.set(provinceSlug, (qualifyingPageCounts.get(provinceSlug) ?? 0) + 1);
+    }
+  }
+
+  return pages.map((page) => {
+    const location = locationsBySlug.get(page.citySlug);
+    const relatedLinks = page.page.relatedLinks.filter((link) => !localPaths.has(link.href) || eligiblePaths.has(link.href));
+    const provinceSlug = location ? slugifyProvince(location.province) : "";
+    const href = provinceSlug ? `/regios/${provinceSlug}` : "";
+    const hasProvinceHub = Boolean(href && (qualifyingPageCounts.get(provinceSlug) ?? 0) >= 6);
+    const hasProvinceLink = relatedLinks.some((link) => link.href === href);
+    if (relatedLinks === page.page.relatedLinks && (!hasProvinceHub || hasProvinceLink)) return page;
+
+    return {
+      ...page,
+      page: {
+        ...page.page,
+        relatedLinks: [
+          ...relatedLinks,
+          ...(hasProvinceHub && !hasProvinceLink
+            ? [{
+            href,
+            title: `Vakmensen zoeken in ${location?.province ?? ""}`,
+            description: `Bekijk de bestaande regiohub met lokale dienstpagina’s in ${location?.province ?? ""}.`,
+              }]
+            : []),
+        ],
+      },
+    };
+  });
+}
+
 async function fetchDbLocalPages() {
   const supabase = createAdminSupabaseClient();
   const { data, error } = await supabase
@@ -292,7 +375,8 @@ async function fetchDbLocalPages() {
 
   const rows = ((data ?? []) as Array<Record<string, unknown>>).map(rowToLocalPage).filter((row): row is SeoLocalPageWithLocation => Boolean(row));
   const corpus = rows.map(toCorpusItem);
-  return rows.map((row) => toPage(row, corpus));
+  const pages = rows.map((row) => toPage(row, corpus));
+  return addProvinceHubLinks(pages, await getSeoLocations());
 }
 
 const getCachedDbLocalPages = unstable_cache(fetchDbLocalPages, ["seo-local-pages-all"], { revalidate: 3600 });
@@ -311,6 +395,10 @@ export async function getSeoLocalPages() {
         subserviceSlug: page.subserviceSlug,
         cityName: location?.name ?? humanizeSlug(page.citySlug),
         citySlug: page.citySlug,
+        canonicalPath: page.canonicalPath,
+        published: page.published,
+        indexable: page.indexable,
+        contentStatus: page.published ? "published" : "draft",
         intro: page.page.intro.join(" "),
         fullText: [
           ...page.page.intro,
@@ -320,7 +408,7 @@ export async function getSeoLocalPages() {
         description: page.page.description,
       } satisfies LocalPageTextCorpusItem;
     });
-    fallbackLocalPageCache = localServicePages.map((page) => {
+    const pages = localServicePages.map((page) => {
       const location = allLocations.find((candidate) => candidate.slug === page.citySlug);
       const text = [
         ...page.page.intro,
@@ -416,6 +504,15 @@ export async function getSeoLocalPages() {
         page: page.page,
       } satisfies DatabaseBackedLocalPage;
     });
+    fallbackLocalPageCache = addProvinceHubLinks(
+      pages,
+      allLocations.map((location) => ({
+        slug: location.slug,
+        province: location.province,
+        published: location.published,
+        indexable: location.indexable,
+      })),
+    );
     return fallbackLocalPageCache;
   }
 
@@ -525,7 +622,7 @@ export async function getSeoLocalDashboardSummary() {
     { none: 0, limited: 0, sufficient: 0 },
   );
 
-  const warnings = pages.filter((page) => page.qualityLabel === "onvoldoende" || page.duplicateRisk !== "low" || page.coverageStatus === "none").length;
+  const warnings = pages.filter((page) => page.qualityWarnings.length > 0 || page.coverageStatus === "none").length;
   const avg = pages.length ? Math.round(pages.reduce((sum, page) => sum + page.qualityScore, 0) / pages.length) : 0;
 
   return {
@@ -574,6 +671,10 @@ export async function getSeoPageTextCorpus(serviceSlug: string, excludeId?: stri
         subserviceSlug: page.subserviceSlug,
         cityName: location?.name ?? humanizeSlug(page.citySlug),
         citySlug: page.citySlug,
+        canonicalPath: page.canonicalPath,
+        published: page.published,
+        indexable: page.indexable,
+        contentStatus: page.contentStatus,
         intro: page.page.intro.join(" "),
         fullText: [
           ...page.page.intro,

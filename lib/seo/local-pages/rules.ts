@@ -56,7 +56,8 @@ export function validatePublishSafety(input: {
   duplicateRisk?: SeoDuplicateRisk;
   coverageStatus?: SeoCoverageStatus;
 }) {
-  if (!input.localPublished) {
+  const requiresQualityGate = input.localPublished || ["approved", "published"].includes(input.contentStatus) || input.indexable;
+  if (!requiresQualityGate) {
     return { ok: true } as const;
   }
 
@@ -68,12 +69,20 @@ export function validatePublishSafety(input: {
     return { ok: false as const, reason: "Locatie moet indexeerbaar zijn voordat de lokale pagina gepubliceerd kan worden." };
   }
 
-  if (input.contentStatus !== "published") {
+  if (input.localPublished && input.contentStatus !== "published") {
     return { ok: false as const, reason: "Content status moet published zijn voor publicatie." };
   }
 
-  if (!input.indexable) {
+  if (!input.localPublished && input.contentStatus === "published") {
+    return { ok: false as const, reason: "Status published vereist dat de pagina ook gepubliceerd staat." };
+  }
+
+  if (input.localPublished && !input.indexable) {
     return { ok: false as const, reason: "Pagina moet indexable=true hebben om gepubliceerd te worden." };
+  }
+
+  if (!input.localPublished && input.indexable) {
+    return { ok: false as const, reason: "Een approved pagina mag pas bij publicatie indexeerbaar worden." };
   }
 
   if (!canonicalRegex.test(input.canonicalPath)) {

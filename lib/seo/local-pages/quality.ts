@@ -56,6 +56,10 @@ export type LocalPageTextCorpusItem = {
   fullText: string;
   title?: string;
   description?: string;
+  canonicalPath?: string;
+  published?: boolean;
+  indexable?: boolean;
+  contentStatus?: string;
 };
 
 function stripAccents(value: string) {
