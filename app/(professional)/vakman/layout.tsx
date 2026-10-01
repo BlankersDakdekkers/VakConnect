@@ -4,6 +4,7 @@ import { SetupRequired } from "@/components/setup-required";
 import { requireProfessionalUser } from "@/lib/auth/helpers";
 import { buildMetadata } from "@/lib/config/site";
 import { isSupabaseConfigured } from "@/lib/env";
+import { getProfessionalUnreadNotificationCount } from "@/lib/notifications/queries";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +24,8 @@ const navigation = [
   { href: "/vakman/aanvragen", label: "Aanvragen" },
   { href: "/vakman/credits", label: "Credits" },
   { href: "/vakman/profiel", label: "Profiel" },
+  { href: "/vakman/notificaties", label: "Notificaties" },
+  { href: "/vakman/instellingen/notificaties", label: "Notificatie-instellingen" },
 ];
 
 export default async function ProfessionalLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -38,12 +41,16 @@ export default async function ProfessionalLayout({ children }: Readonly<{ childr
   }
 
   const user = await requireProfessionalUser();
+  const unreadCount = await getProfessionalUnreadNotificationCount(user.professional.id);
+  const navigationWithUnread = navigation.map((item) => item.href === "/vakman/notificaties"
+    ? { ...item, label: unreadCount ? `Notificaties (${unreadCount})` : item.label }
+    : item);
 
   return (
     <DashboardShell
       title={`Welkom ${user.professional.company_name}`}
       subtitle="Bekijk je leadmarkt, credits en alleen je eigen vrijgegeven leads"
-      navigation={navigation}
+      navigation={navigationWithUnread}
     >
       {children}
     </DashboardShell>

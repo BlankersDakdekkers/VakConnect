@@ -227,5 +227,5 @@ test("worker endpoint blijft POST-only en deny-by-default zonder secret", () => 
   assert.doesNotMatch(workerRouteSource, /export async function GET/);
   assert.match(workerRouteSource, /if \(!secret\) \{\s*return false;\s*\}/);
   assert.match(workerRouteSource, /error: "unauthorized"/);
-  assert.match(workerRouteSource, /return NextResponse\.json\(\{ processed \}\)/);
+  assert.match(workerRouteSource, /return NextResponse\.json\(\{ processed, failed: 0, status: "completed" \}\)/);
 });

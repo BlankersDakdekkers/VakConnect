@@ -22,7 +22,32 @@ export type ProfessionalAuditEventType =
   | "verification_rejected"
   | "verification_suspended"
   | "critical_profile_change";
-export type ProfessionalNotificationEventType = "onboarding_submitted" | "verification_approved" | "changes_requested" | "verification_rejected";
+export const professionalNotificationEventTypes = [
+  "onboarding_submitted",
+  "verification_approved",
+  "changes_requested",
+  "verification_rejected",
+  "verification_suspended",
+  "document_expiring",
+  "document_expired",
+  "document_rejected",
+  "lead_offer_received",
+  "lead_offer_expiring",
+  "lead_offer_expired",
+  "lead_assignment_created",
+  "lead_progress_reminder",
+  "verification_sla_breached",
+  "document_expiry_attention",
+  "distribution_exhausted",
+  "distribution_worker_failed",
+  "stale_lead",
+  "unmatched_lead",
+  "no_purchase_lead",
+  "operational_alert",
+] as const;
+export type ProfessionalNotificationEventType = (typeof professionalNotificationEventTypes)[number];
+export type NotificationChannelType = "in_app" | "system" | "email" | "sms" | "whatsapp";
+export type NotificationStatus = "pending" | "processing" | "delivered" | "failed" | "cancelled";
 export type LeadStatus =
   | "new"
   | "qualified"
@@ -381,6 +406,8 @@ export interface ProfessionalDocument {
   reviewed_at: string | null;
   reviewed_by: string | null;
   expires_at: string | null;
+  expiry_processed_at: string | null;
+  expiry_processing_started_at: string | null;
   archived_at: string | null;
   superseded_by_document_id: string | null;
   created_at: string;
@@ -419,11 +446,47 @@ export interface ProfessionalAuditLog {
 
 export interface ProfessionalNotificationEvent {
   id: string;
-  professional_id: string;
+  professional_id: string | null;
+  lead_id: string | null;
   event_type: ProfessionalNotificationEventType;
+  channel_type: NotificationChannelType;
   payload: Json;
+  status: NotificationStatus;
+  scheduled_for: string | null;
   processed_at: string | null;
+  failed_at: string | null;
+  attempt_count: number;
+  max_attempts: number;
+  last_error: string | null;
+  deduplication_key: string | null;
+  read_at: string | null;
   created_at: string;
+}
+
+export interface ProfessionalNotificationPreferences {
+  professional_id: string;
+  in_app_enabled: boolean;
+  email_enabled: boolean;
+  sms_enabled: boolean;
+  whatsapp_enabled: boolean;
+  lead_offer_notifications: boolean;
+  verification_notifications: boolean;
+  document_notifications: boolean;
+  progress_reminders: boolean;
+  updated_at: string;
+}
+
+export interface OperationalWorkerRun {
+  id: string;
+  worker_type: string;
+  started_at: string;
+  finished_at: string | null;
+  status: "running" | "completed" | "failed" | "partial";
+  claimed_count: number;
+  processed_count: number;
+  failed_count: number;
+  metadata: Json;
+  error_summary: string | null;
 }
 
 export interface SeoLocation {

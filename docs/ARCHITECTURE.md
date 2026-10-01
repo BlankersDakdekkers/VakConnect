@@ -21,6 +21,8 @@ VakConnect is opgezet als een Next.js App Router applicatie met TypeScript stric
 - `lib/services` bevat querylogica en mutaties voor diensten plus intakebeheer.
 - `lib/matching` bevat pure matchingtypes en database-gedreven matchgeneratie.
 - `lib/distribution` bevat eligibility-, ranking-, fairness- en offer-window logica plus fallback-engine.
+- `lib/notifications` beheert getypeerde in-app/system events, voorkeuren en de notification worker.
+- `lib/operations` bevat configureerbare SLA/reminderdrempels en provider-agnostische expiry- en monitoringjobs.
 - `lib/storage` bevat veilige upload- en signed URL-logica voor leadafbeeldingen.
 - `lib/validation` bevat Zod-schema's voor lead submission, intakevragen, antwoorden, scoring en matching.
 - `types` bevat domeintypes voor rollen, leads, services en professionals.
@@ -40,6 +42,8 @@ Belangrijke keuzes:
 - `lead_distribution_runs` versieert distributiestrategie per lead (`strategy_version`) en borgt idempotency via maximaal één actieve run per lead.
 - `lead_distribution_candidates` bewaart rankpositie, score, breakdown, offerstatus en offerwindow per kandidaat zonder duplicatie van lead-PII.
 - `professional_distribution_settings` beheert capaciteitslimieten zoals `max_open_offers`, `max_active_assignments` en tijdelijke pause.
+- `professional_notification_events` is de gedeelde, idempotente inbox- en system-eventbron; `professional_notification_preferences` bevat uitsluitend de huidige in-app voorkeuren.
+- `operational_settings` bewaart SLA-, reminder-, retry- en stale-lead drempels; `operational_worker_runs` registreert alleen veilige aantallen en generieke foutcodes.
 - `wallet_transactions` is een immutable ledger; `professional_wallets.cached_balance` is alleen een transactioneel bijgewerkte cache.
 - Nieuwe wallets starten op `0` credits; eventuele testcredits worden alleen via expliciete seed- of admintransacties toegevoegd.
 - `leads` bewaart commerciële verkoopstatus via `commercial_type`, `price_credits`, `max_buyers`, `buyers_count`, `sales_status` en optionele `subservice_slug`.
@@ -130,6 +134,19 @@ Iedere match bevat `professional_id`, `match_score` en `reasons`. In de commerci
 - Shared: batch-offers met configureerbare batchsize, slotcontrole (`max_buyers`) en sluiting bij sold-out.
 - Expiry/decline/purchase events worden als `lead_activity` gelogd voor audittrail en admin-inzicht.
 - Exhausted runs krijgen expliciet status `exhausted`; requeue gebeurt alleen via admin override.
+
+## Notifications en operationele workers (Prompt 12)
+
+- `professional_notification_events` is zowel event-outbox als inbox. Events gebruiken `pending → processing → delivered/failed` of `cancelled`; `delivered` betekent voor `in_app` dat de melding in de inbox staat. `read_at` is per ontvanger en wordt los van de lifecycle-status bijgewerkt.
+- Unieke `deduplication_key` waarden maken eventcreatie en reminder-herhalingen idempotent. De database claimt due events met `FOR UPDATE SKIP LOCKED`; een mislukte delivery verhoogt `attempt_count`, plant exponentiële backoff en stopt bij `max_attempts`. Verlopen processing leases kunnen opnieuw worden geclaimd.
+- Database-triggers enqueue-en `lead_offer_received`, `lead_offer_expired`, `lead_assignment_created` en `distribution_exhausted` transactioneel bij de lifecycleovergang. Dat voorkomt afhankelijkheid van UI-acties of een polling-window en houdt event en bronwijziging atomair. Herhaalde statusupdates produceren geen extra event.
+- Document workers maken afzonderlijke 30- en 7-dagen reminders met document-ID deduplication keys. Op expiry claimt een worker het document, zet het op `expired` en ververst derived quality/eligibility. Een required document triggert herbeoordeling en actieve offers worden overgeslagen; een recommended document veroorzaakt geen distribution block. Workerclaims gebruiken databaseleases/row locks.
+- Verification reminders waarschuwen het interne team op de ingestelde 24/48-uursdrempels, zonder commerciële SLA-belofte. Open `changes_requested` feedback geeft na de ingestelde termijn een professionalreminder en staat in de admin operations queue. Een statusovergang weg van `changes_requested` resolveert open feedback, zodat de queue vanzelf opruimt.
+- `/vakman/notificaties` en `/admin/notificaties` zijn gepagineerd. Professional RLS beperkt lezen en `read_at`-updates tot eigen delivered in-app events; admin RLS geeft system-events en hun leesstatus uitsluitend aan admins. Preferences zijn per professional/categorie; externe delivery preferences kunnen niet worden ingeschakeld.
+- Pre-purchase offermeldingen bevatten alleen generieke tekst en een interne route, nooit telefoon, e-mail of exact adres. Assignmentmeldingen ontstaan pas bij een `lead_assignments` insert en bevatten geen contactvelden. Geen externe notification provider wordt aangeroepen.
+- Worker endpoints `/api/internal/notifications/process`, `/api/internal/reminders/process`, `/api/internal/documents/expiry` en `/api/internal/operations/check` zijn POST-only, gebruiken `x-worker-secret` via `INTERNAL_WORKER_SECRET` of de bestaande distribution secret, en weigeren zonder secret generiek. De bestaande distribution worker verwerkt offer expiry/fallback.
+- `operational_worker_runs` registreert start/eindtijd, status en aantallen met begrensde foutcodes, niet met PII. `/admin/operatie` toont actuele verification/feedback queues, documentexpiry, unmatched/stale leads, exhausted runs, failed delivery/workers en recente runs. Instelbare thresholds staan in `operational_settings`.
+- Notification- en workerdata zijn retentie-klaar maar worden niet automatisch verwijderd. E-mail, SMS en WhatsApp zijn alleen schema-uitbreidingspunten en blijven uitgeschakeld; er is geen externe queue of cron-provider nodig.
 
 ## Wallet- en pricing-opzet
 
