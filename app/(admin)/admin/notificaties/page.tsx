@@ -1,0 +1,46 @@
+import Link from "next/link";
+import { Card } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui/page-header";
+import { getAdminNotifications } from "@/lib/notifications/queries";
+import { formatDate } from "@/lib/utils";
+
+function message(payload: Record<string, unknown>, key: string, fallback: string) {
+  const value = payload[key];
+  return typeof value === "string" ? value : fallback;
+}
+
+function safeInternalHref(value: unknown) {
+  if (typeof value !== "string") return null;
+  try {
+    const url = new URL(value, "https://vakconnect.invalid");
+    return url.origin === "https://vakconnect.invalid" && url.pathname.startsWith("/") ? `${url.pathname}${url.search}${url.hash}` : null;
+  } catch {
+    return null;
+  }
+}
+
+export default async function AdminNotificationsPage() {
+  const notifications = await getAdminNotifications();
+  return (
+    <div className="space-y-6">
+      <PageHeader title="Operationele notificaties" description="Systemmeldingen en alerts voor het beheerteam." />
+      {!notifications.length ? (
+        <Card><p className="text-sm text-muted-foreground">Er zijn geen operationele meldingen.</p></Card>
+      ) : (
+        <div className="space-y-3">
+          {notifications.map((notification) => {
+            const href = safeInternalHref(notification.payload.href);
+            return (
+              <Card key={notification.id} className="space-y-2">
+                <h2 className="font-semibold">{message(notification.payload, "title", notification.event_type)}</h2>
+                <p className="text-sm text-muted-foreground">{message(notification.payload, "description", "Er is een operationele melding.")}</p>
+                <time className="block text-xs text-muted-foreground" dateTime={notification.created_at}>{formatDate(notification.created_at)}</time>
+                {href ? <Link href={href} className="inline-block text-sm font-medium text-primary hover:underline">Open record</Link> : null}
+              </Card>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}

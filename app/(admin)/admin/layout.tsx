@@ -27,6 +27,8 @@ const navigation = [
   { href: "/admin/contact", label: "Contact" },
   { href: "/admin/vakmannen", label: "Vakmannen" },
   { href: "/admin/verificatie", label: "Verificatie" },
+  { href: "/admin/operatie", label: "Operatie" },
+  { href: "/admin/notificaties", label: "Notificaties" },
   { href: "/admin/diensten", label: "Diensten" },
   { href: "/admin/seo", label: "SEO overzicht" },
   { href: "/admin/seo/locaties", label: "SEO locaties" },

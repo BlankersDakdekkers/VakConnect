@@ -165,6 +165,7 @@ create policy "admins read operational worker runs"
   using (public.is_admin());
 
 revoke update on public.professional_notification_events from anon, authenticated;
+grant select on public.professional_notification_events to authenticated;
 grant update (read_at) on public.professional_notification_events to authenticated;
 grant select, insert, update on public.professional_notification_preferences to authenticated;
 grant select on public.operational_settings, public.operational_worker_runs to authenticated;

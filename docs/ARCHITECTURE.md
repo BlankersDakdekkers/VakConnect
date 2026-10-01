@@ -21,6 +21,8 @@ VakConnect is opgezet als een Next.js App Router applicatie met TypeScript stric
 - `lib/services` bevat querylogica en mutaties voor diensten plus intakebeheer.
 - `lib/matching` bevat pure matchingtypes en database-gedreven matchgeneratie.
 - `lib/distribution` bevat eligibility-, ranking-, fairness- en offer-window logica plus fallback-engine.
+- `lib/notifications` beheert getypeerde in-app/system events, voorkeuren en de notification worker.
+- `lib/operations` bevat configureerbare SLA/reminderdrempels en provider-agnostische expiry- en monitoringjobs.
 - `lib/storage` bevat veilige upload- en signed URL-logica voor leadafbeeldingen.
 - `lib/validation` bevat Zod-schema's voor lead submission, intakevragen, antwoorden, scoring en matching.
 - `types` bevat domeintypes voor rollen, leads, services en professionals.
@@ -40,6 +42,8 @@ Belangrijke keuzes:
 - `lead_distribution_runs` versieert distributiestrategie per lead (`strategy_version`) en borgt idempotency via maximaal één actieve run per lead.
 - `lead_distribution_candidates` bewaart rankpositie, score, breakdown, offerstatus en offerwindow per kandidaat zonder duplicatie van lead-PII.
 - `professional_distribution_settings` beheert capaciteitslimieten zoals `max_open_offers`, `max_active_assignments` en tijdelijke pause.
+- `professional_notification_events` is de gedeelde, idempotente inbox- en system-eventbron; `professional_notification_preferences` bevat uitsluitend de huidige in-app voorkeuren.
+- `operational_settings` bewaart SLA-, reminder-, retry- en stale-lead drempels; `operational_worker_runs` registreert alleen veilige aantallen en generieke foutcodes.
 - `wallet_transactions` is een immutable ledger; `professional_wallets.cached_balance` is alleen een transactioneel bijgewerkte cache.
 - Nieuwe wallets starten op `0` credits; eventuele testcredits worden alleen via expliciete seed- of admintransacties toegevoegd.
 - `leads` bewaart commerciële verkoopstatus via `commercial_type`, `price_credits`, `max_buyers`, `buyers_count`, `sales_status` en optionele `subservice_slug`.
@@ -130,6 +134,15 @@ Iedere match bevat `professional_id`, `match_score` en `reasons`. In de commerci
 - Shared: batch-offers met configureerbare batchsize, slotcontrole (`max_buyers`) en sluiting bij sold-out.
 - Expiry/decline/purchase events worden als `lead_activity` gelogd voor audittrail en admin-inzicht.
 - Exhausted runs krijgen expliciet status `exhausted`; requeue gebeurt alleen via admin override.
+
+## Notifications en operationele workers (Prompt 12)
+
+- Professional- en systemnotificaties gebruiken `professional_notification_events`; deduplication keys voorkomen dubbele reminders en een database-RPC claimt due events atomair met `FOR UPDATE SKIP LOCKED`.
+- In-app berichten worden bij beschikbaarheid als `delivered` getoond; alleen de eigenaar mag `read_at` aanpassen. System-events zijn alleen voor admins zichtbaar.
+- `/api/internal/notifications/process`, `/api/internal/reminders/process`, `/api/internal/documents/expiry` en `/api/internal/operations/check` zijn POST-only en vereisen `x-worker-secret` met `INTERNAL_WORKER_SECRET` (of de bestaande distribution secret).
+- Alle worker runs worden vastgelegd in `operational_worker_runs`; responses en foutvelden bevatten geen professionele of lead-PII.
+- E-mail-, sms- en WhatsApp-kanalen zijn alleen schema-foundation en blijven uitgeschakeld. Er is geen provider of externe queue vereist.
+- Configureerbare thresholds staan in `operational_settings`; required documents kunnen verificatie opnieuw laten beoordelen, aanbevolen documenten veroorzaken alleen reminders.
 
 ## Wallet- en pricing-opzet
 

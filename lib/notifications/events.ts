@@ -45,7 +45,8 @@ export async function createNotificationEvent(input: {
       .select(`in_app_enabled, ${category}`)
       .eq("professional_id", input.professionalId)
       .maybeSingle();
-    if (preference && (preference.in_app_enabled === false || preference[category] === false)) {
+    const enabled = preference ? (preference as Record<string, unknown>)[category] : undefined;
+    if (preference && (preference.in_app_enabled === false || enabled === false)) {
       return { id: null, created: false };
     }
   }

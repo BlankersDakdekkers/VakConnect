@@ -157,7 +157,6 @@ export async function processReminderChecks() {
     let failed = 0;
 
     const pendingCutoff = isoBefore(settings.verificationSlaHours.first * 60 * 60 * 1000);
-    const breachCutoff = isoBefore(settings.verificationSlaHours.breach * 60 * 60 * 1000);
     const { data: pendingReviews, error: reviewError } = await supabase
       .from("professionals")
       .select("id, submitted_for_review_at")
@@ -273,12 +272,40 @@ export async function processReminderChecks() {
       }
     }
 
+    const assignmentsCreatedSince = isoBefore(dayMs);
+    const { data: newAssignments, error: newAssignmentsError } = await supabase
+      .from("lead_assignments")
+      .select("id, lead_id, professional_id")
+      .gte("assigned_at", assignmentsCreatedSince)
+      .limit(500);
+    if (newAssignmentsError) throw new Error("Nieuwe opdrachten konden niet worden gecontroleerd.");
+    for (const row of newAssignments ?? []) {
+      try {
+        await createNotificationEvent({
+          professionalId: String(row.professional_id),
+          leadId: String(row.lead_id),
+          eventType: "lead_assignment_created",
+          channelType: "in_app",
+          deduplicationKey: `lead-assignment-created:${String(row.id)}`,
+          payload: {
+            title: "Nieuwe opdracht",
+            description: "Er staat een nieuwe leadopdracht voor je klaar.",
+            href: `/vakman/aanvragen/${String(row.lead_id)}`,
+          },
+        });
+        processed += 1;
+      } catch {
+        failed += 1;
+      }
+    }
+
     const assignmentCutoff = isoBefore(settings.progressReminderDelayDays * dayMs);
     const { data: assignments, error: assignmentError } = await supabase
       .from("lead_assignments")
       .select("id, lead_id, professional_id, progress_status, progress_updated_at, assigned_at")
       .in("status", ["accepted", "pending", "viewed"])
-      .lte("progress_updated_at", assignmentCutoff)
+      .lte("assigned_at", assignmentCutoff)
+      .or(`progress_updated_at.lt.${assignmentCutoff},progress_updated_at.is.null`)
       .limit(500);
     if (assignmentError) throw new Error("Leadvoortgang kon niet worden gecontroleerd.");
     for (const row of assignments ?? []) {
@@ -336,7 +363,7 @@ export async function processReminderChecks() {
     const staleRunCutoff = isoBefore(settings.staleLeadThresholds.distributedNoPurchaseHours * 60 * 60 * 1000);
     const { data: staleRuns, error: staleRunsError } = await supabase
       .from("lead_distribution_runs")
-      .select("id, lead_id")
+      .select("id, lead_id, status")
       .in("status", ["active", "exhausted"])
       .lte("started_at", staleRunCutoff)
       .limit(250);

@@ -22,6 +22,7 @@ const migrationFiles = [
   "supabase/migrations/20260911100000_phase7_professional_onboarding_verification.sql",
   "supabase/migrations/20260911110000_phase7_professional_onboarding_security_hardening.sql",
   "supabase/migrations/20260919104000_prompt11_post_merge_hardening.sql",
+  "supabase/migrations/20261001100000_prompt12_notifications_operations.sql",
 ].map((file) => join(repoRoot, file));
 
 type AppRole = "admin" | "professional" | null;
@@ -336,6 +337,67 @@ test("professional cannot verify themselves or forge audit and notification reco
     contextA,
   );
   assert.match(notificationError, /permission denied/i);
+});
+
+test("notification inbox enforces ownership, read-only fields and atomic worker claims", { concurrency: false }, async (t) => {
+  const isolated = await createIsolatedDatabase(t, "prompt12_notifications");
+  if (!isolated) return;
+
+  const { harness, database } = isolated;
+  const userA = randomUUID();
+  const userB = randomUUID();
+  const professionalA = randomUUID();
+  const professionalB = randomUUID();
+  const notificationId = randomUUID();
+  const systemNotificationId = randomUUID();
+  const pendingNotificationId = randomUUID();
+  const contextA = buildUserContext(userA, "professional");
+  const contextB = buildUserContext(userB, "professional");
+  seedProfessional(harness, database, professionalA, userA, "notifications-a@example.com", "Dakbedrijf Notifications A");
+  seedProfessional(harness, database, professionalB, userB, "notifications-b@example.com", "Dakbedrijf Notifications B");
+  harness.run(database, `grant select on public.professionals to authenticated;`);
+  harness.run(database, `
+    insert into public.professional_notification_events (
+      id, professional_id, event_type, channel_type, payload, status, processed_at
+    ) values
+      (${sqlLiteral(notificationId)}, ${sqlLiteral(professionalA)}, 'lead_offer_received', 'in_app', '{"title":"Nieuw aanbod"}'::jsonb, 'delivered', now()),
+      (${sqlLiteral(systemNotificationId)}, null, 'operational_alert', 'system', '{"title":"Operationele melding"}'::jsonb, 'delivered', now()),
+      (${sqlLiteral(pendingNotificationId)}, ${sqlLiteral(professionalA)}, 'lead_offer_received', 'in_app', '{}'::jsonb, 'pending', null);
+  `);
+
+  assert.equal(harness.run(database, `
+    select count(*) from public.professional_notification_events where id = ${sqlLiteral(notificationId)};
+  `, contextA), "1");
+  assert.equal(harness.run(database, `
+    select count(*) from public.professional_notification_events where id = ${sqlLiteral(notificationId)};
+  `, contextB), "0");
+  assert.equal(harness.run(database, `
+    select count(*) from public.professional_notification_events where id = ${sqlLiteral(systemNotificationId)};
+  `, contextA), "0");
+
+  harness.run(database, `
+    update public.professional_notification_events set read_at = now()
+    where id = ${sqlLiteral(notificationId)};
+  `, contextA);
+  const contentUpdateError = harness.expectError(database, `
+    update public.professional_notification_events set payload = '{}'::jsonb
+    where id = ${sqlLiteral(notificationId)};
+  `, contextA);
+  assert.match(contentUpdateError, /permission denied/i);
+  const preferencesError = harness.expectError(database, `
+    insert into public.professional_notification_preferences (professional_id, email_enabled)
+    values (${sqlLiteral(professionalA)}, true);
+  `, contextA);
+  assert.match(preferencesError, /professional_notification_preferences_external_disabled|check constraint|row-level security/i);
+
+  const unauthorizedClaim = harness.expectError(
+    database,
+    `select count(*) from public.claim_pending_notification_events(10);`,
+    contextA,
+  );
+  assert.match(unauthorizedClaim, /permission denied/i);
+  assert.equal(harness.run(database, `select count(*) from public.claim_pending_notification_events(10);`, { dbRole: "service_role" }), "1");
+  assert.equal(harness.run(database, `select count(*) from public.claim_pending_notification_events(10);`, { dbRole: "service_role" }), "0");
 });
 
 test("approved document storage cannot be deleted directly while pending documents can be deleted through the controlled flow", { concurrency: false }, async (t) => {
