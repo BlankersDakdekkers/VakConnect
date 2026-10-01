@@ -1,3 +1,5 @@
+import { serviceMainContent } from "./service-main-content.ts";
+
 export type ServiceSection = {
   heading: string;
   paragraphs: string[];
@@ -23,6 +25,7 @@ export type ServiceContentPageData = {
     title: string;
     description: string;
     label: string;
+    serviceSlug?: string;
     secondaryLabel?: string;
     secondaryHref?: string;
   };
@@ -9316,7 +9319,10 @@ const rawServiceSubPages = {
 } satisfies Record<string, ServiceContentPageData>;
 
 export const serviceMainPages: Record<string, ServiceContentPageData> = Object.fromEntries(
-  Object.entries(rawServiceMainPages).map(([slug, page]) => [slug, { ...page, costFactors: withFallbackCosts(page.costFactors) }]),
+  Object.entries(rawServiceMainPages).map(([slug, fallbackPage]) => {
+    const page = serviceMainContent[slug] ?? fallbackPage;
+    return [slug, { ...page, costFactors: withFallbackCosts(page.costFactors) }];
+  }),
 );
 
 export const serviceSubPages: Record<string, ServiceContentPageData> = Object.fromEntries(
