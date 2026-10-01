@@ -1,5 +1,6 @@
 import type { ServiceContentPageData } from "./service-pages.ts";
 import { homeDepthSections } from "./subservice-depth-home.ts";
+import { tradeDepthSections } from "./subservice-depth-trades.ts";
 
 type EditorialSubPage = {
   title: string;
@@ -1028,6 +1029,27 @@ const practicalNotes: Record<string, string> = {
   "verbouwing/keuken-verbouwen": "Een definitieve keukenplattegrond bepaalt de positie van afvoer, stopcontacten en ventilatie. Controleer daarom vóór sloop of het ontwerp past bij leidingroutes en de beschikbare groepenkast. Spreek af wie op locatie de aansluitmaten controleert vóór de nieuwe meubels arriveren, zodat montage niet stilvalt door een verkeerde aansluiting."
 };
 
+const depthFaqs: Record<string, [string, string]> = {
+  "dakdekker/daklekkage": ["Wat als de lekkage na herstel terugkomt?", "Meld wanneer en bij welk weer de plek verandert en deel de eerdere bevindingen. Laat vaststellen of dezelfde lekroute of een ander dakdetail betrokken is."],
+  "dakdekker/dakrenovatie": ["Hoe spreek ik onverwachte schade na demontage af?", "Vraag vooraf om foto's, een afzonderlijk voorstel en jouw akkoord voordat verborgen gebreken worden hersteld."],
+  "dakdekker/dakpannen-vervangen": ["Wat als dezelfde dakpan niet meer leverbaar is?", "Bespreek of een passend exemplaar verkrijgbaar is en of het verschil in profiel of kleur plaatselijk herstel mogelijk maakt."],
+  "dakdekker/plat-dak": ["Moet oude isolatie altijd blijven zitten?", "Nee. Laat beoordelen of de isolatie droog en bruikbaar is voordat een nieuwe laag of dakopbouw wordt gekozen."],
+  "dakdekker/schoorsteen": ["Wie beoordeelt een schoorsteen die nog wordt gebruikt?", "Meld het gebruik bij de aanvraag en vraag welke specialist de rookafvoer moet beoordelen naast het dak- of metselwerk."],
+  "loodgieter/lekkage": ["Wanneer kan een opengebroken vloer worden afgewerkt?", "Vraag eerst hoe de reparatie wordt gecontroleerd en of er nog vocht moet drogen voordat de afwerking terugkomt."],
+  "loodgieter/verstopping": ["Wat vraag ik na een eerdere ontstopping?", "Vertel welk leidingdeel destijds is behandeld en hoe lang dat hielp; vraag of aanvullend onderzoek nu zinvol is."],
+  "elektricien/groepenkast": ["Wie sluit nieuwe apparatuur op de aangepaste kast aan?", "Laat vastleggen welke elektricien of andere vakman verantwoordelijk is voor bedrading, aansluiting en eindcontrole."],
+  "elektricien/storing": ["Wat als de storing bij het bezoek niet optreedt?", "Deel een overzicht van eerdere uitval en vraag wat al is gecontroleerd en welke waarnemingen nodig zijn voor vervolgonderzoek."],
+  "kozijnen/kunststof-kozijnen": ["Wat bespreek ik over ventilatie bij nieuwe kozijnen?", "Geef aan hoe de ruimte nu verse lucht krijgt en laat de benodigde ventilatie beoordelen in samenhang met de nieuwe kozijnen."],
+  "kozijnen/kozijnen-vervangen": ["Wie herstelt de dagkanten na vervanging?", "Laat per opening vastleggen of herstel van de binnenzijde, buitenzijde en vensterbank in de offerte staat."],
+  "badkamer/renovatie": ["Wanneer spreek ik de definitieve badkamerindeling af?", "Laat de positie van sanitair en aansluitingen controleren voordat leidingwerk en afwerking worden ingepland."],
+  "badkamer/complete-badkamer": ["Wat gebeurt er als een gekozen product later wordt geleverd?", "Spreek af hoe de planning, eventuele tijdelijke voorzieningen en een alternatief product dan worden afgestemd."],
+  "isolatie/dakisolatie": ["Kan ik isoleren als er vocht in het dak zit?", "Laat de oorzaak en toestand van de dakopbouw eerst beoordelen; ingesloten vocht vraagt een andere aanpak."],
+  "verbouwing/aanbouw": ["Wie stemt de overgang naar de bestaande woning af?", "Vraag wie verantwoordelijk is voor de aansluiting van fundering, dak, vloer en installaties op het bestaande huis."],
+  "verbouwing/uitbouw": ["Hoe behoud ik licht in de bestaande ruimte?", "Bespreek raam- en daklichtposities al in het ontwerp en vraag wat dat betekent voor draagconstructie en kosten."],
+  "verbouwing/woning-renoveren": ["Welke werkzaamheden moeten vóór de afwerking gebeuren?", "Laat leidingen, technische controles en eventuele vochtproblemen in de fasering opnemen voordat vloeren en wanden worden gesloten."],
+  "verbouwing/keuken-verbouwen": ["Wanneer moeten de aansluitpunten vastliggen?", "Laat het definitieve keukenplan en de maatvoering toetsen voordat vloer en wanden worden afgewerkt."]
+};
+
 export function getEditorialSubPage(slug: string, fallback: ServiceContentPageData): ServiceContentPageData {
   const content = editorialSubPages[slug];
   if (!content) return fallback;
@@ -1053,9 +1075,13 @@ export function getEditorialSubPage(slug: string, fallback: ServiceContentPageDa
     sections: [
       ...content.details.map((text, index) => ({ heading: headings[index], paragraphs: [text] })),
       { heading: "Praktische afweging voor jouw situatie", paragraphs: [practicalNotes[slug]] },
-      ...(homeDepthSections[slug] ?? [])
+      ...(homeDepthSections[slug] ?? []),
+      ...(tradeDepthSections[slug] ?? [])
     ],
-    faqs: content.faqs.map(([question, answer]) => ({ question, answer })),
+    faqs: [
+      ...content.faqs.map(([question, answer]) => ({ question, answer })),
+      ...(depthFaqs[slug] ? [{ question: depthFaqs[slug][0], answer: depthFaqs[slug][1] }] : [])
+    ],
     relatedLinks: (() => {
       const links = fallback.relatedLinks.filter((link) => link.href !== `/${parent}` && link.href.split("/").length > 2);
       const supplements: Record<string, string[]> = {

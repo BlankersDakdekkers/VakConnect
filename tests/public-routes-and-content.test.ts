@@ -84,6 +84,27 @@ const expectedSubRoutes = [
   "/badkamer/ventilatie",
 ];
 
+const prioritySubRoutes = [
+  "/dakdekker/daklekkage",
+  "/dakdekker/dakrenovatie",
+  "/dakdekker/dakpannen-vervangen",
+  "/dakdekker/plat-dak",
+  "/dakdekker/schoorsteen",
+  "/loodgieter/lekkage",
+  "/loodgieter/verstopping",
+  "/elektricien/groepenkast",
+  "/elektricien/storing",
+  "/kozijnen/kunststof-kozijnen",
+  "/kozijnen/kozijnen-vervangen",
+  "/badkamer/renovatie",
+  "/badkamer/complete-badkamer",
+  "/isolatie/dakisolatie",
+  "/verbouwing/aanbouw",
+  "/verbouwing/uitbouw",
+  "/verbouwing/woning-renoveren",
+  "/verbouwing/keuken-verbouwen",
+];
+
 const baseSitemapRoutes = [
   "/",
   "/hoe-werkt-het",
@@ -160,6 +181,40 @@ test("servicepagina's hebben voldoende inhoudelijke diepgang en niet-thin hoofdc
     assert.ok(page.sections.length >= 7, `Te weinig secties op subdienstpagina ${page.path}`);
     assert.ok(page.faqs.length >= 4, `Te weinig FAQ-items op subdienstpagina ${page.path}`);
     assert.ok(totalChars >= 2200, `Subdienstpagina is te dun: ${page.path}`);
+  }
+});
+
+test("exact 18 prioritaire subdiensten bevatten 900–1400 zichtbare woorden en 5–6 FAQ's", () => {
+  assert.equal(expectedSubRoutes.length, 46);
+  assert.deepEqual(new Set(Object.values(serviceSubPages).map((page) => page.path)), new Set(expectedSubRoutes));
+  assert.equal(prioritySubRoutes.length, 18);
+  assert.equal(new Set(prioritySubRoutes).size, 18);
+
+  for (const path of prioritySubRoutes) {
+    const page = serviceSubPages[path.slice(1)];
+    assert.ok(page, `Prioritaire route ontbreekt: ${path}`);
+    const visibleText = [
+      page.h1,
+      ...page.intro,
+      ...page.sections.flatMap((section) => [section.heading, ...section.paragraphs, ...(section.bullets ?? [])]),
+      "Kostenfactoren",
+      ...page.costFactors,
+      "De uiteindelijke prijs hangt af van de situatie en afgesproken werkzaamheden. Vraag om een offerte waarin scope en eventuele extra’s duidelijk staan.",
+      "Hoe VakConnect werkt",
+      ...page.processSteps.map((step, index) => `Stap ${index + 1}: ${step}`),
+      "Bekijk hoe VakConnect werkt",
+      "Subdiensten en verdere informatie",
+      ...page.relatedLinks.flatMap((link) => [link.title, link.description]),
+      "Veelgestelde vragen",
+      ...page.faqs.flatMap((faq) => [faq.question, faq.answer]),
+      page.cta.title,
+      page.cta.description,
+      page.cta.label,
+      ...(page.cta.secondaryLabel ? [page.cta.secondaryLabel] : []),
+    ].join(" ");
+    const words = visibleText.trim().split(/\s+/).length;
+    assert.ok(words >= 900 && words <= 1400, `${path} heeft ${words} zichtbare woorden`);
+    assert.ok(page.faqs.length >= 5 && page.faqs.length <= 6, `${path} heeft ${page.faqs.length} FAQ's`);
   }
 });
 

@@ -40,8 +40,8 @@ export const tradeDepthSections: Record<string, ServiceSection[]> = {
     {
       heading: "Afstemmen met bewoners en betrokken partijen",
       paragraphs: [
-        "Bij een gedeeld dak of een appartement kan onderzoek toegang tot een andere woning of toestemming van een beheerder vragen. Meld daarom vooraf wie eigenaar van het dak is en wie een vakman binnen kan laten. Als de lekkage zich in meerdere woningen laat zien, helpt één overzicht van de waarnemingen om afzonderlijke symptomen niet voor losse oorzaken aan te zien.",
-        "Bewaar afspraken over het eerste bezoek en noteer welke werkzaamheden al zijn uitgevoerd. Moet een andere partij later isolatie, plafond of schilderwerk herstellen, geef dan de bevindingen over de lekbron door. Zo begint binnenherstel niet voordat duidelijk is of het dak opnieuw water doorlaat en wie eventuele vervolgcontrole uitvoert."
+        "Bij een gedeeld dak kan onderzoek toegang tot een andere woning of toestemming van een beheerder vragen. Meld wie eigenaar is en wie de vakman binnenlaat. Noteer wanneer meerdere woningen dezelfde klacht hebben; dat kan op één gedeelde oorzaak wijzen.",
+        "Bewaar afspraken en vermeld welke werkzaamheden al zijn uitgevoerd. Geef bevindingen over de lekbron door aan wie binnenafwerking herstelt. Bespreek wie controleert of het dak droog blijft voordat plafond of isolatie opnieuw wordt afgewerkt."
       ]
     }
   ],
