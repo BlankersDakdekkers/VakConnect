@@ -44,12 +44,17 @@ export async function generateMetadata({
   const resolved = await resolvePublicServiceRoute(vakgebied, slug);
 
   if (!resolved) {
-    return {};
+    notFound();
   }
 
   if (resolved.type === "local") {
-    if (!resolved.localPage.published || resolved.localPage.contentStatus !== "published") {
-      return {};
+    if (
+      !resolved.localPage.published ||
+      !resolved.localPage.indexable ||
+      !resolved.localPage.publishable ||
+      resolved.localPage.contentStatus !== "published"
+    ) {
+      notFound();
     }
 
     return buildPageMetadata({
@@ -57,7 +62,7 @@ export async function generateMetadata({
       description: resolved.localPage.page.description,
       path: resolved.localPage.canonicalPath,
       keywords: resolved.localPage.page.keywords,
-      indexable: resolved.localPage.indexable,
+      indexable: resolved.localPage.indexable && resolved.localPage.publishable,
     });
   }
 
@@ -85,7 +90,13 @@ export default async function ServiceOrLocalPage({
       resolved.localPage.page.sections.length >= 2 &&
       resolved.localPage.page.faqs.length > 0;
 
-    if (!resolved.localPage.published || !resolved.localPage.indexable || resolved.localPage.contentStatus !== "published" || !hasRequiredContent) {
+    if (
+      !resolved.localPage.published ||
+      !resolved.localPage.indexable ||
+      !resolved.localPage.publishable ||
+      resolved.localPage.contentStatus !== "published" ||
+      !hasRequiredContent
+    ) {
       notFound();
     }
 

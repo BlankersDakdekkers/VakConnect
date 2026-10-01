@@ -36,19 +36,21 @@ export default async function AdminSeoLocalPageDetail({
     ["Indexable", page.indexable],
     ["Content status = published", page.contentStatus === "published"],
     ["Quality ≥ 55", page.qualityScore >= 55],
+    ["Contentlengte minimaal 250 woorden", page.contentWordCount >= 250],
     ["Duplicate risk acceptabel", page.duplicateRisk !== "high"],
     ["Coverage niet none", page.coverageStatus !== "none"],
     ["Canonical geldig", /^\/[a-z0-9-]+\/[a-z0-9-]+(?:\/[a-z0-9-]+)?$/.test(page.canonicalPath)],
     ["Intro aanwezig", page.page.intro.length > 0],
     ["Minimaal 2 secties", page.page.sections.length >= 2],
-    ["Minimaal 1 FAQ", page.page.faqs.length >= 1],
+    ["Minimaal 2 FAQ's", page.page.faqs.length >= 2],
+    ["Lokale kwaliteitspoort", page.publishable],
   ] as const;
 
   return (
     <div className="space-y-6">
       <PageHeader
         title={`Lokale pagina: ${page.canonicalPath}`}
-        description={`Quality ${page.qualityScore} (${page.qualityLabel}) · duplicate risk: ${page.duplicateRisk} · coverage: ${page.coverageStatus}`}
+        description={`Quality ${page.qualityScore} (${page.qualityLabel}) · ${page.contentWordCount} woorden · duplicate risk: ${page.duplicateRisk} · coverage: ${page.coverageStatus}`}
         actions={
           <Link href={`/admin/seo/lokaal/${page.id}/preview`} className="rounded-full border px-4 py-2 text-sm font-medium">
             Preview
@@ -72,6 +74,18 @@ export default async function AdminSeoLocalPageDetail({
             </li>
           ))}
         </ul>
+        {page.qualityWarnings.length ? (
+          <div className="space-y-2 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
+            <h3 className="font-semibold">Quality warnings</h3>
+            <ul className="list-disc space-y-1 pl-5">
+              {page.qualityWarnings.map((warning) => (
+                <li key={warning}>{warning}</li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <p className="text-sm text-success">Geen blokkerende quality warnings.</p>
+        )}
       </Card>
 
       <Card className="space-y-4">

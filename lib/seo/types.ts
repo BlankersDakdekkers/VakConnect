@@ -68,8 +68,11 @@ export type DatabaseBackedLocalPage = {
   canonicalPath: string;
   qualityScore: number;
   qualityLabel: "onvoldoende" | "redelijk" | "goed";
+  qualityWarnings: string[];
+  contentWordCount: number;
   duplicateRisk: SeoDuplicateRisk;
   coverageStatus: SeoCoverageStatus;
+  publishable: boolean;
   updatedAt: string;
   page: ServiceContentPageData;
 };

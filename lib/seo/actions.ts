@@ -6,10 +6,17 @@ import { isSupabaseConfigured } from "@/lib/env";
 import { serviceMainSlugs } from "@/lib/content/service-pages";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { getSeoLocalPages, getSeoPageTextCorpus } from "@/lib/seo/local-pages/queries";
-import { calculateLocalQualityScore, detectDuplicateRisk } from "@/lib/seo/local-pages/quality";
-import { hasSlugCollisionWithSubservice, validatePublishSafety } from "@/lib/seo/local-pages/rules";
+import { getSeoLocations } from "@/lib/seo/locations/queries";
+import {
+  calculateLocalQualityScore,
+  detectDuplicateRisk,
+  hasLocalContext,
+  hasUniqueLocalMetadata,
+} from "@/lib/seo/local-pages/quality";
+import { hasSlugCollisionWithSubservice, isValidSeoStatusTransition, validatePublishSafety } from "@/lib/seo/local-pages/rules";
 import { getRevalidationTargets, revalidateSeoTargets } from "@/lib/seo/revalidation";
 import { evaluateCoverageStatus } from "@/lib/seo/local-pages/coverage";
+import { buildLocalPageMetadata } from "@/lib/seo/local-pages/metadata";
 import { seoBulkCreateSchema, seoBulkStatusSchema, seoLocalPageInputSchema, seoLocationInputSchema } from "@/lib/validation";
 
 type AuditWriterSupabase = {
@@ -189,7 +196,7 @@ export async function upsertSeoLocalPageAction(formData: FormData) {
   const supabase = createAdminSupabaseClient();
   const { data: location } = await supabase
     .from("seo_locations")
-    .select("id, slug, name, province, published")
+    .select("id, slug, name, province, region_label, intro_facts, local_characteristics, housing_notes, published, indexable")
     .eq("id", payload.data.locationId)
     .maybeSingle();
 
@@ -197,12 +204,85 @@ export async function upsertSeoLocalPageAction(formData: FormData) {
     redirectWithMessage(payload.data.redirectTo, "error", "Locatie niet gevonden.");
   }
 
-  if (hasSlugCollisionWithSubservice(payload.data.serviceSlug, location.slug) && !payload.data.subserviceSlug) {
-    redirectWithMessage(payload.data.redirectTo, "error", "City-slug botst met een subdienstslug binnen dit vakgebied.");
+  if (!payload.data.id && (payload.data.contentStatus !== "draft" || payload.data.published || payload.data.indexable)) {
+    redirectWithMessage(payload.data.redirectTo, "error", "Nieuwe lokale pagina's starten altijd als niet-indexeerbare draft.");
   }
 
-  const corpus = await getSeoPageTextCorpus(payload.data.id || undefined);
-  const duplicateRisk = detectDuplicateRisk({ intro: payload.data.localIntro, sections: payload.data.localSections, existingCorpus: corpus });
+  const { data: beforeRow } = payload.data.id
+    ? await supabase
+        .from("seo_local_pages")
+        .select("id, service_slug, subservice_slug, location_id, canonical_path, local_intro, local_sections, faqs, related_local_links, related_service_links, content_status, published")
+        .eq("id", payload.data.id)
+        .maybeSingle()
+    : { data: null };
+
+  if (payload.data.id && !beforeRow) {
+    redirectWithMessage(payload.data.redirectTo, "error", "Lokale pagina niet gevonden.");
+  }
+
+  let contentChanged = false;
+  if (beforeRow) {
+    contentChanged =
+      String(beforeRow.service_slug) !== payload.data.serviceSlug ||
+      String(beforeRow.subservice_slug ?? "") !== payload.data.subserviceSlug ||
+      String(beforeRow.location_id) !== payload.data.locationId ||
+      String(beforeRow.canonical_path) !== payload.data.canonicalPath ||
+      JSON.stringify(beforeRow.local_intro ?? []) !== JSON.stringify(payload.data.localIntro) ||
+      JSON.stringify(beforeRow.local_sections ?? []) !== JSON.stringify(payload.data.localSections) ||
+      JSON.stringify(beforeRow.faqs ?? []) !== JSON.stringify(payload.data.faqs) ||
+      JSON.stringify(beforeRow.related_local_links ?? []) !== JSON.stringify(payload.data.relatedLocalLinks) ||
+      JSON.stringify(beforeRow.related_service_links ?? []) !== JSON.stringify(payload.data.relatedServiceLinks);
+  }
+
+  if (
+    !isValidSeoStatusTransition({
+      previousStatus: beforeRow ? String(beforeRow.content_status) : null,
+      nextStatus: payload.data.contentStatus,
+      nextPublished: payload.data.published,
+      contentChanged,
+    })
+  ) {
+    redirectWithMessage(payload.data.redirectTo, "error", "Statusovergang niet toegestaan; volg draft → review → approved → published en laat gewijzigde content opnieuw beoordelen.");
+  }
+
+  const corpus = await getSeoPageTextCorpus(payload.data.serviceSlug, payload.data.id || undefined);
+  const cityNames = (await getSeoLocations()).map((item) => item.name);
+  const localBodyText = [
+    ...payload.data.localIntro,
+    ...payload.data.localSections.flatMap((section) => [section.heading, ...section.paragraphs, ...(section.bullets ?? [])]),
+    ...payload.data.faqs.flatMap((faq) => [faq.question, faq.answer]),
+  ].join(" ");
+  const locationFacts = [
+    ...((Array.isArray(location.intro_facts) ? location.intro_facts : []).map(String)),
+    ...((Array.isArray(location.local_characteristics) ? location.local_characteristics : []).map(String)),
+    location.housing_notes ?? "",
+  ].filter(Boolean);
+  const hasLocalFacts = hasLocalContext({
+    text: localBodyText,
+    cityName: location.name,
+    regionLabel: location.region_label,
+    localFacts: locationFacts,
+  });
+  const duplicateRisk = detectDuplicateRisk({
+    intro: payload.data.localIntro,
+    sections: payload.data.localSections,
+    existingCorpus: corpus,
+    serviceSlug: payload.data.serviceSlug,
+    subserviceSlug: payload.data.subserviceSlug || null,
+    cityName: location.name,
+    cityNames,
+  });
+  const serviceName = payload.data.serviceSlug.replace(/-/g, " ");
+  const subserviceName = payload.data.subserviceSlug?.replace(/-/g, " ");
+  const metadata = buildLocalPageMetadata({ serviceName, cityName: location.name, subserviceName });
+  const { title, description } = metadata;
+  const metadataIsUnique = hasUniqueLocalMetadata({
+    title,
+    description,
+    serviceSlug: payload.data.serviceSlug,
+    currentId: payload.data.id || undefined,
+    existingCorpus: corpus,
+  });
   const quality = calculateLocalQualityScore({
     canonicalPath: payload.data.canonicalPath,
     intro: payload.data.localIntro,
@@ -210,20 +290,43 @@ export async function upsertSeoLocalPageAction(formData: FormData) {
     faqsCount: payload.data.faqs.length,
     relatedLinksCount: payload.data.relatedServiceLinks.length + payload.data.relatedLocalLinks.length,
     duplicateRisk: duplicateRisk.level,
-    hasLocalContext: payload.data.localSections.some((section) => /lokaal|woning|planning|bereikbaarheid/i.test(section.heading)),
+    hasLocalContext: hasLocalFacts,
+    title,
+    description,
+    h1: `${subserviceName ?? serviceName} in ${location.name} nodig?`,
+    hasCta: true,
+    hasUniqueMetadata: metadataIsUnique,
+    bodyText: localBodyText,
   });
   const coverageStatus = await evaluateCoverageStatus({ supabase, serviceSlug: payload.data.serviceSlug, locationName: location.name });
 
   const publishSafety = validatePublishSafety({
     locationPublished: Boolean(location.published),
+    locationIndexable: Boolean(location.indexable),
     localPublished: payload.data.published,
     indexable: payload.data.indexable,
     contentStatus: payload.data.contentStatus,
     canonicalPath: payload.data.canonicalPath,
+    serviceSlug: payload.data.serviceSlug,
+    subserviceSlug: payload.data.subserviceSlug || null,
+    citySlug: location.slug,
     localIntro: payload.data.localIntro,
     localSections: payload.data.localSections,
     faqs: payload.data.faqs,
     qualityScore: quality.score,
+    contentWordCount: quality.contentWordCount,
+    hasMetadata: Boolean(title && description),
+    metadataWithinLimits: title.length <= 60 && description.length <= 160,
+    hasUniqueMetadata: metadataIsUnique,
+    hasH1: Boolean(payload.data.localIntro[0]?.trim()),
+    hasCta: true,
+    hasLocalContext: hasLocalFacts,
+    relatedLinksCount: payload.data.relatedServiceLinks.length + payload.data.relatedLocalLinks.length,
+    relatedLinkHrefs: [
+      ...payload.data.relatedServiceLinks.map((link) => link.href),
+      ...payload.data.relatedLocalLinks.map((citySlug) => `/${payload.data.serviceSlug}/${citySlug}`),
+    ],
+    hasPlaceholder: quality.hasPlaceholder,
     duplicateRisk: duplicateRisk.level,
     coverageStatus,
   });
@@ -242,10 +345,6 @@ export async function upsertSeoLocalPageAction(formData: FormData) {
   if ((conflictingCanonical ?? []).length) {
     redirectWithMessage(payload.data.redirectTo, "error", "Canonical pad bestaat al.");
   }
-
-  const { data: beforeRow } = payload.data.id
-    ? await supabase.from("seo_local_pages").select("id, content_status, published").eq("id", payload.data.id).maybeSingle()
-    : { data: null };
 
   const values = {
     service_slug: payload.data.serviceSlug,

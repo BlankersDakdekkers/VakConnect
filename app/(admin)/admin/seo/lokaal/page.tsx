@@ -244,6 +244,7 @@ export default async function AdminSeoLocalPagesPage({
                 <th className="py-3">Vakgebied</th>
                 <th className="py-3">Subdienst</th>
                 <th className="py-3">Quality</th>
+                <th className="py-3">Quality waarschuwingen</th>
                 <th className="py-3">Duplicate</th>
                 <th className="py-3">Coverage</th>
                 <th className="py-3">Status</th>
@@ -257,7 +258,10 @@ export default async function AdminSeoLocalPagesPage({
                   <td className="py-3">{pageRow.location?.name ?? pageRow.citySlug}</td>
                   <td className="py-3">{pageRow.serviceSlug}</td>
                   <td className="py-3">{pageRow.subserviceSlug ?? "-"}</td>
-                  <td className="py-3">{pageRow.qualityScore}</td>
+                  <td className="py-3">{pageRow.qualityScore} · {pageRow.contentWordCount} woorden</td>
+                  <td className="py-3 text-xs">
+                    {pageRow.qualityWarnings.length ? pageRow.qualityWarnings.join("; ") : "Geen"}
+                  </td>
                   <td className="py-3">{pageRow.duplicateRisk}</td>
                   <td className="py-3">{pageRow.coverageStatus}</td>
                   <td className="py-3">{pageRow.contentStatus}</td>

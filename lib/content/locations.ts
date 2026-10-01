@@ -38,22 +38,157 @@ type LocationSeed = {
   populationBand: string;
   historicCore?: boolean;
   suburbanExpansion?: boolean;
+  introFacts?: [string, string];
+  localCharacteristics?: [string, string];
 };
 
 const seeds: LocationSeed[] = [
-  { slug: "amsterdam", name: "Amsterdam", province: "Noord-Holland", regionLabel: "Randstad", tier: "A", nearbyCities: ["haarlem", "hoofddorp", "zaandam"], populationBand: "zeer grootstedelijk", historicCore: true },
-  { slug: "rotterdam", name: "Rotterdam", province: "Zuid-Holland", regionLabel: "Randstad", tier: "A", nearbyCities: ["schiedam", "vlaardingen", "capelle-aan-den-ijssel"], populationBand: "zeer grootstedelijk" },
-  { slug: "den-haag", name: "Den Haag", province: "Zuid-Holland", regionLabel: "Randstad", tier: "A", nearbyCities: ["leiden", "rotterdam", "delft"], populationBand: "zeer grootstedelijk" },
-  { slug: "utrecht", name: "Utrecht", province: "Utrecht", regionLabel: "Midden-Nederland", tier: "A", nearbyCities: ["amersfoort", "hilversum", "hoofddorp"], populationBand: "grootstedelijk", historicCore: true },
-  { slug: "eindhoven", name: "Eindhoven", province: "Noord-Brabant", regionLabel: "Zuidoost-Brabant", tier: "A", nearbyCities: ["helmond", "den-bosch", "tilburg"], populationBand: "grootstedelijk", suburbanExpansion: true },
-  { slug: "groningen", name: "Groningen", province: "Groningen", regionLabel: "Noord-Nederland", tier: "A", nearbyCities: ["assen", "heerenveen", "drachten"], populationBand: "regionale stad", historicCore: true },
-  { slug: "tilburg", name: "Tilburg", province: "Noord-Brabant", regionLabel: "Midden-Brabant", tier: "A", nearbyCities: ["breda", "waalwijk", "eindhoven"], populationBand: "grote stad" },
-  { slug: "breda", name: "Breda", province: "Noord-Brabant", regionLabel: "West-Brabant", tier: "A", nearbyCities: ["roosendaal", "etten-leur", "tilburg"], populationBand: "grote stad", historicCore: true },
-  { slug: "nijmegen", name: "Nijmegen", province: "Gelderland", regionLabel: "Rijk van Nijmegen", tier: "A", nearbyCities: ["arnhem", "oss", "ede"], populationBand: "grote stad", historicCore: true },
-  { slug: "arnhem", name: "Arnhem", province: "Gelderland", regionLabel: "Arnhem-Nijmegen", tier: "A", nearbyCities: ["nijmegen", "ede", "doetinchem"], populationBand: "middelgrote stad", historicCore: true },
-  { slug: "haarlem", name: "Haarlem", province: "Noord-Holland", regionLabel: "Randstad", tier: "A", nearbyCities: ["hoofddorp", "amsterdam", "zaandam"], populationBand: "middelgrote stad", historicCore: true },
+  {
+    slug: "amsterdam", name: "Amsterdam", province: "Noord-Holland", regionLabel: "Randstad", tier: "A",
+    nearbyCities: ["haarlem", "hoofddorp", "zaandam"], populationBand: "zeer grootstedelijk", historicCore: true,
+    introFacts: [
+      "Amsterdam combineert dichtbebouwde buurten met veel appartementen, portiekwoningen en gemengde bouwperioden.",
+      "Planning in de stad vraagt vaak extra aandacht voor bereikbaarheid, laden en lossen en werkmomenten in drukke straten.",
+    ],
+    localCharacteristics: [
+      "Bij oudere panden vraagt de combinatie van bestaande installaties en renovaties om een zorgvuldige opname vooraf.",
+      "In buurten met weinig parkeerruimte helpt het om toegang, steigeropties of liftgebruik vroeg in de aanvraag te benoemen.",
+    ],
+  },
+  {
+    slug: "rotterdam", name: "Rotterdam", province: "Zuid-Holland", regionLabel: "Randstad", tier: "A",
+    nearbyCities: ["schiedam", "vlaardingen", "capelle-aan-den-ijssel"], populationBand: "zeer grootstedelijk",
+    introFacts: [
+      "Rotterdam heeft een mix van hoogstedelijke gebieden, wederopbouwwijken en nieuwbouwlocaties.",
+      "Bij werkzaamheden spelen logistiek, bereikbaarheid en afstemming met VvE of beheer geregeld een rol.",
+    ],
+    localCharacteristics: [
+      "In hoogbouw kunnen transportafstanden, liftcapaciteit en toegangstijden de planning beïnvloeden.",
+      "In oudere wijken is extra aandacht voor bestaande leidingen, aansluitingen en bouwkundige details vaak verstandig.",
+    ],
+  },
+  {
+    slug: "den-haag", name: "Den Haag", province: "Zuid-Holland", regionLabel: "Randstad", tier: "A",
+    nearbyCities: ["leiden", "rotterdam", "delft"], populationBand: "zeer grootstedelijk",
+    introFacts: [
+      "Den Haag kent veel woningen uit verschillende perioden, van oudere stadswijken tot recente uitbreidingen.",
+      "Bereikbaarheid per wijk en de combinatie van appartementen en grondgebonden woningen maken een goede intake belangrijk.",
+    ],
+    localCharacteristics: [
+      "Bij bestaande bouw is vooraf inzicht in staat van dak, leidingwerk of elektra belangrijk voor een realistische aanpak.",
+      "In dichtbebouwde straten helpt het om parkeer- en toegangssituatie expliciet mee te nemen in de aanvraag.",
+    ],
+  },
+  {
+    slug: "utrecht", name: "Utrecht", province: "Utrecht", regionLabel: "Midden-Nederland", tier: "A",
+    nearbyCities: ["amersfoort", "hilversum", "hoofddorp"], populationBand: "grootstedelijk", historicCore: true,
+    introFacts: [
+      "Utrecht combineert een compacte binnenstad met naoorlogse wijken en veel recente woningontwikkeling.",
+      "Voor planning is de balans tussen stedelijke bereikbaarheid en woonwijken met verschillende bouwjaren relevant.",
+    ],
+    localCharacteristics: [
+      "In oudere woningen kunnen verouderde aansluitingen of beperkte technische ruimtes extra voorbereiding vragen.",
+      "In nieuwere buurten ligt de nadruk vaker op uitbreiding, verduurzaming en inpassing van nieuwe installaties.",
+    ],
+  },
+  {
+    slug: "eindhoven", name: "Eindhoven", province: "Noord-Brabant", regionLabel: "Zuidoost-Brabant", tier: "A",
+    nearbyCities: ["helmond", "den-bosch", "tilburg"], populationBand: "grootstedelijk", suburbanExpansion: true,
+    introFacts: [
+      "Eindhoven heeft een combinatie van bestaande woonwijken, naoorlogse bouw en veel nieuwbouwontwikkeling.",
+      "Aanvragen profiteren van duidelijke informatie over type woning, bereikbaarheid en gewenste planning.",
+    ],
+    localCharacteristics: [
+      "Bij renovatie in oudere woningen zijn ondergrond, aansluitpunten en huidige staat vaak bepalend voor de scope.",
+      "In uitbreidingswijken draait het vaker om afwerking, upgrades en slim combineren van meerdere klussen.",
+    ],
+  },
+  {
+    slug: "groningen", name: "Groningen", province: "Groningen", regionLabel: "Noord-Nederland", tier: "A",
+    nearbyCities: ["assen", "heerenveen", "drachten"], populationBand: "regionale stad", historicCore: true,
+    introFacts: [
+      "Groningen heeft een mix van binnenstedelijke woningen, jaren 30-bouw en recentere uitbreidingen.",
+      "Voor werkzaamheden helpt het om rekening te houden met wijktype, bereikbaarheid en bouwkundige staat.",
+    ],
+    localCharacteristics: [
+      "In oudere panden kunnen onderhoudsstaat en bestaande details bepalend zijn voor herstel- of renovatiekeuzes.",
+      "In appartementencomplexen is afstemming over toegang en werktijden vaak onderdeel van de voorbereiding.",
+    ],
+  },
+  {
+    slug: "tilburg", name: "Tilburg", province: "Noord-Brabant", regionLabel: "Midden-Brabant", tier: "A",
+    nearbyCities: ["breda", "waalwijk", "eindhoven"], populationBand: "grote stad",
+    introFacts: [
+      "Tilburg heeft zowel bestaande woonwijken als nieuwbouwgebieden met uiteenlopende onderhoudsbehoeften.",
+      "Een heldere intake over woningtype en bereikbaarheid helpt om aanvragen sneller passend te maken.",
+    ],
+    localCharacteristics: [
+      "Bij oudere woningen kunnen kozijnen, daken of leidingdelen extra aandacht vragen tijdens de opname.",
+      "In nieuwere buurten spelen planning en het combineren van werkzaamheden vaak een grote rol.",
+    ],
+  },
+  {
+    slug: "breda", name: "Breda", province: "Noord-Brabant", regionLabel: "West-Brabant", tier: "A",
+    nearbyCities: ["roosendaal", "etten-leur", "tilburg"], populationBand: "grote stad", historicCore: true,
+    introFacts: [
+      "Breda combineert historische delen, jaren 30-wijken en uitbreidingslocaties met uiteenlopende woningtypen.",
+      "Daardoor verschillen onderhouds- en renovatievragen vaak per buurt en type woning.",
+    ],
+    localCharacteristics: [
+      "In oudere woningen vragen bestaande aansluitingen en bouwdetails vaak om een zorgvuldige beoordeling.",
+      "In recentere wijken ligt het accent vaker op planbaar onderhoud en slimme combinatie van klussen.",
+    ],
+  },
+  {
+    slug: "nijmegen", name: "Nijmegen", province: "Gelderland", regionLabel: "Rijk van Nijmegen", tier: "A",
+    nearbyCities: ["arnhem", "oss", "ede"], populationBand: "grote stad", historicCore: true,
+    introFacts: [
+      "Nijmegen kent een combinatie van oudere stadsdelen, naoorlogse wijken en nieuwbouwgebieden.",
+      "Voor vakwerk helpt een intake die rekening houdt met bouwperiode en bereikbaarheid.",
+    ],
+    localCharacteristics: [
+      "Bij bestaande bouw kunnen ondergrond en bestaande installaties bepalend zijn voor de aanpak.",
+      "Bij planbare klussen is duidelijke scope en fasering belangrijk voor een realistische planning.",
+    ],
+  },
+  {
+    slug: "arnhem", name: "Arnhem", province: "Gelderland", regionLabel: "Arnhem-Nijmegen", tier: "A",
+    nearbyCities: ["nijmegen", "ede", "doetinchem"], populationBand: "middelgrote stad", historicCore: true,
+    introFacts: [
+      "Arnhem heeft diverse woningtypes: van oudere stadswoningen tot naoorlogse en nieuwere buurten.",
+      "Dat vraagt om maatwerk in opname, planning en uitvoering per type klus.",
+    ],
+    localCharacteristics: [
+      "Bij oudere panden kan de technische staat van bestaande voorzieningen extra voorbereiding vragen.",
+      "Voor buitenwerk en renovatie telt bereikbaarheid van locatie en materiaaltransport nadrukkelijk mee.",
+    ],
+  },
+  {
+    slug: "haarlem", name: "Haarlem", province: "Noord-Holland", regionLabel: "Randstad", tier: "A",
+    nearbyCities: ["hoofddorp", "amsterdam", "zaandam"], populationBand: "middelgrote stad", historicCore: true,
+    introFacts: [
+      "Haarlem heeft veel karakteristieke stadswijken en daarnaast nieuwere woongebieden.",
+      "Dat zorgt voor uiteenlopende onderhoudsvragen tussen oudere en recentere woningen.",
+    ],
+    localCharacteristics: [
+      "In compactere straten vraagt uitvoering soms extra afstemming over toegang en logistiek.",
+      "Bij oudere bouw is een goede technische opname belangrijk om verrassingen tijdens uitvoering te beperken.",
+    ],
+  },
+  {
+    slug: "zwolle", name: "Zwolle", province: "Overijssel", regionLabel: "Regio Zwolle", tier: "A",
+    nearbyCities: ["deventer", "kampen", "harderwijk"], populationBand: "middelgrote stad", historicCore: true,
+    introFacts: [
+      "Zwolle heeft een mix van binnenstedelijke gebieden, gezinswijken en recente nieuwbouw.",
+      "Voor goede matching helpt het om type klus en context van de woning concreet te omschrijven.",
+    ],
+    localCharacteristics: [
+      "In bestaande bouw kunnen onderhoudstoestand en bereikbaarheid sterk verschillen per wijk.",
+      "Bij planbare projecten geeft duidelijke fasering vaak sneller duidelijke vervolgstappen.",
+    ],
+  },
+
   { slug: "almere", name: "Almere", province: "Flevoland", regionLabel: "Flevoland", tier: "A", nearbyCities: ["amsterdam", "lelystad", "amersfoort"], populationBand: "grote stad", suburbanExpansion: true },
-  { slug: "zwolle", name: "Zwolle", province: "Overijssel", regionLabel: "Regio Zwolle", tier: "A", nearbyCities: ["deventer", "kampen", "harderwijk"], populationBand: "middelgrote stad", historicCore: true },
   { slug: "amersfoort", name: "Amersfoort", province: "Utrecht", regionLabel: "Midden-Nederland", tier: "A", nearbyCities: ["utrecht", "hilversum", "veenendaal"], populationBand: "middelgrote stad", historicCore: true },
 
   { slug: "maastricht", name: "Maastricht", province: "Limburg", regionLabel: "Zuid-Limburg", tier: "B", nearbyCities: ["heerlen", "sittard", "roermond"], populationBand: "middelgrote stad", historicCore: true },
@@ -139,14 +274,16 @@ function buildLocation(seed: LocationSeed): LocationContent {
     province: seed.province,
     regionLabel: seed.regionLabel,
     tier: seed.tier,
-    introFacts: [
-      `${seed.name} heeft ${densityLabel} woongebieden met een mix van bouwperioden en woningtypen.`,
-      `Lokale planning wordt sterker wanneer woningcontext, bereikbaarheid en gewenste uitvoeringsperiode vooraf concreet zijn.`,
-    ],
-    localCharacteristics: [
-      profile.renovationContext,
-      `${profile.accessibilityNotes} ${profile.parkingLogistics}`,
-    ],
+    introFacts:
+      seed.introFacts ?? [
+        `${seed.name} heeft ${densityLabel} woongebieden met een mix van bouwperioden en woningtypen.`,
+        `Lokale planning wordt sterker wanneer woningcontext, bereikbaarheid en gewenste uitvoeringsperiode vooraf concreet zijn.`,
+      ],
+    localCharacteristics:
+      seed.localCharacteristics ?? [
+        profile.renovationContext,
+        `${profile.accessibilityNotes} ${profile.parkingLogistics}`,
+      ],
     nearbyCities: seed.nearbyCities,
     published: true,
     indexable: true,

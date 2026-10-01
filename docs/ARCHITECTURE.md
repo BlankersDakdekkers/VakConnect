@@ -332,12 +332,16 @@ Lokale SEO-content wordt beheerd via twee tabellen:
 
 Een lokale pagina is alleen sitemap/index-eligible wanneer alle voorwaarden gelden:
 
-1. locatie `published = true`
+1. locatie `published = true` en `indexable = true`
 2. pagina `published = true`
 3. pagina `indexable = true`
 4. `content_status = published`
+5. de quality gate slaagt op route/service/stad, minimaal 250 inhoudelijke woorden, metadata, H1, CTA, lokale broncontext, interne links en placeholders
+6. duplicate risk is niet `high`
 
 `draft` en `review` mogen niet indexeerbaar zijn. Bij onvoldoende content of ongeldige publish-state blokkeert server-side validatie publicatie.
+
+Dezelfde contentgate geldt vóór `approved`; nieuwe records starten als draft en live copy moet na inhoudelijke wijzigingen opnieuw door review en approval. Een duplicate-check vergelijkt alleen dezelfde service en zoekintentie, neutraliseert alle bekende plaatsnamen en gebruikt Jaccard-overlap van inhoudelijke tokens: vanaf 72% is het risico hoog en publicatie geblokkeerd; 58–71% geeft een redactionele waarschuwing en vereist menselijke beoordeling; lager dan 58% geldt als laag risico. Deze drempels zijn review-signalen, geen automatische goedkeuring.
 
 ### Route-invariant en slug-collision
 
