@@ -158,7 +158,7 @@ export function detectDuplicateRisk(input: {
   const bodyText = normalize(sectionText(input.sections), input.cityNames ?? []);
 
   if (!introText || !bodyText) {
-    return { level: "high" as const, reason: "Inhoud onvolledig voor duplicate-check." };
+    return { level: "high" as const, similarity: 0, reason: "Inhoud onvolledig voor duplicate-check." };
   }
 
   const comparablePages = input.existingCorpus.filter(
@@ -168,17 +168,22 @@ export function detectDuplicateRisk(input: {
       !(input.cityName && item.cityName === input.cityName),
   );
   const cityNames = [...(input.cityNames ?? []), input.cityName ?? "", ...comparablePages.flatMap((item) => [item.cityName, item.citySlug.replace(/-/g, " ")])];
+  const currentTokens = tokenSet(`${input.intro.join(" ")} ${sectionText(input.sections)}`, cityNames);
+  const similarity = comparablePages.reduce((highest, item) => {
+    const overlap = jaccard(currentTokens, tokenSet(item.fullText, cityNames));
+    return Math.max(highest, overlap);
+  }, 0);
 
   const normalizedIntro = normalize(input.intro.join(" "), cityNames);
   const exactIntroMatch = comparablePages.some((item) => normalize(item.intro, cityNames) === normalizedIntro);
   if (exactIntroMatch) {
-    return { level: "high" as const, reason: "Intro blijft gelijk nadat plaatsnamen zijn geneutraliseerd." };
+    return { level: "high" as const, similarity, reason: "Intro blijft gelijk nadat plaatsnamen zijn geneutraliseerd." };
   }
 
   const introTokens = tokenSet(input.intro.join(" "), cityNames);
   const nearIdenticalIntro = comparablePages.some((item) => jaccard(introTokens, tokenSet(item.intro, cityNames)) >= 0.8);
   if (nearIdenticalIntro) {
-    return { level: "high" as const, reason: "Intro heeft sterke overlap met een andere stadspagina na plaatsnaam-normalisatie." };
+    return { level: "high" as const, similarity, reason: "Intro heeft sterke overlap met een andere stadspagina na plaatsnaam-normalisatie." };
   }
 
   const normalizedParagraphs = input.sections.flatMap((section) => section.paragraphs.map((paragraph) => normalize(paragraph, cityNames)));
@@ -186,7 +191,7 @@ export function detectDuplicateRisk(input: {
     (paragraph, index, values) => paragraph.length > 35 && values.findIndex((value) => value === paragraph) !== index,
   );
   if (duplicateParagraphs.length > 0) {
-    return { level: "high" as const, reason: "Exact duplicate paragrafen binnen de pagina gedetecteerd." };
+    return { level: "high" as const, similarity, reason: "Exact duplicate paragrafen binnen de pagina gedetecteerd." };
   }
 
   const normalizedHeadings = input.sections.map((section) => normalize(section.heading, cityNames));
@@ -194,31 +199,25 @@ export function detectDuplicateRisk(input: {
     (heading, index, values) => heading.length > 0 && values.findIndex((value) => value === heading) !== index,
   );
   if (repeatedHeadings.length > 0) {
-    return { level: "medium" as const, reason: "Sectieheading herhaalt binnen dezelfde pagina." };
+    return { level: "medium" as const, similarity, reason: "Sectieheading herhaalt binnen dezelfde pagina." };
   }
 
-  const currentTokens = tokenSet(`${input.intro.join(" ")} ${sectionText(input.sections)}`, cityNames);
-  const maximumOverlap = comparablePages.reduce((highest, item) => {
-    const overlap = jaccard(currentTokens, tokenSet(item.fullText, cityNames));
-    return Math.max(highest, overlap);
-  }, 0);
-
-  if (maximumOverlap >= 0.72) {
-    return { level: "high" as const, reason: "Inhoudsoverlap met een pagina voor dezelfde dienst/klus is ≥72% na plaatsnaam-normalisatie." };
+  if (similarity >= 0.72) {
+    return { level: "high" as const, similarity, reason: "Inhoudsoverlap met een pagina voor dezelfde dienst/klus is ≥72% na plaatsnaam-normalisatie." };
   }
 
-  if (maximumOverlap >= 0.58) {
-    return { level: "medium" as const, reason: "Inhoudsoverlap is 58–71% na plaatsnaam-normalisatie; handmatige redactionele controle nodig." };
+  if (similarity >= 0.58) {
+    return { level: "medium" as const, similarity, reason: "Inhoudsoverlap is 58–71% na plaatsnaam-normalisatie; handmatige redactionele controle nodig." };
   }
 
   if (
     (input.title && comparablePages.some((item) => item.title === input.title)) ||
     (input.description && comparablePages.some((item) => item.description === input.description))
   ) {
-    return { level: "medium" as const, reason: "Meta title of description is gelijk aan een andere pagina binnen dezelfde dienst." };
+    return { level: "medium" as const, similarity, reason: "Meta title of description is gelijk aan een andere pagina binnen dezelfde dienst." };
   }
 
-  return { level: "low" as const, reason: "Geen relevante duplicaten gedetecteerd." };
+  return { level: "low" as const, similarity, reason: "Geen relevante duplicaten gedetecteerd." };
 }
 
 export function calculateLocalQualityScore(input: {

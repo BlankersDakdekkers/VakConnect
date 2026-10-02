@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { upsertSeoLocalPageAction } from "@/lib/seo/actions";
 import { getSeoLocations } from "@/lib/seo/locations/queries";
 import { getSeoLocalPageById } from "@/lib/seo/local-pages/queries";
+import { localContentDepth } from "@/lib/content/local-content-depth";
 
 export default async function AdminSeoLocalPageDetail({
   params,
@@ -27,6 +28,9 @@ export default async function AdminSeoLocalPageDetail({
 
   const success = typeof query.success === "string" ? query.success : undefined;
   const error = typeof query.error === "string" ? query.error : undefined;
+  const proposal = localContentDepth[page.canonicalPath];
+  const useProposal = query.voorstel === "prompt17" && Boolean(proposal);
+  const editableContent = useProposal ? proposal : page.page;
 
   const location = locations.find((item) => item.slug === page.citySlug);
   const locationId = location?.id ?? "";
@@ -52,7 +56,7 @@ export default async function AdminSeoLocalPageDetail({
         title={`Lokale pagina: ${page.canonicalPath}`}
         description={`Quality ${page.qualityScore} (${page.qualityLabel}) · ${page.contentWordCount} woorden · duplicate risk: ${page.duplicateRisk} · coverage: ${page.coverageStatus}`}
         actions={
-          <Link href={`/admin/seo/lokaal/${page.id}/preview`} className="rounded-full border px-4 py-2 text-sm font-medium">
+          <Link href={`/admin/seo/lokaal/${page.id}/preview${useProposal ? "?voorstel=prompt17" : ""}`} className="rounded-full border px-4 py-2 text-sm font-medium">
             Preview
           </Link>
         }
@@ -64,6 +68,18 @@ export default async function AdminSeoLocalPageDetail({
       </div>
       {success ? <p className="rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-success">{success}</p> : null}
       {error ? <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-danger">{error}</p> : null}
+      {proposal ? (
+        <p className="text-sm text-muted-foreground">
+          {useProposal ? (
+            <>Redactioneel voorstel geladen, nog niet opgeslagen. De kwaliteitsindicatoren hieronder tonen de opgeslagen pagina. Laat gewijzigde gepubliceerde content opnieuw beoordelen: kies review en zet Published en Indexable uit voordat je opslaat. </>
+          ) : (
+            <>Voor deze bestaande route is een redactioneel voorstel beschikbaar. </>
+          )}
+          <Link href={`/admin/seo/lokaal/${page.id}${useProposal ? "" : "?voorstel=prompt17"}`} className="text-primary underline underline-offset-4">
+            {useProposal ? "Toon opgeslagen content" : "Laad redactioneel voorstel"}
+          </Link>
+        </p>
+      ) : null}
 
       <Card className="space-y-4">
         <h2 className="text-lg font-semibold tracking-tight">Publish preview checklist</h2>
@@ -89,7 +105,7 @@ export default async function AdminSeoLocalPageDetail({
       </Card>
 
       <Card className="space-y-4">
-        <form action={upsertSeoLocalPageAction} className="space-y-4">
+        <form key={useProposal ? "proposal" : "saved"} action={upsertSeoLocalPageAction} className="space-y-4">
           <input type="hidden" name="id" value={page.id} />
           <input type="hidden" name="redirect_to" value={`/admin/seo/lokaal/${page.id}`} />
           <div className="grid gap-4 md:grid-cols-3">
@@ -124,13 +140,13 @@ export default async function AdminSeoLocalPageDetail({
           </FormField>
 
           <FormField id="local_intro" label="Local intro (JSON array)">
-            <Textarea id="local_intro" name="local_intro" rows={5} defaultValue={JSON.stringify(page.page.intro, null, 2)} required />
+            <Textarea id="local_intro" name="local_intro" rows={5} defaultValue={JSON.stringify(editableContent.intro, null, 2)} required />
           </FormField>
           <FormField id="local_sections" label="Local sections (JSON array)">
-            <Textarea id="local_sections" name="local_sections" rows={12} defaultValue={JSON.stringify(page.page.sections, null, 2)} required />
+            <Textarea id="local_sections" name="local_sections" rows={12} defaultValue={JSON.stringify(editableContent.sections, null, 2)} required />
           </FormField>
           <FormField id="faqs" label="FAQ (JSON array)">
-            <Textarea id="faqs" name="faqs" rows={8} defaultValue={JSON.stringify(page.page.faqs, null, 2)} required />
+            <Textarea id="faqs" name="faqs" rows={8} defaultValue={JSON.stringify(editableContent.faqs, null, 2)} required />
           </FormField>
           <FormField id="related_local_links" label="Related local links (city slug JSON array)">
             <Textarea id="related_local_links" name="related_local_links" rows={3} defaultValue={JSON.stringify([], null, 2)} />

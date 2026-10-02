@@ -2,7 +2,8 @@ import "server-only";
 
 import { unstable_cache } from "next/cache";
 import { getServiceSubPage, serviceSubSlugs, type ServiceContentPageData } from "@/lib/content/service-pages";
-import { localServicePages } from "@/lib/content/local-service-pages";
+import { baselineLocalServicePages, localServicePages } from "@/lib/content/local-service-pages";
+import { localContentDepth, matchesLocalContentDepth } from "@/lib/content/local-content-depth";
 import { isSupabaseConfigured } from "@/lib/env";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import {
@@ -59,8 +60,21 @@ const serviceNameMap: Record<string, string> = {
 };
 
 const subserviceMap = new Map(serviceSubSlugs.map((item) => [`${item.vakgebied}/${item.subdienst}`, humanizeSlug(item.subdienst)]));
-const fallbackByPath = new Map(localServicePages.map((page) => [page.canonicalPath, page]));
+const fallbackByPath = new Map(baselineLocalServicePages.map((page) => [page.canonicalPath, page]));
+const depthByPath = new Map(localServicePages.map((page) => [page.canonicalPath, page]));
 let fallbackLocalPageCache: DatabaseBackedLocalPage[] | null = null;
+
+function getDatabaseFallback(row: SeoLocalPageWithLocation) {
+  const proposal = localContentDepth[row.canonical_path];
+  if (proposal && matchesLocalContentDepth({
+    intro: coerceStringArray(row.local_intro),
+    sections: coerceServiceSections(row.local_sections),
+    faqs: coerceFaqs(row.faqs),
+  }, proposal)) {
+    return depthByPath.get(row.canonical_path);
+  }
+  return fallbackByPath.get(row.canonical_path);
+}
 
 function rowToLocation(input: Record<string, unknown>): SeoLocation {
   return {
@@ -111,7 +125,7 @@ function rowToLocalPage(input: Record<string, unknown>): SeoLocalPageWithLocatio
 }
 
 function toCorpusItem(row: SeoLocalPageWithLocation): LocalPageTextCorpusItem {
-  const fallback = fallbackByPath.get(row.canonical_path);
+  const fallback = getDatabaseFallback(row);
   const intro = coerceStringArray(row.local_intro, fallback?.page.intro ?? []);
   const sections = coerceServiceSections(row.local_sections);
   const faqs = coerceFaqs(row.faqs);
@@ -145,7 +159,7 @@ function toCorpusItem(row: SeoLocalPageWithLocation): LocalPageTextCorpusItem {
 }
 
 function toPage(row: SeoLocalPageWithLocation, corpus: LocalPageTextCorpusItem[]): DatabaseBackedLocalPage {
-  const fallback = fallbackByPath.get(row.canonical_path);
+  const fallback = getDatabaseFallback(row);
   const intro = coerceStringArray(row.local_intro, fallback?.page.intro ?? []);
   const sections = coerceServiceSections(row.local_sections);
   const faqs = coerceFaqs(row.faqs);

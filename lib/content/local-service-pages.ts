@@ -1,6 +1,7 @@
 import type { ServiceContentPageData, ServiceFaq, ServiceLink, ServiceSection } from "./service-pages.ts";
 import { allLocations, getLocation, getLocationsByTier, getPublishedLocations, type CityTier } from "./locations.ts";
 import { buildLocalPageMetadata } from "../seo/local-pages/metadata.ts";
+import { localContentDepth } from "./local-content-depth.ts";
 
 export type LocalServiceSlug = "dakdekker" | "loodgieter" | "schilder" | "elektricien" | "kozijnen" | "badkamer" | "isolatie" | "verbouwing";
 
@@ -314,7 +315,7 @@ function buildLocalSections(profile: ServiceProfile, citySlug: string, subservic
   return sectionVariant === 0 ? blocks : [blocks[1], blocks[0], blocks[3], blocks[2]];
 }
 
-function buildRelatedServiceLinks(serviceSlug: LocalServiceSlug, subserviceSlug: string | null): ServiceLink[] {
+function buildRelatedServiceLinks(serviceSlug: LocalServiceSlug, subserviceSlug: string | null, includeRelatedSubservices = false): ServiceLink[] {
   const profile = serviceProfiles[serviceSlug];
   const links: ServiceLink[] = [
     {
@@ -330,8 +331,13 @@ function buildRelatedServiceLinks(serviceSlug: LocalServiceSlug, subserviceSlug:
       title: `${profile.subservices[subserviceSlug].name} zonder lokale filter`,
       description: `Lees de algemene pagina over ${profile.subservices[subserviceSlug].name.toLowerCase()}.`,
     });
+    if (includeRelatedSubservices) {
+      for (const [slug, subservice] of Object.entries(profile.subservices).filter(([slug]) => slug !== subserviceSlug).slice(0, 2)) {
+        links.push({ href: `/${serviceSlug}/${slug}`, title: subservice.name, description: `Vergelijk de aanpak voor ${subservice.name.toLowerCase()} wanneer de opname daar aanleiding toe geeft.` });
+      }
+    }
   } else {
-    for (const [slug, subservice] of Object.entries(profile.subservices).slice(0, 3)) {
+    for (const [slug, subservice] of Object.entries(profile.subservices).slice(0, includeRelatedSubservices ? 4 : 3)) {
       links.push({ href: `/${serviceSlug}/${slug}`, title: subservice.name, description: `Bekijk ${subservice.name.toLowerCase()} als vervolgroute.` });
     }
   }
@@ -383,12 +389,14 @@ function buildContextualLocalServiceLinks(serviceSlug: LocalServiceSlug, citySlu
     });
 }
 
-function buildConfig(serviceSlug: LocalServiceSlug, citySlug: string, subserviceSlug: string | null, published: boolean): LocalPageConfig {
+function buildConfig(serviceSlug: LocalServiceSlug, citySlug: string, subserviceSlug: string | null, published: boolean, useDepth = true): LocalPageConfig {
   const location = getLocation(citySlug);
   if (!location) throw new Error(`Onbekende citySlug: ${citySlug}`);
 
   const profile = serviceProfiles[serviceSlug];
   const subservice = subserviceSlug ? profile.subservices[subserviceSlug] : undefined;
+  const canonicalPath = buildCanonicalPath(serviceSlug, citySlug, subserviceSlug);
+  const depth = useDepth ? localContentDepth[canonicalPath] : undefined;
   return {
     serviceSlug,
     subserviceSlug,
@@ -396,12 +404,12 @@ function buildConfig(serviceSlug: LocalServiceSlug, citySlug: string, subservice
     tier: location.tier,
     published,
     indexable: published,
-    canonicalPath: buildCanonicalPath(serviceSlug, citySlug, subserviceSlug),
-    localIntro: buildLocalIntro(profile, citySlug, subserviceSlug),
-    localSections: buildLocalSections(profile, citySlug, subserviceSlug),
-    faq: buildFaq(profile, location.name, subservice?.name),
+    canonicalPath,
+    localIntro: depth?.intro ?? buildLocalIntro(profile, citySlug, subserviceSlug),
+    localSections: depth?.sections ?? buildLocalSections(profile, citySlug, subserviceSlug),
+    faq: depth?.faqs ?? buildFaq(profile, location.name, subservice?.name),
     relatedLocalLinks: location.nearbyCities,
-    relatedServiceLinks: buildRelatedServiceLinks(serviceSlug, subserviceSlug),
+    relatedServiceLinks: buildRelatedServiceLinks(serviceSlug, subserviceSlug, Boolean(depth)),
   };
 }
 
@@ -466,13 +474,14 @@ export const localServicePageConfigs = [
   ...draftSubserviceConfigs,
 ];
 
-function buildLocalPage(config: LocalPageConfig): LocalServicePage {
+function buildLocalPage(config: LocalPageConfig, useDepth = true): LocalServicePage {
   const location = getLocation(config.citySlug);
   if (!location) throw new Error(`Onbekende citySlug: ${config.citySlug}`);
 
   const profile = serviceProfiles[config.serviceSlug];
   const subservice = config.subserviceSlug ? profile.subservices[config.subserviceSlug] : undefined;
-  const metadata = buildLocalPageMetadata({
+  const depth = useDepth ? localContentDepth[config.canonicalPath] : undefined;
+  const metadata = depth ?? buildLocalPageMetadata({
     serviceName: profile.serviceName,
     cityName: location.name,
     subserviceName: subservice?.name,
@@ -509,7 +518,7 @@ function buildLocalPage(config: LocalPageConfig): LocalServicePage {
       subservice ? `${subservice.name.toLowerCase()} ${location.name}` : `${profile.serviceName.toLowerCase()} regio ${location.name}`,
       "VakConnect",
     ],
-    h1: subservice ? `${subservice.name} in ${location.name} laten oplossen?` : `${profile.serviceName} in ${location.name} nodig?`,
+    h1: depth?.h1 ?? (subservice ? `${subservice.name} in ${location.name} laten oplossen?` : `${profile.serviceName} in ${location.name} nodig?`),
     intro: config.localIntro,
     breadcrumbs: [
       { label: "Home", href: "/" },
@@ -544,6 +553,10 @@ function buildLocalPage(config: LocalPageConfig): LocalServicePage {
 }
 
 export const localServicePages = localServicePageConfigs.map((config) => buildLocalPage(config));
+export const baselineLocalServicePages = localServicePages.map((local) => localContentDepth[local.canonicalPath]
+  ? buildLocalPage(buildConfig(local.serviceSlug, local.citySlug, local.subserviceSlug, local.published, false), false)
+  : local,
+);
 
 const localPageByPath = new Map(localServicePages.map((page) => [page.canonicalPath, page]));
 
