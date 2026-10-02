@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -455,16 +456,23 @@ export function LeadRequestForm({
       </div>
 
       {currentStep === 0 ? (
-        <FormField id="serviceId" label="Welke dienst heb je nodig?" error={errors.serviceId}>
-          <Select id="serviceId" value={draft.serviceId} onChange={(event) => updateDraft("serviceId", event.target.value)}>
-            <option value="">Selecteer een dienst</option>
-            {services.map((service) => (
-              <option key={service.id} value={service.id}>
-                {service.name}
-              </option>
-            ))}
-          </Select>
-        </FormField>
+        <div className="space-y-4">
+          <FormField id="serviceId" label="Welke dienst heb je nodig?" error={errors.serviceId}>
+            <Select id="serviceId" disabled={!services.length} value={draft.serviceId} onChange={(event) => updateDraft("serviceId", event.target.value)}>
+              <option value="">Selecteer een dienst</option>
+              {services.map((service) => (
+                <option key={service.id} value={service.id}>
+                  {service.name}
+                </option>
+              ))}
+            </Select>
+          </FormField>
+          {!services.length ? (
+            <p role="status" className="rounded-sm bg-surface-muted p-4 text-sm leading-6 text-muted-foreground">
+              We kunnen op dit moment geen diensten tonen. Probeer het later opnieuw of <Link href="/contact" className="underline underline-offset-4">neem contact op</Link>.
+            </p>
+          ) : null}
+        </div>
       ) : null}
 
       {currentStep === 1 ? (

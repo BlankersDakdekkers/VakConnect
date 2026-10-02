@@ -26,6 +26,7 @@ test("public baseline retains the brand and readable text/CTA contrast", () => {
     assert.ok((values[0] + 0.05) / (values[1] + 0.05) >= 4.5, `${text}/${background} fails AA`);
   }
   assert.match(css, /--primary: #0f766e/);
+  assert.ok((color("surface") + 0.05) / (color("control-border") + 0.05) >= 3, "Form boundaries fail non-text AA");
   assert.match(css, /@layer base/);
   assert.doesNotMatch(css, /a\s*\{\s*color:\s*inherit/);
 });
@@ -39,6 +40,7 @@ test("public forms share mobile-sized controls, error and disabled states", () =
   assert.match(css, /\.form-control\[aria-invalid="true"\]/);
   assert.match(css, /\.form-control:disabled/);
   assert.match(css, /prefers-reduced-motion: reduce/);
+  assert.match(css, /@layer components\s*\{\s*\.form-control/);
 });
 
 test("form descriptions/errors are associated and choice groups use native semantics", () => {
