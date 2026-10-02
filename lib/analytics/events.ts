@@ -23,6 +23,26 @@ export const funnelEventNames = {
 export type FunnelEventName = (typeof funnelEventNames)[keyof typeof funnelEventNames];
 
 export const allowedFunnelEventNames = new Set<FunnelEventName>(Object.values(funnelEventNames));
+export const clientTrackableEventNames = [
+  funnelEventNames.leadFunnelStarted,
+  funnelEventNames.publicPageViewed,
+  funnelEventNames.servicePageViewed,
+  funnelEventNames.localPageViewed,
+  funnelEventNames.publicCtaClicked,
+  funnelEventNames.serviceSelected,
+  funnelEventNames.subserviceClicked,
+  funnelEventNames.relatedLocationClicked,
+  funnelEventNames.leadFunnelStepViewed,
+  funnelEventNames.leadFunnelStepCompleted,
+  funnelEventNames.leadFunnelValidationError,
+  funnelEventNames.leadFunnelBack,
+  funnelEventNames.faqOpened,
+  funnelEventNames.jumpLinkClicked,
+  funnelEventNames.locationCompleted,
+  funnelEventNames.dynamicQuestionsCompleted,
+  funnelEventNames.mediaStepCompleted,
+  funnelEventNames.contactCompleted,
+] as const;
 
 export const leadFunnelSteps = [
   "service",
@@ -65,6 +85,11 @@ export const analyticsCtaLocations = [
 ] as const;
 
 export type AnalyticsCtaLocation = (typeof analyticsCtaLocations)[number];
+
+export const analyticsDestinationTypes = ["request", "service", "contact", "professional", "public"] as const;
+export const analyticsDeviceCategories = ["mobile", "tablet", "desktop"] as const;
+export const analyticsReferralChannels = ["organic", "paid", "direct", "referral", "unknown"] as const;
+export const analyticsDurationBuckets = ["under_15s", "15_59s", "1_3m", "over_3m"] as const;
 
 export const analyticsValidationErrorTypes = [
   "required_missing",

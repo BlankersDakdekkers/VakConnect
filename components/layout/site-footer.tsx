@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TrackedLink } from "@/components/public/tracked-link";
 import { getPopularServiceClusters } from "@/lib/content/service-cards";
 
 export function SiteFooter() {
@@ -17,7 +18,7 @@ export function SiteFooter() {
           <p className="font-medium text-slate-100">Consument</p>
           <div className="flex flex-col gap-2">
             <Link href="/hoe-werkt-het">Hoe het werkt</Link>
-            <Link href="/aanvraag">Plaats je klus</Link>
+            <TrackedLink href="/aanvraag" ctaId="footer_request" ctaLocation="footer" destinationType="request">Plaats je klus</TrackedLink>
             <Link href="/kosten">Kosten</Link>
             <Link href="/regios">Regio&apos;s</Link>
           </div>
@@ -25,8 +26,8 @@ export function SiteFooter() {
         <div className="space-y-3 text-sm text-slate-400">
           <p className="font-medium text-slate-100">Vakmannen</p>
           <div className="flex flex-col gap-2">
-            <Link href="/voor-vakmannen">Voor vakmannen</Link>
-            <Link href="/aanmelden-vakman">Aanmelden vakman</Link>
+            <TrackedLink href="/voor-vakmannen" ctaId="footer_professional_landing" ctaLocation="footer" destinationType="professional">Voor vakmannen</TrackedLink>
+            <TrackedLink href="/aanmelden-vakman" ctaId="footer_professional_signup" ctaLocation="footer" destinationType="professional">Aanmelden vakman</TrackedLink>
             <Link href="/login">Inloggen</Link>
           </div>
         </div>

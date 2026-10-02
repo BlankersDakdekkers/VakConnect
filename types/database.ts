@@ -263,6 +263,7 @@ export interface AnalyticsEvent {
   lead_id: string | null;
   service_id: string | null;
   metadata: Json | null;
+  idempotency_key: string | null;
   created_at: string;
 }
 

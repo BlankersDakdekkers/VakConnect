@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { FormField } from "@/components/ui/form-field";
 import { FaqList } from "@/components/public/faq-list";
+import { TrackedLink } from "@/components/public/tracked-link";
 import { ProcessSteps } from "@/components/public/process-steps";
 import { buildPageMetadata } from "@/lib/config/site";
 import { getPopularServiceClusters } from "@/lib/content/service-cards";
@@ -93,9 +94,9 @@ export default async function HomePage() {
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Link href="/aanvraag" className={buttonClassName({ variant: "primary", size: "lg", className: "w-full sm:w-auto" })}>
+              <TrackedLink href="/aanvraag" ctaId="home_hero_request" ctaLocation="hero" destinationType="request" className={buttonClassName({ variant: "primary", size: "lg", className: "w-full sm:w-auto" })}>
                 Plaats je klus
-              </Link>
+              </TrackedLink>
               <Link href="/hoe-werkt-het" className={buttonClassName({ variant: "secondary", size: "lg", className: "w-full sm:w-auto" })}>
                 Bekijk hoe het werkt
               </Link>
@@ -161,7 +162,7 @@ export default async function HomePage() {
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {popularServices.map((service) => (
-            <Link key={service.href} href={service.href} className="group rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+            <TrackedLink key={service.href} href={service.href} ctaId={`service_${service.href.split("/").filter(Boolean)[0]}`} ctaLocation="service_card" destinationType="service" serviceSlug={service.href.split("/").filter(Boolean)[0]} className="group rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
               <Card className="flex h-full flex-col items-start gap-3 transition duration-150 group-hover:-translate-y-px group-hover:border-primary/30 group-hover:shadow-sm">
                 <h3 className="text-xl font-semibold tracking-tight">{service.title}</h3>
                 <p className="flex-1 text-sm leading-6 text-muted-foreground">{service.description}</p>
@@ -169,7 +170,7 @@ export default async function HomePage() {
                   Bekijk {service.title.toLowerCase()} <span aria-hidden="true" className="ml-2">→</span>
                 </span>
               </Card>
-            </Link>
+            </TrackedLink>
           ))}
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -214,9 +215,9 @@ export default async function HomePage() {
           <p className="max-w-2xl text-sm leading-7 text-muted-foreground">
             Stel je diensten en werkgebied in, geef je beschikbaarheid aan en bekijk aanvragen die op die gegevens aansluiten.
           </p>
-          <Link href="/voor-vakmannen" className={buttonClassName({ variant: "secondary", size: "lg" })}>
+          <TrackedLink href="/voor-vakmannen" ctaId="home_professional_signup" ctaLocation="mid_content" destinationType="professional" className={buttonClassName({ variant: "secondary", size: "lg" })}>
             Meld je aan als vakman
-          </Link>
+          </TrackedLink>
         </Card>
       </section>
 

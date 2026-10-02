@@ -33,3 +33,16 @@ test("phase3 migration adds lead progress and performance indexes", () => {
   assert.match(sql, /create index lead_activity_professional_id_idx/);
   assert.match(sql, /create index professional_service_areas_professional_id_idx/);
 });
+
+test("Prompt 19 migration adds an idempotency key for accepted lead events", () => {
+  const prompt19Sql = readFileSync(
+    "/home/runner/work/VakConnect/VakConnect/supabase/migrations/20261002210000_prompt19_analytics_hardening.sql",
+    "utf8",
+  );
+  assert.match(prompt19Sql, /add column idempotency_key text/);
+  assert.match(prompt19Sql, /create unique index analytics_events_idempotency_key_idx/);
+  assert.match(prompt19Sql, /analytics_events_idempotency_key_length/);
+  assert.match(prompt19Sql, /'source_route'/);
+  assert.match(prompt19Sql, /'cta_location'/);
+  assert.match(prompt19Sql, /analytics_metadata_is_safe/);
+});

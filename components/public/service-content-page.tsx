@@ -2,7 +2,11 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { buttonClassName } from "@/components/ui/button";
 import { FaqList } from "@/components/public/faq-list";
+import { TrackedLink } from "@/components/public/tracked-link";
+import { TrackedJumpLink } from "@/components/public/tracked-jump-link";
+import { PublicPageAnalytics } from "@/components/analytics/public-analytics";
 import { ProcessSteps } from "@/components/public/process-steps";
+import type { AnalyticsPageContext } from "@/lib/analytics/page-types";
 import type { ServiceContentPageData } from "@/lib/content/service-pages";
 
 function Breadcrumbs({ items }: Readonly<{ items: ServiceContentPageData["breadcrumbs"] }>) {
@@ -26,7 +30,15 @@ function Breadcrumbs({ items }: Readonly<{ items: ServiceContentPageData["breadc
   );
 }
 
-export function ServiceContentPage({ page }: Readonly<{ page: ServiceContentPageData }>) {
+export function ServiceContentPage({
+  page,
+  analyticsContext,
+}: Readonly<{ page: ServiceContentPageData; analyticsContext?: AnalyticsPageContext }>) {
+  const context: AnalyticsPageContext =
+    analyticsContext ??
+    (page.path.split("/").filter(Boolean).length === 1
+      ? { pageType: "service", serviceSlug: page.path.split("/").filter(Boolean)[0] }
+      : {});
   const applicationHref = page.cta.serviceSlug
     ? `/aanvraag?dienst=${encodeURIComponent(page.cta.serviceSlug)}`
     : "/aanvraag";
@@ -38,6 +50,7 @@ export function ServiceContentPage({ page }: Readonly<{ page: ServiceContentPage
 
   return (
     <div className="container-shell space-y-12 py-10 sm:py-14">
+      <PublicPageAnalytics context={context} />
       <Breadcrumbs items={page.breadcrumbs} />
 
       <section className="space-y-5">
@@ -48,9 +61,9 @@ export function ServiceContentPage({ page }: Readonly<{ page: ServiceContentPage
           ))}
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <Link href={applicationHref} className={buttonClassName({ variant: "primary", size: "lg" })}>
+          <TrackedLink href={applicationHref} ctaId="request_hero" ctaLocation="hero" destinationType="request" pageContext={context} className={buttonClassName({ variant: "primary", size: "lg" })}>
             {page.cta.label}
-          </Link>
+          </TrackedLink>
           <p className="max-w-prose text-sm leading-6 text-muted-foreground">
             VakConnect gebruikt je klus en regio om passende professionals te zoeken. Een vakman beoordeelt zelf de aanvraag; jij kiest hoe je verdergaat.
           </p>
@@ -63,12 +76,13 @@ export function ServiceContentPage({ page }: Readonly<{ page: ServiceContentPage
           <ul className="flex flex-wrap gap-2">
             {page.sections.map((section, index) => (
               <li key={section.heading}>
-                <a
+                <TrackedJumpLink
                   href={`#service-section-${index + 1}`}
-                  className="inline-flex min-h-10 items-center rounded-full border bg-surface px-3 text-sm text-muted-foreground transition hover:border-primary/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                  id={`section_${index + 1}`}
+                  pageContext={context}
                 >
                   {section.heading}
-                </a>
+                </TrackedJumpLink>
               </li>
             ))}
           </ul>
@@ -103,9 +117,9 @@ export function ServiceContentPage({ page }: Readonly<{ page: ServiceContentPage
                     <h2 className="break-words text-lg font-semibold">Weet je wat er moet gebeuren?</h2>
                     <p className="text-sm text-muted-foreground">Beschrijf je klus en regio; een passende vakman beoordeelt de aanvraag.</p>
                   </div>
-                  <Link href={applicationHref} className={buttonClassName({ variant: "primary", size: "lg" })}>
+                  <TrackedLink href={applicationHref} ctaId="request_mid_content" ctaLocation="mid_content" destinationType="request" pageContext={context} className={buttonClassName({ variant: "primary", size: "lg" })}>
                     Plaats je klus
-                  </Link>
+                  </TrackedLink>
                 </div>
               </section>
             ) : null}
@@ -153,17 +167,17 @@ export function ServiceContentPage({ page }: Readonly<{ page: ServiceContentPage
         <h2 className="break-words text-2xl font-semibold tracking-tight">Subdiensten en verdere informatie</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {page.relatedLinks.map((link) => (
-            <Link key={link.href} href={link.href} className="group rounded-2xl border bg-surface px-4 py-4 transition hover:-translate-y-px hover:border-primary/30 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 motion-reduce:transform-none motion-reduce:transition-none">
+            <TrackedLink key={link.href} href={link.href} ctaId="related_page" ctaLocation={context.pageType === "service_city" || context.pageType === "subservice_city" ? "local_context" : "service_card"} destinationType="service" pageContext={context} className="group rounded-2xl border bg-surface px-4 py-4 transition hover:-translate-y-px hover:border-primary/30 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 motion-reduce:transform-none motion-reduce:transition-none">
               <p className="text-sm font-semibold text-foreground">{link.title}</p>
               <p className="mt-1 max-w-prose text-sm leading-6 text-muted-foreground">{link.description}</p>
-            </Link>
+            </TrackedLink>
           ))}
         </div>
       </section>
 
       <section className="space-y-4">
         <h2 className="break-words text-2xl font-semibold tracking-tight">Veelgestelde vragen</h2>
-        <FaqList items={page.faqs} />
+        <FaqList items={page.faqs} analyticsContext={context} />
       </section>
 
       <section>
@@ -171,9 +185,9 @@ export function ServiceContentPage({ page }: Readonly<{ page: ServiceContentPage
           <h2 className="break-words text-2xl font-semibold tracking-tight">{page.cta.title}</h2>
           <p className="text-sm leading-7 text-primary-foreground/90">{page.cta.description}</p>
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Link href={applicationHref} className={buttonClassName({ variant: "secondary", size: "lg", className: "border-white/25 bg-white text-primary hover:bg-slate-100" })}>
+            <TrackedLink href={applicationHref} ctaId="request_final_cta" ctaLocation="final_cta" destinationType="request" pageContext={context} className={buttonClassName({ variant: "secondary", size: "lg", className: "border-white/25 bg-white text-primary hover:bg-slate-100" })}>
               {page.cta.label}
-            </Link>
+            </TrackedLink>
             {page.cta.secondaryHref && page.cta.secondaryLabel ? (
               <Link href={page.cta.secondaryHref} className={buttonClassName({ variant: "secondary", size: "lg", className: "border-white/35 bg-transparent text-white hover:bg-white/10" })}>
                 {page.cta.secondaryLabel}

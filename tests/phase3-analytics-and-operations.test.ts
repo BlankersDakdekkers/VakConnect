@@ -22,7 +22,8 @@ test("UTM normalisatie en attribution parsing werken consistent", () => {
   assert.equal(parsed.utm_campaign, "najaar");
   assert.equal(parsed.gclid, "abc123");
   assert.equal(parsed.first_touch_source, "google");
-  assert.equal(parsed.landing_page, "/aanvraag?utm_source=Google&utm_medium=CPC&utm_campaign=Najaar&gclid=abc123");
+  assert.equal(parsed.landing_page, "/aanvraag");
+  assert.equal(parsed.referrer, "google.com");
 });
 
 test("anonymous session ids zijn random en UUID-geformatteerd", () => {
@@ -35,19 +36,20 @@ test("anonymous session ids zijn random en UUID-geformatteerd", () => {
 
 test("analytics metadata sanitizer verwijdert PII-velden", () => {
   const sanitized = sanitizeAnalyticsMetadata({
-    step: 3,
-    service_id: "123",
+    step_key: "location",
+    service_id: "123e4567-e89b-42d3-a456-426614174000",
     email: "should-be-removed@example.com",
     message: "vrije tekst",
     upload_count: 2,
-    tags: ["dak", "spoed"],
+    cta_location: "hero",
+    free_text: "not an allowlisted dimension",
   });
 
   assert.deepEqual(sanitized, {
-    step: 3,
-    service_id: "123",
+    step_key: "location",
+    service_id: "123e4567-e89b-42d3-a456-426614174000",
     upload_count: 2,
-    tags: ["dak", "spoed"],
+    cta_location: "hero",
   });
 });
 

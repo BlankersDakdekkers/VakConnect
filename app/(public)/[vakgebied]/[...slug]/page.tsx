@@ -115,7 +115,15 @@ export default async function ServiceOrLocalPage({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schema.breadcrumbList) }}
         />
         <Script id={`faq-${resolved.localPage.canonicalPath}`} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema.faqSchema) }} />
-        <ServiceContentPage page={resolved.localPage.page} />
+        <ServiceContentPage
+          page={resolved.localPage.page}
+          analyticsContext={{
+            pageType: resolved.localPage.subserviceSlug ? "subservice_city" : "service_city",
+            serviceSlug: resolved.localPage.serviceSlug,
+            subserviceSlug: resolved.localPage.subserviceSlug,
+            citySlug: resolved.localPage.citySlug,
+          }}
+        />
       </>
     );
   }
@@ -125,5 +133,10 @@ export default async function ServiceOrLocalPage({
     (link, index, list) => list.findIndex((candidate) => candidate.href === link.href) === index,
   ).slice(0, 5);
 
-  return <ServiceContentPage page={{ ...resolved.serviceSubPage, relatedLinks }} />;
+  return (
+    <ServiceContentPage
+      page={{ ...resolved.serviceSubPage, relatedLinks }}
+      analyticsContext={{ pageType: "subservice", serviceSlug: vakgebied, subserviceSlug: slug[0] }}
+    />
+  );
 }

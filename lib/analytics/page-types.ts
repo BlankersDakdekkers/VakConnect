@@ -1,5 +1,5 @@
-import { serviceDetailRoutes } from "@/lib/content/service-cards";
-import type { AnalyticsPageType } from "@/lib/analytics/events";
+import { serviceDetailRoutes } from "../content/service-cards.ts";
+import type { AnalyticsPageType } from "./events.ts";
 
 export type AnalyticsPageContext = {
   pageType?: AnalyticsPageType;

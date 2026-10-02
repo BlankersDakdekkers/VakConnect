@@ -10,8 +10,9 @@ import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { buildLeadImagePath, leadImagesBucket, validateLeadImages } from "@/lib/storage/leads";
 import { leadSubmissionSchema } from "@/lib/validation/leads";
 import { addLeadActivity } from "@/lib/leads/activity";
-import { funnelEventNames } from "@/lib/analytics/events";
+import { funnelEventNames, leadFunnelSteps } from "@/lib/analytics/events";
 import { linkAnonymousAnalyticsEventsToLead, storeAnalyticsEvent } from "@/lib/analytics/server";
+import { classifyPublicPage } from "@/lib/analytics/page-types";
 
 function getRawDynamicAnswers(formData: FormData, questions: ServiceQuestionDefinition[]) {
   return Object.fromEntries(
@@ -173,7 +174,7 @@ export async function createLeadSubmission(formData: FormData) {
   const supabase = createAdminSupabaseClient();
   const { data: service, error: serviceError } = await supabase
     .from("services")
-    .select("id")
+    .select("id, slug")
     .eq("id", payload.data.serviceId)
     .eq("active", true)
     .maybeSingle();
@@ -309,20 +310,41 @@ export async function createLeadSubmission(formData: FormData) {
     }
 
     if (anonymousSessionId) {
+      const sourcePage = attribution.landing_page ? classifyPublicPage(attribution.landing_page) : null;
+      const sourceRouteSegments = attribution.landing_page?.split("/").filter(Boolean) ?? [];
+      const sourcePageTypeIsAmbiguous = Boolean(sourcePage?.serviceSlug && sourceRouteSegments.length === 2);
       try {
-        await linkAnonymousAnalyticsEventsToLead(anonymousSessionId, lead.id);
         await storeAnalyticsEvent({
           eventName: funnelEventNames.leadSubmitted,
           anonymousSessionId,
           leadId: lead.id,
           serviceId: submissionPayload.data.serviceId,
+          idempotencyKey: `lead_submitted:${lead.id}`,
           metadata: {
+            schema_version: 1,
             upload_count: files.length,
             question_count: questions.length,
+            step_count: leadFunnelSteps.length,
+            service_slug: service.slug,
+            ...(attribution.utm_source ? { utm_source: attribution.utm_source } : {}),
+            ...(attribution.utm_medium ? { utm_medium: attribution.utm_medium } : {}),
+            ...(attribution.utm_campaign ? { utm_campaign: attribution.utm_campaign } : {}),
+            ...(attribution.first_touch_source ? { first_touch_source: attribution.first_touch_source } : {}),
+            ...(attribution.landing_page
+              ? {
+                  source_route: attribution.landing_page,
+                  ...(!sourcePageTypeIsAmbiguous && sourcePage?.pageType ? { source_page_type: sourcePage.pageType } : {}),
+                }
+              : {}),
           },
         });
       } catch (analyticsError) {
-        console.error("Lead analytics kon niet volledig worden opgeslagen", analyticsError);
+        console.error("Lead submission-event kon niet worden opgeslagen", analyticsError);
+      }
+      try {
+        await linkAnonymousAnalyticsEventsToLead(anonymousSessionId, lead.id);
+      } catch (analyticsError) {
+        console.error("Bestaande analytics-events konden niet aan de lead worden gekoppeld", analyticsError);
       }
     }
   } catch (error) {
