@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { buttonClassName } from "@/components/ui/button";
+import { ProcessSteps } from "@/components/public/process-steps";
 import { buildPageMetadata } from "@/lib/config/site";
 
 export const metadata: Metadata = buildPageMetadata({
@@ -31,7 +32,7 @@ export default function ForProfessionalsPage() {
       <nav className="text-sm text-muted-foreground" aria-label="Broodkruimel"><Link href="/">Home</Link> / Voor vakmannen</nav>
       <section className="space-y-5">
         <p className="text-sm font-medium text-primary">Voor vakbedrijven</p>
-        <h1 className="max-w-4xl text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+        <h1 className="max-w-4xl text-3xl font-semibold leading-tight tracking-tight text-balance sm:text-5xl">
           Meer passende opdrachten. Minder tijd verspillen aan slechte leads.
         </h1>
         <p className="max-w-3xl text-lg leading-8 text-muted-foreground">
@@ -58,15 +59,7 @@ export default function ForProfessionalsPage() {
 
       <section className="space-y-5">
         <h2 className="text-3xl font-semibold tracking-tight">Zo werkt het voor jouw bedrijf</h2>
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {setupSteps.map(([title, description], index) => (
-            <Card key={title} className="space-y-3">
-              <p className="text-sm font-medium text-primary">Stap {index + 1}</p>
-              <h3 className="text-lg font-semibold">{title}</h3>
-              <p className="text-sm leading-7 text-muted-foreground">{description}</p>
-            </Card>
-          ))}
-        </div>
+        <ProcessSteps steps={setupSteps.map(([title, description]) => ({ title, description }))} columns={4} />
       </section>
 
       <section className="grid gap-4 lg:grid-cols-2">

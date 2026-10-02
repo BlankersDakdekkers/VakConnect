@@ -6,6 +6,7 @@ import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { Textarea } from "@/components/ui/textarea";
+import { ProcessSteps } from "@/components/public/process-steps";
 import { buildPageMetadata } from "@/lib/config/site";
 import { isSupabaseConfigured } from "@/lib/env";
 import { submitProfessionalApplicationAction } from "@/lib/public/actions";
@@ -34,23 +35,20 @@ export default async function JoinProfessionalsPage({
       </nav>
       <section className="space-y-4">
         <p className="text-sm font-medium text-primary">Aanmelden als vakbedrijf</p>
-        <h1 className="text-4xl font-semibold tracking-tight">Laat zien welk werk je doet en waar je werkt</h1>
-        <p className="max-w-3xl text-lg leading-8 text-muted-foreground">
+        <h1 className="max-w-4xl text-3xl font-semibold leading-tight tracking-tight text-balance sm:text-4xl">Laat zien welk werk je doet en waar je werkt</h1>
+        <p className="max-w-prose text-base leading-7 text-muted-foreground sm:text-lg">
           Deel je bedrijfsgegevens, diensten en werkgebied. We beoordelen je aanmelding voordat je profiel wordt geactiveerd.
         </p>
       </section>
 
-      <section className="grid gap-4 sm:grid-cols-3">
-        {[
-          ["1. Bedrijfsgegevens", "Vul je bedrijfsnaam, contactgegevens en KvK-nummer in."],
-          ["2. Diensten en regio", "Kies het soort opdrachten dat bij je bedrijf past en geef je werkgebied op."],
-          ["3. Beoordeling", "We nemen je gegevens door en laten weten wat de vervolgstap is."],
-        ].map(([title, description]) => (
-          <Card key={title} className="space-y-2">
-            <h2 className="font-semibold">{title}</h2>
-            <p className="text-sm leading-6 text-muted-foreground">{description}</p>
-          </Card>
-        ))}
+      <section aria-label="Stappen voor aanmelden">
+        <ProcessSteps
+          steps={[
+            { title: "Bedrijfsgegevens", description: "Vul je bedrijfsnaam, contactgegevens en KvK-nummer in." },
+            { title: "Diensten en regio", description: "Kies het soort opdrachten dat bij je bedrijf past en geef je werkgebied op." },
+            { title: "Beoordeling", description: "We nemen je gegevens door en laten weten wat de vervolgstap is." },
+          ]}
+        />
       </section>
 
       <Card className="space-y-3">
@@ -64,8 +62,8 @@ export default async function JoinProfessionalsPage({
         <SetupRequired title="Aanmelden tijdelijk niet beschikbaar" description="De omgeving is nog niet volledig geconfigureerd." />
       ) : null}
 
-      {success ? <p className="rounded-2xl border border-success/30 bg-green-50 px-4 py-3 text-sm text-success">{success}</p> : null}
-      {error ? <p className="rounded-2xl border border-danger/30 bg-red-50 px-4 py-3 text-sm text-danger">{error}</p> : null}
+      {success ? <p role="status" className="rounded-2xl border border-success/30 bg-green-50 px-4 py-3 text-sm text-success">{success}</p> : null}
+      {error ? <p role="alert" className="rounded-2xl border border-danger/30 bg-red-50 px-4 py-3 text-sm text-danger">{error}</p> : null}
 
       <Card className="space-y-6">
         <div className="space-y-2">
@@ -89,7 +87,7 @@ export default async function JoinProfessionalsPage({
             <p className="text-sm text-muted-foreground">Selecteer één of meer diensten die bij je bedrijf passen.</p>
             <div className="grid gap-2 sm:grid-cols-2">
               {services.map((service) => (
-                <label key={service.id} className="flex items-center gap-2 rounded-2xl border bg-surface-muted px-3 py-2 text-sm">
+                <label key={service.id} className="flex min-h-11 cursor-pointer items-center gap-3 rounded-2xl border bg-surface-muted px-3 py-2 text-sm">
                   <input type="checkbox" name="service_ids" value={service.id} />
                   <span>{service.name}</span>
                 </label>

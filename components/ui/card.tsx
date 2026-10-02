@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 export function Card({ className, children, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
-    <div {...props} className={cn("rounded-3xl border bg-surface p-6 shadow-sm", className)}>
+    <div {...props} className={cn("rounded-3xl border bg-surface p-5 shadow-[var(--shadow-soft)] sm:p-6", className)}>
       {children}
     </div>
   );

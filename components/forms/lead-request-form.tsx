@@ -63,6 +63,15 @@ const initialDraft: LeadDraft = {
 };
 
 const stepTitles = ["Dienst", "Dienstvragen", "Locatie", "Klus", "Foto's", "Contact", "Samenvatting"];
+const stepDescriptions = [
+  "Kies het vakgebied dat het beste bij je klus past.",
+  "Beantwoord de vragen die helpen om je klus goed te begrijpen.",
+  "Waar is het werk nodig? We gebruiken je postcode voor de regionale aansluiting.",
+  "Beschrijf wat er aan de hand is en wanneer je hulp zoekt.",
+  "Foto's zijn optioneel, maar kunnen extra context geven.",
+  "Vul je gegevens in zodat een vakman contact met je kan opnemen.",
+  "Controleer je aanvraag voordat je deze verstuurt.",
+];
 
 function isDynamicAnswerFilled(value: DynamicAnswerValue | undefined) {
   if (Array.isArray(value)) return value.length > 0;
@@ -255,6 +264,8 @@ export function LeadRequestForm({
   }
 
   async function handleSubmit() {
+    if (submitting) return;
+
     if (!validateStep(1)) {
       setCurrentStep(1);
       return;
@@ -307,40 +318,53 @@ export function LeadRequestForm({
     });
     images.forEach((image) => body.append("images", image));
 
-    const response = await fetch("/api/leads", {
-      method: "POST",
-      body,
-    });
+    try {
+      const response = await fetch("/api/leads", {
+        method: "POST",
+        body,
+      });
 
-    const payload = (await response.json().catch(() => null)) as { error?: string; reference?: string } | null;
+      const payload = (await response.json().catch(() => null)) as { error?: string; reference?: string } | null;
 
-    if (!response.ok || !payload?.reference) {
+      if (!response.ok || !payload?.reference) {
+        setSubmitting(false);
+        setFormError(payload?.error ?? "De aanvraag kon niet worden verstuurd.");
+        return;
+      }
+
+      router.push(`/aanvraag/bedankt?ref=${payload.reference}`);
+    } catch {
       setSubmitting(false);
-      setFormError(payload?.error ?? "De aanvraag kon niet worden verstuurd.");
-      return;
+      setFormError("De aanvraag kon niet worden verstuurd. Controleer je verbinding en probeer het opnieuw.");
     }
-
-    router.push(`/aanvraag/bedankt?ref=${payload.reference}`);
   }
 
   return (
     <Card className="space-y-6">
       <div className="space-y-3">
-        <div className="flex flex-wrap gap-2">
-          {stepTitles.map((title, index) => (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between gap-3 text-sm">
+            <p aria-live="polite" className="font-medium text-foreground">Stap {currentStep + 1} van {stepTitles.length}</p>
+            <p className="text-muted-foreground">{Math.round(((currentStep + 1) / stepTitles.length) * 100)}%</p>
+          </div>
+          <div
+            role="progressbar"
+            aria-label="Voortgang van je aanvraag"
+            aria-valuemin={1}
+            aria-valuemax={stepTitles.length}
+            aria-valuenow={currentStep + 1}
+            aria-valuetext={`Stap ${currentStep + 1} van ${stepTitles.length}: ${stepTitles[currentStep]}`}
+            className="h-2 overflow-hidden rounded-full bg-surface-muted"
+          >
             <div
-              key={title}
-              className={`rounded-full px-3 py-1 text-xs font-medium ${
-                index === currentStep ? "bg-primary text-primary-foreground" : "bg-surface-muted text-muted-foreground"
-              }`}
-            >
-              Stap {index + 1}: {title}
-            </div>
-          ))}
+              className="h-full rounded-full bg-primary transition-[width] duration-200 motion-reduce:transition-none"
+              style={{ width: `${((currentStep + 1) / stepTitles.length) * 100}%` }}
+            />
+          </div>
         </div>
         <div>
           <h2 className="text-2xl font-semibold tracking-tight">{stepTitles[currentStep]}</h2>
-          <p className="text-sm text-muted-foreground">Doorloop stap voor stap je aanvraag. Server-side validatie blijft altijd leidend.</p>
+          <p className="max-w-prose text-sm leading-6 text-muted-foreground">{stepDescriptions[currentStep]}</p>
         </div>
       </div>
 
@@ -631,19 +655,19 @@ export function LeadRequestForm({
         </div>
       ) : null}
 
-      {formError ? <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-danger">{formError}</p> : null}
+      {formError ? <p role="alert" className="rounded-2xl border border-danger/30 bg-red-50 px-4 py-3 text-sm text-danger">{formError}</p> : null}
 
       <div className="flex flex-col gap-3 sm:flex-row sm:justify-between">
-        <Button type="button" variant="secondary" onClick={handleBack} disabled={currentStep === 0 || submitting}>
+        <Button type="button" variant="secondary" className="w-full sm:w-auto" onClick={handleBack} disabled={currentStep === 0 || submitting}>
           Vorige stap
         </Button>
         {currentStep === stepTitles.length - 1 ? (
-          <Button type="button" onClick={handleSubmit} disabled={submitting || !services.length}>
+          <Button type="button" className="w-full sm:w-auto" onClick={handleSubmit} disabled={submitting || !services.length}>
             {submitting ? "Aanvraag wordt verstuurd..." : "Aanvraag versturen"}
           </Button>
         ) : (
-          <Button type="button" onClick={handleNext} disabled={!services.length}>
-            Volgende stap
+          <Button type="button" className="w-full sm:w-auto" onClick={handleNext} disabled={!services.length}>
+            Verder naar {stepTitles[currentStep + 1].toLowerCase()}
           </Button>
         )}
       </div>

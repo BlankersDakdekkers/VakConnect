@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { Textarea } from "@/components/ui/textarea";
 import { buildPageMetadata, siteConfig } from "@/lib/config/site";
@@ -26,18 +25,18 @@ export default async function ContactPage({
   const error = typeof params.error === "string" ? params.error : null;
 
   return (
-    <div className="container-shell space-y-10 py-14">
-      <nav className="text-sm text-muted-foreground"><Link href="/">Home</Link> / Contact</nav>
+    <div className="container-shell space-y-10 py-10 sm:py-14">
+      <nav className="text-xs text-muted-foreground sm:text-sm" aria-label="Broodkruimel"><Link href="/">Home</Link> / Contact</nav>
       <section className="space-y-4">
         <p className="text-sm font-medium text-primary">We helpen je op weg</p>
-        <h1 className="text-4xl font-semibold tracking-tight">Waar kunnen we je mee helpen?</h1>
-        <p className="max-w-3xl leading-7 text-muted-foreground">
+        <h1 className="max-w-3xl text-3xl font-semibold leading-tight tracking-tight text-balance sm:text-4xl">Waar kunnen we je mee helpen?</h1>
+        <p className="max-w-prose leading-7 text-muted-foreground">
           Stel een vraag over je aanvraag, aanmelden als vakman, account of verificatie. Ook voor een technisch probleem kun je hieronder een bericht sturen.
         </p>
       </section>
 
-      {success ? <p className="rounded-2xl border border-success/30 bg-green-50 px-4 py-3 text-sm text-success">{success}</p> : null}
-      {error ? <p className="rounded-2xl border border-danger/30 bg-red-50 px-4 py-3 text-sm text-danger">{error}</p> : null}
+      {success ? <p role="status" className="rounded-2xl border border-success/30 bg-green-50 px-4 py-3 text-sm text-success">{success}</p> : null}
+      {error ? <p role="alert" className="rounded-2xl border border-danger/30 bg-red-50 px-4 py-3 text-sm text-danger">{error}</p> : null}
 
       <Card className="space-y-6">
         <div className="space-y-2">
@@ -54,17 +53,25 @@ export default async function ContactPage({
             className="hidden"
             defaultValue=""
           />
-          <FormField id="reason" label="Waar gaat je vraag over?" className="md:col-span-2">
-            <Select id="reason" name="reason" required>
-              <option value="consument">Consumentenvraag</option>
-              <option value="vakman">Vraag als vakman</option>
-              <option value="algemeen">Account, verificatie of technisch probleem</option>
-            </Select>
-          </FormField>
+          <fieldset className="space-y-3 md:col-span-2">
+            <legend className="text-sm font-medium">Waar gaat je vraag over?</legend>
+            <p className="text-sm text-muted-foreground">Kies het onderwerp dat het beste past.</p>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {[
+                ["consument", "Mijn klus of aanvraag"],
+                ["vakman", "Aanmelden als vakman"],
+                ["algemeen", "Account, verificatie of iets anders"],
+              ].map(([value, label], index) => (
+                <label key={value} className="flex min-h-14 cursor-pointer items-center gap-3 rounded-2xl border bg-surface px-4 py-3 text-sm transition hover:border-primary/40 has-[:checked]:border-primary has-[:checked]:bg-primary/5">
+                  <input type="radio" name="reason" value={value} required defaultChecked={index === 0} />
+                  <span>{label}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
           <FormField id="name" label="Naam"><Input id="name" name="name" required /></FormField>
           <FormField id="email" label="E-mail"><Input id="email" name="email" type="email" required /></FormField>
           <FormField id="phone" label="Telefoon (optioneel)"><Input id="phone" name="phone" /></FormField>
-          <div className="hidden md:block" />
           <FormField id="message" label="Bericht" className="md:col-span-2">
             <Textarea id="message" name="message" required />
           </FormField>
