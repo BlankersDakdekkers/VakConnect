@@ -22,7 +22,9 @@ export type AnalyticsReport = {
     service: string;
     slug: string;
     pageViews: number;
+    ctaImpressions: number;
     ctaClicks: number;
+    ctaCtr: number | null;
     funnelStarts: number;
     submissions: number;
     conversionRate: number | null;
@@ -33,7 +35,9 @@ export type AnalyticsReport = {
     city: string;
     service: string;
     views: number;
+    ctaImpressions: number;
     ctaClicks: number;
+    ctaCtr: number | null;
     starts: number;
     submissions: number;
   }>;
@@ -43,18 +47,23 @@ export type AnalyticsReport = {
     completed: number;
     completionRate: number | null;
     dropOffRate: number | null;
+    validationErrorRate: number | null;
     errors: number;
+    backs: number;
+    abandoned: number;
     durationBuckets: Record<string, number>;
   }>;
+  funnelAbandonment: { started: number; inferredAbandoned: number; thresholdMinutes: number; rate: number | null };
   deviceRows: Array<{ device: string; starts: number; submissions: number }>;
   channelRows: Array<{ channel: string; starts: number; submissions: number }>;
-  ctaRows: Array<{ ctaId: string; location: string; clicks: number; startedSessions: number; submittedSessions: number }>;
+  ctaRows: Array<{ ctaId: string; location: string; impressions: number; clicks: number; ctr: number | null; startedSessions: number; submittedSessions: number }>;
   utmRows: Array<{ source: string; medium: string; campaign: string; starts: number; submissions: number }>;
 };
 
 type SessionSummary = {
   started: boolean;
   submitted: boolean;
+  linkedLead: boolean;
   serviceSlug: string | null;
   sourceRoute: string | null;
   device: string;
@@ -63,6 +72,8 @@ type SessionSummary = {
   ctaLocation: string | null;
   ctaIdAtStart: string | null;
   ctaLocationAtStart: string | null;
+  latestFunnelActivityAt: number | null;
+  lastViewedStep: string | null;
   utmSource: string | null;
   utmMedium: string | null;
   utmCampaign: string | null;
@@ -91,26 +102,30 @@ export function buildAnalyticsReport({
   services,
   sampleLimited = false,
   storedLeadTotal,
+  now = new Date(),
+  abandonmentThresholdMinutes = 30,
 }: {
   events: AnalyticsReportEvent[];
   leads: LeadReportRow[];
   services: Pick<Service, "id" | "slug" | "name">[];
   sampleLimited?: boolean;
   storedLeadTotal?: number;
+  now?: Date;
+  abandonmentThresholdMinutes?: 30 | 120;
 }): AnalyticsReport {
   const serviceById = new Map(services.map((service) => [service.id, service]));
   const servicesBySlug = new Map(services.map((service) => [service.slug, service]));
-  const serviceStats = new Map<string, { views: number; clicks: number; starts: Set<string>; submittedSessions: Set<string> }>();
+  const serviceStats = new Map<string, { views: number; impressions: number; clicks: number; starts: Set<string>; submittedSessions: Set<string> }>();
   const localStats = new Map<
     string,
-    { city: string; service: string; views: number; clicks: number; starts: number; submissions: number }
+    { city: string; service: string; views: number; impressions: number; clicks: number; starts: number; submissions: number }
   >();
   const funnelStats = new Map<
     string,
-    { viewed: Set<string>; completed: Set<string>; errors: number; durations: Record<string, number> }
+    { viewed: Set<string>; completed: Set<string>; errors: number; backs: number; abandoned: number; durations: Record<string, number> }
   >();
   const sessions = new Map<string, SessionSummary>();
-  const ctaStats = new Map<string, { ctaId: string; location: string; clicks: number; startedSessions: number; submittedSessions: number }>();
+  const ctaStats = new Map<string, { ctaId: string; location: string; impressions: number; clicks: number; startedSessions: number; submittedSessions: number }>();
   const utmStats = new Map<string, { source: string; medium: string; campaign: string; starts: number; submissions: number }>();
   const stepOrder = new Map<string, number>(leadFunnelSteps.map((step, index) => [step, index]));
   let pageViews = 0;
@@ -124,6 +139,7 @@ export function buildAnalyticsReport({
       session = {
         started: false,
         submitted: false,
+        linkedLead: false,
         serviceSlug: null,
         sourceRoute: null,
         device: "unknown",
@@ -132,6 +148,8 @@ export function buildAnalyticsReport({
         ctaLocation: null,
         ctaIdAtStart: null,
         ctaLocationAtStart: null,
+        latestFunnelActivityAt: null,
+        lastViewedStep: null,
         utmSource: null,
         utmMedium: null,
         utmCampaign: null,
@@ -155,6 +173,8 @@ export function buildAnalyticsReport({
     const channel = stringValue(metadata.referral_channel);
     const ctaId = stringValue(metadata.cta_id);
     const ctaLocation = stringValue(metadata.cta_location);
+    const eventTimestamp = Date.parse(event.created_at);
+    if (event.lead_id) session.linkedLead = true;
     if (device) session.device = device;
     if (channel) session.channel = channel;
     if (stringValue(metadata.utm_source)) session.utmSource = stringValue(metadata.utm_source);
@@ -166,7 +186,7 @@ export function buildAnalyticsReport({
       pageViews += 1;
       const slug = eventServiceSlug;
       if (slug) {
-        const stats = serviceStats.get(slug) ?? { views: 0, clicks: 0, starts: new Set<string>(), submittedSessions: new Set<string>() };
+        const stats = serviceStats.get(slug) ?? { views: 0, impressions: 0, clicks: 0, starts: new Set<string>(), submittedSessions: new Set<string>() };
         stats.views += 1;
         serviceStats.set(slug, stats);
       }
@@ -179,6 +199,7 @@ export function buildAnalyticsReport({
           city: stringValue(metadata.city_slug) ?? "",
           service: eventServiceSlug ?? "",
           views: 0,
+          impressions: 0,
           clicks: 0,
           starts: 0,
           submissions: 0,
@@ -191,14 +212,14 @@ export function buildAnalyticsReport({
       ctaClicks += 1;
       if (ctaId && ctaLocation) {
         const key = `${ctaId}:${ctaLocation}`;
-        const stats = ctaStats.get(key) ?? { ctaId, location: ctaLocation, clicks: 0, startedSessions: 0, submittedSessions: 0 };
+        const stats = ctaStats.get(key) ?? { ctaId, location: ctaLocation, impressions: 0, clicks: 0, startedSessions: 0, submittedSessions: 0 };
         stats.clicks += 1;
         ctaStats.set(key, stats);
         session.ctaId = ctaId;
         session.ctaLocation = ctaLocation;
       }
       if (eventServiceSlug) {
-        const stats = serviceStats.get(eventServiceSlug) ?? { views: 0, clicks: 0, starts: new Set<string>(), submittedSessions: new Set<string>() };
+        const stats = serviceStats.get(eventServiceSlug) ?? { views: 0, impressions: 0, clicks: 0, starts: new Set<string>(), submittedSessions: new Set<string>() };
         stats.clicks += 1;
         serviceStats.set(eventServiceSlug, stats);
       }
@@ -209,6 +230,7 @@ export function buildAnalyticsReport({
             city: stringValue(metadata.city_slug) ?? "",
             service: eventServiceSlug ?? "",
             views: 0,
+            impressions: 0,
             clicks: 0,
             starts: 0,
             submissions: 0,
@@ -218,8 +240,36 @@ export function buildAnalyticsReport({
         }
       }
     }
+    if (event.event_name === funnelEventNames.ctaImpression && ctaId && ctaLocation) {
+      const key = `${ctaId}:${ctaLocation}`;
+      const stats = ctaStats.get(key) ?? { ctaId, location: ctaLocation, impressions: 0, clicks: 0, startedSessions: 0, submittedSessions: 0 };
+      stats.impressions += 1;
+      ctaStats.set(key, stats);
+      if (eventServiceSlug) {
+        const service = serviceStats.get(eventServiceSlug) ?? { views: 0, impressions: 0, clicks: 0, starts: new Set<string>(), submittedSessions: new Set<string>() };
+        service.impressions += 1;
+        serviceStats.set(eventServiceSlug, service);
+      }
+      if (metadata.page_type === "service_city" || metadata.page_type === "subservice_city") {
+        const route = stringValue(metadata.route);
+        if (route) {
+          const local = localStats.get(route) ?? {
+            city: stringValue(metadata.city_slug) ?? "",
+            service: eventServiceSlug ?? "",
+            views: 0,
+            impressions: 0,
+            clicks: 0,
+            starts: 0,
+            submissions: 0,
+          };
+          local.impressions += 1;
+          localStats.set(route, local);
+        }
+      }
+    }
     if (event.event_name === funnelEventNames.leadFunnelStarted) {
       session.started = true;
+      session.latestFunnelActivityAt = eventTimestamp;
       session.ctaIdAtStart = session.ctaId;
       session.ctaLocationAtStart = session.ctaLocation;
       session.utmSourceAtStart = session.utmSource;
@@ -240,19 +290,35 @@ export function buildAnalyticsReport({
     if (
       event.event_name === funnelEventNames.leadFunnelStepViewed ||
       event.event_name === funnelEventNames.leadFunnelStepCompleted ||
-      event.event_name === funnelEventNames.leadFunnelValidationError
+      event.event_name === funnelEventNames.leadFunnelValidationError ||
+      event.event_name === funnelEventNames.leadFunnelBack
     ) {
       const step = stringValue(metadata.step_key);
       if (step && stepOrder.has(step)) {
-        const stats = funnelStats.get(step) ?? { viewed: new Set<string>(), completed: new Set<string>(), errors: 0, durations: {} };
-        if (event.event_name === funnelEventNames.leadFunnelStepViewed) stats.viewed.add(event.anonymous_session_id);
-        if (event.event_name === funnelEventNames.leadFunnelStepCompleted) {
-          stats.completed.add(event.anonymous_session_id);
-          const duration = stringValue(metadata.duration_bucket);
-          if (duration) stats.durations[duration] = (stats.durations[duration] ?? 0) + 1;
+        const fullStats = funnelStats.get(step) ?? { viewed: new Set<string>(), completed: new Set<string>(), errors: 0, backs: 0, abandoned: 0, durations: {} };
+        if (event.event_name === funnelEventNames.leadFunnelStepViewed) {
+          fullStats.viewed.add(event.anonymous_session_id);
+          session.lastViewedStep = step;
+          session.latestFunnelActivityAt = eventTimestamp;
         }
-        if (event.event_name === funnelEventNames.leadFunnelValidationError) stats.errors += 1;
-        funnelStats.set(step, stats);
+        if (event.event_name === funnelEventNames.leadFunnelStepCompleted) {
+          fullStats.completed.add(event.anonymous_session_id);
+          if (session.lastViewedStep === step) session.lastViewedStep = null;
+          session.latestFunnelActivityAt = eventTimestamp;
+          const duration = stringValue(metadata.duration_bucket);
+          if (duration) fullStats.durations[duration] = (fullStats.durations[duration] ?? 0) + 1;
+        }
+        if (event.event_name === funnelEventNames.leadFunnelValidationError) {
+          fullStats.errors += 1;
+          session.lastViewedStep = step;
+          session.latestFunnelActivityAt = eventTimestamp;
+        }
+        if (event.event_name === funnelEventNames.leadFunnelBack) {
+          fullStats.backs += 1;
+          session.lastViewedStep = step;
+          session.latestFunnelActivityAt = eventTimestamp;
+        }
+        funnelStats.set(step, fullStats);
       }
     }
   }
@@ -267,7 +333,7 @@ export function buildAnalyticsReport({
     if (!session.started) continue;
     if (session.serviceSlug) {
       const service = servicesBySlug.get(session.serviceSlug);
-      const stats = serviceStats.get(session.serviceSlug) ?? { views: 0, clicks: 0, starts: new Set<string>(), submittedSessions: new Set<string>() };
+      const stats = serviceStats.get(session.serviceSlug) ?? { views: 0, impressions: 0, clicks: 0, starts: new Set<string>(), submittedSessions: new Set<string>() };
       stats.starts.add(sessionId);
       if (session.submitted) stats.submittedSessions.add(sessionId);
       serviceStats.set(session.serviceSlug, stats);
@@ -281,9 +347,22 @@ export function buildAnalyticsReport({
   const deviceCounts = new Map<string, { starts: number; submissions: number }>();
   const channelCounts = new Map<string, { starts: number; submissions: number }>();
   let funnelStarts = 0;
+  let inferredAbandoned = 0;
   for (const session of sessions.values()) {
     if (!session.started) continue;
     funnelStarts += 1;
+    if (
+      !session.submitted &&
+      !session.linkedLead &&
+      session.latestFunnelActivityAt !== null &&
+      now.getTime() - session.latestFunnelActivityAt >= abandonmentThresholdMinutes * 60_000
+    ) {
+      inferredAbandoned += 1;
+      if (session.lastViewedStep) {
+        const stats = funnelStats.get(session.lastViewedStep);
+        if (stats) stats.abandoned += 1;
+      }
+    }
     if (session.submitted) convertedSessions += 1;
     const device = deviceCounts.get(session.device) ?? { starts: 0, submissions: 0 };
     device.starts += 1;
@@ -327,6 +406,7 @@ export function buildAnalyticsReport({
     serviceRows: services.map((service) => {
       const stats = serviceStats.get(service.slug) ?? {
         views: 0,
+        impressions: 0,
         clicks: 0,
         starts: new Set<string>(),
         submittedSessions: new Set<string>(),
@@ -336,7 +416,9 @@ export function buildAnalyticsReport({
         service: service.name,
         slug: service.slug,
         pageViews: stats.views,
+        ctaImpressions: stats.impressions,
         ctaClicks: stats.clicks,
+        ctaCtr: getRate(stats.clicks, stats.impressions),
         funnelStarts: stats.starts.size,
         submissions,
         conversionRate: getRate(stats.submittedSessions.size, stats.starts.size),
@@ -349,13 +431,15 @@ export function buildAnalyticsReport({
         city: stats.city,
         service: stats.service,
         views: stats.views,
+        ctaImpressions: stats.impressions,
         ctaClicks: stats.clicks,
+        ctaCtr: getRate(stats.clicks, stats.impressions),
         starts: stats.starts,
         submissions: stats.submissions,
       }))
       .sort((a, b) => b.views - a.views || a.route.localeCompare(b.route)),
     funnelRows: leadFunnelSteps.map((step) => {
-      const stats = funnelStats.get(step) ?? { viewed: new Set<string>(), completed: new Set<string>(), errors: 0, durations: {} };
+      const stats = funnelStats.get(step) ?? { viewed: new Set<string>(), completed: new Set<string>(), errors: 0, backs: 0, abandoned: 0, durations: {} };
       const viewed = stats.viewed.size;
       const completed = stats.completed.size;
       return {
@@ -364,13 +448,29 @@ export function buildAnalyticsReport({
         completed,
         completionRate: getRate(completed, viewed),
         dropOffRate: getRate(Math.max(0, viewed - completed), viewed),
+        validationErrorRate: getRate(stats.errors, viewed),
         errors: stats.errors,
+        backs: stats.backs,
+        abandoned: stats.abandoned,
         durationBuckets: stats.durations,
       };
     }),
+    funnelAbandonment: {
+      started: funnelStarts,
+      inferredAbandoned,
+      thresholdMinutes: abandonmentThresholdMinutes,
+      rate: getRate(inferredAbandoned, funnelStarts),
+    },
     deviceRows: Array.from(deviceCounts, ([device, counts]) => ({ device, ...counts })),
     channelRows: Array.from(channelCounts, ([channel, counts]) => ({ channel, ...counts })),
-    ctaRows: Array.from(ctaStats.values()).sort((a, b) => b.clicks - a.clicks),
+    ctaRows: Array.from(ctaStats.values())
+      .map(({ impressions, clicks, ...row }) => ({
+        ...row,
+        impressions,
+        clicks,
+        ctr: getRate(clicks, impressions),
+      }))
+      .sort((a, b) => b.impressions - a.impressions || b.clicks - a.clicks),
     utmRows: Array.from(utmStats.values()).sort((a, b) => b.starts - a.starts),
   };
 }

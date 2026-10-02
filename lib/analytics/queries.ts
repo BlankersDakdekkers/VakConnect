@@ -6,7 +6,7 @@ import { buildAnalyticsReport, type AnalyticsReport } from "@/lib/analytics/repo
 
 const maxRows = 5000;
 
-export async function getAdminAnalyticsDashboard(rangeDays: 7 | 28) {
+export async function getAdminAnalyticsDashboard(rangeDays: 7 | 28, abandonmentThresholdMinutes: 30 | 120 = 30) {
   await requireAdminUser();
   const supabase = createAdminSupabaseClient();
   const until = new Date();
@@ -49,6 +49,7 @@ export async function getAdminAnalyticsDashboard(rangeDays: 7 | 28) {
     services: servicesResult.data ?? [],
     storedLeadTotal,
     sampleLimited: eventRows.length === maxRows || leadRows.length === maxRows,
+    abandonmentThresholdMinutes,
   });
 
   return {

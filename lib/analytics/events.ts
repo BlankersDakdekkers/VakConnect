@@ -3,7 +3,9 @@ export const funnelEventNames = {
   publicPageViewed: "public_page_view",
   servicePageViewed: "service_page_view",
   localPageViewed: "local_page_view",
+  ctaImpression: "cta_impression",
   publicCtaClicked: "public_cta_click",
+  experimentExposed: "experiment_exposed",
   serviceSelected: "service_selected",
   subserviceClicked: "subservice_clicked",
   relatedLocationClicked: "related_location_clicked",
@@ -28,6 +30,7 @@ export const clientTrackableEventNames = [
   funnelEventNames.publicPageViewed,
   funnelEventNames.servicePageViewed,
   funnelEventNames.localPageViewed,
+  funnelEventNames.ctaImpression,
   funnelEventNames.publicCtaClicked,
   funnelEventNames.serviceSelected,
   funnelEventNames.subserviceClicked,
@@ -89,7 +92,7 @@ export type AnalyticsCtaLocation = (typeof analyticsCtaLocations)[number];
 export const analyticsDestinationTypes = ["request", "service", "contact", "professional", "public"] as const;
 export const analyticsDeviceCategories = ["mobile", "tablet", "desktop"] as const;
 export const analyticsReferralChannels = ["organic", "paid", "direct", "referral", "unknown"] as const;
-export const analyticsDurationBuckets = ["under_15s", "15_59s", "1_3m", "over_3m"] as const;
+export const analyticsDurationBuckets = ["under_10s", "10_30s", "30_60s", "1_3m", "over_3m"] as const;
 
 export const analyticsValidationErrorTypes = [
   "required_missing",

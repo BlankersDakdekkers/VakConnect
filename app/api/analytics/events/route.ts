@@ -6,6 +6,7 @@ import { storeAnalyticsEvent } from "@/lib/analytics/server";
 const eventSchema = z.strictObject({
   eventName: z.enum(clientTrackableEventNames),
   anonymousSessionId: z.string().uuid(),
+  idempotencyKey: z.string().regex(/^[a-z0-9:_-]{1,160}$/i).optional(),
   serviceId: z.string().uuid().optional(),
   metadata: z
     .record(
@@ -33,6 +34,7 @@ export async function POST(request: Request) {
     await storeAnalyticsEvent({
       eventName: payload.data.eventName,
       anonymousSessionId: payload.data.anonymousSessionId,
+      idempotencyKey: payload.data.idempotencyKey,
       serviceId: payload.data.serviceId,
       metadata: payload.data.metadata,
     });
