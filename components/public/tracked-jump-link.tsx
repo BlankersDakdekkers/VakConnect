@@ -14,7 +14,7 @@ export function TrackedJumpLink({
   return (
     <a
       href={href}
-      className="inline-flex min-h-10 items-center rounded-full border bg-surface px-3 text-sm text-muted-foreground transition hover:border-primary/40 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+      className="inline-flex min-h-11 items-center py-2 text-sm text-muted-foreground underline decoration-border underline-offset-4 hover:text-foreground"
       onClick={() => void trackFunnelEvent(funnelEventNames.jumpLinkClicked, { jump_link_id: id }, pageContext)}
     >
       {children}

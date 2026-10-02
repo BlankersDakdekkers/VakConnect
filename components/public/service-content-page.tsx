@@ -14,9 +14,9 @@ function Breadcrumbs({ items }: Readonly<{ items: ServiceContentPageData["breadc
     <nav aria-label="Broodkruimel" className="text-xs text-muted-foreground sm:text-sm">
       <ol className="flex flex-wrap items-center gap-1.5">
         {items.map((item, index) => (
-          <li key={`${item.label}-${index}`} className="flex items-center gap-1.5">
+          <li key={`${item.label}-${index}`} className="flex min-w-0 items-center gap-1.5">
             {item.href ? (
-              <Link href={item.href} className="underline-offset-2 hover:underline">
+              <Link href={item.href} className="inline-flex min-h-11 items-center underline-offset-2 hover:underline">
                 {item.label}
               </Link>
             ) : (
@@ -44,7 +44,7 @@ export function ServiceContentPage({
     : "/aanvraag";
   const sectionStyles: Record<NonNullable<ServiceContentPageData["sections"][number]["type"]>, string> = {
     default: "space-y-3",
-    info: "space-y-3 rounded-r-xl border-l-4 border-primary/30 bg-primary/5 px-5 py-4",
+    info: "space-y-3 rounded-r-lg border-l-2 border-border bg-surface-muted px-5 py-4",
     warning: "space-y-3 rounded-r-xl border-l-4 border-accent/50 bg-accent/10 px-5 py-4",
   };
 
@@ -53,27 +53,25 @@ export function ServiceContentPage({
       <PublicPageAnalytics context={context} />
       <Breadcrumbs items={page.breadcrumbs} />
 
-      <section className="space-y-5">
+      <section className="space-y-5 border-b pb-8">
         <h1 className="max-w-4xl break-words text-3xl font-semibold leading-tight tracking-tight text-balance sm:text-4xl lg:text-5xl">{page.h1}</h1>
+        <TrackedLink href={applicationHref} ctaId="request_hero" ctaLocation="hero" destinationType="request" pageContext={context} className={buttonClassName({ variant: "primary", size: "lg", className: "w-full sm:w-auto" })}>
+          {page.cta.label}
+        </TrackedLink>
         <div className="max-w-prose space-y-3 text-base leading-7 text-muted-foreground">
           {page.intro.map((paragraph) => (
             <p key={paragraph}>{paragraph}</p>
           ))}
         </div>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <TrackedLink href={applicationHref} ctaId="request_hero" ctaLocation="hero" destinationType="request" pageContext={context} className={buttonClassName({ variant: "primary", size: "lg" })}>
-            {page.cta.label}
-          </TrackedLink>
-          <p className="max-w-prose text-sm leading-6 text-muted-foreground">
-            VakConnect gebruikt je klus en regio om passende professionals te zoeken. Een vakman beoordeelt zelf de aanvraag; jij kiest hoe je verdergaat.
-          </p>
-        </div>
+        <p className="max-w-prose text-sm leading-6 text-muted-foreground">
+          VakConnect gebruikt je klus en regio om passende professionals te zoeken. Een vakman beoordeelt zelf de aanvraag; jij kiest hoe je verdergaat.
+        </p>
       </section>
 
       {page.sections.length >= 4 ? (
-        <nav aria-label="Op deze pagina" className="rounded-2xl border bg-surface-muted p-5">
+        <nav aria-label="Op deze pagina" className="rounded-lg bg-surface-muted p-5 sm:p-6">
           <p className="mb-3 text-sm font-semibold">Op deze pagina</p>
-          <ul className="flex flex-wrap gap-2">
+          <ul className="grid gap-x-6 sm:grid-cols-2 lg:grid-cols-3">
             {page.sections.map((section, index) => (
               <li key={section.heading}>
                 <TrackedJumpLink
@@ -89,9 +87,9 @@ export function ServiceContentPage({
         </nav>
       ) : null}
 
-      <div className="space-y-10">
+      <div className="max-w-4xl space-y-10 sm:space-y-12">
         {page.sections.map((section, index) => (
-          <div key={section.heading} className="space-y-8">
+          <div key={section.heading} className="space-y-8 border-b pb-10 last:border-b-0 last:pb-0">
             <section
               id={`service-section-${index + 1}`}
               className={`scroll-mt-28 ${sectionStyles[section.type ?? "default"]}`}
@@ -103,7 +101,7 @@ export function ServiceContentPage({
                 </p>
               ))}
               {section.bullets?.length ? (
-                <ul className="max-w-prose list-disc space-y-2 pl-5 text-sm leading-6 text-muted-foreground marker:text-primary">
+                <ul className="max-w-prose list-disc space-y-2 pl-5 text-base leading-7 text-muted-foreground">
                   {section.bullets.map((bullet) => (
                     <li key={bullet}>{bullet}</li>
                   ))}
@@ -167,7 +165,7 @@ export function ServiceContentPage({
         <h2 className="break-words text-2xl font-semibold tracking-tight">Subdiensten en verdere informatie</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {page.relatedLinks.map((link) => (
-            <TrackedLink key={link.href} href={link.href} ctaId="related_page" ctaLocation={context.pageType === "service_city" || context.pageType === "subservice_city" ? "local_context" : "service_card"} destinationType="service" pageContext={context} className="group rounded-2xl border bg-surface px-4 py-4 transition hover:-translate-y-px hover:border-primary/30 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 motion-reduce:transform-none motion-reduce:transition-none">
+            <TrackedLink key={link.href} href={link.href} ctaId="related_page" ctaLocation={context.pageType === "service_city" || context.pageType === "subservice_city" ? "local_context" : "service_card"} destinationType="service" pageContext={context} className="service-card group border bg-surface px-5 py-5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 motion-reduce:transition-none">
               <p className="text-sm font-semibold text-foreground">{link.title}</p>
               <p className="mt-1 max-w-prose text-sm leading-6 text-muted-foreground">{link.description}</p>
             </TrackedLink>
@@ -181,20 +179,20 @@ export function ServiceContentPage({
       </section>
 
       <section>
-        <Card className="space-y-4 bg-primary text-primary-foreground">
+        <div className="public-cta space-y-4">
           <h2 className="break-words text-2xl font-semibold tracking-tight">{page.cta.title}</h2>
-          <p className="text-sm leading-7 text-primary-foreground/90">{page.cta.description}</p>
+          <p className="max-w-prose text-base leading-7 text-muted-foreground">{page.cta.description}</p>
           <div className="flex flex-col gap-3 sm:flex-row">
-            <TrackedLink href={applicationHref} ctaId="request_final_cta" ctaLocation="final_cta" destinationType="request" pageContext={context} className={buttonClassName({ variant: "secondary", size: "lg", className: "border-white/25 bg-white text-primary hover:bg-slate-100" })}>
+            <TrackedLink href={applicationHref} ctaId="request_final_cta" ctaLocation="final_cta" destinationType="request" pageContext={context} className={buttonClassName({ variant: "primary", size: "lg" })}>
               {page.cta.label}
             </TrackedLink>
             {page.cta.secondaryHref && page.cta.secondaryLabel ? (
-              <Link href={page.cta.secondaryHref} className={buttonClassName({ variant: "secondary", size: "lg", className: "border-white/35 bg-transparent text-white hover:bg-white/10" })}>
+              <Link href={page.cta.secondaryHref} className={buttonClassName({ variant: "ghost", size: "lg" })}>
                 {page.cta.secondaryLabel}
               </Link>
             ) : null}
           </div>
-        </Card>
+        </div>
       </section>
     </div>
   );

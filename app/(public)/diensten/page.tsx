@@ -33,11 +33,11 @@ export default async function ServicesPage() {
 
       <section aria-label="Vakgebieden" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {clusters.map((cluster) => (
-          <TrackedLink key={cluster.href} href={cluster.href} ctaId={`service_${cluster.href.split("/").filter(Boolean)[0]}`} ctaLocation="service_card" destinationType="service" className="group rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
-            <Card className="flex h-full flex-col items-start gap-3 transition duration-150 group-hover:-translate-y-px group-hover:border-primary/30 group-hover:shadow-sm">
+          <TrackedLink key={cluster.href} href={cluster.href} ctaId={`service_${cluster.href.split("/").filter(Boolean)[0]}`} ctaLocation="service_card" destinationType="service" className="service-card group">
+            <Card className="flex h-full flex-col items-start gap-3 transition-colors group-hover:border-muted-foreground">
               <h2 className="text-xl font-semibold tracking-tight">{cluster.title}</h2>
               <p className="flex-1 text-sm leading-6 text-muted-foreground">{cluster.description}</p>
-              <span className="inline-flex min-h-11 items-center text-sm font-medium text-primary">
+              <span className="inline-flex min-h-11 items-center text-sm font-medium text-foreground">
                 Bekijk {cluster.title.toLowerCase()} <span aria-hidden="true" className="ml-2">→</span>
               </span>
             </Card>

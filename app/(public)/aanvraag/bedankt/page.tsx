@@ -34,10 +34,10 @@ export default async function ThankYouPage({
   }
 
   return (
-    <div className="container-shell py-16">
+    <div className="container-shell py-8 sm:py-16">
       <Card className="mx-auto max-w-2xl space-y-6 text-center">
         <p className="text-sm font-medium text-primary">Aanvraag ontvangen</p>
-        <h1 className="text-4xl font-semibold tracking-tight">Je aanvraag is ontvangen.</h1>
+        <h1 className="text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">Je aanvraag is ontvangen.</h1>
         <p className="text-sm text-muted-foreground">
           Publieke aanvraagreferentie: <span className="font-semibold text-foreground">{reference}</span>
         </p>
@@ -46,11 +46,13 @@ export default async function ThankYouPage({
           <li>2. We zoeken een passende vakman.</li>
           <li>3. Een vakman kan daarna contact met je opnemen.</li>
         </ol>
+        <p className="text-sm leading-6 text-muted-foreground">Bewaar je referentie als je contact met ons wilt opnemen. Een reactie hangt af van de klus, regio en beschikbaarheid.</p>
         <div className="flex justify-center">
           <Link href="/" className={buttonClassName({ variant: "primary" })}>
             Terug naar homepage
           </Link>
         </div>
+        <Link href="/contact" className="inline-flex min-h-11 items-center text-sm underline underline-offset-4">Een vraag over je aanvraag?</Link>
       </Card>
     </div>
   );
