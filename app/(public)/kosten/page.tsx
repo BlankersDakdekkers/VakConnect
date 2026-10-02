@@ -19,8 +19,8 @@ export default function PricingPage() {
       <nav className="text-sm text-muted-foreground" aria-label="Broodkruimel"><Link href="/">Home</Link> / Kosten</nav>
       <section className="space-y-4">
         <p className="text-sm font-medium text-primary">Duidelijkheid vooraf</p>
-        <h1 className="text-4xl font-semibold tracking-tight">Wat kost VakConnect?</h1>
-        <p className="max-w-3xl text-lg leading-8 text-muted-foreground">
+        <h1 className="text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">Wat kost VakConnect?</h1>
+        <p className="max-w-prose text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
           Voor consumenten is een aanvraag plaatsen gratis. Voor vakbedrijven kunnen kosten gelden wanneer zij een aanvraag oppakken. De prijs van de klus spreek je rechtstreeks af met de vakman.
         </p>
       </section>
@@ -50,8 +50,8 @@ export default function PricingPage() {
         <p className="max-w-3xl leading-7 text-muted-foreground">
           De prijs voor het werk hangt af van je situatie en de afspraken met de vakman. Onder meer deze onderdelen kunnen meespelen:
         </p>
-        <ul className="grid gap-2 sm:grid-cols-2">
-          {factors.map((factor) => <li key={factor} className="rounded-2xl border bg-surface-muted px-4 py-3 text-sm">{factor}</li>)}
+        <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {factors.map((factor) => <li key={factor} className="rounded-xl border bg-surface-muted px-4 py-3 text-sm leading-6">{factor}</li>)}
         </ul>
         <p className="max-w-3xl text-sm leading-7 text-muted-foreground">
           Vraag de vakman om een duidelijke uitleg van de werkzaamheden en eventuele bijkomende kosten voordat je akkoord gaat.

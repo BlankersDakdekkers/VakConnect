@@ -32,8 +32,8 @@ export function ServiceContentPage({ page }: Readonly<{ page: ServiceContentPage
     : "/aanvraag";
   const sectionStyles: Record<NonNullable<ServiceContentPageData["sections"][number]["type"]>, string> = {
     default: "space-y-3",
-    info: "space-y-3 rounded-r-xl border-l-4 border-blue-300 bg-blue-50/70 px-5 py-4",
-    warning: "space-y-3 rounded-r-xl border-l-4 border-amber-400 bg-amber-50/70 px-5 py-4",
+    info: "space-y-3 rounded-r-xl border-l-4 border-primary/30 bg-primary/5 px-5 py-4",
+    warning: "space-y-3 rounded-r-xl border-l-4 border-accent/50 bg-accent/10 px-5 py-4",
   };
 
   return (
@@ -116,8 +116,8 @@ export function ServiceContentPage({ page }: Readonly<{ page: ServiceContentPage
       {page.warning ? (
         <section>
           <div className="space-y-3 rounded-r-xl border-l-4 border-amber-400 bg-amber-50/70 px-5 py-4">
-            <h2 className="break-words text-xl font-semibold tracking-tight text-amber-900">{page.warning.title}</h2>
-            <p className="max-w-prose text-sm leading-7 text-amber-900/90">{page.warning.body}</p>
+            <h2 className="break-words text-xl font-semibold tracking-tight">{page.warning.title}</h2>
+            <p className="max-w-prose text-sm leading-7 text-muted-foreground">{page.warning.body}</p>
           </div>
         </section>
       ) : null}
@@ -153,7 +153,7 @@ export function ServiceContentPage({ page }: Readonly<{ page: ServiceContentPage
         <h2 className="break-words text-2xl font-semibold tracking-tight">Subdiensten en verdere informatie</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {page.relatedLinks.map((link) => (
-            <Link key={link.href} href={link.href} className="group rounded-2xl border bg-surface px-4 py-4 transition hover:-translate-y-px hover:border-primary/30 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+            <Link key={link.href} href={link.href} className="group rounded-2xl border bg-surface px-4 py-4 transition hover:-translate-y-px hover:border-primary/30 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 motion-reduce:transform-none motion-reduce:transition-none">
               <p className="text-sm font-semibold text-foreground">{link.title}</p>
               <p className="mt-1 max-w-prose text-sm leading-6 text-muted-foreground">{link.description}</p>
             </Link>

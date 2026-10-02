@@ -59,8 +59,8 @@ export default function HowItWorksPage() {
       </nav>
       <section className="space-y-4">
         <p className="text-sm font-medium text-primary">Voor consumenten</p>
-        <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-balance">Zo vind je via VakConnect een vakman voor je klus</h1>
-        <p className="max-w-3xl text-lg leading-8 text-muted-foreground">
+        <h1 className="max-w-3xl text-3xl font-semibold leading-tight tracking-tight text-balance sm:text-4xl">Zo vind je via VakConnect een vakman voor je klus</h1>
+        <p className="max-w-prose text-base leading-7 text-muted-foreground sm:text-lg">
           Je hoeft niet eerst zelf uit te zoeken welk bedrijf je moet bellen. Beschrijf je klus; VakConnect gebruikt je aanvraag om passende vakmensen in jouw regio te vinden.
         </p>
         <Link href="/aanvraag" className={buttonClassName({ variant: "primary", size: "lg" })}>Plaats je klus</Link>
