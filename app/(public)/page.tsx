@@ -3,6 +3,11 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { buttonClassName } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { FormField } from "@/components/ui/form-field";
+import { FaqList } from "@/components/public/faq-list";
+import { ProcessSteps } from "@/components/public/process-steps";
 import { buildPageMetadata } from "@/lib/config/site";
 import { getPopularServiceClusters } from "@/lib/content/service-cards";
 import { getActiveServices } from "@/lib/services/queries";
@@ -76,71 +81,63 @@ export default async function HomePage() {
   return (
     <div className="space-y-16 pb-16 sm:space-y-20 sm:pb-20">
       <section className="border-b bg-[radial-gradient(circle_at_top,_rgba(15,118,110,0.12),_transparent_45%),linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)]">
-        <div className="container-shell grid gap-8 py-10 sm:py-14 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:py-20">
-          <div className="space-y-5">
+        <div className="container-shell grid gap-6 py-8 sm:py-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:py-16">
+          <div className="space-y-4">
             <Badge className="border-primary/20 bg-primary/10 text-primary">Voor je klus, in jouw regio</Badge>
-            <div className="space-y-3">
-              <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+            <div className="space-y-2">
+              <h1 className="max-w-3xl text-3xl font-semibold leading-tight tracking-tight text-balance sm:text-5xl">
                 Vind de juiste vakman voor jouw klus
               </h1>
-              <p className="max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
+              <p className="max-w-prose text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
                 Vertel wat er moet gebeuren en VakConnect koppelt jouw aanvraag aan een passende vakman bij jou in de buurt.
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Link href="/aanvraag" className={buttonClassName({ variant: "primary", size: "lg" })}>
+              <Link href="/aanvraag" className={buttonClassName({ variant: "primary", size: "lg", className: "w-full sm:w-auto" })}>
                 Plaats je klus
               </Link>
-              <Link href="/hoe-werkt-het" className={buttonClassName({ variant: "secondary", size: "lg" })}>
+              <Link href="/hoe-werkt-het" className={buttonClassName({ variant: "secondary", size: "lg", className: "w-full sm:w-auto" })}>
                 Bekijk hoe het werkt
               </Link>
             </div>
-            <ul className="grid gap-2 text-sm text-muted-foreground sm:grid-cols-2" aria-label="Wat je kunt verwachten">
-              <li>Je aanvraag plaatsen is gratis</li>
-              <li>Je zit nergens aan vast</li>
-              <li>Je regio telt mee</li>
-              <li>Een aanvraag voor je klus</li>
+            <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground" aria-label="Wat je kunt verwachten">
+              <li>Gratis aanvraag</li>
+              <li>Matching op dienst en regio</li>
+              <li>Jij kiest hoe je verdergaat</li>
             </ul>
           </div>
           <Card className="space-y-4">
-            <h2 className="text-xl font-semibold tracking-tight">Waar heb je hulp bij nodig?</h2>
-            <p className="text-sm text-muted-foreground">Kies een dienst en vul je postcode in. Daarna beschrijf je de klus.</p>
+            <div className="space-y-1">
+              <h2 className="text-xl font-semibold tracking-tight">Begin met je dienst en regio</h2>
+              <p className="text-sm text-muted-foreground">We nemen deze gegevens mee als je je klus beschrijft.</p>
+            </div>
             <form action="/aanvraag" method="get" className="space-y-3">
-              <label className="block text-sm font-medium text-foreground" htmlFor="dienst">
-                Dienst
-              </label>
-              <select id="dienst" name="dienst" className="min-h-11 w-full rounded-2xl border bg-surface px-4 py-2 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20">
-                <option value="">Kies een dienst</option>
-                {services.map((service) => (
-                  <option key={service.id} value={service.slug}>
-                    {service.name}
-                  </option>
-                ))}
-              </select>
-              <label className="block text-sm font-medium text-foreground" htmlFor="postcode">
-                Postcode
-              </label>
-              <input
-                id="postcode"
-                name="postcode"
-                placeholder="1234 AB"
-                autoComplete="postal-code"
-                className="min-h-11 w-full rounded-2xl border bg-surface px-4 py-2 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20"
-              />
-              <button type="submit" className={buttonClassName({ variant: "primary", size: "lg", className: "w-full" })}>
-                Beschrijf je klus
+              <FormField id="dienst" label="Dienst">
+                <Select id="dienst" name="dienst">
+                  <option value="">Kies een dienst</option>
+                  {services.map((service) => (
+                    <option key={service.id} value={service.slug}>
+                      {service.name}
+                    </option>
+                  ))}
+                </Select>
+              </FormField>
+              <FormField id="postcode" label="Postcode">
+                <Input id="postcode" name="postcode" placeholder="1234 AB" autoComplete="postal-code" />
+              </FormField>
+              <button type="submit" className={buttonClassName({ variant: "secondary", size: "lg", className: "w-full" })}>
+                Ga verder met deze gegevens
               </button>
             </form>
           </Card>
         </div>
       </section>
 
-      <section className="container-shell grid gap-3 rounded-3xl border bg-surface-muted p-5 sm:grid-cols-2 sm:p-6 lg:grid-cols-4">
+      <section aria-label="Zo werkt het in het kort" className="container-shell grid gap-4 rounded-3xl border bg-surface-muted p-5 sm:grid-cols-3 sm:p-6">
         {[
           ["Eén aanvraag", "Beschrijf je klus op één plek."],
-          ["Lokale aansluiting", "Je werkgebied helpt bij de matching."],
-          ["Relevante informatie", "Geef details mee die ertoe doen."],
-          ["Jij beslist", "Je maakt zelf afspraken met een vakman."],
+          ["Matching op dienst en regio", "Je aanvraag wordt gekoppeld aan relevante werkgebieden."],
+          ["Jij beslist", "Je kiest zelf of je verdergaat."],
         ].map(([title, description]) => (
           <div key={title} className="space-y-1">
             <h2 className="font-semibold">{title}</h2>
@@ -154,15 +151,7 @@ export default async function HomePage() {
           <h2 className="text-3xl font-semibold tracking-tight">Van klus naar gesprek</h2>
           <p className="max-w-2xl text-muted-foreground">Je begint met de informatie die nodig is om een passende vakman te vinden.</p>
         </div>
-        <div className="grid gap-4 md:grid-cols-3">
-          {processSteps.map((item, index) => (
-            <Card key={item.title} className="space-y-3">
-              <Badge>{`Stap ${index + 1}`}</Badge>
-              <h3 className="text-xl font-semibold tracking-tight">{item.title}</h3>
-              <p className="text-sm leading-7 text-muted-foreground">{item.description}</p>
-            </Card>
-          ))}
-        </div>
+        <ProcessSteps steps={processSteps} />
       </section>
 
       <section id="diensten" className="container-shell space-y-8">
@@ -170,23 +159,22 @@ export default async function HomePage() {
           <h2 className="text-3xl font-semibold tracking-tight">Waar kunnen we je bij helpen?</h2>
           <p className="max-w-2xl text-muted-foreground">Bekijk de vakgebieden en voorbeelden van klussen die daarbij passen.</p>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {popularServices.map((service) => (
-            <Card key={service.href} className="flex flex-col items-start gap-3">
-              <h3 className="text-xl font-semibold tracking-tight">{service.title}</h3>
-              <p className="flex-1 text-sm leading-6 text-muted-foreground">{service.description}</p>
-              <Link href={service.href} className={buttonClassName({ variant: "secondary", size: "sm" })}>
-                Bekijk {service.title.toLowerCase()}
-              </Link>
-            </Card>
+            <Link key={service.href} href={service.href} className="group rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+              <Card className="flex h-full flex-col items-start gap-3 transition duration-150 group-hover:-translate-y-px group-hover:border-primary/30 group-hover:shadow-sm">
+                <h3 className="text-xl font-semibold tracking-tight">{service.title}</h3>
+                <p className="flex-1 text-sm leading-6 text-muted-foreground">{service.description}</p>
+                <span className="inline-flex min-h-11 items-center text-sm font-medium text-primary">
+                  Bekijk {service.title.toLowerCase()} <span aria-hidden="true" className="ml-2">→</span>
+                </span>
+              </Card>
+            </Link>
           ))}
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <Link href="/diensten" className={buttonClassName({ variant: "ghost" })}>
             Bekijk alle diensten
-          </Link>
-          <Link href="/aanvraag" className={buttonClassName({ variant: "primary" })}>
-            Plaats je klus
           </Link>
         </div>
       </section>
@@ -261,14 +249,7 @@ export default async function HomePage() {
 
       <section id="faq" className="container-shell space-y-8">
         <h2 className="text-3xl font-semibold tracking-tight">Veelgestelde vragen</h2>
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {faqItems.map((item) => (
-            <Card key={item.question} className="space-y-3">
-              <h3 className="text-lg font-semibold tracking-tight">{item.question}</h3>
-              <p className="text-sm leading-7 text-muted-foreground">{item.answer}</p>
-            </Card>
-          ))}
-        </div>
+        <FaqList items={faqItems} />
       </section>
 
       <section className="container-shell">

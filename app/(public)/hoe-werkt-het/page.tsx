@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { buttonClassName } from "@/components/ui/button";
+import { FaqList } from "@/components/public/faq-list";
+import { ProcessSteps } from "@/components/public/process-steps";
 import { buildPageMetadata } from "@/lib/config/site";
 
 export const metadata: Metadata = buildPageMetadata({
@@ -66,15 +68,7 @@ export default function HowItWorksPage() {
 
       <section className="space-y-5">
         <h2 className="text-3xl font-semibold tracking-tight">Van aanvraag tot afspraak</h2>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {steps.map((step, index) => (
-            <Card key={step.title} className="space-y-3">
-              <p className="text-sm font-medium text-primary">Stap {index + 1}</p>
-              <h3 className="text-xl font-semibold">{step.title}</h3>
-              <p className="text-sm leading-7 text-muted-foreground">{step.description}</p>
-            </Card>
-          ))}
-        </div>
+        <ProcessSteps steps={steps} columns={4} />
       </section>
 
       <section className="grid gap-4 lg:grid-cols-2">
@@ -111,14 +105,7 @@ export default function HowItWorksPage() {
 
       <section className="space-y-5">
         <h2 className="text-2xl font-semibold">Veelgestelde vragen</h2>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {faqItems.map((item) => (
-            <Card key={item.question} className="space-y-2">
-              <h3 className="font-semibold">{item.question}</h3>
-              <p className="text-sm leading-7 text-muted-foreground">{item.answer}</p>
-            </Card>
-          ))}
-        </div>
+        <FaqList items={faqItems} />
       </section>
 
       <Card className="space-y-4 bg-primary text-primary-foreground">

@@ -19,34 +19,35 @@ export default async function ServicesPage() {
   const clusters = getPopularServiceClusters();
 
   return (
-    <div className="container-shell space-y-10 py-10 sm:py-14">
+    <div className="container-shell space-y-12 py-10 sm:py-14">
       <nav className="text-sm text-muted-foreground" aria-label="Broodkruimel"><Link href="/">Home</Link> / Diensten</nav>
       <section className="space-y-4">
         <p className="text-sm font-medium text-primary">Vakgebieden</p>
-        <h1 className="text-4xl font-semibold tracking-tight">Vind een vakman voor jouw soort klus</h1>
-        <p className="max-w-3xl text-lg leading-8 text-muted-foreground">
+        <h1 className="max-w-4xl text-3xl font-semibold leading-tight tracking-tight text-balance sm:text-4xl">Vind een vakman voor jouw soort klus</h1>
+        <p className="max-w-prose text-base leading-7 text-muted-foreground sm:text-lg">
           Bekijk waar vakmensen je mee kunnen helpen. Kies een vakgebied voor meer informatie of start direct met het beschrijven van je klus.
         </p>
-        <Link href="/aanvraag" className={buttonClassName({ variant: "primary", size: "lg" })}>Plaats je klus</Link>
+        <Link href="/aanvraag" className={buttonClassName({ variant: "primary", size: "lg", className: "w-full sm:w-auto" })}>Plaats je klus</Link>
       </section>
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <section aria-label="Vakgebieden" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {clusters.map((cluster) => (
-          <Card key={cluster.href} className="flex flex-col items-start gap-3">
-            <h2 className="text-xl font-semibold tracking-tight">{cluster.title}</h2>
-            <p className="flex-1 text-sm leading-6 text-muted-foreground">{cluster.description}</p>
-            <Link href={cluster.href} className="text-sm font-medium text-primary underline underline-offset-4">
-              Bekijk {cluster.title.toLowerCase()}
-            </Link>
-            <Link href="/aanvraag" className={buttonClassName({ variant: "secondary", size: "sm" })}>Plaats je klus</Link>
-          </Card>
+          <Link key={cluster.href} href={cluster.href} className="group rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+            <Card className="flex h-full flex-col items-start gap-3 transition duration-150 group-hover:-translate-y-px group-hover:border-primary/30 group-hover:shadow-sm">
+              <h2 className="text-xl font-semibold tracking-tight">{cluster.title}</h2>
+              <p className="flex-1 text-sm leading-6 text-muted-foreground">{cluster.description}</p>
+              <span className="inline-flex min-h-11 items-center text-sm font-medium text-primary">
+                Bekijk {cluster.title.toLowerCase()} <span aria-hidden="true" className="ml-2">→</span>
+              </span>
+            </Card>
+          </Link>
         ))}
       </section>
 
       {additionalServices.length ? (
         <section className="space-y-5">
           <h2 className="text-2xl font-semibold tracking-tight">Andere diensten die je kunt aanvragen</h2>
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {additionalServices.map((service) => (
               <Card key={service.id} className="flex flex-col items-start gap-3">
                 <p className="text-sm font-medium text-primary">{service.category}</p>
