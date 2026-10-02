@@ -15,7 +15,7 @@ export function buttonClassName({
   className?: string;
 } = {}) {
   return cn(
-    "inline-flex items-center justify-center rounded-full font-medium transition duration-150 hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 active:translate-y-0 disabled:pointer-events-none disabled:transform-none disabled:opacity-60 motion-reduce:transform-none motion-reduce:transition-none",
+    "inline-flex max-w-full items-center justify-center gap-2 rounded-sm text-center font-semibold transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary disabled:pointer-events-none disabled:opacity-60 motion-reduce:transition-none",
     variant === "primary" && "bg-primary text-primary-foreground hover:bg-primary/90",
     variant === "secondary" && "border border-border bg-surface text-foreground hover:bg-surface-muted",
     variant === "ghost" && "text-foreground hover:bg-surface-muted",
@@ -52,8 +52,13 @@ export function Button(props: ButtonProps) {
     );
   }
 
+  const { as: _as, variant: _variant, size: _size, ...buttonProps } = props;
+  void _as;
+  void _variant;
+  void _size;
+
   return (
-    <button {...props} className={classes}>
+    <button {...buttonProps} className={classes}>
       {children}
     </button>
   );

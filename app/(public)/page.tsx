@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { buttonClassName } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -80,71 +79,34 @@ export default async function HomePage() {
   const popularServices = getPopularServiceClusters();
 
   return (
-    <div className="space-y-16 pb-16 sm:space-y-20 sm:pb-20">
-      <section className="border-b bg-[radial-gradient(circle_at_top,_rgba(15,118,110,0.12),_transparent_45%),linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)]">
-        <div className="container-shell grid gap-6 py-8 sm:py-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:py-16">
-          <div className="space-y-4">
-            <Badge className="border-primary/20 bg-primary/10 text-primary">Voor je klus, in jouw regio</Badge>
+    <div className="space-y-12 pb-12 sm:space-y-16 sm:pb-16">
+      <section className="public-hero">
+        <div className="container-shell">
+          <div className="max-w-3xl space-y-5">
+            <p className="text-sm font-medium text-muted-foreground">Voor je klus, in jouw regio</p>
             <div className="space-y-2">
-              <h1 className="max-w-3xl text-3xl font-semibold leading-tight tracking-tight text-balance sm:text-5xl">
+              <h1 className="max-w-3xl text-3xl font-semibold leading-tight tracking-tight text-balance sm:text-5xl lg:text-6xl">
                 Vind de juiste vakman voor jouw klus
               </h1>
               <p className="max-w-prose text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
-                Vertel wat er moet gebeuren en VakConnect koppelt jouw aanvraag aan een passende vakman bij jou in de buurt.
+                Beschrijf je klus. VakConnect zoekt passende vakmensen in jouw regio. Jij bespreekt de mogelijkheden en beslist zelf.
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
               <TrackedLink href="/aanvraag" ctaId="home_hero_request" ctaLocation="hero" destinationType="request" className={buttonClassName({ variant: "primary", size: "lg", className: "w-full sm:w-auto" })}>
-                Plaats je klus
+                Start je aanvraag
               </TrackedLink>
-              <Link href="/hoe-werkt-het" className={buttonClassName({ variant: "secondary", size: "lg", className: "w-full sm:w-auto" })}>
+              <Link href="/hoe-werkt-het" className={buttonClassName({ variant: "ghost", size: "lg", className: "w-full sm:w-auto" })}>
                 Bekijk hoe het werkt
               </Link>
             </div>
             <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground" aria-label="Wat je kunt verwachten">
               <li>Gratis aanvraag</li>
-              <li>Matching op dienst en regio</li>
+              <li>Geen verplichting</li>
               <li>Jij kiest hoe je verdergaat</li>
             </ul>
           </div>
-          <Card className="space-y-4">
-            <div className="space-y-1">
-              <h2 className="text-xl font-semibold tracking-tight">Begin met je dienst en regio</h2>
-              <p className="text-sm text-muted-foreground">We nemen deze gegevens mee als je je klus beschrijft.</p>
-            </div>
-            <form action="/aanvraag" method="get" className="space-y-3">
-              <FormField id="dienst" label="Dienst">
-                <Select id="dienst" name="dienst">
-                  <option value="">Kies een dienst</option>
-                  {services.map((service) => (
-                    <option key={service.id} value={service.slug}>
-                      {service.name}
-                    </option>
-                  ))}
-                </Select>
-              </FormField>
-              <FormField id="postcode" label="Postcode">
-                <Input id="postcode" name="postcode" placeholder="1234 AB" autoComplete="postal-code" />
-              </FormField>
-              <button type="submit" className={buttonClassName({ variant: "secondary", size: "lg", className: "w-full" })}>
-                Ga verder met deze gegevens
-              </button>
-            </form>
-          </Card>
         </div>
-      </section>
-
-      <section aria-label="Zo werkt het in het kort" className="container-shell grid gap-4 rounded-3xl border bg-surface-muted p-5 sm:grid-cols-3 sm:p-6">
-        {[
-          ["Eén aanvraag", "Beschrijf je klus op één plek."],
-          ["Matching op dienst en regio", "Je aanvraag wordt gekoppeld aan relevante werkgebieden."],
-          ["Jij beslist", "Je kiest zelf of je verdergaat."],
-        ].map(([title, description]) => (
-          <div key={title} className="space-y-1">
-            <h2 className="font-semibold">{title}</h2>
-            <p className="text-sm text-muted-foreground">{description}</p>
-          </div>
-        ))}
       </section>
 
       <section id="hoe-het-werkt" className="container-shell space-y-8">
@@ -162,11 +124,11 @@ export default async function HomePage() {
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {popularServices.map((service) => (
-            <TrackedLink key={service.href} href={service.href} ctaId={`service_${service.href.split("/").filter(Boolean)[0]}`} ctaLocation="service_card" destinationType="service" serviceSlug={service.href.split("/").filter(Boolean)[0]} className="group rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
-              <Card className="flex h-full flex-col items-start gap-3 transition duration-150 group-hover:-translate-y-px group-hover:border-primary/30 group-hover:shadow-sm">
+            <TrackedLink key={service.href} href={service.href} ctaId={`service_${service.href.split("/").filter(Boolean)[0]}`} ctaLocation="service_card" destinationType="service" serviceSlug={service.href.split("/").filter(Boolean)[0]} className="service-card group">
+              <Card className="flex h-full flex-col items-start gap-3 transition-colors group-hover:border-muted-foreground">
                 <h3 className="text-xl font-semibold tracking-tight">{service.title}</h3>
                 <p className="flex-1 text-sm leading-6 text-muted-foreground">{service.description}</p>
-                <span className="inline-flex min-h-11 items-center text-sm font-medium text-primary">
+                <span className="inline-flex min-h-11 items-center text-sm font-medium text-foreground">
                   Bekijk {service.title.toLowerCase()} <span aria-hidden="true" className="ml-2">→</span>
                 </span>
               </Card>
@@ -178,6 +140,28 @@ export default async function HomePage() {
             Bekijk alle diensten
           </Link>
         </div>
+        {services.length ? (
+          <div className="space-y-5 border-t pt-6">
+            <div className="space-y-1">
+              <h3 className="text-xl font-semibold tracking-tight">Weet je al welke dienst je nodig hebt?</h3>
+              <p className="text-sm leading-6 text-muted-foreground">Kies je dienst en postcode. We nemen deze gegevens mee naar je aanvraag.</p>
+            </div>
+            <form action="/aanvraag" method="get" className="grid items-end gap-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_auto]">
+              <FormField id="dienst" label="Dienst">
+                <Select id="dienst" name="dienst">
+                  <option value="">Kies een dienst</option>
+                  {services.map((service) => <option key={service.id} value={service.slug}>{service.name}</option>)}
+                </Select>
+              </FormField>
+              <FormField id="postcode" label="Postcode">
+                <Input id="postcode" name="postcode" placeholder="1234 AB" autoComplete="postal-code" autoCapitalize="characters" />
+              </FormField>
+              <button type="submit" className={buttonClassName({ variant: "secondary", size: "lg", className: "w-full sm:col-span-2 lg:col-span-1" })}>
+                Ga verder met deze gegevens
+              </button>
+            </form>
+          </div>
+        ) : null}
       </section>
 
       <section className="container-shell space-y-6">
@@ -188,16 +172,15 @@ export default async function HomePage() {
             ["Informatie op één plek", "Je zet locatie, klusdetails en gewenste timing bij elkaar in een aanvraag."],
             ["Jij houdt de regie", "VakConnect brengt je aanvraag onder de aandacht; jij bepaalt zelf of je afspraken maakt."],
           ].map(([title, description]) => (
-            <Card key={title} className="space-y-2">
+            <div key={title} className="space-y-2 border-t pt-5">
               <h3 className="font-semibold">{title}</h3>
               <p className="text-sm leading-7 text-muted-foreground">{description}</p>
-            </Card>
+            </div>
           ))}
         </div>
       </section>
 
       <section className="container-shell space-y-4">
-        <Badge className="border-primary/20 bg-primary/10 text-primary">Voor consumenten</Badge>
         <h2 className="text-3xl font-semibold tracking-tight">Minder zoeken. Duidelijker beginnen.</h2>
         <p className="max-w-3xl leading-7 text-muted-foreground">
           Je aanvraag bundelt wat je anders bij ieder bedrijf opnieuw moet uitleggen. Zo kan een vakman vooraf zien of je klus past bij het werk dat hij doet.
@@ -209,8 +192,8 @@ export default async function HomePage() {
       </section>
 
       <section className="container-shell">
-        <Card className="space-y-5 border-primary/20 bg-primary/5">
-          <Badge className="border-primary/20 bg-primary/10 text-primary">Voor vakmensen</Badge>
+        <div className="space-y-5 border-y py-8">
+          <p className="text-sm font-medium text-muted-foreground">Voor vakmensen</p>
           <h2 className="max-w-3xl text-3xl font-semibold tracking-tight">Ben je vakman? Ontvang opdrachten die beter bij je passen.</h2>
           <p className="max-w-2xl text-sm leading-7 text-muted-foreground">
             Stel je diensten en werkgebied in, geef je beschikbaarheid aan en bekijk aanvragen die op die gegevens aansluiten.
@@ -218,7 +201,7 @@ export default async function HomePage() {
           <TrackedLink href="/voor-vakmannen" ctaId="home_professional_signup" ctaLocation="mid_content" destinationType="professional" className={buttonClassName({ variant: "secondary", size: "lg" })}>
             Meld je aan als vakman
           </TrackedLink>
-        </Card>
+        </div>
       </section>
 
       <section className="container-shell grid gap-8 lg:grid-cols-2 lg:items-center">
@@ -230,7 +213,7 @@ export default async function HomePage() {
         </div>
         <ul className="grid gap-3 sm:grid-cols-2">
           {["Soort klus", "Regio en werkgebied", "Specialisatie", "Beschikbaarheid en capaciteit"].map((factor) => (
-            <li key={factor} className="rounded-2xl border bg-surface-muted px-4 py-3 text-sm font-medium">{factor}</li>
+            <li key={factor} className="border-b py-3 text-sm font-medium">{factor}</li>
           ))}
         </ul>
       </section>
@@ -254,15 +237,15 @@ export default async function HomePage() {
       </section>
 
       <section className="container-shell">
-        <Card className="space-y-5 bg-primary text-primary-foreground">
+        <div className="public-cta space-y-5">
           <h2 className="text-3xl font-semibold tracking-tight">Vertel wat er moet gebeuren</h2>
-          <p className="max-w-2xl text-sm leading-7 text-primary-foreground/90">
+          <p className="max-w-2xl text-base leading-7 text-muted-foreground">
             Zet je klus op een rij. Daarna kan VakConnect zoeken naar een passende vakman in jouw regio.
           </p>
-          <Link href="/aanvraag" className={buttonClassName({ variant: "secondary", size: "lg", className: "border-white/25 bg-white text-primary hover:bg-slate-100" })}>
-            Plaats je klus
-          </Link>
-        </Card>
+          <TrackedLink href="/aanvraag" ctaId="home_final_request" ctaLocation="final_cta" destinationType="request" className={buttonClassName({ variant: "primary", size: "lg", className: "w-full sm:w-auto" })}>
+            Start je aanvraag
+          </TrackedLink>
+        </div>
       </section>
     </div>
   );

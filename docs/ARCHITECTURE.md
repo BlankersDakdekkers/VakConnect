@@ -234,6 +234,16 @@ De huidige structuur is voorbereid op:
 
 ## Publieke route-architectuur (contentfase)
 
+### Publieke designbaseline (Prompt 21)
+
+- `app/globals.css` blijft de bron voor merkkleur, neutrale kleuren, radii en shadows; bestaande UI-primitives blijven gedeeld met de rest van de applicatie. Componentstyles staan in de Tailwind-componentlaag zodat sizing-utilities (bijvoorbeeld `min-h-32` voor textareas) kunnen overrulen.
+- De publieke layout gebruikt een skiplink naar `main-content`. De mobiele navigatie is een niet-modale disclosure: Tab volgt de normale documentvolgorde, Escape sluit met focusterugkeer, en focus buiten het menu of een klik buiten het menu sluit het.
+- `FormField` koppelt helptekst en fouten aan de control met hetzelfde `id`. Keuzegroepen gebruiken `group` voor native `fieldset`/`legend`. De intake focust de nieuwe staptitel en alleen na een mislukte validatie de eerste ongeldige control; typen mag geen focus verplaatsen.
+- De homepage heeft één dominante hero-aanvraagactie; de optionele dienst/postcode-prefill staat bij de vakgebieden, niet naast die hero-actie. De gedeelde service/subdienst/lokale template behoudt alle content, headings, routes en schema-output; de hero-CTA staat vóór de volledige introductie zodat lange content de aanvraag niet verstopt.
+- Geraakte toekomstige experimentkandidaten: homepage hero (`home_hero_request`, copy en presentatie), servicehero (`request_hero`, positie), eind-CTA (`request_final_cta`, styling), en aanvraagmicrocopy/progresspresentatie. Bestaande CTA-, FAQ-, jumplink- en zeven funnelstapidentifiers blijven gelijk; `home_final_request` is een extra trackingpunt voor de bestaande homepage-eindactie.
+- Deze checkout bevat alleen gereserveerde `experiment_id`/`variant_id`-analyticsmetadata, geen Prompt 20-experimenttabellen, assignmentlaag of actieve variantslots. De baseline voegt geen experimentengine toe, verandert deze gereserveerde metadata niet en activeert geen experiment.
+- Er zijn geen nieuwe dependencies, fonts, afbeeldingen of animatielibraries nodig; publieke content blijft server-rendered. Auth, RLS, privacygedrag, matching/scoring, submittransport en databasearchitectuur blijven ongewijzigd.
+
 De publieke laag gebruikt uitsluitend routes in `app/(public)`:
 
 - `/`
