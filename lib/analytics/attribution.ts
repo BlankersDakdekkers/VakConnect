@@ -72,6 +72,8 @@ export function parseAttributionFromUrl(url: URL, referrer?: string) {
   const fbclid = normalizeOptionalValue(url.searchParams.get("fbclid"));
   const landing_page = normalizeOptionalValue(url.pathname);
   const normalizedReferrer = normalizeReferrer(referrer);
+  const externalReferrer =
+    normalizedReferrer && normalizedReferrer !== url.hostname.replace(/^www\./, "") ? normalizedReferrer : null;
 
   const attribution = {
     utm_source,
@@ -80,7 +82,7 @@ export function parseAttributionFromUrl(url: URL, referrer?: string) {
     utm_term,
     utm_content,
     landing_page,
-    referrer: normalizedReferrer,
+    referrer: externalReferrer,
     gclid,
     fbclid,
     first_touch_source: null,

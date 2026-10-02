@@ -24,6 +24,7 @@ test("UTM normalisatie en attribution parsing werken consistent", () => {
   assert.equal(parsed.first_touch_source, "google");
   assert.equal(parsed.landing_page, "/aanvraag");
   assert.equal(parsed.referrer, "google.com");
+  assert.equal(parseAttributionFromUrl(new URL("https://vakconnect.nl/aanvraag"), "https://vakconnect.nl/diensten").referrer, null);
 });
 
 test("anonymous session ids zijn random en UUID-geformatteerd", () => {
