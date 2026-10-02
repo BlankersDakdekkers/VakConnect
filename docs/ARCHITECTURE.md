@@ -395,6 +395,17 @@ Per lokale pagina draait een eenvoudige niet-AI quality check:
 
 Uitkomst wordt geclassificeerd als `onvoldoende`, `redelijk` of `goed` en gebruikt als publicatiewaarschuwing/blokkade.
 
+### Redactionele lokale verdieping (Prompt 17)
+
+- `lib/content/local-content-depth.ts` selecteert een begrensde batch van 24 bestaande combinaties: 12 service-stad en 12 subdienst-stad, verdeeld over dakdekker, loodgieter, elektricien, badkamer en kozijnen. De teksten staan in twee server-side contentmodules; routes, locaties en publicatiestatussen veranderen niet.
+- De repositoryfallback gebruikt deze individuele teksten en metadata. Vier geselecteerde subdienstpagina’s blijven draft: groepenkast/Utrecht, storing/Rotterdam, renovatie/Amsterdam en kunststof-kozijnen/Rotterdam. Ze krijgen geen publieke indexeerbare pagina of sitemapvermelding.
+- Supabase blijft DB-first: bestaande CMS-teksten worden nooit stilzwijgend vervangen door een runtime-overlay of migratie. DB-fallbacks behouden ook de oorspronkelijke metadata/H1; alleen als de opgeslagen intro, secties en FAQ exact het voorstel bevatten, worden de bijbehorende redactionele metadata/H1 gebruikt. De vergelijking is onafhankelijk van JSONB-keyvolgorde. In de bestaande admineditor kan een beheerder **Laad redactioneel voorstel** kiezen en het voorstel in de bestaande preview bekijken. Dit vult alleen het formulier; opslaan, opnieuw beoordelen en publiceren gebruiken de bestaande acties en quality gate. De indicatoren tonen tot opslaan de opgeslagen content. Gepubliceerde content moet eerst terug naar review, met published/indexable uit.
+- Duplicate-checks blijven plaatsnamen neutraliseren, met 58% als reviewdrempel en 72% als high risk. Het resultaat bevat ook de maximale Jaccard-overlap (`similarity`, 0–1); introduplicatie kan onafhankelijk daarvan high risk opleveren.
+- Nabijgelegen links worden uitsluitend uit de bestaande `nearbyCities` en publiceerbare combinaties gehaald. Waar minder dan twee zulke routes bestaan, worden geen drafts of willekeurige nationale bestemmingen toegevoegd om een linkquotum te halen.
+- Lokale metadata gebruikt een absolute titel om een dubbele `| VakConnect` door de roottemplate te voorkomen. Canonical, FAQ, jump links, CTA’s, intake en analytics blijven op de bestaande implementaties.
+- Onbekende steden, diensten en combinaties blijven via de bestaande DB-aware resolver naar `notFound()` gaan. Er is bewust geen statische proxy-allowlist toegevoegd: die zou geldige CMS-routes kunnen blokkeren. Bij een reeds gestreamde response kan Next.js een 200 met not-found UI en noindex geven; vóór streaming kan het een harde 404 geven.
+- De contenttests controleren de batchgrenzen, tekstlengte, lokale broncontext, metadata, interne links, duplicate risk, kwaliteits- en publicatievoorwaarden en behoud van de PR #21-componenten. Live tellingen moeten apart read-only worden gecontroleerd; repositorytellingen zijn geen bewijs van de actuele DB-inhoud.
+
 ## Lokale SEO gecontroleerd opschalen (Prompt 8)
 
 ### Stedenbestand, tiers en contentprofielen

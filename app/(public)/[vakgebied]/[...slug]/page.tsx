@@ -57,13 +57,18 @@ export async function generateMetadata({
       notFound();
     }
 
-    return buildPageMetadata({
+    const metadata = buildPageMetadata({
       title: resolved.localPage.page.title,
       description: resolved.localPage.page.description,
       path: resolved.localPage.canonicalPath,
       keywords: resolved.localPage.page.keywords,
       indexable: resolved.localPage.indexable && resolved.localPage.publishable,
     });
+    return {
+      ...metadata,
+      title: { absolute: resolved.localPage.page.title },
+      openGraph: { ...metadata.openGraph, title: resolved.localPage.page.title },
+    };
   }
 
   return buildPageMetadata({
