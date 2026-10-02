@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,7 @@ import {
 import { formatFileSize, formatPostalCode, normalizePostalCode } from "@/lib/utils";
 import type { Service } from "@/types/database";
 import { getClientAttributionSnapshot, trackFunnelEvent } from "@/lib/analytics/client";
-import { funnelEventNames } from "@/lib/analytics/events";
+import { funnelEventNames, leadFunnelSteps, type AnalyticsValidationErrorType } from "@/lib/analytics/events";
 import { getOrCreateAnonymousSessionId } from "@/lib/analytics/session";
 
 const serviceStepSchema = leadSubmissionSchema.pick({ serviceId: true });
@@ -110,6 +110,14 @@ function getArrayAnswer(value: DynamicAnswerValue | undefined) {
   return Array.isArray(value) ? value : [];
 }
 
+function durationBucket(startedAt: number) {
+  const seconds = Math.max(0, Math.round((Date.now() - startedAt) / 1000));
+  if (seconds < 15) return "under_15s";
+  if (seconds < 60) return "15_59s";
+  if (seconds < 180) return "1_3m";
+  return "over_3m";
+}
+
 export function LeadRequestForm({
   services,
   prefill,
@@ -133,10 +141,22 @@ export function LeadRequestForm({
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [attribution] = useState(() => getClientAttributionSnapshot());
+  const startedRef = useRef(false);
+  const viewedStepRef = useRef<number | null>(null);
+  const stepStartedAtRef = useRef(0);
 
   useEffect(() => {
-    void trackFunnelEvent(funnelEventNames.leadFunnelStarted, { step: 1 });
-  }, []);
+    if (viewedStepRef.current === currentStep) return;
+    viewedStepRef.current = currentStep;
+    stepStartedAtRef.current = Date.now();
+    const stepKey = leadFunnelSteps[currentStep];
+
+    if (!startedRef.current) {
+      startedRef.current = true;
+      void trackFunnelEvent(funnelEventNames.leadFunnelStarted, { step_key: stepKey });
+    }
+    void trackFunnelEvent(funnelEventNames.leadFunnelStepViewed, { step_key: stepKey });
+  }, [currentStep]);
 
   const selectedService = useMemo(
     () => services.find((service) => service.id === draft.serviceId) ?? null,
@@ -207,6 +227,18 @@ export function LeadRequestForm({
       if (invalidFile) {
         nextErrors.images = "Gebruik alleen JPG, PNG of WebP tot maximaal 5 MB per bestand.";
       }
+      if (Object.keys(nextErrors).length) {
+        const errorType: AnalyticsValidationErrorType =
+          invalidFile?.size && invalidFile.size > maxLeadImageSizeBytes
+            ? "file_too_large"
+            : invalidFile
+              ? "upload_failed"
+              : "other";
+        void trackFunnelEvent(funnelEventNames.leadFunnelValidationError, {
+          step_key: leadFunnelSteps[step],
+          error_type: errorType,
+        });
+      }
       setErrors((current) => ({ ...current, ...nextErrors }));
       return Object.keys(nextErrors).length === 0;
     } else {
@@ -214,6 +246,24 @@ export function LeadRequestForm({
     }
 
     if (!result?.success) {
+      const fieldNames = new Set(result.error.issues.map((issue) => String(issue.path[0])));
+      const errorTypes = new Set<AnalyticsValidationErrorType>();
+      const hasRequiredMissing = result.error.issues.some((issue) => issue.code === "too_small" || issue.code === "invalid_type");
+      if (step === 2 && fieldNames.has("postalCode")) {
+        errorTypes.add(result.error.issues.some((issue) => issue.path[0] === "postalCode" && issue.code === "invalid_format") ? "invalid_postcode" : "required_missing");
+      } else if (step === 5 && fieldNames.has("phone")) {
+        errorTypes.add(result.error.issues.some((issue) => issue.path[0] === "phone" && issue.code === "too_small") ? "required_missing" : "invalid_phone_format");
+      } else if (step === 5 && fieldNames.has("email")) {
+        errorTypes.add(result.error.issues.some((issue) => issue.path[0] === "email" && issue.code === "too_small") ? "required_missing" : "invalid_email_format");
+      } else if (result.error.issues.length) {
+        errorTypes.add(hasRequiredMissing || result.error.issues.every((issue) => issue.code === "custom") ? "required_missing" : "other");
+      }
+      for (const errorType of errorTypes) {
+        void trackFunnelEvent(funnelEventNames.leadFunnelValidationError, {
+          step_key: leadFunnelSteps[step],
+          error_type: errorType,
+        });
+      }
       const nextErrors = Object.fromEntries(result.error.issues.map((issue) => [String(issue.path[0]), issue.message]));
       setErrors((current) => ({ ...current, ...nextErrors }));
       return false;
@@ -224,9 +274,17 @@ export function LeadRequestForm({
 
   function handleNext() {
     if (!validateStep()) return;
+    const stepKey = leadFunnelSteps[currentStep];
+    void trackFunnelEvent(funnelEventNames.leadFunnelStepCompleted, {
+      step_key: stepKey,
+      duration_bucket: durationBucket(stepStartedAtRef.current),
+    });
 
     if (currentStep === 0) {
-      void trackFunnelEvent(funnelEventNames.serviceSelected, { service_id: draft.serviceId });
+      void trackFunnelEvent(funnelEventNames.serviceSelected, {
+        service_id: draft.serviceId,
+        ...(selectedService ? { service_slug: selectedService.slug } : {}),
+      });
     }
     if (currentStep === 1) {
       const answeredCount = selectedQuestions.filter((question) => isDynamicAnswerFilled(dynamicAnswers[question.id])).length;
@@ -236,13 +294,13 @@ export function LeadRequestForm({
       });
     }
     if (currentStep === 2) {
-      void trackFunnelEvent(funnelEventNames.locationCompleted, { step: 3 });
+      void trackFunnelEvent(funnelEventNames.locationCompleted, { step_key: stepKey });
     }
     if (currentStep === 4) {
-      void trackFunnelEvent(funnelEventNames.mediaStepCompleted, { upload_count: images.length });
+      void trackFunnelEvent(funnelEventNames.mediaStepCompleted, { upload_count: images.length, step_key: stepKey });
     }
     if (currentStep === 5) {
-      void trackFunnelEvent(funnelEventNames.contactCompleted, { step: 6 });
+      void trackFunnelEvent(funnelEventNames.contactCompleted, { step_key: stepKey });
     }
 
     setCurrentStep((step) => Math.min(step + 1, stepTitles.length - 1));
@@ -250,6 +308,9 @@ export function LeadRequestForm({
 
   function handleBack() {
     setFormError(null);
+    if (currentStep > 0) {
+      void trackFunnelEvent(funnelEventNames.leadFunnelBack, { step_key: leadFunnelSteps[currentStep] });
+    }
     setCurrentStep((step) => Math.max(step - 1, 0));
   }
 
@@ -332,6 +393,10 @@ export function LeadRequestForm({
         return;
       }
 
+      void trackFunnelEvent(funnelEventNames.leadFunnelStepCompleted, {
+        step_key: leadFunnelSteps[6],
+        duration_bucket: durationBucket(stepStartedAtRef.current),
+      });
       router.push(`/aanvraag/bedankt?ref=${payload.reference}`);
     } catch {
       setSubmitting(false);

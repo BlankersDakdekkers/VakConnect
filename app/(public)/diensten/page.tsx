@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { buttonClassName } from "@/components/ui/button";
+import { TrackedLink } from "@/components/public/tracked-link";
 import { buildPageMetadata } from "@/lib/config/site";
 import { getPopularServiceClusters, getServiceDetailHref } from "@/lib/content/service-cards";
 import { getActiveServices } from "@/lib/services/queries";
@@ -27,12 +28,12 @@ export default async function ServicesPage() {
         <p className="max-w-prose text-base leading-7 text-muted-foreground sm:text-lg">
           Bekijk waar vakmensen je mee kunnen helpen. Kies een vakgebied voor meer informatie of start direct met het beschrijven van je klus.
         </p>
-        <Link href="/aanvraag" className={buttonClassName({ variant: "primary", size: "lg", className: "w-full sm:w-auto" })}>Plaats je klus</Link>
+        <TrackedLink href="/aanvraag" ctaId="services_request" ctaLocation="hero" destinationType="request" className={buttonClassName({ variant: "primary", size: "lg", className: "w-full sm:w-auto" })}>Plaats je klus</TrackedLink>
       </section>
 
       <section aria-label="Vakgebieden" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {clusters.map((cluster) => (
-          <Link key={cluster.href} href={cluster.href} className="group rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
+          <TrackedLink key={cluster.href} href={cluster.href} ctaId={`service_${cluster.href.split("/").filter(Boolean)[0]}`} ctaLocation="service_card" destinationType="service" className="group rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40">
             <Card className="flex h-full flex-col items-start gap-3 transition duration-150 group-hover:-translate-y-px group-hover:border-primary/30 group-hover:shadow-sm">
               <h2 className="text-xl font-semibold tracking-tight">{cluster.title}</h2>
               <p className="flex-1 text-sm leading-6 text-muted-foreground">{cluster.description}</p>
@@ -40,7 +41,7 @@ export default async function ServicesPage() {
                 Bekijk {cluster.title.toLowerCase()} <span aria-hidden="true" className="ml-2">→</span>
               </span>
             </Card>
-          </Link>
+          </TrackedLink>
         ))}
       </section>
 
@@ -53,12 +54,15 @@ export default async function ServicesPage() {
                 <p className="text-sm font-medium text-primary">{service.category}</p>
                 <h3 className="text-lg font-semibold">{service.name}</h3>
                 {service.description ? <p className="flex-1 text-sm leading-6 text-muted-foreground">{service.description}</p> : null}
-                <Link
+                <TrackedLink
                   href={`/aanvraag?dienst=${encodeURIComponent(service.slug)}`}
+                  ctaId={`request_${service.slug}`}
+                  ctaLocation="service_card"
+                  destinationType="request"
                   className={buttonClassName({ variant: "secondary", size: "sm" })}
                 >
                   Start je aanvraag
-                </Link>
+                </TrackedLink>
               </Card>
             ))}
           </div>

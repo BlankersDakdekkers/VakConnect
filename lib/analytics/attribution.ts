@@ -27,6 +27,25 @@ function normalizeOptionalValue(value: string | null | undefined) {
   return trimmed.length ? trimmed.slice(0, 500) : null;
 }
 
+function normalizeReferrer(value: string | null | undefined) {
+  if (!value) return null;
+  try {
+    const url = new URL(value.includes("://") ? value : `https://${value}`);
+    return url.hostname.replace(/^www\./, "").slice(0, 120) || null;
+  } catch {
+    return null;
+  }
+}
+
+function normalizeLandingPath(value: string | null | undefined) {
+  if (!value) return null;
+  try {
+    return new URL(value, window.location.origin).pathname.slice(0, 500);
+  } catch {
+    return null;
+  }
+}
+
 function inferSource(data: Pick<LeadAttribution, "utm_source" | "gclid" | "fbclid" | "referrer">) {
   if (data.utm_source) return data.utm_source;
   if (data.gclid) return "google_ads";
@@ -51,8 +70,10 @@ export function parseAttributionFromUrl(url: URL, referrer?: string) {
   const utm_content = normalizeUtmValue(url.searchParams.get("utm_content"));
   const gclid = normalizeOptionalValue(url.searchParams.get("gclid"));
   const fbclid = normalizeOptionalValue(url.searchParams.get("fbclid"));
-  const landing_page = normalizeOptionalValue(`${url.pathname}${url.search}`);
-  const normalizedReferrer = normalizeOptionalValue(referrer ?? null);
+  const landing_page = normalizeOptionalValue(url.pathname);
+  const normalizedReferrer = normalizeReferrer(referrer);
+  const externalReferrer =
+    normalizedReferrer && normalizedReferrer !== url.hostname.replace(/^www\./, "") ? normalizedReferrer : null;
 
   const attribution = {
     utm_source,
@@ -61,7 +82,7 @@ export function parseAttributionFromUrl(url: URL, referrer?: string) {
     utm_term,
     utm_content,
     landing_page,
-    referrer: normalizedReferrer,
+    referrer: externalReferrer,
     gclid,
     fbclid,
     first_touch_source: null,
@@ -77,10 +98,9 @@ export function parseAttributionFromUrl(url: URL, referrer?: string) {
 function loadStoredValue<T>(key: string): T | null {
   if (typeof window === "undefined") return null;
 
-  const raw = window.localStorage.getItem(key);
-  if (!raw) return null;
-
   try {
+    const raw = window.localStorage.getItem(key);
+    if (!raw) return null;
     return JSON.parse(raw) as T;
   } catch {
     return null;
@@ -89,7 +109,11 @@ function loadStoredValue<T>(key: string): T | null {
 
 function saveStoredValue(key: string, value: unknown) {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(key, JSON.stringify(value));
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    return;
+  }
 }
 
 export function getStoredAttributionSnapshot() {
@@ -109,17 +133,29 @@ export function getStoredAttributionSnapshot() {
     } satisfies LeadAttribution;
   }
 
-  const parsed = parseAttributionFromUrl(new URL(window.location.href), document.referrer || undefined);
+  const currentUrl = new URL(window.location.href);
+  const parsed = parseAttributionFromUrl(currentUrl, document.referrer || undefined);
   const previousLastTouch = loadStoredValue<Partial<LeadAttribution>>(LAST_TOUCH_STORAGE_KEY);
-
+  const safePreviousLastTouch = previousLastTouch
+    ? {
+        ...previousLastTouch,
+          landing_page: normalizeLandingPath(previousLastTouch.landing_page),
+        referrer: normalizeReferrer(previousLastTouch.referrer),
+      }
+    : null;
+  const hasNewTouch =
+    Boolean(parsed.utm_source || parsed.utm_medium || parsed.utm_campaign || parsed.gclid || parsed.fbclid) ||
+    Boolean(parsed.referrer && parsed.referrer !== currentUrl.hostname.replace(/^www\./, ""));
   const currentLastTouch = {
-    ...previousLastTouch,
-    ...parsed,
+    ...(safePreviousLastTouch ?? parsed),
+    ...(hasNewTouch ? parsed : {}),
     first_touch_source: null,
     first_touch_timestamp: null,
   } as LeadAttribution;
 
-  saveStoredValue(LAST_TOUCH_STORAGE_KEY, currentLastTouch);
+  if (!safePreviousLastTouch || hasNewTouch) {
+    saveStoredValue(LAST_TOUCH_STORAGE_KEY, currentLastTouch);
+  }
 
   const previousFirstTouch = loadStoredValue<{ source: string; timestamp: string }>(FIRST_TOUCH_STORAGE_KEY);
   const currentFirstTouch = previousFirstTouch ?? {

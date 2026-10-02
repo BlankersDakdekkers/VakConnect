@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { buttonClassName } from "@/components/ui/button";
 import { ProcessSteps } from "@/components/public/process-steps";
+import { TrackedLink } from "@/components/public/tracked-link";
 import { buildPageMetadata } from "@/lib/config/site";
 
 export const metadata: Metadata = buildPageMetadata({
@@ -38,7 +39,7 @@ export default function ForProfessionalsPage() {
         <p className="max-w-3xl text-lg leading-8 text-muted-foreground">
           VakConnect houdt rekening met je diensten, werkgebied en beschikbaarheid. Zo kun je aanvragen bekijken die beter aansluiten op het werk dat je zoekt.
         </p>
-        <Link href="/aanmelden-vakman" className={buttonClassName({ variant: "primary", size: "lg" })}>Meld je aan als vakman</Link>
+        <TrackedLink href="/aanmelden-vakman" ctaId="professional_landing_signup_hero" ctaLocation="hero" destinationType="professional" className={buttonClassName({ variant: "primary", size: "lg" })}>Meld je aan als vakman</TrackedLink>
         <p className="text-sm text-muted-foreground">Nieuwe aanmeldingen worden eerst handmatig beoordeeld.</p>
       </section>
 
@@ -83,9 +84,9 @@ export default function ForProfessionalsPage() {
         <p className="max-w-2xl text-sm leading-7 text-primary-foreground/90">
           Meld je bedrijf aan met je basisgegevens, diensten en werkgebied. We beoordelen nieuwe aanmeldingen voordat ze worden geactiveerd.
         </p>
-        <Link href="/aanmelden-vakman" className={buttonClassName({ variant: "secondary", size: "lg", className: "border-white/20 bg-white text-primary" })}>
+        <TrackedLink href="/aanmelden-vakman" ctaId="professional_landing_signup_final" ctaLocation="final_cta" destinationType="professional" className={buttonClassName({ variant: "secondary", size: "lg", className: "border-white/20 bg-white text-primary" })}>
           Meld je aan als vakman
-        </Link>
+        </TrackedLink>
       </Card>
     </div>
   );

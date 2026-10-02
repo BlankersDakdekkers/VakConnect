@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { buttonClassName } from "@/components/ui/button";
+import { TrackedLink } from "@/components/public/tracked-link";
 import { MobileNavigation } from "@/components/layout/mobile-navigation";
 import { publicNavigation } from "@/lib/content/public-navigation";
 
@@ -18,15 +19,15 @@ export function SiteHeader() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
-          <Link href="/aanmelden-vakman" className="hidden text-sm font-medium text-foreground sm:inline">
+          <TrackedLink href="/aanmelden-vakman" ctaId="header_professional_signup" ctaLocation="header" destinationType="professional" className="hidden text-sm font-medium text-foreground sm:inline">
             Aanmelden als vakman
-          </Link>
+          </TrackedLink>
           <Link href="/login" className="hidden text-sm font-medium text-foreground xl:inline">
             Inloggen
           </Link>
-          <Link href="/aanvraag" className={buttonClassName({ variant: "primary", size: "sm" })}>
+          <TrackedLink href="/aanvraag" ctaId="header_request" ctaLocation="header" destinationType="request" className={buttonClassName({ variant: "primary", size: "sm" })}>
             Plaats je klus
-          </Link>
+          </TrackedLink>
           <MobileNavigation />
         </div>
       </div>

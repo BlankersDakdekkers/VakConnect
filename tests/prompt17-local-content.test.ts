@@ -138,7 +138,7 @@ test("Prompt 17 behoudt PR 21 componenten, intake, canonical en notFound routing
   assert.match(renderer, /focus-visible:ring-2/);
   assert.match(source("components/layout/mobile-navigation.tsx"), /onClick=\{closeMenu\}/);
   assert.match(source("components/public/faq-list.tsx"), /<details/);
-  assert.match(source("components/public/faq-list.tsx"), /<summary/);
+  assert.match(source("components/public/faq-summary.tsx"), /<summary/);
   const route = source("app/(public)/[vakgebied]/[...slug]/page.tsx");
   assert.match(route, /path: resolved\.localPage\.canonicalPath/);
   assert.match(route, /title: \{ absolute: resolved\.localPage\.page\.title \}/);
