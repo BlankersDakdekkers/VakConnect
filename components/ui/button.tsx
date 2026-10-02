@@ -15,13 +15,13 @@ export function buttonClassName({
   className?: string;
 } = {}) {
   return cn(
-    "inline-flex items-center justify-center rounded-full font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 disabled:pointer-events-none disabled:opacity-60",
+    "inline-flex items-center justify-center rounded-full font-medium transition duration-150 hover:-translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 active:translate-y-0 disabled:pointer-events-none disabled:transform-none disabled:opacity-60",
     variant === "primary" && "bg-primary text-primary-foreground hover:bg-primary/90",
     variant === "secondary" && "border border-border bg-surface text-foreground hover:bg-surface-muted",
     variant === "ghost" && "text-foreground hover:bg-surface-muted",
     variant === "danger" && "bg-danger text-white hover:bg-danger/90",
     size === "default" && "min-h-11 px-5 text-sm",
-    size === "sm" && "min-h-9 px-4 text-sm",
+    size === "sm" && "min-h-11 px-4 text-sm",
     size === "lg" && "min-h-12 px-6 text-base",
     className,
   );
