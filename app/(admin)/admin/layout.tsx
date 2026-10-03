@@ -30,6 +30,7 @@ const navigation = [
   { href: "/admin/operatie", label: "Operatie" },
   { href: "/admin/notificaties", label: "Notificaties" },
   { href: "/admin/analytics", label: "Analytics" },
+  { href: "/admin/experimenten", label: "Experimenten" },
   { href: "/admin/diensten", label: "Diensten" },
   { href: "/admin/seo", label: "SEO overzicht" },
   { href: "/admin/seo/locaties", label: "SEO locaties" },

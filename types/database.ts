@@ -95,6 +95,7 @@ export type WalletTransactionType =
 export type ServiceQuestionType = "text" | "textarea" | "select" | "multiselect" | "radio" | "boolean" | "number";
 export type ContactSubmissionStatus = "new" | "read" | "handled" | "spam";
 export type SeoContentStatus = "draft" | "review" | "approved" | "published";
+export type ExperimentStatus = "draft" | "active" | "paused" | "completed" | "archived";
 
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
@@ -264,6 +265,47 @@ export interface AnalyticsEvent {
   service_id: string | null;
   metadata: Json | null;
   idempotency_key: string | null;
+  created_at: string;
+}
+
+export interface Experiment {
+  id: string;
+  key: string;
+  name: string;
+  status: ExperimentStatus;
+  target_type: "homepage" | "service_page" | "local_page" | "lead_funnel" | "cta" | "funnel_step";
+  slot: string;
+  target_rules: Json;
+  goal_event: "public_cta_click" | "lead_funnel_started" | "lead_submitted";
+  started_at: string | null;
+  ended_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ExperimentVariant {
+  id: string;
+  experiment_id: string;
+  key: string;
+  label: string;
+  weight: number;
+  is_control: boolean;
+  created_at: string;
+}
+
+export interface ExperimentAssignment {
+  experiment_id: string;
+  anonymous_session_id: string;
+  variant_id: string;
+  assigned_at: string;
+}
+
+export interface ExperimentAuditLog {
+  id: string;
+  experiment_id: string;
+  actor_user_id: string | null;
+  previous_status: ExperimentStatus;
+  next_status: ExperimentStatus;
   created_at: string;
 }
 
@@ -638,6 +680,26 @@ export interface Database {
       analytics_events: {
         Row: AnalyticsEvent;
         Insert: Partial<AnalyticsEvent> & Pick<AnalyticsEvent, "event_name" | "anonymous_session_id">;
+        Update: never;
+      };
+      experiments: {
+        Row: Experiment;
+        Insert: Partial<Experiment> & Pick<Experiment, "key" | "name" | "target_type" | "slot" | "goal_event">;
+        Update: Partial<Experiment>;
+      };
+      experiment_variants: {
+        Row: ExperimentVariant;
+        Insert: Partial<ExperimentVariant> & Pick<ExperimentVariant, "experiment_id" | "key" | "label" | "weight">;
+        Update: Partial<ExperimentVariant>;
+      };
+      experiment_assignments: {
+        Row: ExperimentAssignment;
+        Insert: ExperimentAssignment;
+        Update: never;
+      };
+      experiment_audit_log: {
+        Row: ExperimentAuditLog;
+        Insert: Partial<ExperimentAuditLog> & Pick<ExperimentAuditLog, "experiment_id" | "actor_user_id" | "previous_status" | "next_status">;
         Update: never;
       };
       lead_activity: {

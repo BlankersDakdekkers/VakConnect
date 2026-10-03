@@ -23,7 +23,7 @@ import {
 } from "@/lib/validation";
 import { formatFileSize, formatPostalCode, normalizePostalCode } from "@/lib/utils";
 import type { Service } from "@/types/database";
-import { getClientAttributionSnapshot, trackFunnelEvent } from "@/lib/analytics/client";
+import { getClientAttributionSnapshot, requestExperimentAssignment, trackExperimentExposure, trackFunnelEvent, type ClientExperimentAssignment } from "@/lib/analytics/client";
 import { funnelEventNames, leadFunnelSteps, type AnalyticsValidationErrorType } from "@/lib/analytics/events";
 import { getOrCreateAnonymousSessionId } from "@/lib/analytics/session";
 
@@ -112,9 +112,10 @@ function getArrayAnswer(value: DynamicAnswerValue | undefined) {
 
 function durationBucket(startedAt: number) {
   const seconds = Math.max(0, Math.round((Date.now() - startedAt) / 1000));
-  if (seconds < 15) return "under_15s";
-  if (seconds < 60) return "15_59s";
-  if (seconds < 180) return "1_3m";
+  if (seconds < 10) return "under_10s";
+  if (seconds < 30) return "10_30s";
+  if (seconds < 60) return "30_60s";
+  if (seconds <= 180) return "1_3m";
   return "over_3m";
 }
 
@@ -140,10 +141,33 @@ export function LeadRequestForm({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [progressExperiment, setProgressExperiment] = useState<ClientExperimentAssignment | null>(null);
   const [attribution] = useState(() => getClientAttributionSnapshot());
   const startedRef = useRef(false);
   const viewedStepRef = useRef<number | null>(null);
   const stepStartedAtRef = useRef(0);
+
+  useEffect(() => {
+    let active = true;
+    let interval: number | undefined;
+    const refreshAssignment = async () => {
+      const assignment = await requestExperimentAssignment("lead.progress.copy", { pageType: "lead_funnel" }, leadFunnelSteps[currentStep]);
+      if (!active) return;
+      setProgressExperiment(assignment);
+      if (assignment) {
+        trackExperimentExposure(assignment, { pageType: "lead_funnel" }, leadFunnelSteps[currentStep]);
+        if (interval === undefined) interval = window.setInterval(refreshAssignment, 15_000);
+      } else if (interval !== undefined) {
+        window.clearInterval(interval);
+        interval = undefined;
+      }
+    };
+    void refreshAssignment();
+    return () => {
+      active = false;
+      if (interval !== undefined) window.clearInterval(interval);
+    };
+  }, [currentStep]);
 
   useEffect(() => {
     if (viewedStepRef.current === currentStep) return;
@@ -409,7 +433,10 @@ export function LeadRequestForm({
       <div className="space-y-3">
         <div className="space-y-2">
           <div className="flex items-center justify-between gap-3 text-sm">
-            <p aria-live="polite" className="font-medium text-foreground">Stap {currentStep + 1} van {stepTitles.length}</p>
+            <p aria-live="polite" className="font-medium text-foreground">
+              Stap {currentStep + 1} van {stepTitles.length}
+              {progressExperiment?.variantKey === "variant_b" ? " — Vertel wat er moet gebeuren" : ""}
+            </p>
             <p className="text-muted-foreground">{Math.round(((currentStep + 1) / stepTitles.length) * 100)}%</p>
           </div>
           <div

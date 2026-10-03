@@ -203,7 +203,9 @@ test("analytics report reconciles events with saved leads and summarizes funnel/
     city: "utrecht",
     service: "dakdekker",
     views: 1,
+    ctaImpressions: 0,
     ctaClicks: 1,
+    ctaCtr: null,
     starts: 1,
     submissions: 1,
   });

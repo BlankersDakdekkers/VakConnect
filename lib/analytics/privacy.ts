@@ -41,7 +41,10 @@ const allowedMetadataKeys = new Set([
   "source_route",
   "source_page_type",
   "experiment_id",
+  "experiment_key",
+  "experiment_slot",
   "variant_id",
+  "variant_key",
   "step_count",
   "question_count",
   "answered_count",
@@ -88,6 +91,9 @@ function isSafeDimension(key: string, value: Json) {
   }
   if (key === "service_id") return typeof value === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
   if (typeof value !== "string") return true;
+  if (key === "experiment_id" || key === "variant_id") {
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+  }
   if (/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i.test(value)) return false;
   if (value.replace(/\D/g, "").length >= 7) return false;
 
@@ -105,7 +111,8 @@ function isSafeDimension(key: string, value: Json) {
   if (key === "question_id") return /^faq_[1-9]\d{0,2}$/.test(value);
   if (key === "jump_link_id") return /^section_[1-9]\d{0,2}$/.test(value);
   if (key === "cta_id") return /^[a-z0-9_-]{1,80}$/.test(value);
-  if (key === "experiment_id" || key === "variant_id") return /^[a-z0-9_-]{1,80}$/i.test(value);
+  if (key === "experiment_key" || key === "variant_key") return /^[a-z0-9_]{2,80}$/.test(value);
+  if (key === "experiment_slot") return /^[a-z0-9_.]{3,100}$/.test(value);
   if (["utm_source", "utm_medium", "utm_campaign", "first_touch_source"].includes(key)) return /^[a-z0-9_. -]{1,120}$/i.test(value);
   return /^[a-z0-9_.-]{1,120}$/i.test(value);
 }

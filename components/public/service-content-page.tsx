@@ -117,7 +117,16 @@ export function ServiceContentPage({
                     <h2 className="break-words text-lg font-semibold">Weet je wat er moet gebeuren?</h2>
                     <p className="text-sm text-muted-foreground">Beschrijf je klus en regio; een passende vakman beoordeelt de aanvraag.</p>
                   </div>
-                  <TrackedLink href={applicationHref} ctaId="request_mid_content" ctaLocation="mid_content" destinationType="request" pageContext={context} className={buttonClassName({ variant: "primary", size: "lg" })}>
+                  <TrackedLink
+                    href={applicationHref}
+                    ctaId="request_mid_content"
+                    ctaLocation="mid_content"
+                    destinationType="request"
+                    pageContext={context}
+                    experimentSlot={context.pageType === "service" && context.serviceSlug === "dakdekker" ? "service.mid_cta" : undefined}
+                    experimentLabels={{ variant_b: "Beschrijf je dakprobleem" }}
+                    className={buttonClassName({ variant: "primary", size: "lg" })}
+                  >
                     Plaats je klus
                   </TrackedLink>
                 </div>

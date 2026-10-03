@@ -11,6 +11,7 @@ VakConnect is opgezet als een Next.js App Router applicatie met TypeScript stric
 - `app/(admin)/admin/*` bevat het admin-dashboard, leadbeheer, vakmannen en dienstenbeheer.
 - `app/(professional)/vakman/*` bevat het vakman-dashboard, eigen aanvragen en profiel.
 - `app/api/leads` verwerkt publieke leadinzendingen server-side.
+- `app/api/analytics` en `app/api/experiments` verwerken privacy-gesaneerde gedragsevents en veilige server-side varianttoewijzing/exposure.
 
 ## Domeinen en library-structuur
 
@@ -23,13 +24,14 @@ VakConnect is opgezet als een Next.js App Router applicatie met TypeScript stric
 - `lib/distribution` bevat eligibility-, ranking-, fairness- en offer-window logica plus fallback-engine.
 - `lib/notifications` beheert getypeerde in-app/system events, voorkeuren en de notification worker.
 - `lib/operations` bevat configureerbare SLA/reminderdrempels en provider-agnostische expiry- en monitoringjobs.
+- `lib/experiments` bevat safe targetmatching, deterministische varianttoewijzing, experimentrapportage en adminstatusmutaties.
 - `lib/storage` bevat veilige upload- en signed URL-logica voor leadafbeeldingen.
 - `lib/validation` bevat Zod-schema's voor lead submission, intakevragen, antwoorden, scoring en matching.
 - `types` bevat domeintypes voor rollen, leads, services en professionals.
 
 ## Databaseconcepten
 
-De basis bestaat uit de tabellen `professionals`, `services`, `service_questions`, `service_question_options`, `professional_services`, `professional_service_areas`, `leads`, `lead_answers`, `lead_images`, `lead_matches`, `lead_assignments`, `analytics_events`, `lead_activity`, `professional_wallets`, `wallet_transactions`, `lead_pricing_rules`, `lead_purchases`, `commercial_audit_log`, `lead_distribution_runs`, `lead_distribution_candidates` en `professional_distribution_settings`.
+De basis bestaat uit de tabellen `professionals`, `services`, `service_questions`, `service_question_options`, `professional_services`, `professional_service_areas`, `leads`, `lead_answers`, `lead_images`, `lead_matches`, `lead_assignments`, `analytics_events`, `experiments`, `experiment_variants`, `experiment_assignments`, `experiment_audit_log`, `lead_activity`, `professional_wallets`, `wallet_transactions`, `lead_pricing_rules`, `lead_purchases`, `commercial_audit_log`, `lead_distribution_runs`, `lead_distribution_candidates` en `professional_distribution_settings`.
 
 Belangrijke keuzes:
 
@@ -186,8 +188,9 @@ De huidige structuur is voorbereid op:
 ## Analytics events en privacy
 
 - `lib/analytics/events.ts` bevat de centrale eventnamen, page types, funnel steps, CTA-locaties en validatiefouttypes. `lib/analytics/page-types.ts` classificeert publieke routes; dynamische lokale/subdienstpagina's geven hun bestaande routecontext expliciet door.
-- Bestaande events blijven behouden. Toegevoegd zijn publieke/service/lokale page views, expliciete CTA-klikken, FAQ/jump-link gebruik en per aanvraagstap viewed/completed/validation-error/back events. De aanvraag start bij het tonen van de eerste stap van `/aanvraag`, niet alleen bij een CTA-klik.
+- Bestaande events blijven behouden. Toegevoegd zijn publieke/service/lokale page views, zichtbare CTA-impressies, expliciete CTA-klikken, experimentexposures, FAQ/jump-link gebruik en per aanvraagstap viewed/completed/validation-error/back events. De aanvraag start bij het tonen van de eerste stap van `/aanvraag`, niet alleen bij een CTA-klik.
 - Client-events gaan via `trackFunnelEvent()` en `POST /api/analytics/events` naar de bestaande `analytics_events`-tabel. Het endpoint accepteert uitsluitend client-eventnamen, UUID-sessie-id's, een begrensde body en de centrale property-allowlist uit `lib/analytics/privacy.ts`. Onbekende, te lange, geneste, e-mailachtige, telefoonachtige en query-bevattende routewaarden worden gedropt. Geen global click capture, session replay, fingerprinting of ruwe formulierinhoud.
+- `experiment_exposed` is geen client-trackable event: `POST /api/experiments/exposure` verifieert actieve configuratie en de server opgeslagen sessie/variant-assignment voordat het event wordt opgeslagen. `/api/experiments/assignment` retourneert alleen de veilige variant voor één passend slot.
 - Toegestane dimensies zijn onder meer route/page type, service/subservice/plaats/provincie-slugs, device/viewport bucket, referral channel, UTM source/medium/campaign, first-touch source, funnel step, CTA key/location, error type en grove duration bucket. Naam, e-mail, telefoon, adres/postcode, beschrijving, vraagantwoord, bericht, document- en afbeeldingsinhoud horen niet in analytics.
 - De bestaande first-party UUID in localStorage blijft het anonieme sessiemodel. First-touch source wordt niet overschreven; UTM/gclid/fbclid/referrer vormen current/last touch met voorrang UTM source → gclid → fbclid → externe referrer → direct. Interne navigatie wist de touch niet. Alleen het landing-path (zonder querystring) en de referrer-host worden bewaard voor analytics/lead attribution.
 - `lead_submitted` wordt uitsluitend server-side na succesvolle opslag verstuurd, gebruikt een idempotency key per lead en mag client-side niet worden aangevraagd. `leads` is de bron van waarheid voor opgeslagen aanvragen; analytics-events verklaren gedrag ervoor. Analyticsfouten blokkeren de leadopslag niet.
@@ -198,13 +201,14 @@ De huidige structuur is voorbereid op:
 - `/admin/analytics` gebruikt de bestaande adminlayout en `requireAdminUser`; de serverquery leest hoogstens 5.000 events en 5.000 leaddetails per rollend venster. De vensters zijn 7 en 28 dagen in UTC; leadtotalen komen uit database-counts.
 - KPI's: page views, CTA-klikken, unieke aanvraagstarts, opgeslagen leads uit `leads`, waargenomen sessies met serverbevestigde inzending en contactinzendingen uit `contact_submissions`. Het event/leadverschil wordt als datakwaliteit getoond; adblockers kunnen events missen.
 - Dienst- en lokale tabellen tonen views, CTA's, starts en beschikbare inzendingen. De funnel telt unieke anonieme sessies per stap; drop-off is `max(0, viewed - completed) / viewed` binnen dezelfde stap. Validatiefouten zijn eventaantallen; duration wordt alleen in grove buckets opgeslagen. Device en kanaal zijn alleen zichtbaar bij beschikbare sessiedata.
-- CTA-reporting telt expliciete clicks en koppelt starts/serverbevestigde inzendingen aan de laatste gemeten CTA vóór de funnelstart. Impressies worden niet gemeten. UTM-tabellen tonen source/medium/campaign voor starts en serverbevestigde sessies; click-ID's zijn niet zichtbaar als dimensie.
-- Er is geen betrouwbaar tab-close-event. Niet-afgeronde stappen en starts zonder inzending zijn alleen funnel-inferenties binnen het gekozen rapportvenster; ze worden niet als expliciete `abandoned`-events gepresenteerd. De intake heeft geen state persistence, dus er is geen resume/fresh-start-classificatie.
+- CTA-reporting telt zichtbare impressies en clicks, toont CTR (`clicks / impressions`) en koppelt downstream starts/serverbevestigde inzendingen aan de laatste gemeten CTA vóór de funnelstart. UTM-tabellen tonen source/medium/campaign voor starts en serverbevestigde sessies; click-ID's zijn niet zichtbaar als dimensie.
+- Er is geen betrouwbaar tab-close-event. Step drop-off, validatiefouten en terugnavigatie blijven onderscheiden; abandonment wordt alleen afgeleid uit starts zonder opgeslagen/gekoppelde lead plus configureerbare inactiviteit (30 minuten of 2 uur). De intake heeft geen state persistence, dus er is geen resume/fresh-start-classificatie.
 - De bestaande anonymous UUID blijft persistent in localStorage en heeft geen time-based expiry. Daarom zijn dashboardstarts/conversies unieke anonieme ID’s binnen het venster, geen onafhankelijke browserbezoeken of strikt tijdgebonden funnelcohorten; dit wordt expliciet gelabeld.
 - Dienst-rates met minder dan 20 starts worden als lage steekproef getoond, niet als percentage. Regels voor lage step completion, validatiefouten en lokale views zonder CTA zijn beschrijvend, niet automatisch advies; er worden geen kleine-sampleconclusies, upliftclaims of automatische contentwijzigingen gemaakt.
 - Empty state bevat geen demodata. Detaildata wordt begrensd; bij het bereiken van de querylimiet wordt dat gemeld. De primaire conversie is een succesvol opgeslagen lead, niet een CTA, leadscore of klik.
 - GA4 is niet geconfigureerd. Als dit later wordt ingericht, aanbevolen custom dimensions zijn `page_type`, `service_slug`, `subservice_slug`, `city_slug`, `cta_location` en `step_key`; map dan alleen vanuit de interne eventtaxonomie en configureer GA4 buiten deze code.
-- Toekomstige, niet uitgevoerde experimentkandidaten: hero-CTA-copy/plaatsing, aanvraagmicrocopy en progressindicator. Er is nu geen A/B-testengine, experimenttoewijzing of automatische aanbeveling.
+- `/admin/experimenten` beheert handmatig de status van experimenten en toont variantcounts, CTR, starts, serverbevestigde leads, device-exposures en sample warnings. Configuratie blijft draft totdat een admin activeert; er is geen winnerselectie, automatische rollout of AI-optimalisatie. Targeting blijft beperkt tot CTA-copy/progressie; SEO-content en lead-businesslogica blijven gelijk.
+- Experimenttoewijzing gebruikt de bestaande localStorage-anonieme UUID, deterministische gewichtsverdeling en server-side assignmentopslag. Er wordt geen cookie, fingerprint of tweede analyticsysteem toegevoegd. Door de bestaande localStorage-identiteit ziet SSR control; na hydration kan actieve variantcopy wisselen. Zie `docs/EXPERIMENTS.md` voor activatie, privacy, meetdefinities en de no-flicker productkeuze.
 
 ## Professional onboarding en beheer
 
