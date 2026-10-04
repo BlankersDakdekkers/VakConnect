@@ -93,10 +93,11 @@ test("service template retains all SEO content and stable analytics identifiers"
 
 test("intake keeps seven steps, submission transport and analytics while improving presentation", () => {
   const form = source("components/forms/lead-request-form.tsx");
-  assert.match(form, /const stepTitles = \["Dienst", "Dienstvragen", "Locatie", "Klus", "Foto's", "Contact", "Samenvatting"\]/);
+  assert.match(form, /const stepTitles = \["Kies een dienst", "Over je klus", "Waar is het werk\?", "Omschrijf je klus", "Foto's toevoegen", "Contactgegevens", "Controleer je aanvraag"\]/);
   assert.match(form, /fetch\("\/api\/leads", \{\s*method: "POST",\s*body,/);
   assert.match(form, /body\.set\("anonymousSessionId", getOrCreateAnonymousSessionId\(\)\)/);
-  assert.match(form, /router\.push\(`\/aanvraag\/bedankt\?ref=\$\{payload\.reference\}`\)/);
+  assert.match(form, /reference = payload\.reference/);
+  assert.match(form, /router\.push\(`\/aanvraag\/bedankt\?ref=\$\{reference\}`\)/);
   assert.match(form, /funnelEventNames\.leadFunnelStepViewed/);
   assert.match(form, /role="progressbar"/);
   assert.match(form, /focusErrorRef\.current = false/);

@@ -16,7 +16,7 @@ export const leadSubmissionSchema = z.object({
     .string()
     .min(1, "Postcode is verplicht.")
     .transform(normalizePostalCode)
-    .refine((value) => /^[1-9][0-9]{3}[A-Z]{2}$/.test(value), "Gebruik een geldige Nederlandse postcode."),
+    .refine((value) => /^[1-9][0-9]{3}[A-Z]{2}$/.test(value), "Vul een geldige postcode in, bijvoorbeeld 1234 AB."),
   houseNumber: z.string().trim().min(1, "Huisnummer is verplicht."),
   houseNumberAddition: z.string().trim().max(12).optional().or(z.literal("")),
   description: z.string().trim().min(20, "Omschrijf de klus in minimaal 20 tekens.").max(2500),

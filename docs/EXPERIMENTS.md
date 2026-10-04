@@ -26,6 +26,18 @@ De experimentdetailpagina biedt een afgeschermde admin-copypreview zonder analyt
 
 Alle drie worden als `draft` ingevoegd. Gewichten staan op 50/50. Variant B verandert alleen presentatie/copy en behoudt dezelfde bestemming en bestaande formulier-/leadlogica.
 
+## Prompt 22: funnel-baseline en latere testkandidaten
+
+De verfijnde zevenstapsaanvraagflow is de nieuwe UX-baseline; analytics-events, leadverwerking en het bestaande slot `lead.progress.copy` blijven ongewijzigd. De codewijzigingen activeren of wijzigen geen experimenten en voegen geen experiment- of slotnamen toe. Kandidaten voor een latere, handmatig beoordeelde test:
+
+- CTA-copy voor het versturen van de aanvraag.
+- Voortgangstekst binnen het bestaande slot `lead.progress.copy`.
+- Helpertekst bij dienstvragen, locatie en contactgegevens.
+- Presentatie van dienstopties wanneer een card-layout aantoonbaar beter scanbaar is.
+- Positie van de bestaande, feitelijke vertrouwenstekst in de controle- en verzendstap.
+
+Dit zijn hypotheses, geen conversieresultaten. Activeer een test alleen via de bestaande handmatige workflow; automatische winners, rollout en experimentactivatie blijven uitgeschakeld.
+
 ## Events en definities
 
 - `cta_impression` wordt via `IntersectionObserver` geregistreerd wanneer een bestaande `TrackedLink` zichtbaar is. Fallback zonder `IntersectionObserver` controleert zichtbaarheid in de viewport. Deduplicatie is per page view + CTA-ID + locatie; idempotency keys voorkomen dubbele opslag bij retries.

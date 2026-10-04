@@ -63,15 +63,15 @@ const initialDraft: LeadDraft = {
   email: "",
 };
 
-const stepTitles = ["Dienst", "Dienstvragen", "Locatie", "Klus", "Foto's", "Contact", "Samenvatting"];
+const stepTitles = ["Kies een dienst", "Over je klus", "Waar is het werk?", "Omschrijf je klus", "Foto's toevoegen", "Contactgegevens", "Controleer je aanvraag"];
 const stepDescriptions = [
-  "Kies het vakgebied dat het beste bij je klus past.",
-  "Beantwoord de vragen die helpen om je klus goed te begrijpen.",
-  "Waar is het werk nodig? We gebruiken je postcode voor de regionale aansluiting.",
-  "Beschrijf wat er aan de hand is en wanneer je hulp zoekt.",
-  "Foto's zijn optioneel, maar kunnen extra context geven.",
-  "Vul je gegevens in zodat een vakman contact met je kan opnemen.",
-  "Controleer je aanvraag voordat je deze verstuurt.",
+  "Kies het vakgebied dat het beste bij je klus past. Je kunt je keuze later nog aanpassen.",
+  "Beantwoord de vragen die bij je gekozen dienst horen.",
+  "Je postcode helpt ons vakmensen in jouw regio te vinden. Je huisnummer hebben we nodig voor je aanvraag.",
+  "Beschrijf wat je wilt laten doen en wanneer het ongeveer uitkomt.",
+  "Foto's zijn optioneel en kunnen extra context geven.",
+  "Een passende vakman kan contact met je opnemen over je aanvraag.",
+  "Loop je gegevens nog even na. Je kunt onderdelen hieronder aanpassen.",
 ];
 
 function isDynamicAnswerFilled(value: DynamicAnswerValue | undefined) {
@@ -111,6 +111,12 @@ function getArrayAnswer(value: DynamicAnswerValue | undefined) {
   return Array.isArray(value) ? value : [];
 }
 
+function areImagesValid(images: File[]) {
+  return images.length <= maxLeadImageCount && images.every(
+    (file) => allowedLeadImageTypes.includes(file.type as (typeof allowedLeadImageTypes)[number]) && file.size <= maxLeadImageSizeBytes,
+  );
+}
+
 function durationBucket(startedAt: number) {
   const seconds = Math.max(0, Math.round((Date.now() - startedAt) / 1000));
   if (seconds < 10) return "under_10s";
@@ -142,8 +148,10 @@ export function LeadRequestForm({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [slowSubmission, setSlowSubmission] = useState(false);
   const [progressExperiment, setProgressExperiment] = useState<ClientExperimentAssignment | null>(null);
   const [attribution] = useState(() => getClientAttributionSnapshot());
+  const submittingRef = useRef(false);
   const startedRef = useRef(false);
   const viewedStepRef = useRef<number | null>(null);
   const stepStartedAtRef = useRef(0);
@@ -166,6 +174,13 @@ export function LeadRequestForm({
     const control = invalid?.matches("fieldset") ? invalid.querySelector<HTMLElement>("input, select, textarea") : invalid;
     control?.focus();
   }, [errors]);
+
+  useEffect(() => {
+    if (!submitting) return;
+
+    const timeout = window.setTimeout(() => setSlowSubmission(true), 10_000);
+    return () => window.clearTimeout(timeout);
+  }, [submitting]);
 
   useEffect(() => {
     let active = true;
@@ -209,8 +224,19 @@ export function LeadRequestForm({
   const selectedQuestions = selectedService?.questions ?? [];
 
   function updateDraft<K extends keyof LeadDraft>(key: K, value: LeadDraft[K]) {
-    setDraft((current) => ({ ...current, [key]: value }));
+    const nextDraft = { ...draft, [key]: value };
+    setDraft(nextDraft);
+    setFormError(null);
+    const result = key === "serviceId"
+      ? serviceStepSchema.safeParse(nextDraft)
+      : ["postalCode", "houseNumber", "houseNumberAddition"].includes(key)
+        ? locationStepSchema.safeParse(nextDraft)
+        : ["description", "urgency", "preferredTiming"].includes(key)
+          ? detailsStepSchema.safeParse(nextDraft)
+          : contactStepSchema.safeParse(nextDraft);
+    const fieldIsValid = result.success || !result.error.issues.some((issue) => issue.path[0] === key);
     setErrors((current) => {
+      if (!fieldIsValid) return current;
       const next = { ...current };
       delete next[key];
       return next;
@@ -218,8 +244,16 @@ export function LeadRequestForm({
   }
 
   function updateDynamicAnswer(questionId: string, value: string | boolean) {
-    setDynamicAnswers((current) => ({ ...current, [questionId]: value }));
+    const nextAnswers = { ...dynamicAnswers, [questionId]: value };
+    setDynamicAnswers(nextAnswers);
+    setFormError(null);
+    const validation = validateDynamicAnswers(
+      selectedQuestions,
+      Object.fromEntries(selectedQuestions.map((question) => [question.id, nextAnswers[question.id]])),
+    );
+    const answerIsValid = validation.success || !validation.error.issues.some((issue) => issue.path[0] === questionId);
     setErrors((current) => {
+      if (!answerIsValid) return current;
       const next = { ...current };
       delete next[questionId];
       return next;
@@ -227,18 +261,20 @@ export function LeadRequestForm({
   }
 
   function toggleDynamicMultiSelect(questionId: string, value: string, checked: boolean) {
-    setDynamicAnswers((current) => {
-      const currentValues = Array.isArray(current[questionId]) ? current[questionId] : [];
-      const nextValues = checked
-        ? Array.from(new Set([...currentValues, value]))
-        : currentValues.filter((entry) => entry !== value);
-
-      return {
-        ...current,
-        [questionId]: nextValues,
-      };
-    });
+    const currentValues = Array.isArray(dynamicAnswers[questionId]) ? dynamicAnswers[questionId] : [];
+    const nextValues = checked
+      ? Array.from(new Set([...currentValues, value]))
+      : currentValues.filter((entry) => entry !== value);
+    const nextAnswers = { ...dynamicAnswers, [questionId]: nextValues };
+    setDynamicAnswers(nextAnswers);
+    setFormError(null);
+    const validation = validateDynamicAnswers(
+      selectedQuestions,
+      Object.fromEntries(selectedQuestions.map((question) => [question.id, nextAnswers[question.id]])),
+    );
+    const answerIsValid = validation.success || !validation.error.issues.some((issue) => issue.path[0] === questionId);
     setErrors((current) => {
+      if (!answerIsValid) return current;
       const next = { ...current };
       delete next[questionId];
       return next;
@@ -360,10 +396,20 @@ export function LeadRequestForm({
     setCurrentStep((step) => Math.max(step - 1, 0));
   }
 
+  function goToStep(step: number) {
+    setFormError(null);
+    if (step < currentStep) {
+      void trackFunnelEvent(funnelEventNames.leadFunnelBack, { step_key: leadFunnelSteps[currentStep] });
+    }
+    setCurrentStep(step);
+  }
+
   function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
     const nextImages = Array.from(event.target.files ?? []);
     setImages(nextImages);
+    setFormError(null);
     setErrors((current) => {
+      if (!areImagesValid(nextImages)) return current;
       const next = { ...current };
       delete next.images;
       return next;
@@ -371,7 +417,7 @@ export function LeadRequestForm({
   }
 
   async function handleSubmit() {
-    if (submitting) return;
+    if (submittingRef.current) return;
 
     if (!validateStep(1)) {
       setCurrentStep(1);
@@ -383,6 +429,8 @@ export function LeadRequestForm({
       return;
     }
 
+    submittingRef.current = true;
+    setSlowSubmission(false);
     setSubmitting(true);
     setFormError(null);
 
@@ -425,6 +473,7 @@ export function LeadRequestForm({
     });
     images.forEach((image) => body.append("images", image));
 
+    let reference: string;
     try {
       const response = await fetch("/api/leads", {
         method: "POST",
@@ -434,32 +483,38 @@ export function LeadRequestForm({
       const payload = (await response.json().catch(() => null)) as { error?: string; reference?: string } | null;
 
       if (!response.ok || !payload?.reference) {
+        submittingRef.current = false;
         setSubmitting(false);
-        setFormError(payload?.error ?? "De aanvraag kon niet worden verstuurd.");
+        setFormError(payload?.error ?? "De aanvraag kon niet worden verstuurd. Probeer het opnieuw.");
         return;
       }
-
-      void trackFunnelEvent(funnelEventNames.leadFunnelStepCompleted, {
-        step_key: leadFunnelSteps[6],
-        duration_bucket: durationBucket(stepStartedAtRef.current),
-      });
-      router.push(`/aanvraag/bedankt?ref=${payload.reference}`);
+      reference = payload.reference;
     } catch {
+      submittingRef.current = false;
       setSubmitting(false);
       setFormError("De aanvraag kon niet worden verstuurd. Controleer je verbinding en probeer het opnieuw.");
+      return;
     }
+
+    void trackFunnelEvent(funnelEventNames.leadFunnelStepCompleted, {
+      step_key: leadFunnelSteps[6],
+      duration_bucket: durationBucket(stepStartedAtRef.current),
+    });
+    router.push(`/aanvraag/bedankt?ref=${reference}`);
   }
 
   return (
     <Card ref={formRef} className="mx-auto max-w-3xl space-y-6" aria-busy={submitting}>
       <div className="space-y-3">
         <div className="space-y-2">
-          <div className="flex items-center justify-between gap-3 text-sm">
+          <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
             <p aria-live="polite" className="font-medium text-foreground">
-              Stap {currentStep + 1} van {stepTitles.length}
+              Stap {currentStep + 1} van {stepTitles.length} — {stepTitles[currentStep]}
               {progressExperiment?.variantKey === "variant_b" ? " — Vertel wat er moet gebeuren" : ""}
             </p>
-            <p className="text-muted-foreground">{Math.round(((currentStep + 1) / stepTitles.length) * 100)}%</p>
+            <p className="text-muted-foreground">
+              {currentStep === stepTitles.length - 1 ? "Laatste stap" : `Daarna nog ${stepTitles.length - currentStep - 1} stappen`}
+            </p>
           </div>
           <div
             role="progressbar"
@@ -494,6 +549,11 @@ export function LeadRequestForm({
               ))}
             </Select>
           </FormField>
+          {prefill?.serviceId && draft.serviceId === prefill.serviceId && selectedService ? (
+            <p className="text-sm leading-6 text-muted-foreground">
+              Je aanvraag start met <span className="font-medium text-foreground">{selectedService.name}</span>. Je kunt hierboven een andere dienst kiezen.
+            </p>
+          ) : null}
           {!services.length ? (
             <p role="status" className="rounded-sm bg-surface-muted p-4 text-sm leading-6 text-muted-foreground">
               We kunnen op dit moment geen diensten tonen. Probeer het later opnieuw of <Link href="/contact" className="underline underline-offset-4">neem contact op</Link>.
@@ -511,11 +571,12 @@ export function LeadRequestForm({
                   <FormField
                     id={question.id}
                     label={`${question.question}${question.required ? " *" : ""}`}
-                    description={question.help_text ?? undefined}
+                    description={question.help_text || "Beschrijf het kort; maximaal 4.000 tekens."}
                     error={errors[question.id]}
                   >
                     <Textarea
                       id={question.id}
+                      maxLength={4000}
                       value={getStringAnswer(dynamicAnswers[question.id])}
                       onChange={(event) => updateDynamicAnswer(question.id, event.target.value)}
                     />
@@ -648,9 +709,10 @@ export function LeadRequestForm({
 
       {currentStep === 2 ? (
         <div className="grid gap-4 md:grid-cols-3">
-          <FormField id="postalCode" label="Postcode" error={errors.postalCode}>
+          <FormField id="postalCode" label="Postcode" description="Vul de postcode in van de plek waar het werk nodig is." error={errors.postalCode}>
             <Input
               id="postalCode"
+              type="text"
               autoComplete="postal-code"
               autoCapitalize="characters"
               value={draft.postalCode}
@@ -673,12 +735,18 @@ export function LeadRequestForm({
 
       {currentStep === 3 ? (
         <div className="space-y-4">
-          <FormField id="description" label="Omschrijf de klus" error={errors.description}>
+          <FormField
+            id="description"
+            label="Omschrijf de klus"
+            description="Vertel wat je ziet, waar het zit en wat je graag wilt laten doen. Minimaal 20 en maximaal 2.500 tekens."
+            error={errors.description}
+          >
             <Textarea
               id="description"
+              maxLength={2500}
               value={draft.description}
               onChange={(event) => updateDraft("description", event.target.value)}
-              placeholder="Beschrijf wat er moet gebeuren, wat de huidige situatie is en wat je verwacht van de vakman."
+              placeholder="Bijvoorbeeld: wat er aan de hand is en welke werkzaamheden je overweegt."
             />
           </FormField>
           <div className="grid gap-4 md:grid-cols-2">
@@ -718,10 +786,31 @@ export function LeadRequestForm({
           <Input id="images" type="file" accept={allowedLeadImageTypes.join(",")} multiple onChange={handleImageChange} />
           {images.length ? (
             <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-              {images.map((image) => (
-                <li key={`${image.name}-${image.lastModified}`} className="flex flex-wrap items-center justify-between gap-2 rounded-sm bg-surface-muted px-4 py-3">
+              {images.map((image, imageIndex) => (
+                <li key={`${image.name}-${image.lastModified}-${imageIndex}`} className="flex flex-wrap items-center justify-between gap-2 rounded-sm bg-surface-muted px-4 py-3">
                   <span className="min-w-0 break-all">{image.name}</span>
-                  <span className="shrink-0">{formatFileSize(image.size)}</span>
+                  <span className="flex shrink-0 items-center gap-3">
+                    {formatFileSize(image.size)}
+                    <button
+                      type="button"
+                      className="inline-flex min-h-11 items-center underline underline-offset-4"
+                      aria-label={`Verwijder ${image.name}`}
+                      onClick={() => {
+                        const nextImages = images.filter((_, index) => index !== imageIndex);
+                        setImages(nextImages);
+                        const input = formRef.current?.querySelector<HTMLInputElement>("#images");
+                        if (input) input.value = "";
+                        setErrors((current) => {
+                          if (!areImagesValid(nextImages)) return current;
+                          const next = { ...current };
+                          delete next.images;
+                          return next;
+                        });
+                      }}
+                    >
+                      Verwijder
+                    </button>
+                  </span>
                 </li>
               ))}
             </ul>
@@ -737,33 +826,49 @@ export function LeadRequestForm({
           <FormField id="lastName" label="Achternaam" error={errors.lastName}>
             <Input id="lastName" autoComplete="family-name" value={draft.lastName} onChange={(event) => updateDraft("lastName", event.target.value)} />
           </FormField>
-          <FormField id="phone" label="Telefoonnummer" error={errors.phone}>
+          <FormField id="phone" label="Telefoonnummer" description="We gebruiken je telefoonnummer voor contact over je aanvraag." error={errors.phone}>
             <Input id="phone" type="tel" autoComplete="tel" value={draft.phone} onChange={(event) => updateDraft("phone", event.target.value)} />
           </FormField>
-          <FormField id="email" label="E-mailadres" error={errors.email}>
+          <FormField id="email" label="E-mailadres" description="We gebruiken je e-mailadres voor contact over je aanvraag." error={errors.email}>
             <Input id="email" type="email" autoComplete="email" autoCapitalize="none" value={draft.email} onChange={(event) => updateDraft("email", event.target.value)} />
           </FormField>
+          <p className="md:col-span-2 text-sm leading-6 text-muted-foreground">
+            We gebruiken je gegevens voor deze aanvraag. Lees meer in ons <Link href="/privacy" className="underline underline-offset-4">privacybeleid</Link>.
+          </p>
         </div>
       ) : null}
 
       {currentStep === 6 ? (
         <div className="space-y-4 break-words">
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-3xl bg-surface-muted p-5">
-              <p className="text-sm font-medium text-muted-foreground">Dienst</p>
-              <p className="mt-2 text-lg font-semibold">{selectedService?.name ?? "Niet geselecteerd"}</p>
-            </div>
-            <div className="rounded-3xl bg-surface-muted p-5">
-              <p className="text-sm font-medium text-muted-foreground">Locatie</p>
-              <p className="mt-2 text-lg font-semibold">
-                {formatPostalCode(draft.postalCode)} {draft.houseNumber}
-                {draft.houseNumberAddition ? ` ${draft.houseNumberAddition}` : ""}
-              </p>
-            </div>
+            <section className="rounded-2xl bg-surface-muted p-5" aria-labelledby="review-service">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h3 id="review-service" className="text-sm font-medium text-muted-foreground">Dienst</h3>
+                  <p className="mt-2 text-lg font-semibold">{selectedService?.name ?? "Niet geselecteerd"}</p>
+                </div>
+                <button type="button" className="inline-flex min-h-11 shrink-0 items-center underline underline-offset-4" onClick={() => goToStep(0)}>Wijzig dienst</button>
+              </div>
+            </section>
+            <section className="rounded-2xl bg-surface-muted p-5" aria-labelledby="review-location">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h3 id="review-location" className="text-sm font-medium text-muted-foreground">Locatie</h3>
+                  <p className="mt-2 text-lg font-semibold">
+                    {formatPostalCode(draft.postalCode)} {draft.houseNumber}
+                    {draft.houseNumberAddition ? ` ${draft.houseNumberAddition}` : ""}
+                  </p>
+                </div>
+                <button type="button" className="inline-flex min-h-11 shrink-0 items-center underline underline-offset-4" onClick={() => goToStep(2)}>Wijzig locatie</button>
+              </div>
+            </section>
           </div>
           {selectedQuestions.length ? (
-            <div className="space-y-3 rounded-3xl bg-surface-muted p-5">
-              <p className="text-sm font-medium text-muted-foreground">Dienstvragen</p>
+            <section className="space-y-3 rounded-2xl bg-surface-muted p-5" aria-labelledby="review-questions">
+              <div className="flex items-start justify-between gap-3">
+                <h3 id="review-questions" className="text-sm font-medium text-muted-foreground">Antwoorden over je klus</h3>
+                <button type="button" className="inline-flex min-h-11 shrink-0 items-center underline underline-offset-4" onClick={() => goToStep(1)}>Wijzig antwoorden</button>
+              </div>
               <ul className="space-y-3 text-sm">
                 {selectedQuestions.map((question) => (
                   <li key={question.id}>
@@ -772,23 +877,52 @@ export function LeadRequestForm({
                   </li>
                 ))}
               </ul>
-            </div>
+            </section>
           ) : null}
-          <div className="space-y-3 rounded-3xl bg-surface-muted p-5">
-            <div className="flex items-center gap-3">
-              <p className="text-sm font-medium text-muted-foreground">Urgentie</p>
-              <StatusBadge value={draft.urgency} />
+          <section className="space-y-3 rounded-2xl bg-surface-muted p-5" aria-labelledby="review-details">
+            <div className="flex items-start justify-between gap-3">
+              <h3 id="review-details" className="text-sm font-medium text-muted-foreground">Klus</h3>
+              <button type="button" className="inline-flex min-h-11 shrink-0 items-center underline underline-offset-4" onClick={() => goToStep(3)}>Wijzig klus</button>
             </div>
             <p className="text-sm leading-7 text-foreground">{draft.description}</p>
-            <p className="text-sm text-muted-foreground">
-              Contact: {draft.firstName} {draft.lastName} · {draft.phone} · {draft.email}
-            </p>
-            <p className="text-sm text-muted-foreground">Foto’s toegevoegd: {images.length}</p>
-          </div>
+            <div className="flex flex-wrap items-center gap-3 text-sm">
+              <span className="text-muted-foreground">Urgentie</span>
+              <StatusBadge value={draft.urgency} />
+              <span className="text-muted-foreground">Voorkeur planning</span>
+              <span>
+                {draft.preferredTiming === "asap" ? "Zo snel mogelijk" :
+                  draft.preferredTiming === "few_weeks" ? "Binnen enkele weken" :
+                    draft.preferredTiming === "one_to_three_months" ? "Binnen 1 tot 3 maanden" :
+                      draft.preferredTiming === "later" ? "Later" : "Nog niet zeker"}
+              </span>
+            </div>
+          </section>
+          <section className="space-y-3 rounded-2xl bg-surface-muted p-5" aria-labelledby="review-photos">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h3 id="review-photos" className="text-sm font-medium text-muted-foreground">Foto&apos;s</h3>
+                <p className="mt-2 text-sm">{images.length ? `${images.length} foto’s geselecteerd` : "Geen foto's geselecteerd"}</p>
+              </div>
+              <button type="button" className="inline-flex min-h-11 shrink-0 items-center underline underline-offset-4" onClick={() => goToStep(4)}>Wijzig foto&apos;s</button>
+            </div>
+            {images.length ? <ul className="space-y-1 text-sm text-muted-foreground">{images.map((image) => <li key={`${image.name}-${image.lastModified}`} className="break-all">{image.name}</li>)}</ul> : null}
+          </section>
+          <section className="space-y-3 rounded-2xl bg-surface-muted p-5" aria-labelledby="review-contact">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h3 id="review-contact" className="text-sm font-medium text-muted-foreground">Contactgegevens</h3>
+                <p className="mt-2 text-sm text-foreground">{draft.firstName} {draft.lastName}</p>
+                <p className="text-sm text-muted-foreground">{draft.phone} · {draft.email}</p>
+              </div>
+              <button type="button" className="inline-flex min-h-11 shrink-0 items-center underline underline-offset-4" onClick={() => goToStep(5)}>Wijzig contact</button>
+            </div>
+          </section>
+          <p className="text-sm leading-6 text-muted-foreground">Aanvraag plaatsen is gratis. Je beslist zelf of je met een vakman verdergaat.</p>
         </div>
       ) : null}
 
       {formError ? <p role="alert" className="rounded-2xl border border-danger/30 bg-red-50 px-4 py-3 text-sm text-danger">{formError}</p> : null}
+      {formError ? <p className="text-sm text-muted-foreground">Je ingevulde gegevens staan nog in dit formulier. Controleer de melding en probeer het opnieuw.</p> : null}
 
       <div className="flex flex-col-reverse gap-3 border-t pt-6 sm:flex-row sm:justify-between">
         <Button type="button" variant="ghost" className="w-full sm:w-auto" onClick={handleBack} disabled={currentStep === 0 || submitting}>
@@ -796,7 +930,12 @@ export function LeadRequestForm({
         </Button>
         {currentStep === stepTitles.length - 1 ? (
           <Button type="button" className="w-full sm:w-auto" onClick={handleSubmit} aria-busy={submitting} disabled={submitting || !services.length}>
-            {submitting ? "Aanvraag wordt verstuurd..." : "Aanvraag versturen"}
+            {submitting ? (
+              <>
+                <span aria-hidden="true" className="size-4 animate-spin rounded-full border-2 border-current border-r-transparent motion-reduce:animate-none" />
+                Aanvraag wordt verstuurd…
+              </>
+            ) : formError ? "Probeer opnieuw" : "Verstuur mijn aanvraag"}
           </Button>
         ) : (
           <Button type="button" className="w-full sm:w-auto" onClick={handleNext} disabled={!services.length}>
@@ -805,7 +944,13 @@ export function LeadRequestForm({
         )}
       </div>
       <p role="status" className="text-sm leading-6 text-muted-foreground">
-        {submitting ? "Je aanvraag wordt verstuurd. Wacht even en sluit deze pagina niet." : currentStep === 6 ? "Na verzending controleren we je aanvraag en zoeken we een passende vakman. Beschikbaarheid verschilt per klus en regio." : "Je aanvraag wordt pas verstuurd na je controle in de laatste stap."}
+        {submitting
+          ? slowSubmission
+            ? "Het versturen duurt iets langer dan verwacht. Je gegevens blijven staan; wacht nog even."
+            : "Je aanvraag wordt verstuurd. Dit kan even duren."
+          : currentStep === 6
+            ? "Na verzending controleren we je aanvraag en zoeken we een passende vakman. Beschikbaarheid verschilt per klus en regio."
+            : "Je aanvraag wordt pas verstuurd nadat je alles hebt gecontroleerd."}
       </p>
     </Card>
   );
