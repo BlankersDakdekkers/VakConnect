@@ -4,6 +4,7 @@ import { join } from "node:path";
 import test from "node:test";
 import { getAllServicePages } from "../lib/content/service-pages.ts";
 import { localServicePageConfigs } from "../lib/content/local-service-pages.ts";
+import { normalizePublicConsumerCopy } from "../lib/content/public-copy.ts";
 
 const repoRoot = process.cwd();
 const source = (path: string) => readFileSync(join(repoRoot, path), "utf8");
@@ -19,6 +20,20 @@ test("marketplace trust component is concise, semantic, server-rendered, and use
   assert.doesNotMatch(component, /use client/);
   assert.match(servicePage, /<MarketplaceTrust/);
   assert.match(servicePage, /context\.citySlug/);
+  assert.match(servicePage, /normalizePublicConsumerCopy\(page\)/);
+});
+
+test("service copy softens direct match claims and uses consumer wording", () => {
+  assert.equal(
+    normalizePublicConsumerCopy("VakConnect koppelt je aanvraag aan passende professionals."),
+    "VakConnect zoekt op basis van dienst en regio naar vakmannen die mogelijk passen.",
+  );
+  const consumerServiceCopy = JSON.stringify(normalizePublicConsumerCopy([
+    ...getAllServicePages(),
+    ...localServicePageConfigs,
+  ]));
+  assert.doesNotMatch(consumerServiceCopy, /VakConnect\s+(?:koppelt|matcht)\b/i);
+  assert.doesNotMatch(consumerServiceCopy, /\bprofessionals?\b/i);
 });
 
 test("public verification and matching wording explains review limits and uncertain outcomes", () => {
@@ -77,8 +92,8 @@ test("public copy contains no fabricated ratings, scale claims, endorsements, or
     "app/(public)/aanvraag/bedankt/page.tsx",
   ];
   const serviceCopy = JSON.stringify([
-    ...getAllServicePages(),
-    ...localServicePageConfigs,
+    ...normalizePublicConsumerCopy(getAllServicePages()),
+    ...normalizePublicConsumerCopy(localServicePageConfigs),
   ]);
   const publicCopy = [...routes.map(source), serviceCopy].join("\n");
   const forbiddenClaims = [

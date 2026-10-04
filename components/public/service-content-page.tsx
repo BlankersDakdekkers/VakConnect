@@ -8,22 +8,8 @@ import { PublicPageAnalytics } from "@/components/analytics/public-analytics";
 import { ProcessSteps } from "@/components/public/process-steps";
 import { MarketplaceTrust } from "@/components/public/marketplace-trust";
 import type { AnalyticsPageContext } from "@/lib/analytics/page-types";
+import { normalizePublicConsumerCopy } from "@/lib/content/public-copy";
 import type { ServiceContentPageData } from "@/lib/content/service-pages";
-
-function normalizeConsumerCopy<T>(value: T): T {
-  if (typeof value === "string") {
-    return value.replace(/\bprofessionals\b/gi, "vakmannen").replace(/\bprofessional\b/gi, "vakman") as T;
-  }
-  if (Array.isArray(value)) {
-    return value.map(normalizeConsumerCopy) as T;
-  }
-  if (value && typeof value === "object") {
-    return Object.fromEntries(
-      Object.entries(value).map(([key, item]) => [key, normalizeConsumerCopy(item)]),
-    ) as T;
-  }
-  return value;
-}
 
 function Breadcrumbs({ items }: Readonly<{ items: ServiceContentPageData["breadcrumbs"] }>) {
   return (
@@ -50,7 +36,7 @@ export function ServiceContentPage({
   page,
   analyticsContext,
 }: Readonly<{ page: ServiceContentPageData; analyticsContext?: AnalyticsPageContext }>) {
-  page = normalizeConsumerCopy(page);
+  page = normalizePublicConsumerCopy(page);
   const context: AnalyticsPageContext =
     analyticsContext ??
     (page.path.split("/").filter(Boolean).length === 1
