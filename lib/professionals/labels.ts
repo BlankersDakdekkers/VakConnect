@@ -4,7 +4,7 @@ import type {
   ProfessionalDocumentVerificationStatus,
   ProfessionalOnboardingStatus,
   ProfessionalVerificationStatus,
-} from "@/types/database";
+} from "../../types/database.ts";
 
 export const professionalOnboardingStatusLabels: Record<ProfessionalOnboardingStatus, string> = {
   not_started: "Niet gestart",

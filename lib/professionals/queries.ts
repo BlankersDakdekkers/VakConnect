@@ -4,7 +4,7 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { calculateProfessionalQuality, getProfessionalQualityLabel } from "@/lib/professionals/onboarding";
 import { createSignedProfessionalDocumentUrl } from "@/lib/storage/professional-documents";
 import { distributionConfig } from "@/lib/distribution/config";
-import { evaluateDistributionCandidateEligibility } from "@/lib/distribution/scoring";
+import { getProfessionalDistributionReadiness } from "./readiness";
 import type {
   LeadCommercialType,
   Professional,
@@ -269,59 +269,6 @@ async function loadProfessionalStats(professionalId: string) {
   };
 }
 
-function getDistributionReadiness(
-  professional: Professional,
-  settings: ProfessionalDistributionSettings | null,
-  stats: Awaited<ReturnType<typeof loadProfessionalStats>>,
-) {
-  const effectiveSettings = {
-    paused: settings?.paused ?? false,
-    pauseUntil: settings?.pause_until ?? null,
-    availabilityStatus: settings?.availability_status ?? "available",
-    maxOpenOffers: settings?.max_open_offers ?? distributionConfig.defaultMaxOpenOffers,
-    maxActiveAssignments: settings?.max_active_assignments ?? distributionConfig.defaultMaxActiveAssignments,
-  };
-  const evaluation = evaluateDistributionCandidateEligibility({
-    professionalStatus: professional.status,
-    onboardingStatus: professional.onboarding_status,
-    verificationStatus: professional.verification_status,
-    qualityScore: professional.quality_score,
-    alreadyPurchased: false,
-    settings: effectiveSettings,
-    stats: { openOffers: stats.activeOffers, activeAssignments: stats.activeAssignments },
-  });
-  const checks: Array<[string, string]> = [
-    ["professional_active", "Je profiel is niet actief."],
-    ["onboarding_complete", "Je profiel is nog niet goedgekeurd."],
-    ["verification_allowed", "Je verificatie is nog niet goedgekeurd."],
-    ["paused", settings?.pause_until
-      ? `Je profiel is gepauzeerd tot ${new Date(settings.pause_until).toLocaleString("nl-NL")}.`
-      : "Je profiel staat tijdelijk gepauzeerd."],
-    ["availability_available", `Je beschikbaarheid staat op ‘${effectiveSettings.availabilityStatus}’; alleen ‘beschikbaar’ ontvangt nieuwe aanbiedingen.`],
-    ["open_offers", "Je maximum aantal open aanbiedingen is bereikt."],
-    ["active_assignments", "Je maximum aantal actieve opdrachten is bereikt."],
-    ["quality_score", "Je profielkwaliteit voldoet nog niet aan de bestaande distributievoorwaarde."],
-  ];
-  const reasons = checks
-    .filter(([key]) => key === "open_offers"
-      ? Number(evaluation.reasons.open_offers) >= Number(evaluation.reasons.max_open_offers)
-      : key === "active_assignments"
-        ? Number(evaluation.reasons.active_assignments) >= Number(evaluation.reasons.max_active_assignments)
-        : key === "quality_score"
-          ? Number(evaluation.reasons.quality_score) < Number(evaluation.reasons.minimum_quality_score)
-        : !evaluation.reasons[key])
-    .map(([, message]) => message);
-
-  return {
-    eligible: evaluation.eligible,
-    reasons,
-    activeOffers: stats.activeOffers,
-    maxOpenOffers: effectiveSettings.maxOpenOffers,
-    activeAssignments: stats.activeAssignments,
-    maxActiveAssignments: effectiveSettings.maxActiveAssignments,
-  };
-}
-
 function calculateFromRow(row: Record<string, unknown>) {
   const professional = mapProfessional(row);
   const serviceLinks = ((row.professional_services ?? []) as Array<Record<string, unknown>>).map(mapService).filter((serviceLink): serviceLink is ProfessionalDetail["serviceLinks"][number] => serviceLink !== null);
@@ -475,7 +422,13 @@ export async function getAdminProfessionalDetail(id: string) {
     missingSteps: quality.missingSteps,
     canSubmit: quality.canSubmit,
     distributionEligible: quality.distributionEligible,
-    distributionReadiness: getDistributionReadiness(professional, settings, stats),
+    distributionReadiness: getProfessionalDistributionReadiness(
+      professional,
+      settings,
+      stats,
+      serviceLinks.filter((serviceLink) => serviceLink.active).length,
+      areaLinks.length,
+    ),
     stats,
   } satisfies ProfessionalDetail;
 }
@@ -504,7 +457,13 @@ export async function getOwnProfessionalDetail(id: string) {
     missingSteps: quality.missingSteps,
     canSubmit: quality.canSubmit,
     distributionEligible: quality.distributionEligible,
-    distributionReadiness: getDistributionReadiness(professional, settings, stats),
+    distributionReadiness: getProfessionalDistributionReadiness(
+      professional,
+      settings,
+      stats,
+      serviceLinks.filter((serviceLink) => serviceLink.active).length,
+      areaLinks.length,
+    ),
     stats,
   } satisfies ProfessionalDetail;
 }

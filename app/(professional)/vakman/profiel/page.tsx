@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ProfessionalQualitySummary } from "@/components/professional/quality-summary";
+import { isDistributionPauseActive } from "@/lib/distribution/scoring";
 import { requireProfessionalUser } from "@/lib/auth/helpers";
 import { getOwnProfessionalDetail } from "@/lib/professionals/queries";
 import { professionalAvailabilityStatusLabels, professionalDocumentStatusLabels, professionalDocumentTypeLabels, professionalOnboardingStatusLabels, professionalStatusDescriptions, professionalVerificationStatusLabels } from "@/lib/professionals/labels";
@@ -32,7 +33,25 @@ export default async function ProfessionalProfilePage() {
   const professional = await getOwnProfessionalDetail(user.professional.id);
   if (!professional) return null;
 
-  const requirementsByType = new Map(professional.documentRequirements.map((requirement) => [requirement.document_type, requirement]));
+  const applicableDocumentRequirements = professional.documentRequirements.filter((requirement) =>
+    requirement.service_id === null || professional.serviceLinks.some((service) => service.active),
+  );
+  const requirementsByType = new Map(applicableDocumentRequirements.map((requirement) => [requirement.document_type, requirement]));
+  for (const requirement of applicableDocumentRequirements) {
+    if (requirement.requirement_level === "required") requirementsByType.set(requirement.document_type, requirement);
+  }
+  const uploadedDocumentTypes = new Set(professional.documents
+    .filter((document) => !document.archived_at && ["pending", "approved"].includes(document.verification_status))
+    .map((document) => document.document_type));
+  const missingRequiredDocuments = [...requirementsByType.values()].filter((requirement) =>
+    requirement.requirement_level === "required" && !uploadedDocumentTypes.has(requirement.document_type),
+  );
+  const recommendedDocumentsMissing = [...new Map(applicableDocumentRequirements
+    .filter((requirement) => requirement.requirement_level === "recommended")
+    .map((requirement) => [requirement.document_type, requirement])).values()]
+    .filter((requirement) => requirementsByType.get(requirement.document_type)?.requirement_level !== "required")
+    .filter((requirement) => !professional.documents.some((document) => !document.archived_at && document.document_type === requirement.document_type));
+  const pauseActive = isDistributionPauseActive(professional.distributionSettings?.paused ?? false, professional.distributionSettings?.pause_until ?? null);
 
   return (
     <div className="space-y-6">
@@ -50,6 +69,17 @@ export default async function ProfessionalProfilePage() {
           <p className="mt-2 text-sm text-muted-foreground">Profiel- en documentbeoordeling betekent niet dat VakConnect de kwaliteit of uitvoering van werk garandeert.</p>
         </div>
         {professional.verification_status_reason ? <p className="rounded-xl bg-surface-muted p-3 text-sm">{professional.verification_status_reason}</p> : null}
+      </Card>
+
+      <Card className="space-y-3">
+        <h2 className="text-lg font-semibold tracking-tight">Nieuwe aanvragen ontvangen</h2>
+        <StatusBadge value={professional.distributionReadiness.eligible ? "available" : "limited"} label={professional.distributionReadiness.eligible ? "Profiel gereed voor passende aanvragen" : "Voorwaarden nog niet vervuld"} />
+        <p className="text-sm text-muted-foreground">VakConnect biedt kansen; niet elke aanvraag wordt een opdracht. Of een specifieke aanvraag wordt aangeboden, hangt ook af van je actieve diensten, werkgebied en beschikbare capaciteit.</p>
+        {professional.distributionReadiness.reasons.length ? (
+          <ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+            {professional.distributionReadiness.reasons.map((reason) => <li key={reason}>{reason}</li>)}
+          </ul>
+        ) : <p className="text-sm text-success">Je profiel voldoet aan de huidige profiel- en beschikbaarheidsvoorwaarden.</p>}
       </Card>
 
       {professional.verification_status === "changes_requested" || professional.onboarding_status === "changes_requested" ? (
@@ -111,6 +141,7 @@ export default async function ProfessionalProfilePage() {
               ))}
             </ul>
           ) : <p className="text-sm text-muted-foreground">Er zijn nog geen diensten geselecteerd.</p>}
+          <p className="text-sm text-muted-foreground">Alleen actieve diensten kunnen voor een passende aanvraag meetellen.</p>
         </Card>
 
         <Card className="space-y-4">
@@ -131,11 +162,11 @@ export default async function ProfessionalProfilePage() {
             <Link href="/vakman/onboarding?step=capacity" className="text-sm font-medium text-primary underline underline-offset-4">Instellingen aanpassen</Link>
           </div>
           <div className="flex flex-wrap gap-2">
-            <StatusBadge value={professional.distributionSettings?.paused ? "paused" : professional.distributionSettings?.availability_status ?? "available"} label={professional.distributionSettings?.paused ? "Tijdelijk gepauzeerd" : professionalAvailabilityStatusLabels[professional.distributionSettings?.availability_status ?? "available"]} />
-            {professional.distributionSettings?.pause_until ? <span className="text-sm text-muted-foreground">Tot {formatDate(professional.distributionSettings.pause_until)}</span> : null}
+            <StatusBadge value={pauseActive ? "paused" : professional.distributionSettings?.availability_status ?? "available"} label={pauseActive ? "Tijdelijk gepauzeerd" : professionalAvailabilityStatusLabels[professional.distributionSettings?.availability_status ?? "available"]} />
+            {pauseActive && professional.distributionSettings?.pause_until ? <span className="text-sm text-muted-foreground">Pauze tot {formatDate(professional.distributionSettings.pause_until)}</span> : null}
           </div>
           {professional.distributionSettings?.availability_status === "limited" ? <p className="text-sm text-amber-800">Nieuwe aanvragen worden niet aangeboden zolang je beschikbaarheid beperkt is.</p> : null}
-          {professional.distributionSettings?.paused ? <p className="text-sm text-muted-foreground">Je ontvangt geen nieuwe aanbiedingen zolang de pauze actief is.</p> : null}
+          {pauseActive ? <p className="text-sm text-muted-foreground">Je ontvangt geen nieuwe aanbiedingen zolang de pauze actief is.</p> : null}
           <dl className="grid grid-cols-2 gap-3 text-sm">
             <div><dt className="text-muted-foreground">Open aanbiedingen</dt><dd>{professional.distributionReadiness.activeOffers} / {professional.distributionReadiness.maxOpenOffers}</dd></div>
             <div><dt className="text-muted-foreground">Actieve opdrachten</dt><dd>{professional.distributionReadiness.activeAssignments} / {professional.distributionReadiness.maxActiveAssignments}</dd></div>
@@ -149,6 +180,22 @@ export default async function ProfessionalProfilePage() {
           <Link href="/vakman/onboarding?step=documents" className="text-sm font-medium text-primary underline underline-offset-4">Documenten beheren</Link>
         </div>
         <p className="text-sm text-muted-foreground">Documenten worden privé bewaard voor beoordeling en zijn niet openbaar zichtbaar.</p>
+        {missingRequiredDocuments.length ? (
+          <div className="rounded-xl bg-amber-50 p-3">
+            <p className="font-medium">Vereiste documenten nog nodig</p>
+            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm">
+              {missingRequiredDocuments.map((requirement) => <li key={requirement.id}>{requirement.display_name || professionalDocumentTypeLabels[requirement.document_type]} · upload dit document om je profiel in te dienen.</li>)}
+            </ul>
+          </div>
+        ) : null}
+        {recommendedDocumentsMissing.length ? (
+          <div>
+            <p className="font-medium">Aanbevolen, niet verplicht</p>
+            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+              {recommendedDocumentsMissing.map((requirement) => <li key={requirement.id}>{requirement.display_name || professionalDocumentTypeLabels[requirement.document_type]}</li>)}
+            </ul>
+          </div>
+        ) : null}
         {professional.documents.length ? (
           <ul className="divide-y">
             {professional.documents.filter((document) => !document.archived_at).map((document) => {

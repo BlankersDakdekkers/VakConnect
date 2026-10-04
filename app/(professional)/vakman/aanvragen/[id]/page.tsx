@@ -27,6 +27,9 @@ const declineReasonLabels: Record<(typeof declineReasonValues)[number], string> 
 
 const statusLabels: Record<string, string> = {
   available: "Beschikbaar",
+  unavailable: "Niet beschikbaar",
+  partially_sold: "Gedeeltelijk verkocht",
+  sold_out: "Uitverkocht",
   purchased: "Gekocht",
   closed: "Gesloten",
   offered: "Nieuw aanbod",
@@ -38,6 +41,30 @@ const statusLabels: Record<string, string> = {
   assigned: "Toegewezen",
   urgent: "Urgent",
   normal: "Normaal",
+  new: "Nieuw",
+  contacted: "Contact opgenomen",
+  appointment_scheduled: "Afspraak gepland",
+  quote_sent: "Offerte verstuurd",
+  won: "Opdracht gewonnen",
+  lost: "Opdracht niet gewonnen",
+};
+
+const progressLabels: Record<(typeof leadProgressStatusValues)[number], string> = {
+  new: "Nieuw",
+  contacted: "Contact opgenomen",
+  appointment_scheduled: "Afspraak gepland",
+  quote_sent: "Offerte verstuurd",
+  won: "Opdracht gewonnen",
+  lost: "Opdracht niet gewonnen",
+};
+
+const lossReasonLabels: Record<(typeof leadLossReasonValues)[number], string> = {
+  prijs: "Prijs",
+  klant_niet_bereikbaar: "Klant niet bereikbaar",
+  klant_koos_andere_partij: "Klant koos een andere partij",
+  klus_uitgesteld: "Klus uitgesteld",
+  buiten_scope: "Buiten scope",
+  anders: "Anders",
 };
 
 function expiryTime(value: string) {
@@ -73,14 +100,14 @@ export default async function ProfessionalLeadDetailPage({
         title="Aanvraagdetail"
         description={marketLead.mode === "unlocked" ? "Contactgegevens zijn veilig vrijgegeven na geldige toegang." : "Je ziet nu alleen pre-purchase leadinformatie zonder gevoelige contactdata."}
       />
-      {success ? <p className="rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-success">{success}</p> : null}
-      {error ? <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-danger">{error}</p> : null}
+      {success ? <p role="status" className="rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-success">{success}</p> : null}
+      {error ? <p role="alert" className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-danger">{error}</p> : null}
       <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         <div className="space-y-6">
           <Card className="space-y-4">
             <div className="flex flex-wrap gap-3">
               <StatusBadge value={marketLead.state} label={statusLabels[marketLead.state] ?? "Status bijgewerkt"} />
-              <StatusBadge value={marketLead.commercial.commercialType} />
+              <StatusBadge value={marketLead.commercial.commercialType} label={getCommercialTypeLabel(marketLead.commercial.commercialType)} />
               <StatusBadge value={marketLead.commercial.salesStatus} label={statusLabels[marketLead.commercial.salesStatus] ?? "Status bijgewerkt"} />
               <StatusBadge value={marketLead.preview.urgency} label={statusLabels[marketLead.preview.urgency] ?? "Urgentie bijgewerkt"} />
               {marketLead.assignment.status ? <StatusBadge value={marketLead.assignment.status} label={statusLabels[marketLead.assignment.status] ?? "Toewijzing bijgewerkt"} /> : null}
@@ -95,7 +122,7 @@ export default async function ProfessionalLeadDetailPage({
                 <p className="text-sm text-muted-foreground">Regio</p>
                 <p className="mt-1 font-medium">{marketLead.preview.city ?? `Postcodegebied ${marketLead.preview.postalCodePrefix}`}</p>
                 <p className="text-sm text-muted-foreground">Ingediend op {formatDate(marketLead.preview.createdAt)}</p>
-                {marketLead.distributionOffer.offerExpiresAt ? <p className="text-sm text-muted-foreground">Beschikbaar tot {expiryTime(marketLead.distributionOffer.offerExpiresAt)}</p> : null}
+                {marketLead.distributionOffer.offerExpiresAt ? <p className="text-sm text-muted-foreground">{marketLead.distributionOffer.offerTermExpired ? "De eindtijd van dit aanbod is verstreken." : `Beschikbaar tot ${expiryTime(marketLead.distributionOffer.offerExpiresAt)}`}</p> : null}
               </div>
             </div>
             <p className="text-sm leading-7 text-muted-foreground">{marketLead.preview.summary}</p>
@@ -252,15 +279,15 @@ export default async function ProfessionalLeadDetailPage({
             <form action={updateLeadProgressAction} className="space-y-3">
               <input type="hidden" name="lead_id" value={marketLead.detail.lead.id} />
               <input type="hidden" name="redirect_to" value={`/vakman/aanvragen/${marketLead.detail.lead.id}`} />
-              <Select name="progress_status" defaultValue={marketLead.detail.assignmentProgressStatus}>
+              <Select name="progress_status" aria-label="Voortgangsstatus" defaultValue={marketLead.detail.assignmentProgressStatus}>
                 {leadProgressStatusValues.map((value) => (
-                  <option key={value} value={value}>{value}</option>
+                  <option key={value} value={value}>{progressLabels[value]}</option>
                 ))}
               </Select>
-              <Select name="loss_reason" defaultValue={marketLead.detail.lossReason ?? ""}>
+              <Select name="loss_reason" aria-label="Reden waarom de opdracht niet is gewonnen" defaultValue={marketLead.detail.lossReason ?? ""}>
                 <option value="">Geen verliesreden</option>
                 {leadLossReasonValues.map((value) => (
-                  <option key={value} value={value}>{value}</option>
+                  <option key={value} value={value}>{lossReasonLabels[value]}</option>
                 ))}
               </Select>
               <SubmitButton className="w-full" variant="secondary" pendingLabel="Voortgang wordt bijgewerkt...">Voortgang bijwerken</SubmitButton>

@@ -7,6 +7,7 @@ import { formatCredits } from "@/lib/commercial/labels";
 import { getProfessionalWalletOverview } from "@/lib/commercial/queries";
 import { requireProfessionalUser } from "@/lib/auth/helpers";
 import { getProfessionalDashboardStats } from "@/lib/leads/queries";
+import { isDistributionPauseActive } from "@/lib/distribution/scoring";
 import { getOwnProfessionalDetail } from "@/lib/professionals/queries";
 import { professionalAvailabilityStatusLabels, professionalOnboardingStatusLabels, professionalStatusDescriptions, professionalVerificationStatusLabels } from "@/lib/professionals/labels";
 import { getProfessionalNotifications } from "@/lib/notifications/queries";
@@ -41,7 +42,9 @@ function getNextAction(professional: NonNullable<Awaited<ReturnType<typeof getOw
   }
 
   const settings = professional.distributionSettings;
-  if (settings?.paused || settings?.availability_status !== "available" || professional.distributionReadiness.reasons.some((reason) => reason.includes("maximum"))) {
+  const capacityReached = professional.distributionReadiness.activeOffers >= professional.distributionReadiness.maxOpenOffers
+    || professional.distributionReadiness.activeAssignments >= professional.distributionReadiness.maxActiveAssignments;
+  if (isDistributionPauseActive(settings?.paused ?? false, settings?.pause_until ?? null) || settings?.availability_status !== "available" || capacityReached) {
     return {
       label: "Bekijk beschikbaarheid en capaciteit",
       href: "/vakman/onboarding?step=capacity",
@@ -108,7 +111,9 @@ export default async function ProfessionalDashboardPage() {
     ].includes(notification.event_type),
   ).slice(0, 3);
   const availability = professional.distributionSettings?.availability_status ?? "available";
-  const availabilityLabel = professional.distributionSettings?.paused
+  const pauseActive = isDistributionPauseActive(professional.distributionSettings?.paused ?? false, professional.distributionSettings?.pause_until ?? null);
+  const pauseUntil = professional.distributionSettings?.pause_until ? new Date(professional.distributionSettings.pause_until) : null;
+  const availabilityLabel = pauseActive
     ? "Tijdelijk gepauzeerd"
     : professionalAvailabilityStatusLabels[availability];
 
@@ -175,11 +180,11 @@ export default async function ProfessionalDashboardPage() {
         <Card className="space-y-3">
           <h2 className="text-lg font-semibold tracking-tight">Beschikbaarheid en capaciteit</h2>
           <div className="flex flex-wrap items-center gap-3">
-            <StatusBadge value={professional.distributionSettings?.paused ? "paused" : availability} label={availabilityLabel} />
-            {professional.distributionSettings?.pause_until ? <p className="text-sm text-muted-foreground">Pauze tot {new Date(professional.distributionSettings.pause_until).toLocaleString("nl-NL")}</p> : null}
+            <StatusBadge value={pauseActive ? "paused" : availability} label={availabilityLabel} />
+            {pauseActive && pauseUntil && Number.isFinite(pauseUntil.getTime()) ? <p className="text-sm text-muted-foreground">Pauze tot {pauseUntil.toLocaleString("nl-NL")}</p> : null}
           </div>
           {availability === "limited" ? <p className="text-sm text-amber-800">Je profiel ontvangt geen nieuwe aanbiedingen zolang je status beperkt is.</p> : null}
-          {professional.distributionSettings?.paused ? <p className="text-sm text-muted-foreground">Je ontvangt geen nieuwe aanbiedingen zolang de pauze actief is.</p> : null}
+          {pauseActive ? <p className="text-sm text-muted-foreground">Je ontvangt geen nieuwe aanbiedingen zolang de pauze actief is.</p> : null}
           <dl className="grid grid-cols-2 gap-3 text-sm">
             <div><dt className="text-muted-foreground">Open aanbiedingen</dt><dd className="font-medium">{professional.distributionReadiness.activeOffers} / {professional.distributionReadiness.maxOpenOffers}</dd></div>
             <div><dt className="text-muted-foreground">Actieve opdrachten</dt><dd className="font-medium">{professional.distributionReadiness.activeAssignments} / {professional.distributionReadiness.maxActiveAssignments}</dd></div>

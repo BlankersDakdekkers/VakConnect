@@ -74,7 +74,7 @@ export function ProfessionalQualitySummary({
                 </div>
                 <span className="shrink-0 text-xs text-muted-foreground">{item.score}/{item.weight}</span>
               </div>
-              <p className="mt-2 text-sm text-muted-foreground">{item.message}</p>
+              <p className="mt-2 text-sm text-muted-foreground">{key === "verification" ? "Je actuele beoordelingsstatus staat hierboven; deze status is geen kwaliteitsgarantie." : item.message}</p>
             </li>
           );
         })}

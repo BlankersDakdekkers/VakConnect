@@ -56,6 +56,18 @@ export default async function ProfessionalOnboardingPage({
   const activeServiceIds = new Set(professional.serviceLinks.filter((service) => service.active).map((service) => service.service.id));
   const availableServices = services.filter((service) => service.active);
   const previousStep = getPreviousOnboardingStep(step);
+  const applicableDocumentRequirements = professional.documentRequirements.filter((requirement) => requirement.service_id === null || activeServiceIds.size > 0);
+  const uploadedDocumentTypes = new Set(professional.documents
+    .filter((document) => !document.archived_at && ["pending", "approved"].includes(document.verification_status))
+    .map((document) => document.document_type));
+  const documentRequirements = [...new Map(applicableDocumentRequirements
+    .filter((requirement) => requirement.requirement_level === "required")
+    .map((requirement) => [requirement.document_type, requirement])).values()];
+  const missingRequiredDocuments = documentRequirements.filter((requirement) => !uploadedDocumentTypes.has(requirement.document_type));
+  const recommendedDocuments = [...new Map(applicableDocumentRequirements
+    .filter((requirement) => requirement.requirement_level === "recommended")
+    .map((requirement) => [requirement.document_type, requirement])).values()]
+    .filter((requirement) => !documentRequirements.some((required) => required.document_type === requirement.document_type));
 
   return (
     <div className="space-y-6">
@@ -250,7 +262,28 @@ export default async function ProfessionalOnboardingPage({
       {step === "documents" ? (
         <Card className="space-y-4">
           <h2 className="text-lg font-semibold tracking-tight">Documenten</h2>
-          <form action={uploadProfessionalDocumentAction} className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-3 border-b pb-4">
+            <h3 className="font-medium">Vereist voor indiening</h3>
+            {missingRequiredDocuments.length ? (
+              <ul className="space-y-2">
+                {missingRequiredDocuments.map((requirement) => (
+                  <li key={requirement.id} className="flex flex-wrap items-start justify-between gap-3 rounded-xl bg-amber-50 p-3 text-sm">
+                    <div><p className="font-medium">{requirement.display_name || professionalDocumentTypeLabels[requirement.document_type]} · Nog nodig</p>{requirement.description ? <p className="text-muted-foreground">{requirement.description}</p> : null}</div>
+                    <Link href="#document-upload" className="text-primary underline underline-offset-4">Document toevoegen</Link>
+                  </li>
+                ))}
+              </ul>
+            ) : <p className="text-sm text-success">Alle vereiste documenten zijn geüpload.</p>}
+            {recommendedDocuments.filter((requirement) => !uploadedDocumentTypes.has(requirement.document_type)).length ? (
+              <div>
+                <p className="text-sm font-medium">Aanbevolen, niet verplicht</p>
+                <ul className="mt-1 list-disc pl-5 text-sm text-muted-foreground">
+                  {recommendedDocuments.filter((requirement) => !uploadedDocumentTypes.has(requirement.document_type)).map((requirement) => <li key={requirement.id}>{requirement.display_name || professionalDocumentTypeLabels[requirement.document_type]}</li>)}
+                </ul>
+              </div>
+            ) : null}
+          </div>
+          <form id="document-upload" action={uploadProfessionalDocumentAction} className="grid gap-4 sm:grid-cols-2">
             <input type="hidden" name="redirect_to" value="/vakman/onboarding?step=documents" />
             <FormField id="document_type" label="Documenttype"><Select id="document_type" name="document_type" defaultValue="kvk_extract">{professionalDocumentTypeValues.map((value) => <option key={value} value={value}>{professionalDocumentTypeLabels[value]}</option>)}</Select></FormField>
             <FormField id="expires_at" label="Verloopt op" description="Vul dit alleen in als het document een vervaldatum heeft."><Input id="expires_at" name="expires_at" type="datetime-local" /></FormField>
