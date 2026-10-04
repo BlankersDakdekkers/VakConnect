@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { markAllNotificationsReadAction, markNotificationReadAction } from "@/lib/notifications/actions";
 import { getProfessionalNotifications, getProfessionalUnreadNotificationCount } from "@/lib/notifications/queries";
@@ -46,6 +47,21 @@ function safeInternalHref(value: unknown) {
   }
 }
 
+function categoryLabel(eventType: ProfessionalNotificationEventType) {
+  if (eventType.startsWith("lead_") || ["stale_lead", "unmatched_lead", "no_purchase_lead"].includes(eventType)) return "Aanvragen";
+  if (eventType.startsWith("document")) return "Documenten";
+  if (eventType.startsWith("verification") || eventType === "onboarding_submitted" || eventType === "changes_requested") return "Profiel en verificatie";
+  return "Accountmelding";
+}
+
+function fallbackHref(notification: Awaited<ReturnType<typeof getProfessionalNotifications>>["items"][number]) {
+  if (notification.lead_id && notification.event_type.startsWith("lead_")) return `/vakman/aanvragen/${notification.lead_id}`;
+  if (notification.event_type.startsWith("document")) return "/vakman/onboarding?step=documents";
+  if (notification.event_type === "changes_requested" || notification.event_type.startsWith("verification")) return "/vakman/onboarding?step=review";
+  if (notification.event_type === "onboarding_submitted") return "/vakman/profiel";
+  return null;
+}
+
 export default async function ProfessionalNotificationsPage({
   searchParams,
 }: Readonly<{
@@ -64,7 +80,7 @@ export default async function ProfessionalNotificationsPage({
     <div className="space-y-6">
       <PageHeader
         title="Notificaties"
-        description="Je in-app berichten over verificatie, documenten en leads."
+        description="In-app updates over aanvragen, documenten, profielbeoordeling en accountacties."
         actions={unreadCount ? (
           <form action={markAllNotificationsReadAction}>
             <button className="rounded-full border px-4 py-2 text-sm font-medium hover:bg-surface-muted">Alles als gelezen markeren</button>
@@ -72,23 +88,24 @@ export default async function ProfessionalNotificationsPage({
         ) : undefined}
       />
       {!notifications.length ? (
-        <Card><p className="text-sm text-muted-foreground">Je hebt nog geen notificaties.</p></Card>
+        <EmptyState title="Je hebt nog geen notificaties." description="Nieuwe aanvragen, documentupdates en profielbeoordelingen verschijnen hier." />
       ) : (
         <div className="space-y-3">
           {notifications.map((notification) => {
             const title = payloadText(notification.payload, "title", eventLabels[notification.event_type]);
             const description = payloadText(notification.payload, "description", "Er is een update voor je account.");
-            const href = safeInternalHref(notification.payload.href);
+            const href = safeInternalHref(notification.payload.href) ?? fallbackHref(notification);
             return (
-              <Card key={notification.id} className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <Card key={notification.id} className={`flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between ${!notification.read_at ? "border-primary/30" : ""}`}>
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <h2 className="font-semibold">{title}</h2>
-                    {!notification.read_at ? <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">Nieuw</span> : null}
+                  <span className="rounded-full bg-surface-muted px-2 py-0.5 text-xs text-muted-foreground">{categoryLabel(notification.event_type)}</span>
+                  <h2 className="font-semibold">{title}</h2>
+                  {!notification.read_at ? <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">Ongelezen</span> : null}
                   </div>
                   <p className="text-sm text-muted-foreground">{description}</p>
                   <time className="block text-xs text-muted-foreground" dateTime={notification.created_at}>{formatDate(notification.created_at)}</time>
-                  {href ? <Link href={href} className="inline-block text-sm font-medium text-primary hover:underline">Bekijk details</Link> : null}
+                  {href ? <Link href={href} className="inline-block min-h-11 py-2 text-sm font-medium text-primary underline underline-offset-4">{notification.lead_id ? "Bekijk aanvraag" : "Bekijk details"}</Link> : null}
                 </div>
                 {!notification.read_at ? (
                   <form action={markNotificationReadAction}>
@@ -103,11 +120,12 @@ export default async function ProfessionalNotificationsPage({
       )}
       {notificationPage.pageCount > 1 ? (
         <nav aria-label="Paginering notificaties" className="flex items-center justify-between">
-          <Link aria-disabled={notificationPage.page <= 1} className={`rounded-full border px-4 py-2 text-sm ${notificationPage.page <= 1 ? "pointer-events-none opacity-50" : "hover:bg-surface-muted"}`} href={`/vakman/notificaties?page=${notificationPage.page - 1}`}>Vorige</Link>
+          <Link aria-disabled={notificationPage.page <= 1} tabIndex={notificationPage.page <= 1 ? -1 : undefined} className={`rounded-full border px-4 py-2 text-sm ${notificationPage.page <= 1 ? "pointer-events-none opacity-50" : "hover:bg-surface-muted"}`} href={`/vakman/notificaties?page=${notificationPage.page - 1}`}>Vorige</Link>
           <span className="text-sm text-muted-foreground">Pagina {notificationPage.page} van {notificationPage.pageCount}</span>
-          <Link aria-disabled={notificationPage.page >= notificationPage.pageCount} className={`rounded-full border px-4 py-2 text-sm ${notificationPage.page >= notificationPage.pageCount ? "pointer-events-none opacity-50" : "hover:bg-surface-muted"}`} href={`/vakman/notificaties?page=${notificationPage.page + 1}`}>Volgende</Link>
+          <Link aria-disabled={notificationPage.page >= notificationPage.pageCount} tabIndex={notificationPage.page >= notificationPage.pageCount ? -1 : undefined} className={`rounded-full border px-4 py-2 text-sm ${notificationPage.page >= notificationPage.pageCount ? "pointer-events-none opacity-50" : "hover:bg-surface-muted"}`} href={`/vakman/notificaties?page=${notificationPage.page + 1}`}>Volgende</Link>
         </nav>
       ) : null}
+      <Link href="/vakman/instellingen/notificaties" className="inline-block text-sm font-medium text-primary underline underline-offset-4">Notificatievoorkeuren beheren</Link>
     </div>
   );
 }

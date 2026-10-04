@@ -45,6 +45,6 @@ const variantClasses: Record<string, string> = {
   unverified: "border-border bg-slate-100 text-slate-700",
 };
 
-export function StatusBadge({ value }: Readonly<{ value: string }>) {
-  return <Badge className={variantClasses[value] ?? "border-border bg-surface-muted text-foreground"}>{value}</Badge>;
+export function StatusBadge({ value, label = value }: Readonly<{ value: string; label?: string }>) {
+  return <Badge className={variantClasses[value] ?? "border-border bg-surface-muted text-foreground"}>{label}</Badge>;
 }

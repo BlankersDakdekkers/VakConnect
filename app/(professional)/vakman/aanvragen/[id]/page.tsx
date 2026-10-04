@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -23,6 +24,25 @@ const declineReasonLabels: Record<(typeof declineReasonValues)[number], string> 
   timing_past_niet: "Timing past niet",
   anders: "Anders",
 };
+
+const statusLabels: Record<string, string> = {
+  available: "Beschikbaar",
+  purchased: "Gekocht",
+  closed: "Gesloten",
+  offered: "Nieuw aanbod",
+  viewed: "Bekeken",
+  declined: "Geweigerd",
+  expired: "Verlopen",
+  accepted: "Geaccepteerd",
+  pending: "In behandeling",
+  assigned: "Toegewezen",
+  urgent: "Urgent",
+  normal: "Normaal",
+};
+
+function expiryTime(value: string) {
+  return new Intl.DateTimeFormat("nl-NL", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
+}
 
 export default async function ProfessionalLeadDetailPage({
   params,
@@ -59,24 +79,23 @@ export default async function ProfessionalLeadDetailPage({
         <div className="space-y-6">
           <Card className="space-y-4">
             <div className="flex flex-wrap gap-3">
-              <StatusBadge value={marketLead.state} />
+              <StatusBadge value={marketLead.state} label={statusLabels[marketLead.state] ?? "Status bijgewerkt"} />
               <StatusBadge value={marketLead.commercial.commercialType} />
-              <StatusBadge value={marketLead.commercial.salesStatus} />
-              <StatusBadge value={marketLead.preview.urgency} />
-              {marketLead.assignment.status ? <StatusBadge value={marketLead.assignment.status} /> : null}
-              {marketLead.distributionOffer.status ? <StatusBadge value={marketLead.distributionOffer.status} /> : null}
+              <StatusBadge value={marketLead.commercial.salesStatus} label={statusLabels[marketLead.commercial.salesStatus] ?? "Status bijgewerkt"} />
+              <StatusBadge value={marketLead.preview.urgency} label={statusLabels[marketLead.preview.urgency] ?? "Urgentie bijgewerkt"} />
+              {marketLead.assignment.status ? <StatusBadge value={marketLead.assignment.status} label={statusLabels[marketLead.assignment.status] ?? "Toewijzing bijgewerkt"} /> : null}
+              {marketLead.distributionOffer.status ? <StatusBadge value={marketLead.distributionOffer.status} label={statusLabels[marketLead.distributionOffer.status] ?? "Aanbod bijgewerkt"} /> : null}
             </div>
             <div className="grid gap-4 md:grid-cols-2">
               <div>
                 <p className="text-sm text-muted-foreground">Dienst</p>
                 <p className="mt-1 font-medium">{marketLead.preview.serviceName}</p>
-                <p className="text-sm text-muted-foreground">Leadscore: {marketLead.preview.leadScore ?? "—"}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Regio</p>
                 <p className="mt-1 font-medium">{marketLead.preview.city ?? `Postcodegebied ${marketLead.preview.postalCodePrefix}`}</p>
                 <p className="text-sm text-muted-foreground">Ingediend op {formatDate(marketLead.preview.createdAt)}</p>
-                {marketLead.distributionOffer.offerExpiresAt ? <p className="text-sm text-muted-foreground">Offer verloopt op {formatDate(marketLead.distributionOffer.offerExpiresAt)}</p> : null}
+                {marketLead.distributionOffer.offerExpiresAt ? <p className="text-sm text-muted-foreground">Beschikbaar tot {expiryTime(marketLead.distributionOffer.offerExpiresAt)}</p> : null}
               </div>
             </div>
             <p className="text-sm leading-7 text-muted-foreground">{marketLead.preview.summary}</p>
@@ -178,14 +197,18 @@ export default async function ProfessionalLeadDetailPage({
               <input type="hidden" name="lead_id" value={marketLead.preview.leadId} />
               <input type="hidden" name="idempotency_key" value={confirmationToken} />
               <input type="hidden" name="redirect_to" value={`/vakman/aanvragen/${marketLead.preview.leadId}`} />
-              <p className="rounded-2xl bg-surface-muted px-4 py-3 text-sm text-muted-foreground">
-                Controleer lead, prijs, saldo en type voordat je doorgaat. De prijs wordt altijd server-side opnieuw berekend.
+              <p id="purchase-guidance" className="rounded-2xl bg-surface-muted px-4 py-3 text-sm text-muted-foreground">
+                Controleer de aanvraag, prijs, saldo en aanbodstatus. De prijs wordt bij bevestiging opnieuw server-side berekend.
               </p>
-              <SubmitButton className="w-full" disabled={marketLead.state !== "available" || marketLead.commercial.balanceAfterPurchase < 0 || !canPurchaseFromOffer} pendingLabel="Aankoop wordt verwerkt...">
+              <SubmitButton className="w-full" aria-describedby="purchase-guidance purchase-block-reason" disabled={marketLead.state !== "available" || marketLead.commercial.balanceAfterPurchase < 0 || !canPurchaseFromOffer} pendingLabel="Aankoop wordt verwerkt...">
                 Bevestig aankoop
               </SubmitButton>
-              {marketLead.commercial.balanceAfterPurchase < 0 ? (
-                <p className="text-sm text-danger">Onvoldoende saldo. Benodigd: {formatCredits(marketLead.commercial.priceCredits)}, huidig: {formatCredits(marketLead.commercial.currentBalance)}. Credits kopen wordt binnenkort beschikbaar.</p>
+              {marketLead.state !== "available" || !canPurchaseFromOffer || marketLead.commercial.balanceAfterPurchase < 0 ? (
+                <div id="purchase-block-reason" className="space-y-1 text-sm">
+                  {marketLead.state !== "available" ? <p className="text-muted-foreground">Deze aanvraag is niet meer beschikbaar voor aankoop.</p> : null}
+                  {!canPurchaseFromOffer ? <p className="text-muted-foreground">Dit aanbod kan niet meer worden gekocht. Controleer de actuele status.</p> : null}
+                  {marketLead.commercial.balanceAfterPurchase < 0 ? <p className="text-danger">Je creditsaldo is onvoldoende. Benodigd: {formatCredits(marketLead.commercial.priceCredits)}, huidig: {formatCredits(marketLead.commercial.currentBalance)}. Bekijk je saldo en transacties bij <Link href="/vakman/credits" className="underline">Credits</Link>.</p> : null}
+                </div>
               ) : null}
             </form>
             </>

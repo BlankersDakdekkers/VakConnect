@@ -3,6 +3,8 @@ import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { calculateProfessionalQuality, getProfessionalQualityLabel } from "@/lib/professionals/onboarding";
 import { createSignedProfessionalDocumentUrl } from "@/lib/storage/professional-documents";
+import { distributionConfig } from "@/lib/distribution/config";
+import { evaluateDistributionCandidateEligibility } from "@/lib/distribution/scoring";
 import type {
   LeadCommercialType,
   Professional,
@@ -13,6 +15,7 @@ import type {
   ProfessionalReviewFeedback,
   Service,
 } from "@/types/database";
+import type { ProfessionalQualityResult } from "./onboarding";
 
 export interface ProfessionalListItem extends Professional {
   serviceNames: string[];
@@ -42,9 +45,18 @@ export interface ProfessionalDetail extends ProfessionalListItem {
   reviewFeedback: ProfessionalReviewFeedback[];
   auditEntries: ProfessionalAuditLog[];
   qualityLabel: ReturnType<typeof getProfessionalQualityLabel>;
+  qualityBreakdown: ProfessionalQualityResult["breakdown"];
   missingSteps: string[];
   canSubmit: boolean;
   distributionEligible: boolean;
+  distributionReadiness: {
+    eligible: boolean;
+    reasons: string[];
+    activeOffers: number;
+    maxOpenOffers: number;
+    activeAssignments: number;
+    maxActiveAssignments: number;
+  };
   stats: {
     assignmentsTotal: number;
     assignmentsAccepted: number;
@@ -56,6 +68,8 @@ export interface ProfessionalDetail extends ProfessionalListItem {
     offersExpired: number;
     offersPurchased: number;
     averageResponseHours: number;
+    activeOffers: number;
+    activeAssignments: number;
   };
 }
 
@@ -208,15 +222,29 @@ const baseSelection = `
 
 async function loadProfessionalStats(professionalId: string) {
   const supabase = createAdminSupabaseClient();
-  const [totalAssignments, acceptedAssignments, wonAssignments, lostAssignments, candidateRows] = await Promise.all([
+  const lookbackCutoff = new Date(Date.now() - distributionConfig.performanceLookbackDays * 24 * 60 * 60_000).toISOString();
+  const [totalAssignments, acceptedAssignments, wonAssignments, lostAssignments, candidateRows, activeAssignmentRows] = await Promise.all([
     supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("professional_id", professionalId),
     supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("professional_id", professionalId).eq("status", "accepted"),
     supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("professional_id", professionalId).eq("progress_status", "won"),
     supabase.from("lead_assignments").select("id", { count: "exact", head: true }).eq("professional_id", professionalId).eq("progress_status", "lost"),
-    supabase.from("lead_distribution_candidates").select("status, offered_at, viewed_at, declined_at, expired_at, purchased_at").eq("professional_id", professionalId),
+    supabase.from("lead_distribution_candidates").select("status, offered_at, viewed_at, declined_at, expired_at, purchased_at, offer_expires_at, created_at").eq("professional_id", professionalId),
+    supabase.from("lead_assignments").select("status, progress_status").eq("professional_id", professionalId).gte("assigned_at", lookbackCutoff),
   ]);
 
   const offers = (candidateRows.data ?? []) as Array<Record<string, unknown>>;
+  const now = Date.now();
+  const activeOffers = offers.filter((row) => {
+    const createdAt = row.created_at ? new Date(String(row.created_at)).getTime() : 0;
+    const expiresAt = row.offer_expires_at ? new Date(String(row.offer_expires_at)).getTime() : null;
+    return createdAt >= new Date(lookbackCutoff).getTime()
+      && ["offered", "viewed"].includes(String(row.status))
+      && (expiresAt === null || expiresAt > now);
+  }).length;
+  const activeAssignments = ((activeAssignmentRows.data ?? []) as Array<Record<string, unknown>>).filter((row) =>
+    ["accepted", "viewed", "pending"].includes(String(row.status))
+      && !["won", "lost"].includes(String(row.progress_status)),
+  ).length;
   const responseHours = offers.map((row) => {
     const offeredAt = row.offered_at ? new Date(String(row.offered_at)).getTime() : 0;
     const respondedAt = row.viewed_at || row.declined_at || row.purchased_at;
@@ -236,6 +264,61 @@ async function loadProfessionalStats(professionalId: string) {
     offersExpired: offers.filter((row) => Boolean(row.expired_at)).length,
     offersPurchased: offers.filter((row) => Boolean(row.purchased_at)).length,
     averageResponseHours: responseHours.length ? Number((responseHours.reduce((sum, value) => sum + value, 0) / responseHours.length).toFixed(1)) : 0,
+    activeOffers,
+    activeAssignments,
+  };
+}
+
+function getDistributionReadiness(
+  professional: Professional,
+  settings: ProfessionalDistributionSettings | null,
+  stats: Awaited<ReturnType<typeof loadProfessionalStats>>,
+) {
+  const effectiveSettings = {
+    paused: settings?.paused ?? false,
+    pauseUntil: settings?.pause_until ?? null,
+    availabilityStatus: settings?.availability_status ?? "available",
+    maxOpenOffers: settings?.max_open_offers ?? distributionConfig.defaultMaxOpenOffers,
+    maxActiveAssignments: settings?.max_active_assignments ?? distributionConfig.defaultMaxActiveAssignments,
+  };
+  const evaluation = evaluateDistributionCandidateEligibility({
+    professionalStatus: professional.status,
+    onboardingStatus: professional.onboarding_status,
+    verificationStatus: professional.verification_status,
+    qualityScore: professional.quality_score,
+    alreadyPurchased: false,
+    settings: effectiveSettings,
+    stats: { openOffers: stats.activeOffers, activeAssignments: stats.activeAssignments },
+  });
+  const checks: Array<[string, string]> = [
+    ["professional_active", "Je profiel is niet actief."],
+    ["onboarding_complete", "Je profiel is nog niet goedgekeurd."],
+    ["verification_allowed", "Je verificatie is nog niet goedgekeurd."],
+    ["paused", settings?.pause_until
+      ? `Je profiel is gepauzeerd tot ${new Date(settings.pause_until).toLocaleString("nl-NL")}.`
+      : "Je profiel staat tijdelijk gepauzeerd."],
+    ["availability_available", `Je beschikbaarheid staat op ‘${effectiveSettings.availabilityStatus}’; alleen ‘beschikbaar’ ontvangt nieuwe aanbiedingen.`],
+    ["open_offers", "Je maximum aantal open aanbiedingen is bereikt."],
+    ["active_assignments", "Je maximum aantal actieve opdrachten is bereikt."],
+    ["quality_score", "Je profielkwaliteit voldoet nog niet aan de bestaande distributievoorwaarde."],
+  ];
+  const reasons = checks
+    .filter(([key]) => key === "open_offers"
+      ? Number(evaluation.reasons.open_offers) >= Number(evaluation.reasons.max_open_offers)
+      : key === "active_assignments"
+        ? Number(evaluation.reasons.active_assignments) >= Number(evaluation.reasons.max_active_assignments)
+        : key === "quality_score"
+          ? Number(evaluation.reasons.quality_score) < Number(evaluation.reasons.minimum_quality_score)
+        : !evaluation.reasons[key])
+    .map(([, message]) => message);
+
+  return {
+    eligible: evaluation.eligible,
+    reasons,
+    activeOffers: stats.activeOffers,
+    maxOpenOffers: effectiveSettings.maxOpenOffers,
+    activeAssignments: stats.activeAssignments,
+    maxActiveAssignments: effectiveSettings.maxActiveAssignments,
   };
 }
 
@@ -388,9 +471,11 @@ export async function getAdminProfessionalDetail(id: string) {
     reviewFeedback,
     auditEntries,
     qualityLabel: getProfessionalQualityLabel(quality.score),
+    qualityBreakdown: quality.breakdown,
     missingSteps: quality.missingSteps,
     canSubmit: quality.canSubmit,
     distributionEligible: quality.distributionEligible,
+    distributionReadiness: getDistributionReadiness(professional, settings, stats),
     stats,
   } satisfies ProfessionalDetail;
 }
@@ -402,6 +487,7 @@ export async function getOwnProfessionalDetail(id: string) {
   if (!data) return null;
 
   const { professional, serviceLinks, areaLinks, settings, documents, documentRequirements, reviewFeedback, auditEntries, quality } = calculateFromRow(data as Record<string, unknown>);
+  const stats = await loadProfessionalStats(id);
   return {
     ...professional,
     serviceNames: serviceLinks.filter((serviceLink) => serviceLink.active).map((serviceLink) => serviceLink.service.name),
@@ -414,10 +500,12 @@ export async function getOwnProfessionalDetail(id: string) {
     reviewFeedback,
     auditEntries,
     qualityLabel: getProfessionalQualityLabel(quality.score),
+    qualityBreakdown: quality.breakdown,
     missingSteps: quality.missingSteps,
     canSubmit: quality.canSubmit,
     distributionEligible: quality.distributionEligible,
-    stats: await loadProfessionalStats(id),
+    distributionReadiness: getDistributionReadiness(professional, settings, stats),
+    stats,
   } satisfies ProfessionalDetail;
 }
 

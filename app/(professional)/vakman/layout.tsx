@@ -22,10 +22,8 @@ export const metadata: Metadata = buildMetadata({
 const navigation = [
   { href: "/vakman", label: "Overzicht" },
   { href: "/vakman/aanvragen", label: "Aanvragen" },
-  { href: "/vakman/credits", label: "Credits" },
   { href: "/vakman/profiel", label: "Profiel" },
   { href: "/vakman/notificaties", label: "Notificaties" },
-  { href: "/vakman/instellingen/notificaties", label: "Notificatie-instellingen" },
 ];
 
 export default async function ProfessionalLayout({ children }: Readonly<{ children: React.ReactNode }>) {
