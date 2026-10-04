@@ -24,6 +24,8 @@ const migrationFiles = [
   "supabase/migrations/20260919104000_prompt11_post_merge_hardening.sql",
   "supabase/migrations/20261001100000_prompt12_notifications_operations.sql",
   "supabase/migrations/20261002100000_prompt12_followup_hardening.sql",
+  "supabase/migrations/20261002210000_prompt19_analytics_hardening.sql",
+  "supabase/migrations/20261002220000_prompt20_cro_experiments.sql",
 ].map((file) => join(repoRoot, file));
 
 type AppRole = "admin" | "professional" | null;
@@ -276,6 +278,100 @@ function seedProfessional(harness: Harness, database: string, professionalId: st
     );
   `);
 }
+
+test("Prompt 20 experiments default to draft, enforce assignment privacy, and activate atomically with audit", { concurrency: false }, async (t) => {
+  const isolated = await createIsolatedDatabase(t, "prompt20_experiments");
+  if (!isolated) return;
+
+  const { harness, database } = isolated;
+  const actorId = harness.adminContext.userId ?? randomUUID();
+  assert.equal(harness.run(database, "select count(*) from public.experiments where status = 'draft';"), "3");
+
+  const homepage = harness.queryRowJson<{ id: string }>(
+    database,
+    "select id from public.experiments where key = 'homepage_cta_copy';",
+  );
+  const service = harness.queryRowJson<{ id: string }>(
+    database,
+    "select id from public.experiments where key = 'service_mid_cta_copy';",
+  );
+  const control = harness.queryRowJson<{ id: string }>(
+    database,
+    `select id from public.experiment_variants where experiment_id = ${sqlLiteral(homepage.id)} and is_control;`,
+  );
+  const sessionId = randomUUID();
+
+  const assignmentInsert = `insert into public.experiment_assignments (experiment_id, anonymous_session_id, variant_id) values (${sqlLiteral(homepage.id)}, ${sqlLiteral(sessionId)}, ${sqlLiteral(control.id)});`;
+  harness.run(database, assignmentInsert);
+  assert.equal(harness.run(database, `select count(*) from public.experiment_assignments where anonymous_session_id = ${sqlLiteral(sessionId)};`, harness.adminContext), "1");
+  let publicAssignmentRows = "";
+  try {
+    publicAssignmentRows = harness.run(database, `select count(*) from public.experiment_assignments where anonymous_session_id = ${sqlLiteral(sessionId)};`, {
+      dbRole: "authenticated",
+      requestRole: "anon",
+    });
+  } catch (error) {
+    assert.match(String(error), /permission denied/i);
+  }
+  assert.ok(publicAssignmentRows === "" || publicAssignmentRows === "0");
+  const publicWriteError = harness.expectError(
+    database,
+    assignmentInsert,
+    { dbRole: "authenticated", requestRole: "anon" },
+  );
+  assert.match(publicWriteError, /permission denied|row-level security/i);
+
+  const forbiddenActivation = harness.expectError(
+    database,
+    `select public.transition_experiment_status(${sqlLiteral(homepage.id)}, 'active', ${sqlLiteral(actorId)});`,
+    harness.adminContext,
+  );
+  assert.match(forbiddenActivation, /permission denied/i);
+
+  harness.run(database, `update public.experiment_variants set weight = 40 where experiment_id = ${sqlLiteral(homepage.id)} and is_control;`);
+  const invalidWeights = harness.expectError(
+    database,
+    `select public.transition_experiment_status(${sqlLiteral(homepage.id)}, 'active', ${sqlLiteral(actorId)});`,
+    { dbRole: "service_role", requestRole: "service_role" },
+  );
+  assert.match(invalidWeights, /minimaal twee varianten|gewichten van totaal 100/i);
+  assert.equal(harness.run(database, `select status from public.experiments where id = ${sqlLiteral(homepage.id)};`), "draft");
+  assert.equal(harness.run(database, `select count(*) from public.experiment_audit_log where experiment_id = ${sqlLiteral(homepage.id)};`), "0");
+
+  harness.run(database, `update public.experiment_variants set weight = 50 where experiment_id = ${sqlLiteral(homepage.id)} and is_control;`);
+  harness.run(database, `select public.transition_experiment_status(${sqlLiteral(homepage.id)}, 'active', ${sqlLiteral(actorId)});`, {
+    dbRole: "service_role",
+    requestRole: "service_role",
+  });
+  assert.equal(harness.run(database, `select status from public.experiments where id = ${sqlLiteral(homepage.id)};`), "active");
+
+  harness.run(database, `update public.experiments set slot = 'homepage.hero.cta' where id = ${sqlLiteral(service.id)};`);
+  const conflictingSlot = harness.expectError(
+    database,
+    `select public.transition_experiment_status(${sqlLiteral(service.id)}, 'active', ${sqlLiteral(actorId)});`,
+    { dbRole: "service_role", requestRole: "service_role" },
+  );
+  assert.match(conflictingSlot, /experiments_one_active_per_slot_idx/i);
+  assert.equal(harness.run(database, `select status from public.experiments where id = ${sqlLiteral(service.id)};`), "draft");
+
+  harness.run(database, `select public.transition_experiment_status(${sqlLiteral(homepage.id)}, 'paused', ${sqlLiteral(actorId)});`, {
+    dbRole: "service_role",
+    requestRole: "service_role",
+  });
+  assert.equal(harness.run(database, `select status from public.experiments where id = ${sqlLiteral(homepage.id)};`), "paused");
+  harness.run(database, `select public.transition_experiment_status(${sqlLiteral(homepage.id)}, 'completed', ${sqlLiteral(actorId)});`, {
+    dbRole: "service_role",
+    requestRole: "service_role",
+  });
+  const completedAt = harness.run(database, `select ended_at::text from public.experiments where id = ${sqlLiteral(homepage.id)};`);
+  harness.run(database, `select public.transition_experiment_status(${sqlLiteral(homepage.id)}, 'archived', ${sqlLiteral(actorId)});`, {
+    dbRole: "service_role",
+    requestRole: "service_role",
+  });
+  assert.equal(harness.run(database, `select status from public.experiments where id = ${sqlLiteral(homepage.id)};`), "archived");
+  assert.equal(harness.run(database, `select ended_at::text from public.experiments where id = ${sqlLiteral(homepage.id)};`), completedAt);
+  assert.equal(harness.run(database, `select count(*) from public.experiment_audit_log where experiment_id = ${sqlLiteral(homepage.id)} and actor_user_id = ${sqlLiteral(actorId)};`), "4");
+});
 
 test("professional can start onboarding and only advance through controlled transitions", { concurrency: false }, async (t) => {
   const isolated = await createIsolatedDatabase(t, "prompt11_onboarding_transition");

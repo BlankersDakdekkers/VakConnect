@@ -58,12 +58,26 @@ test("homepage has a quiet hero and retains existing tracked conversion destinat
   const home = source("app/(public)/page.tsx");
   assert.doesNotMatch(home, /gradient|<Badge/);
   assert.equal((home.match(/ctaId="home_hero_request"/g) ?? []).length, 1);
-  assert.match(home, /ctaId="home_hero_request" ctaLocation="hero" destinationType="request"/);
+  assert.match(home, /ctaId="home_hero_request"\s+ctaLocation="hero"\s+destinationType="request"/);
   assert.match(home, /Start je aanvraag/);
   assert.match(home, /form action="\/aanvraag" method="get"/);
   assert.match(home, /name="dienst"/);
   assert.match(home, /name="postcode"/);
   assert.match(home, /getPopularServiceClusters/);
+});
+
+test("merged public baseline preserves all Prompt 20 slots and distinct homepage copy", () => {
+  const home = source("app/(public)/page.tsx");
+  assert.match(home, /experimentSlot="homepage\.hero\.cta"/);
+  assert.match(home, /experimentLabels=\{\{ variant_b: "Start je aanvraag" \}\}/);
+  assert.match(home, /experimentLabels=\{\{ variant_b: "Start je aanvraag" \}\}[\s\S]*?>\s*Plaats je klus\s*<\/TrackedLink>/);
+  const service = source("components/public/service-content-page.tsx");
+  assert.match(service, /experimentSlot=\{context\.pageType === "service" && context\.serviceSlug === "dakdekker" \? "service\.mid_cta" : undefined\}/);
+  assert.match(service, /experimentLabels=\{\{ variant_b: "Beschrijf je dakprobleem" \}\}/);
+  const form = source("components/forms/lead-request-form.tsx");
+  assert.match(form, /requestExperimentAssignment\("lead\.progress\.copy"/);
+  assert.match(form, /trackExperimentExposure\(assignment/);
+  assert.match(form, /progressExperiment\?\.variantKey === "variant_b"/);
 });
 
 test("service template retains all SEO content and stable analytics identifiers", () => {

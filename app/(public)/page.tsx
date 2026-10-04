@@ -93,8 +93,16 @@ export default async function HomePage() {
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
-              <TrackedLink href="/aanvraag" ctaId="home_hero_request" ctaLocation="hero" destinationType="request" className={buttonClassName({ variant: "primary", size: "lg", className: "w-full sm:w-auto" })}>
-                Start je aanvraag
+              <TrackedLink
+                href="/aanvraag"
+                ctaId="home_hero_request"
+                ctaLocation="hero"
+                destinationType="request"
+                experimentSlot="homepage.hero.cta"
+                experimentLabels={{ variant_b: "Start je aanvraag" }}
+                className={buttonClassName({ variant: "primary", size: "lg", className: "w-full sm:w-auto" })}
+              >
+                Plaats je klus
               </TrackedLink>
               <Link href="/hoe-werkt-het" className={buttonClassName({ variant: "ghost", size: "lg", className: "w-full sm:w-auto" })}>
                 Bekijk hoe het werkt

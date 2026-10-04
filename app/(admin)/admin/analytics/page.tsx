@@ -35,9 +35,10 @@ export default async function AdminAnalyticsPage({
 }: Readonly<{ searchParams: Promise<Record<string, string | string[] | undefined>> }>) {
   const params = await searchParams;
   const range: AnalyticsRange = params.range === "28d" ? 28 : 7;
+  const abandonmentThreshold = params.abandonment === "120m" ? 120 : 30;
   const requestedLocalPage = Number(Array.isArray(params.localPage) ? params.localPage[0] : params.localPage);
   const localPage = Number.isSafeInteger(requestedLocalPage) && requestedLocalPage > 0 ? requestedLocalPage : 1;
-  const analytics = await getAdminAnalyticsDashboard(range);
+  const analytics = await getAdminAnalyticsDashboard(range, abandonmentThreshold);
   const insights = insightsFor(analytics);
   const localPageSize = 20;
   const localPageCount = Math.max(1, Math.ceil(analytics.localRows.length / localPageSize));
@@ -57,6 +58,19 @@ export default async function AdminAnalyticsPage({
             className={`rounded-full border px-4 py-2 ${range === days ? "border-primary bg-primary text-primary-foreground" : "hover:bg-surface-muted"}`}
           >
             Laatste {days} dagen
+          </Link>
+        ))}
+      </nav>
+      <nav aria-label="Inactiviteitsdrempel voor abandonment" className="flex flex-wrap items-center gap-2 text-sm">
+        <span className="text-muted-foreground">Abandonment na inactiviteit:</span>
+        {[30, 120].map((minutes) => (
+          <Link
+            key={minutes}
+            href={`/admin/analytics?range=${range}d&abandonment=${minutes}m`}
+            aria-current={abandonmentThreshold === minutes ? "page" : undefined}
+            className={`rounded-full border px-3 py-1.5 ${abandonmentThreshold === minutes ? "border-primary bg-primary text-primary-foreground" : "hover:bg-surface-muted"}`}
+          >
+            {minutes === 30 ? "30 minuten" : "2 uur"}
           </Link>
         ))}
       </nav>
@@ -83,6 +97,11 @@ export default async function AdminAnalyticsPage({
           value={percentage(analytics.funnelStarts ? Math.round((analytics.convertedSessions / analytics.funnelStarts) * 1000) / 10 : null)}
           detail={`${analytics.convertedSessions} unieke anonieme ID’s met start én serverbevestigde inzending`}
         />
+        <Metric
+          label="Funnel-abandonment (inferentie)"
+          value={`${analytics.funnelAbandonment.inferredAbandoned} / ${analytics.funnelAbandonment.started}`}
+          detail={`Geen serverbevestigde lead en ${analytics.funnelAbandonment.thresholdMinutes} minuten inactief; geen betrouwbare tab-closemeting`}
+        />
         <Metric label="Contactinzendingen" value={analytics.contacts} detail="Databasebron van waarheid; inhoud wordt niet getoond" />
       </section>
 
@@ -96,15 +115,15 @@ export default async function AdminAnalyticsPage({
       <Card className="space-y-4">
         <PageHeader title="Dienstprestaties" description="Paginaverkeer en CTA’s komen uit events; opgeslagen aanvragen tellen uit de database." />
         <div className="overflow-x-auto">
-          <table className="min-w-[720px] w-full text-left text-sm">
+          <table className="min-w-[960px] w-full text-left text-sm">
             <thead className="text-muted-foreground">
-              <tr><th className="py-2">Dienst</th><th>Paginaweergaven</th><th>CTA-klikken</th><th>Starts</th><th>Opgeslagen aanvragen</th><th>Waargenomen conversie</th></tr>
+              <tr><th className="py-2">Dienst</th><th>Paginaweergaven</th><th>CTA-impressies</th><th>CTA-klikken</th><th>CTR</th><th>Starts</th><th>Opgeslagen aanvragen</th><th>Waargenomen conversie</th></tr>
             </thead>
             <tbody>
               {analytics.serviceRows.map((service) => (
                 <tr key={service.slug} className="border-t">
                   <th scope="row" className="py-3 font-medium">{service.service}</th>
-                  <td>{service.pageViews}</td><td>{service.ctaClicks}</td><td>{service.funnelStarts}</td><td>{service.submissions}</td>
+                  <td>{service.pageViews}</td><td>{service.ctaImpressions}</td><td>{service.ctaClicks}</td><td>{percentage(service.ctaCtr)}</td><td>{service.funnelStarts}</td><td>{service.submissions}</td>
                   <td>{service.lowSample ? <span title="Minder dan 20 starts">Lage steekproef (&lt;20 starts)</span> : percentage(service.conversionRate)}</td>
                 </tr>
               ))}
@@ -117,15 +136,15 @@ export default async function AdminAnalyticsPage({
       <Card className="space-y-4">
         <PageHeader title="Lokale pagina’s" description="Service-/plaatscombinaties; weergaven, CTA-klikken en starts uit analytics-events." />
         <div className="overflow-x-auto">
-          <table className="min-w-[680px] w-full text-left text-sm">
+          <table className="min-w-[900px] w-full text-left text-sm">
             <thead className="text-muted-foreground">
-              <tr><th className="py-2">Route</th><th>Plaats</th><th>Dienst</th><th>Weergaven</th><th>CTA-klikken</th><th>Starts</th><th>Inzendingen</th></tr>
+              <tr><th className="py-2">Route</th><th>Plaats</th><th>Dienst</th><th>Weergaven</th><th>CTA-impressies</th><th>CTA-klikken</th><th>CTR</th><th>Starts</th><th>Inzendingen</th></tr>
             </thead>
             <tbody>
               {paginatedLocalRows.map((page) => (
                 <tr key={page.route} className="border-t">
                   <th scope="row" className="py-3 font-medium"><Link href={page.route} className="text-primary underline-offset-2 hover:underline">{page.route}</Link></th>
-                  <td>{page.city || "—"}</td><td>{page.service || "—"}</td><td>{page.views}</td><td>{page.ctaClicks}</td><td>{page.starts}</td><td>{page.submissions}</td>
+                  <td>{page.city || "—"}</td><td>{page.service || "—"}</td><td>{page.views}</td><td>{page.ctaImpressions}</td><td>{page.ctaClicks}</td><td>{percentage(page.ctaCtr)}</td><td>{page.starts}</td><td>{page.submissions}</td>
                 </tr>
               ))}
             </tbody>
@@ -155,14 +174,14 @@ export default async function AdminAnalyticsPage({
 
       <div className="grid gap-4 xl:grid-cols-2">
         <Card className="space-y-4">
-          <PageHeader title="CTA-prestaties" description="Kliks en sessies die daarna een aanvraag startten; CTA-impressies worden niet gemeten." />
+          <PageHeader title="CTA-prestaties" description="Impressies tellen alleen wanneer de CTA zichtbaar wordt. CTR = klikken / impressies; vervolgstarts en serverbevestigde inzendingen zijn per CTA-sessie." />
           <div className="overflow-x-auto">
-            <table className="min-w-[520px] w-full text-left text-sm">
-              <thead className="text-muted-foreground"><tr><th className="py-2">CTA key</th><th>Locatie</th><th>Kliks</th><th>Starts</th><th>Serverbevestigde sessies</th></tr></thead>
+            <table className="min-w-[900px] w-full text-left text-sm">
+              <thead className="text-muted-foreground"><tr><th className="py-2">CTA key</th><th>Locatie</th><th>Impressies</th><th>Kliks</th><th>CTR</th><th>Starts</th><th>Serverbevestigde sessies</th></tr></thead>
               <tbody>
                 {analytics.ctaRows.map((cta) => (
                   <tr key={`${cta.ctaId}:${cta.location}`} className="border-t">
-                    <th scope="row" className="py-2 font-medium">{cta.ctaId}</th><td>{cta.location}</td><td>{cta.clicks}</td><td>{cta.startedSessions}</td><td>{cta.submittedSessions}</td>
+                    <th scope="row" className="py-2 font-medium">{cta.ctaId}</th><td>{cta.location}</td><td>{cta.impressions}</td><td>{cta.clicks}</td><td>{percentage(cta.ctr)}</td><td>{cta.startedSessions}</td><td>{cta.submittedSessions}</td>
                   </tr>
                 ))}
               </tbody>
@@ -190,17 +209,17 @@ export default async function AdminAnalyticsPage({
       </div>
 
       <Card className="space-y-4">
-        <PageHeader title="Aanvraagstappen" description="Drop-off is het aandeel bekeken stappen zonder een completion-event voor dezelfde stap." />
+        <PageHeader title="Aanvraagstappen" description={`Step drop-off vergelijkt bekeken en afgeronde stappen. Abandonment is een sessie zonder lead na ${analytics.funnelAbandonment.thresholdMinutes} minuten inactiviteit; validatiefouten zijn afzonderlijk.`} />
         <div className="overflow-x-auto">
-          <table className="min-w-[620px] w-full text-left text-sm">
+          <table className="min-w-[1100px] w-full text-left text-sm">
             <thead className="text-muted-foreground">
-              <tr><th className="py-2">Stap</th><th>Bekeken</th><th>Afgerond</th><th>Completion</th><th>Drop-off</th><th>Validatiefouten</th><th>Duur-buckets</th></tr>
+              <tr><th className="py-2">Stap</th><th>Bekeken</th><th>Afgerond</th><th>Completion</th><th>Step drop-off</th><th>Terug</th><th>Validatiefouten</th><th>Error rate / views</th><th>Abandonment-inferentie</th><th>Duur-buckets</th></tr>
             </thead>
             <tbody>
               {analytics.funnelRows.map((step) => (
                 <tr key={step.step} className="border-t">
                   <th scope="row" className="py-3 font-medium">{step.step}</th><td>{step.viewed}</td><td>{step.completed}</td>
-                  <td>{percentage(step.completionRate)}</td><td>{percentage(step.dropOffRate)}</td><td>{step.errors}</td>
+                  <td>{percentage(step.completionRate)}</td><td>{percentage(step.dropOffRate)}</td><td>{step.backs}</td><td>{step.errors}</td><td>{percentage(step.validationErrorRate)}</td><td>{step.abandoned}</td>
                   <td>{Object.entries(step.durationBuckets).map(([bucket, count]) => `${bucket}: ${count}`).join(", ") || "—"}</td>
                 </tr>
               ))}
