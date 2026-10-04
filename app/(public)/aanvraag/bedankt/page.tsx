@@ -42,14 +42,14 @@ export default async function ThankYouPage({
           Publieke aanvraagreferentie: <span className="font-semibold text-foreground">{reference}</span>
         </p>
         <p className="text-sm leading-6 text-muted-foreground">
-          Bewaar deze referentie als je contact met ons wilt opnemen. We bekijken je aanvraag en zoeken op basis van je klus en regio naar een passende vakman.
+          Bewaar deze referentie als je contact met ons wilt opnemen.           We bekijken je aanvraag en zoeken op basis van je klus en regio naar een passende vakman. Een passende vakman kan je aanvraag ontvangen of contact opnemen.
         </p>
         <ol className="space-y-3 text-left text-sm text-muted-foreground">
           <li>1. We controleren wat er nodig is.</li>
           <li>2. We kijken welke vakmensen bij je klus en regio passen.</li>
-          <li>3. Een passende vakman kan contact met je opnemen.</li>
+          <li>3. Als een vakman je aanvraag oppakt, kan die contact met je opnemen.</li>
         </ol>
-        <p className="text-sm leading-6 text-muted-foreground">Of een vakman contact kan opnemen, hangt af van de dienst, regio en beschikbaarheid. Je beslist zelf hoe je verdergaat.</p>
+        <p className="text-sm leading-6 text-muted-foreground">Of een vakman je aanvraag oppakt of contact opneemt, hangt af van de dienst, regio en beschikbaarheid. Je hoeft niet automatisch met een vakman verder te gaan; jij beslist zelf.</p>
         <div className="flex justify-center">
           <Link href="/" className={buttonClassName({ variant: "primary" })}>
             Terug naar homepage

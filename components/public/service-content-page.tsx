@@ -6,7 +6,9 @@ import { TrackedLink } from "@/components/public/tracked-link";
 import { TrackedJumpLink } from "@/components/public/tracked-jump-link";
 import { PublicPageAnalytics } from "@/components/analytics/public-analytics";
 import { ProcessSteps } from "@/components/public/process-steps";
+import { MarketplaceTrust } from "@/components/public/marketplace-trust";
 import type { AnalyticsPageContext } from "@/lib/analytics/page-types";
+import { normalizePublicConsumerCopy } from "@/lib/content/public-copy";
 import type { ServiceContentPageData } from "@/lib/content/service-pages";
 
 function Breadcrumbs({ items }: Readonly<{ items: ServiceContentPageData["breadcrumbs"] }>) {
@@ -34,6 +36,7 @@ export function ServiceContentPage({
   page,
   analyticsContext,
 }: Readonly<{ page: ServiceContentPageData; analyticsContext?: AnalyticsPageContext }>) {
+  page = normalizePublicConsumerCopy(page);
   const context: AnalyticsPageContext =
     analyticsContext ??
     (page.path.split("/").filter(Boolean).length === 1
@@ -64,9 +67,15 @@ export function ServiceContentPage({
           ))}
         </div>
         <p className="max-w-prose text-sm leading-6 text-muted-foreground">
-          VakConnect gebruikt je klus en regio om passende professionals te zoeken. Een vakman beoordeelt zelf de aanvraag; jij kiest hoe je verdergaat.
+          VakConnect gebruikt je klus en regio om passende vakmannen te zoeken. Een vakman beoordeelt zelf de aanvraag; jij kiest hoe je verdergaat.
         </p>
       </section>
+
+      <MarketplaceTrust
+        city={context.pageType === "service_city" || context.pageType === "subservice_city"
+          ? context.citySlug?.split("-").filter(Boolean).map((part) => `${part.charAt(0).toUpperCase()}${part.slice(1)}`).join(" ")
+          : undefined}
+      />
 
       {page.sections.length >= 4 ? (
         <nav aria-label="Op deze pagina" className="rounded-lg bg-surface-muted p-5 sm:p-6">
@@ -161,7 +170,7 @@ export function ServiceContentPage({
         <h2 className="break-words text-2xl font-semibold tracking-tight">Hoe VakConnect werkt</h2>
         <ProcessSteps
           columns={4}
-          steps={page.processSteps.map((description, index) => ({ title: `Stap ${index + 1}`, description }))}
+          steps=                    {page.processSteps.map((description, index) => ({ title: `Stap ${index + 1}`, description }))}
         />
         {page.path.split("/").length === 3 ? (
           <Link href="/hoe-werkt-het" className="inline-flex min-h-11 items-center text-sm font-medium text-primary underline underline-offset-4">

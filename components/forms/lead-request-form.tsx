@@ -917,7 +917,9 @@ export function LeadRequestForm({
               <button type="button" className="inline-flex min-h-11 shrink-0 items-center underline underline-offset-4" onClick={() => goToStep(5)}>Wijzig contact</button>
             </div>
           </section>
-          <p className="text-sm leading-6 text-muted-foreground">Aanvraag plaatsen is gratis. Je beslist zelf of je met een vakman verdergaat.</p>
+          <p className="text-sm leading-6 text-muted-foreground">
+            Aanvraag plaatsen is gratis en je beslist zelf of je verdergaat. Na verzending kan je aanvraag worden aangeboden aan passende vakmannen; een match of contact is niet gegarandeerd. Je gegevens gebruiken we om de aanvraag te verwerken en matching mogelijk te maken. Lees meer in ons <Link href="/privacy" className="underline underline-offset-4">privacybeleid</Link>.
+          </p>
         </div>
       ) : null}
 
@@ -949,7 +951,7 @@ export function LeadRequestForm({
             ? "Het versturen duurt iets langer dan verwacht. Je gegevens blijven staan; wacht nog even."
             : "Je aanvraag wordt verstuurd. Dit kan even duren."
           : currentStep === 6
-            ? "Na verzending controleren we je aanvraag en zoeken we een passende vakman. Beschikbaarheid verschilt per klus en regio."
+            ? "Na verzending kan je aanvraag worden aangeboden aan passende vakmannen. Beschikbaarheid verschilt per klus en regio."
             : "Je aanvraag wordt pas verstuurd nadat je alles hebt gecontroleerd."}
       </p>
     </Card>

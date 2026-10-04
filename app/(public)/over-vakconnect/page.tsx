@@ -41,7 +41,7 @@ export default function AboutPage() {
       <section className="space-y-4">
         <h2 className="text-2xl font-semibold">Duidelijke verwachtingen horen erbij</h2>
         <p className="max-w-3xl leading-7 text-muted-foreground">
-          VakConnect brengt aanvragen en vakbedrijven bij elkaar, maar voert de klus niet uit en bepaalt de offerte niet. Je bespreekt de aanpak, prijs en planning rechtstreeks met de vakman. We beloven geen directe match; beschikbaarheid en geschiktheid verschillen per aanvraag.
+          VakConnect is het platform dat aanvragen helpt verbinden met vakbedrijven; we voeren de klus niet uit en bepalen de offerte niet. We zoeken op basis van dienst en regio, maar een match of contact is niet gegarandeerd. Je bespreekt aanpak, prijs en planning rechtstreeks met de vakman en beslist zelf of je verdergaat.
         </p>
         <Link href="/hoe-werkt-het" className={buttonClassName({ variant: "secondary" })}>Lees hoe het werkt</Link>
       </section>

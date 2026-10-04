@@ -7,8 +7,8 @@ import { TrackedLink } from "@/components/public/tracked-link";
 import { buildPageMetadata } from "@/lib/config/site";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "Meer passende opdrachten voor vakmannen",
-  description: "Stel je diensten, werkgebied en beschikbaarheid in. Bekijk hoe VakConnect relevante aanvragen voor vakbedrijven selecteert.",
+  title: "Aanvragen bekijken die passen bij je vakbedrijf",
+  description: "Stel je diensten en werkgebied in en lees hoe VakConnect aanvragen voor vakbedrijven aanbiedt.",
   path: "/voor-vakmannen",
   keywords: ["voor vakmannen", "vakbedrijf aanmelden", "opdrachten voor vakbedrijven"],
 });
@@ -22,9 +22,9 @@ const challenges = [
 
 const setupSteps = [
   ["Maak je bedrijfsprofiel aan", "Deel je bedrijfs- en contactgegevens zodat we je aanmelding kunnen beoordelen."],
-  ["Kies je diensten en regio", "Geef aan welk werk je doet en waar je opdrachten wilt uitvoeren."],
+  ["Kies je diensten en regio", "  Geef aan welk werk je doet en in welk gebied je werkt."],
   ["Stel je beschikbaarheid in", "Houd je capaciteit en beschikbaarheid bij zodat de matching daar rekening mee kan houden."],
-  ["Beoordeel passende aanvragen", "Bekijk de klusdetails en bepaal zelf of je een beschikbare aanvraag wilt oppakken."],
+  ["Beoordeel passende aanvragen", "  Bekijk de beschikbare klusdetails en bepaal zelf of een aanvraag past en of je die wilt oppakken."],
 ];
 
 export default function ForProfessionalsPage() {
@@ -34,10 +34,10 @@ export default function ForProfessionalsPage() {
       <section className="space-y-5">
         <p className="text-sm font-medium text-primary">Voor vakbedrijven</p>
         <h1 className="max-w-4xl text-3xl font-semibold leading-tight tracking-tight text-balance sm:text-5xl">
-          Meer passende opdrachten. Minder tijd verspillen aan slechte leads.
+          Bekijk aanvragen die bij je vakbedrijf kunnen passen.
         </h1>
         <p className="max-w-3xl text-lg leading-8 text-muted-foreground">
-          VakConnect houdt rekening met je diensten, werkgebied en beschikbaarheid. Zo kun je aanvragen bekijken die beter aansluiten op het werk dat je zoekt.
+          VakConnect gebruikt de gekozen dienst en regio om aanvragen aan vakmannen aan te bieden die mogelijk passen. Je beoordeelt zelf de klus en beslist of je die oppakt.
         </p>
         <TrackedLink href="/aanmelden-vakman" ctaId="professional_landing_signup_hero" ctaLocation="hero" destinationType="professional" className={buttonClassName({ variant: "primary", size: "lg" })}>Meld je aan als vakman</TrackedLink>
         <p className="text-sm text-muted-foreground">Nieuwe aanmeldingen worden eerst handmatig beoordeeld.</p>
@@ -73,7 +73,7 @@ export default function ForProfessionalsPage() {
         <Card className="space-y-3">
           <h2 className="text-2xl font-semibold">Duidelijkheid over kosten</h2>
           <p className="text-sm leading-7 text-muted-foreground">
-            Voor bepaalde aanvragen kunnen leadkosten gelden. Een aanvraag kan shared of exclusief worden aangeboden; het aantal beschikbare plekken verschilt. De kosten worden in credits weergegeven voordat je een aanvraag oppakt. Er zijn geen vaste publieke tarieven op deze pagina.
+            Voor aanvragen die je oppakt kunnen leadkosten gelden. Een aanvraag kan gedeeld of exclusief worden aangeboden. De kosten worden vóór het oppakken in credits getoond en kunnen per aanvraag verschillen. Een lead leidt niet automatisch tot contact of een opdracht.
           </p>
           <Link href="/kosten" className="text-sm font-medium text-primary underline underline-offset-4">Lees hoe de kosten werken</Link>
         </Card>
@@ -82,7 +82,7 @@ export default function ForProfessionalsPage() {
       <Card className="space-y-4 bg-primary text-primary-foreground">
         <h2 className="text-2xl font-semibold">Kijk of VakConnect bij je bedrijf past</h2>
         <p className="max-w-2xl text-sm leading-7 text-primary-foreground/90">
-          Meld je bedrijf aan met je basisgegevens, diensten en werkgebied. We beoordelen nieuwe aanmeldingen voordat ze worden geactiveerd.
+          Meld je bedrijf aan met je basisgegevens, diensten en werkgebied. We beoordelen de aangeleverde informatie voordat een profiel kan worden geactiveerd. Een beoordeling is geen garantie voor de kwaliteit of uitvoering van een klus.
         </p>
         <TrackedLink href="/aanmelden-vakman" ctaId="professional_landing_signup_final" ctaLocation="final_cta" destinationType="professional" className={buttonClassName({ variant: "secondary", size: "lg", className: "border-white/20 bg-white text-primary" })}>
           Meld je aan als vakman

@@ -31,7 +31,7 @@ export default async function ContactPage({
         <p className="text-sm font-medium text-primary">We helpen je op weg</p>
         <h1 className="max-w-3xl text-3xl font-semibold leading-tight tracking-tight text-balance sm:text-4xl">Waar kunnen we je mee helpen?</h1>
         <p className="max-w-prose leading-7 text-muted-foreground">
-          Stel een vraag over je aanvraag, aanmelden als vakman, account of verificatie. Ook voor een technisch probleem kun je hieronder een bericht sturen.
+          Stel een vraag over je aanvraag, meld een probleem, vraag naar aanmelden als vakman of neem contact op over je account of profielbeoordeling.
         </p>
       </section>
 
@@ -58,9 +58,9 @@ export default async function ContactPage({
             <p className="text-sm text-muted-foreground">Kies het onderwerp dat het beste past.</p>
             <div className="grid gap-3 sm:grid-cols-3">
               {[
-                ["consument", "Mijn klus of aanvraag"],
+                ["consument", "Mijn klus, aanvraag of een probleem melden"],
                 ["vakman", "Aanmelden als vakman"],
-                ["algemeen", "Account, verificatie of iets anders"],
+                ["algemeen", "Account, profielbeoordeling of iets anders"],
               ].map(([value, label], index) => (
                 <label key={value} className="flex min-h-14 cursor-pointer items-center gap-3 rounded-2xl border bg-surface px-4 py-3 text-sm transition hover:border-primary/40 has-[:checked]:border-primary has-[:checked]:bg-primary/5">
                   <input type="radio" name="reason" value={value} required defaultChecked={index === 0} />

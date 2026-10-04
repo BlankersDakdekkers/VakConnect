@@ -44,6 +44,9 @@ export default async function ServicesPage() {
           </TrackedLink>
         ))}
       </section>
+      <p className="max-w-3xl text-sm leading-6 text-muted-foreground">
+        VakConnect zoekt op basis van de gekozen dienst en regio. Een passende match is geen garantie dat een vakman beschikbaar is of dat een opdracht tot stand komt.
+      </p>
 
       {additionalServices.length ? (
         <section className="space-y-5">

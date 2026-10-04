@@ -214,13 +214,13 @@ export default async function HomePage() {
 
       <section className="container-shell grid gap-8 lg:grid-cols-2 lg:items-center">
         <div className="space-y-3">
-          <h2 className="text-3xl font-semibold tracking-tight">Matching begint bij jouw klus</h2>
+          <h2 className="text-3xl font-semibold tracking-tight">Zo zoekt VakConnect naar een passende aansluiting</h2>
           <p className="leading-7 text-muted-foreground">
-            VakConnect kijkt naar de informatie in je aanvraag en de gegevens die vakmensen over hun bedrijf hebben ingevuld. Zo kan de selectie aansluiten op:
+            We vergelijken de gekozen dienst en postcode van je klus met de diensten en werkgebieden van actieve vakmannen.
           </p>
         </div>
         <ul className="grid gap-3 sm:grid-cols-2">
-          {["Soort klus", "Regio en werkgebied", "Specialisatie", "Beschikbaarheid en capaciteit"].map((factor) => (
+          {["De dienst die je kiest", "De postcode van de klus", "De diensten van de vakman", "Het opgegeven werkgebied"].map((factor) => (
             <li key={factor} className="border-b py-3 text-sm font-medium">{factor}</li>
           ))}
         </ul>
@@ -228,12 +228,18 @@ export default async function HomePage() {
 
       <section className="container-shell">
         <Card className="space-y-4">
-          <h2 className="text-2xl font-semibold tracking-tight">Zo houden we profielen zorgvuldig</h2>
+          <h2 className="text-2xl font-semibold tracking-tight">Hoe VakConnect vertrouwen opbouwt</h2>
+          <ul className="grid gap-2 text-sm leading-6 text-muted-foreground sm:grid-cols-2">
+            <li>Je aanvraag begint met de klus en de regio.</li>
+            <li>We beoordelen profielinformatie en relevante documenten waar die beschikbaar zijn.</li>
+            <li>Een passende vakman kan de aanvraag ontvangen; beschikbaarheid verschilt.</li>
+            <li>Je kiest zelf of je met een vakman verdergaat.</li>
+          </ul>
           <p className="max-w-3xl text-sm leading-7 text-muted-foreground">
-            Bij een aanmelding controleren we de ingevulde bedrijfsgegevens en beoordelen we het profiel voordat het wordt geactiveerd. Afhankelijk van het werk en de situatie kunnen aanvullende verificatie of documenten nodig zijn.
+            Een profiel- of documentbeoordeling betekent dat de aangeleverde informatie is bekeken. Dat is geen garantie voor de uitvoering of kwaliteit van een klus.
           </p>
           <p className="max-w-3xl text-sm leading-7 text-muted-foreground">
-            Een controle is geen garantie voor de uitvoering of kwaliteit van iedere klus. Bespreek je verwachtingen en afspraken altijd rechtstreeks met de vakman.
+            Bespreek verwachtingen, planning en afspraken rechtstreeks met de vakman.
           </p>
           <Link href="/aanmelden-vakman" className="text-sm font-medium text-primary underline underline-offset-4">Lees over aanmelden en beoordeling</Link>
         </Card>
