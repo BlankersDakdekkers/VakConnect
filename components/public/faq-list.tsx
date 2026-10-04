@@ -8,11 +8,11 @@ type FaqItem = Readonly<{
 
 export function FaqList({ items, analyticsContext }: Readonly<{ items: FaqItem[]; analyticsContext?: AnalyticsPageContext }>) {
   return (
-    <div className="max-w-4xl space-y-3">
+    <div className="max-w-4xl divide-y border-y">
       {items.map((item, index) => (
-        <details key={item.question} className="group rounded-2xl border bg-surface px-5">
+        <details key={item.question} className="group px-1">
           <FaqSummary questionId={`faq_${index + 1}`} analyticsContext={analyticsContext}>{item.question}</FaqSummary>
-          <p className="max-w-prose pb-5 pr-8 text-sm leading-7 text-muted-foreground">{item.answer}</p>
+          <p className="max-w-prose pb-5 text-base leading-7 text-muted-foreground sm:pr-8">{item.answer}</p>
         </details>
       ))}
     </div>

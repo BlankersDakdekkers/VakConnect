@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -146,6 +147,25 @@ export function LeadRequestForm({
   const startedRef = useRef(false);
   const viewedStepRef = useRef<number | null>(null);
   const stepStartedAtRef = useRef(0);
+  const formRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const previousStepRef = useRef(currentStep);
+  const focusErrorRef = useRef(false);
+
+  useEffect(() => {
+    if (previousStepRef.current !== currentStep) {
+      previousStepRef.current = currentStep;
+      headingRef.current?.focus();
+    }
+  }, [currentStep]);
+
+  useEffect(() => {
+    if (!focusErrorRef.current) return;
+    focusErrorRef.current = false;
+    const invalid = formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]');
+    const control = invalid?.matches("fieldset") ? invalid.querySelector<HTMLElement>("input, select, textarea") : invalid;
+    control?.focus();
+  }, [errors]);
 
   useEffect(() => {
     let active = true;
@@ -263,6 +283,7 @@ export function LeadRequestForm({
           error_type: errorType,
         });
       }
+      focusErrorRef.current = Object.keys(nextErrors).length > 0;
       setErrors((current) => ({ ...current, ...nextErrors }));
       return Object.keys(nextErrors).length === 0;
     } else {
@@ -289,6 +310,7 @@ export function LeadRequestForm({
         });
       }
       const nextErrors = Object.fromEntries(result.error.issues.map((issue) => [String(issue.path[0]), issue.message]));
+      focusErrorRef.current = true;
       setErrors((current) => ({ ...current, ...nextErrors }));
       return false;
     }
@@ -429,7 +451,7 @@ export function LeadRequestForm({
   }
 
   return (
-    <Card className="space-y-6">
+    <Card ref={formRef} className="mx-auto max-w-3xl space-y-6" aria-busy={submitting}>
       <div className="space-y-3">
         <div className="space-y-2">
           <div className="flex items-center justify-between gap-3 text-sm">
@@ -455,29 +477,36 @@ export function LeadRequestForm({
           </div>
         </div>
         <div>
-          <h2 className="text-2xl font-semibold tracking-tight">{stepTitles[currentStep]}</h2>
+          <h2 ref={headingRef} tabIndex={-1} className="text-2xl font-semibold tracking-tight">{stepTitles[currentStep]}</h2>
           <p className="max-w-prose text-sm leading-6 text-muted-foreground">{stepDescriptions[currentStep]}</p>
         </div>
       </div>
 
       {currentStep === 0 ? (
-        <FormField id="serviceId" label="Welke dienst heb je nodig?" error={errors.serviceId}>
-          <Select id="serviceId" value={draft.serviceId} onChange={(event) => updateDraft("serviceId", event.target.value)}>
-            <option value="">Selecteer een dienst</option>
-            {services.map((service) => (
-              <option key={service.id} value={service.id}>
-                {service.name}
-              </option>
-            ))}
-          </Select>
-        </FormField>
+        <div className="space-y-4">
+          <FormField id="serviceId" label="Welke dienst heb je nodig?" error={errors.serviceId}>
+            <Select id="serviceId" disabled={!services.length} value={draft.serviceId} onChange={(event) => updateDraft("serviceId", event.target.value)}>
+              <option value="">Selecteer een dienst</option>
+              {services.map((service) => (
+                <option key={service.id} value={service.id}>
+                  {service.name}
+                </option>
+              ))}
+            </Select>
+          </FormField>
+          {!services.length ? (
+            <p role="status" className="rounded-sm bg-surface-muted p-4 text-sm leading-6 text-muted-foreground">
+              We kunnen op dit moment geen diensten tonen. Probeer het later opnieuw of <Link href="/contact" className="underline underline-offset-4">neem contact op</Link>.
+            </p>
+          ) : null}
+        </div>
       ) : null}
 
       {currentStep === 1 ? (
         selectedQuestions.length ? (
           <div className="space-y-6">
             {selectedQuestions.map((question) => (
-              <div key={question.id} className="space-y-3 rounded-3xl border p-5">
+              <div key={question.id} className="space-y-3 border-t pt-5 first:border-t-0 first:pt-0">
                 {question.type === "textarea" ? (
                   <FormField
                     id={question.id}
@@ -513,6 +542,7 @@ export function LeadRequestForm({
                   </FormField>
                 ) : question.type === "radio" ? (
                   <FormField
+                    group
                     id={question.id}
                     label={`${question.question}${question.required ? " *" : ""}`}
                     description={question.help_text ?? undefined}
@@ -520,10 +550,12 @@ export function LeadRequestForm({
                   >
                     <div className="space-y-3">
                       {question.options.map((option) => (
-                        <label key={option.id} className="flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm">
+                        <label key={option.id} className="flex min-h-12 cursor-pointer items-center gap-3 rounded-sm border px-4 py-3 text-base has-[:checked]:border-primary has-[:checked]:bg-primary/5">
                           <input
                             type="radio"
                             name={question.id}
+                            aria-describedby={errors[question.id] ? `${question.id}-error` : undefined}
+                            className="size-5 shrink-0"
                             checked={dynamicAnswers[question.id] === option.value}
                             onChange={() => updateDynamicAnswer(question.id, option.value)}
                           />
@@ -534,6 +566,7 @@ export function LeadRequestForm({
                   </FormField>
                 ) : question.type === "multiselect" ? (
                   <FormField
+                    group
                     id={question.id}
                     label={`${question.question}${question.required ? " *" : ""}`}
                     description={question.help_text ?? undefined}
@@ -543,9 +576,10 @@ export function LeadRequestForm({
                       {question.options.map((option) => {
                         const selectedValues = getArrayAnswer(dynamicAnswers[question.id]);
                         return (
-                          <label key={option.id} className="flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm">
+                          <label key={option.id} className="flex min-h-12 cursor-pointer items-center gap-3 rounded-sm border px-4 py-3 text-base has-[:checked]:border-primary has-[:checked]:bg-primary/5">
                             <Checkbox
                               checked={selectedValues.includes(option.value)}
+                              aria-describedby={errors[question.id] ? `${question.id}-error` : undefined}
                               onChange={(event) => toggleDynamicMultiSelect(question.id, option.value, event.target.checked)}
                             />
                             {option.label}
@@ -556,25 +590,30 @@ export function LeadRequestForm({
                   </FormField>
                 ) : question.type === "boolean" ? (
                   <FormField
+                    group
                     id={question.id}
                     label={`${question.question}${question.required ? " *" : ""}`}
                     description={question.help_text ?? undefined}
                     error={errors[question.id]}
                   >
                     <div className="grid gap-3 md:grid-cols-2">
-                      <label className="flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm">
+                      <label className="flex min-h-12 cursor-pointer items-center gap-3 rounded-sm border px-4 py-3 text-base has-[:checked]:border-primary has-[:checked]:bg-primary/5">
                         <input
                           type="radio"
                           name={question.id}
+                          aria-describedby={errors[question.id] ? `${question.id}-error` : undefined}
+                          className="size-5 shrink-0"
                           checked={dynamicAnswers[question.id] === true}
                           onChange={() => updateDynamicAnswer(question.id, true)}
                         />
                         Ja
                       </label>
-                      <label className="flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm">
+                      <label className="flex min-h-12 cursor-pointer items-center gap-3 rounded-sm border px-4 py-3 text-base has-[:checked]:border-primary has-[:checked]:bg-primary/5">
                         <input
                           type="radio"
                           name={question.id}
+                          aria-describedby={errors[question.id] ? `${question.id}-error` : undefined}
+                          className="size-5 shrink-0"
                           checked={dynamicAnswers[question.id] === false}
                           onChange={() => updateDynamicAnswer(question.id, false)}
                         />
@@ -601,8 +640,8 @@ export function LeadRequestForm({
             ))}
           </div>
         ) : (
-          <div className="rounded-3xl bg-surface-muted p-5 text-sm text-muted-foreground">
-            Voor deze dienst zijn nog geen extra intakevragen actief. Je kunt doorgaan naar de locatiegegevens.
+          <div className="rounded-lg bg-surface-muted p-5 text-sm leading-6 text-muted-foreground">
+            Voor deze dienst hoef je geen extra vragen te beantwoorden. Ga verder met de locatie van je klus.
           </div>
         )
       ) : null}
@@ -612,13 +651,15 @@ export function LeadRequestForm({
           <FormField id="postalCode" label="Postcode" error={errors.postalCode}>
             <Input
               id="postalCode"
+              autoComplete="postal-code"
+              autoCapitalize="characters"
               value={draft.postalCode}
               onChange={(event) => updateDraft("postalCode", formatPostalCode(event.target.value))}
               placeholder="4811 AB"
             />
           </FormField>
           <FormField id="houseNumber" label="Huisnummer" error={errors.houseNumber}>
-            <Input id="houseNumber" value={draft.houseNumber} onChange={(event) => updateDraft("houseNumber", event.target.value)} />
+            <Input id="houseNumber" inputMode="numeric" value={draft.houseNumber} onChange={(event) => updateDraft("houseNumber", event.target.value)} />
           </FormField>
           <FormField id="houseNumberAddition" label="Toevoeging" description="Optioneel" error={errors.houseNumberAddition}>
             <Input
@@ -678,9 +719,9 @@ export function LeadRequestForm({
           {images.length ? (
             <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
               {images.map((image) => (
-                <li key={`${image.name}-${image.lastModified}`} className="flex items-center justify-between rounded-2xl bg-surface-muted px-4 py-3">
-                  <span>{image.name}</span>
-                  <span>{formatFileSize(image.size)}</span>
+                <li key={`${image.name}-${image.lastModified}`} className="flex flex-wrap items-center justify-between gap-2 rounded-sm bg-surface-muted px-4 py-3">
+                  <span className="min-w-0 break-all">{image.name}</span>
+                  <span className="shrink-0">{formatFileSize(image.size)}</span>
                 </li>
               ))}
             </ul>
@@ -691,22 +732,22 @@ export function LeadRequestForm({
       {currentStep === 5 ? (
         <div className="grid gap-4 md:grid-cols-2">
           <FormField id="firstName" label="Voornaam" error={errors.firstName}>
-            <Input id="firstName" value={draft.firstName} onChange={(event) => updateDraft("firstName", event.target.value)} />
+            <Input id="firstName" autoComplete="given-name" value={draft.firstName} onChange={(event) => updateDraft("firstName", event.target.value)} />
           </FormField>
           <FormField id="lastName" label="Achternaam" error={errors.lastName}>
-            <Input id="lastName" value={draft.lastName} onChange={(event) => updateDraft("lastName", event.target.value)} />
+            <Input id="lastName" autoComplete="family-name" value={draft.lastName} onChange={(event) => updateDraft("lastName", event.target.value)} />
           </FormField>
           <FormField id="phone" label="Telefoonnummer" error={errors.phone}>
-            <Input id="phone" value={draft.phone} onChange={(event) => updateDraft("phone", event.target.value)} />
+            <Input id="phone" type="tel" autoComplete="tel" value={draft.phone} onChange={(event) => updateDraft("phone", event.target.value)} />
           </FormField>
           <FormField id="email" label="E-mailadres" error={errors.email}>
-            <Input id="email" type="email" value={draft.email} onChange={(event) => updateDraft("email", event.target.value)} />
+            <Input id="email" type="email" autoComplete="email" autoCapitalize="none" value={draft.email} onChange={(event) => updateDraft("email", event.target.value)} />
           </FormField>
         </div>
       ) : null}
 
       {currentStep === 6 ? (
-        <div className="space-y-4">
+        <div className="space-y-4 break-words">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="rounded-3xl bg-surface-muted p-5">
               <p className="text-sm font-medium text-muted-foreground">Dienst</p>
@@ -749,12 +790,12 @@ export function LeadRequestForm({
 
       {formError ? <p role="alert" className="rounded-2xl border border-danger/30 bg-red-50 px-4 py-3 text-sm text-danger">{formError}</p> : null}
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:justify-between">
-        <Button type="button" variant="secondary" className="w-full sm:w-auto" onClick={handleBack} disabled={currentStep === 0 || submitting}>
+      <div className="flex flex-col-reverse gap-3 border-t pt-6 sm:flex-row sm:justify-between">
+        <Button type="button" variant="ghost" className="w-full sm:w-auto" onClick={handleBack} disabled={currentStep === 0 || submitting}>
           Vorige stap
         </Button>
         {currentStep === stepTitles.length - 1 ? (
-          <Button type="button" className="w-full sm:w-auto" onClick={handleSubmit} disabled={submitting || !services.length}>
+          <Button type="button" className="w-full sm:w-auto" onClick={handleSubmit} aria-busy={submitting} disabled={submitting || !services.length}>
             {submitting ? "Aanvraag wordt verstuurd..." : "Aanvraag versturen"}
           </Button>
         ) : (
@@ -763,6 +804,9 @@ export function LeadRequestForm({
           </Button>
         )}
       </div>
+      <p role="status" className="text-sm leading-6 text-muted-foreground">
+        {submitting ? "Je aanvraag wordt verstuurd. Wacht even en sluit deze pagina niet." : currentStep === 6 ? "Na verzending controleren we je aanvraag en zoeken we een passende vakman. Beschikbaarheid verschilt per klus en regio." : "Je aanvraag wordt pas verstuurd na je controle in de laatste stap."}
+      </p>
     </Card>
   );
 }

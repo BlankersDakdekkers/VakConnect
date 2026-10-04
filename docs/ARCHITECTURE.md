@@ -238,6 +238,16 @@ De huidige structuur is voorbereid op:
 
 ## Publieke route-architectuur (contentfase)
 
+### Publieke designbaseline (Prompt 21)
+
+- `app/globals.css` blijft de bron voor merkkleur, neutrale kleuren, radii en shadows; bestaande UI-primitives blijven gedeeld met de rest van de applicatie. Componentstyles staan in de Tailwind-componentlaag zodat sizing-utilities (bijvoorbeeld `min-h-32` voor textareas) kunnen overrulen.
+- De publieke layout gebruikt een skiplink naar `main-content`. De mobiele navigatie is een niet-modale disclosure: Tab volgt de normale documentvolgorde, Escape sluit met focusterugkeer, en focus buiten het menu of een klik buiten het menu sluit het.
+- `FormField` koppelt helptekst en fouten aan de control met hetzelfde `id`. Keuzegroepen gebruiken `group` voor native `fieldset`/`legend`. De intake focust de nieuwe staptitel en alleen na een mislukte validatie de eerste ongeldige control; typen mag geen focus verplaatsen.
+- De homepage heeft één dominante hero-aanvraagactie; de optionele dienst/postcode-prefill staat bij de vakgebieden, niet naast die hero-actie. De gedeelde service/subdienst/lokale template behoudt alle content, headings, routes en schema-output; de hero-CTA staat vóór de volledige introductie zodat lange content de aanvraag niet verstopt.
+- Geraakte Prompt 20-slots: `homepage.hero.cta` (`home_hero_request`, presentatie), `lead.progress.copy` (aanvraagprogresspresentatie) en `service.mid_cta` (`request_mid_content`, styling op de dakdekker-hoofdpagina). De homepage behoudt de controltekst “Plaats je klus” en variant B “Start je aanvraag” zodat het bestaande copy-experiment onderscheidend blijft. Ook servicehero (`request_hero`, positie) en eind-CTA (`request_final_cta`, styling) zijn visueel aangepast. Bestaande CTA-, FAQ-, jumplink- en zeven funnelstapidentifiers blijven gelijk; `home_final_request` is een extra trackingpunt voor de bestaande homepage-eindactie.
+- Prompt 20 is via de merge met main opgenomen: experimenttabellen, server-side assignment/exposure, analytics en handmatig adminbeheer blijven intact. De designbaseline wijzigt geen assignmentlogica, variantgewichten, targets of seedstatussen en activeert geen experiment; de drie bestaande experimenten worden nog steeds als `draft` ingevoegd.
+- Er zijn geen nieuwe dependencies, fonts, afbeeldingen of animatielibraries nodig; publieke content blijft server-rendered. Auth, RLS, privacygedrag, matching/scoring, submittransport en databasearchitectuur blijven ongewijzigd.
+
 De publieke laag gebruikt uitsluitend routes in `app/(public)`:
 
 - `/`

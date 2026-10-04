@@ -7,6 +7,7 @@ import { publicNavigation } from "@/lib/content/public-navigation";
 export function MobileNavigation() {
   const [isOpen, setIsOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -18,8 +19,18 @@ export function MobileNavigation() {
       }
     }
 
+    function handlePointerDown(event: PointerEvent) {
+      if (event.target instanceof Node && !menuRef.current?.contains(event.target)) {
+        setIsOpen(false);
+      }
+    }
+
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("pointerdown", handlePointerDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("pointerdown", handlePointerDown);
+    };
   }, [isOpen]);
 
   function closeMenu() {
@@ -27,21 +38,30 @@ export function MobileNavigation() {
   }
 
   return (
-    <div className="relative lg:hidden">
+    <div
+      ref={menuRef}
+      className="relative xl:hidden"
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setIsOpen(false);
+      }}
+    >
       <button
         ref={triggerRef}
         type="button"
         aria-expanded={isOpen}
         aria-controls="mobile-navigation"
         onClick={() => setIsOpen((open) => !open)}
-        className="flex min-h-11 items-center rounded-full border border-border bg-surface px-4 text-sm font-medium transition hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+        aria-label={isOpen ? "Menu sluiten" : "Menu openen"}
+        className="flex size-11 items-center justify-center rounded-sm border bg-surface transition-colors hover:bg-surface-muted"
       >
-        {isOpen ? "Sluit menu" : "Menu"}
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+          {isOpen ? <path d="m5 5 10 10M15 5 5 15" /> : <path d="M3 5h14M3 10h14M3 15h14" />}
+        </svg>
       </button>
       <nav
         id="mobile-navigation"
         aria-label="Mobiele navigatie"
-        className={`${isOpen ? "grid" : "hidden"} absolute right-0 top-[calc(100%+0.75rem)] z-50 min-w-64 gap-1 rounded-2xl border bg-surface p-2 text-sm shadow-lg`}
+        className={`${isOpen ? "grid" : "hidden"} absolute right-0 top-[calc(100%+0.75rem)] z-50 max-h-[calc(100dvh-6rem)] w-72 max-w-[calc(100vw-2rem)] gap-1 overflow-y-auto rounded-lg border bg-surface p-2 text-sm shadow-[var(--shadow-soft)]`}
       >
         {publicNavigation.map((item) => (
           <Link
