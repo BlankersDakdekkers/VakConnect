@@ -29,17 +29,17 @@ export default function PricingPage() {
         <Card className="space-y-4">
           <h2 className="text-2xl font-semibold">Voor consumenten</h2>
           <p className="text-sm leading-7 text-muted-foreground">
-            Je betaalt VakConnect niets om je klus aan te vragen. Je zit nergens aan vast en beslist zelf of je met een vakman verdergaat. De kosten van de uitvoering bespreek je rechtstreeks met die vakman.
+            Een aanvraag plaatsen is gratis: je betaalt VakConnect geen platformkosten voor het insturen ervan. Je zit nergens aan vast en beslist zelf of je met een vakman verdergaat. De kosten van de uitvoering bespreek je rechtstreeks met die vakman.
           </p>
           <Link href="/aanvraag" className={buttonClassName({ variant: "primary" })}>Plaats je klus</Link>
         </Card>
         <Card className="space-y-4">
           <h2 className="text-2xl font-semibold">Voor vakbedrijven</h2>
           <p className="text-sm leading-7 text-muted-foreground">
-            Voor bepaalde aanvragen kunnen leadkosten gelden. Een aanvraag kan shared worden aangeboden aan meerdere vakbedrijven of exclusief aan één bedrijf. De kosten zijn afhankelijk van onder meer het type aanvraag en de distributievorm.
+            Voor aanvragen die je oppakt kunnen leadkosten gelden. Een aanvraag kan gedeeld aan meerdere vakbedrijven of exclusief aan één bedrijf worden aangeboden. De kosten verschillen per aanvraag en distributievorm; niet iedere aanvraag leidt tot een opdracht.
           </p>
           <p className="text-sm leading-7 text-muted-foreground">
-            In het platform worden eventuele kosten in credits weergegeven voordat je een aanvraag oppakt. De prijs per aanvraag verschilt; er staan daarom geen vaste bedragen op deze pagina. Het aanvullen van credits is op dit moment nog niet beschikbaar.
+            De eventuele kosten worden in credits getoond voordat je een aanvraag oppakt. Er gelden geen vaste publieke bedragen; het aanvullen van credits is op dit moment nog niet beschikbaar.
           </p>
           <Link href="/voor-vakmannen" className="text-sm font-medium text-primary underline underline-offset-4">Meer voor vakmannen</Link>
         </Card>

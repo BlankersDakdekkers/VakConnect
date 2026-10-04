@@ -37,7 +37,7 @@ export default async function JoinProfessionalsPage({
         <p className="text-sm font-medium text-primary">Aanmelden als vakbedrijf</p>
         <h1 className="max-w-4xl text-3xl font-semibold leading-tight tracking-tight text-balance sm:text-4xl">Laat zien welk werk je doet en waar je werkt</h1>
         <p className="max-w-prose text-base leading-7 text-muted-foreground sm:text-lg">
-          Deel je bedrijfsgegevens, diensten en werkgebied. We beoordelen je aanmelding voordat je profiel wordt geactiveerd.
+          Deel je bedrijfsgegevens, diensten en werkgebied. We beoordelen de informatie die je aanlevert voordat je profiel wordt geactiveerd. Afhankelijk van je profiel en diensten kunnen relevante documenten nodig zijn.
         </p>
       </section>
 
@@ -54,7 +54,7 @@ export default async function JoinProfessionalsPage({
       <Card className="space-y-3">
         <h2 className="text-xl font-semibold">Wat heb je nodig?</h2>
         <p className="text-sm leading-7 text-muted-foreground">
-          Houd je bedrijfs- en contactgegevens, KvK-nummer, een korte omschrijving, diensten en postcodegebieden bij de hand. In vervolgstappen kunnen we, afhankelijk van je profiel en diensten, vragen naar ervaring, capaciteit of aanvullende documenten.
+          Houd je bedrijfs- en contactgegevens, KvK-nummer, een korte omschrijving, diensten en postcodegebieden bij de hand. In vervolgstappen kunnen we, afhankelijk van je profiel en diensten, vragen naar ervaring, capaciteit of relevante documenten. Een beoordeling van je profiel of documenten is geen kwaliteitsgarantie voor uitgevoerd werk.
         </p>
       </Card>
 

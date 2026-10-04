@@ -87,8 +87,8 @@ const serviceProfiles: Record<LocalServiceSlug, ServiceProfile> = {
     processSteps: [
       "Omschrijf je dakvraag met locatie, type woning en zichtbare signalen.",
       "Voeg foto’s en informatie over toegang of werkhoogte toe.",
-      "VakConnect koppelt je aanvraag aan passende dakdekkers in of rond de regio.",
-      "Daarna stem je planning en aanpak rechtstreeks af met de geselecteerde vakman.",
+      "VakConnect zoekt naar vakmannen met een passend werkgebied bij je klus.",
+      "Als een vakman je aanvraag oppakt, stem je planning en aanpak rechtstreeks af. Een match is geen beschikbaarheids- of opdrachtgarantie.",
     ],
     ctaLabel: "Plaats je dakaanvraag",
     localAngles: ["daktypen", "oudere dakdetails", "bereikbaarheid op hoogte", "storm- en onderhoudscontext"],
@@ -106,7 +106,7 @@ const serviceProfiles: Record<LocalServiceSlug, ServiceProfile> = {
     housingFocus: "In bestaande woningen kunnen verouderde aansluitingen of beperkte technische ruimtes invloed hebben op de uitvoering.",
     accessibilityFocus: "Bij appartementen helpt het om toegang, afsluitmogelijkheden en werktijden direct te benoemen.",
     pricingFactors: ["Aard van de storing", "Toegankelijkheid van leidingen", "Benodigde onderdelen", "Mate van urgentie"],
-    processSteps: ["Beschrijf je loodgietersvraag", "Geef locatie en bereikbaarheid van het probleem", "VakConnect matcht op dienst en regio", "Stem uitvoering af met de vakman"],
+    processSteps: ["Beschrijf je loodgietersvraag", "Geef locatie en bereikbaarheid van het probleem", "VakConnect zoekt op basis van dienst en regio", "Stem uitvoering af met de vakman; beschikbaarheid verschilt"],
     ctaLabel: "Plaats je loodgietersaanvraag",
     localAngles: ["oudere leidingen", "appartementen", "technische ruimtes", "afvoertrajecten"],
     subservices: {
@@ -122,7 +122,7 @@ const serviceProfiles: Record<LocalServiceSlug, ServiceProfile> = {
     housingFocus: "Bij oudere woningen kunnen ondergrondconditie en bestaande verflagen extra voorbereiding vragen.",
     accessibilityFocus: "Voor buitenwerk spelen bereikbaarheid, weersvenster en werkhoogte mee in de planning.",
     pricingFactors: ["Binnen- of buitenwerk", "Voorbehandeling en herstel", "Materiaalkeuze", "Bereikbaarheid en fasering"],
-    processSteps: ["Beschrijf ruimtes of geveldelen", "Voeg foto’s van huidige staat toe", "VakConnect matcht met passende schilders", "Stem planning en afwerking af"],
+    processSteps: ["Beschrijf ruimtes of geveldelen", "Voeg foto’s van huidige staat toe", "VakConnect zoekt op basis van dienst en regio", "Stem planning en afwerking af; beschikbaarheid verschilt"],
     ctaLabel: "Plaats je schildersaanvraag",
     localAngles: ["buitenwerk", "houten kozijnen", "seizoensplanning", "bereikbaarheid"],
     subservices: {
@@ -137,7 +137,7 @@ const serviceProfiles: Record<LocalServiceSlug, ServiceProfile> = {
     housingFocus: "In oudere woningen kunnen bestaande groepen en bekabeling extra aandacht vragen.",
     accessibilityFocus: "Noem direct welke ruimtes en kastdelen betrokken zijn.",
     pricingFactors: ["Complexiteit van de vraag", "Bereikbaarheid van bekabeling", "Benodigde materialen", "Veiligheidsaanpassingen"],
-    processSteps: ["Omschrijf je elektravraag", "Geef betrokken ruimtes of groepen", "VakConnect matcht op expertise", "Stem planning en uitvoering af"],
+    processSteps: ["Omschrijf je elektravraag", "Geef betrokken ruimtes of groepen", "VakConnect zoekt naar een vakman met de betreffende dienst en regio", "Stem planning en uitvoering af; beschikbaarheid verschilt"],
     ctaLabel: "Plaats je elektra-aanvraag",
     localAngles: ["oudere installaties", "uitbreiding", "appartementen", "groepenkast"],
     subservices: {
@@ -152,7 +152,7 @@ const serviceProfiles: Record<LocalServiceSlug, ServiceProfile> = {
     housingFocus: "Bij bestaande bouw bepalen maatvoering, aansluiting en staat van geveldelen de scope.",
     accessibilityFocus: "Bij appartementen of drukke straten moet transport en montageplanning vroeg worden afgestemd.",
     pricingFactors: ["Materiaalkeuze", "Aantal en maatvoering", "Glas en isolatiewaarde", "Demontage en afwerking"],
-    processSteps: ["Beschrijf type kozijnvraag", "Deel foto’s en maatindicaties", "VakConnect matcht op relevante expertise", "Stem planning en uitvoering af"],
+    processSteps: ["Beschrijf type kozijnvraag", "Deel foto’s en maatindicaties", "VakConnect zoekt op basis van dienst en regio", "Stem planning en uitvoering af; beschikbaarheid verschilt"],
     ctaLabel: "Plaats je kozijnaanvraag",
     localAngles: ["materiaalkeuze", "isolatie", "oudere bouwdetails", "glasopties"],
     subservices: {
@@ -167,7 +167,7 @@ const serviceProfiles: Record<LocalServiceSlug, ServiceProfile> = {
     housingFocus: "In appartementen zijn ruimte, leidingroutes en geluidsbeperking vaak bepalend.",
     accessibilityFocus: "Afvoer van materiaal en werktijden kunnen verschillen per woningtype.",
     pricingFactors: ["Sloop- en opbouwwerk", "Leidingverlegging", "Sanitairkeuze", "Ventilatie en afwerking"],
-    processSteps: ["Omschrijf je badkamerdoel", "Deel huidige indeling en knelpunten", "VakConnect koppelt op passende disciplines", "Stem planning en fasering af"],
+    processSteps: ["Omschrijf je badkamerdoel", "Deel huidige indeling en knelpunten", "VakConnect zoekt naar vakmannen met passende diensten en werkgebied", "Stem planning en fasering af; beschikbaarheid verschilt"],
     ctaLabel: "Plaats je badkameraanvraag",
     localAngles: ["appartementen", "leidingverlegging", "ventilatie", "ruimte-indeling"],
     subservices: {
@@ -182,7 +182,7 @@ const serviceProfiles: Record<LocalServiceSlug, ServiceProfile> = {
     housingFocus: "Dak-, spouw- en vloeropbouw bepalen welke maatregel technisch past.",
     accessibilityFocus: "Toegang tot constructiedelen en combinatie met renovatie beïnvloeden de planning.",
     pricingFactors: ["Constructietype", "Bereikbaarheid", "Materiaalkeuze", "Combinatie met renovatiewerk"],
-    processSteps: ["Beschrijf isolatiedoel", "Noem bouwperiode en constructie", "VakConnect matcht met relevante specialisten", "Bespreek aanpak en planning"],
+    processSteps: ["Beschrijf isolatiedoel", "Noem bouwperiode en constructie", "VakConnect zoekt op basis van dienst en regio", "Bespreek aanpak en planning; beschikbaarheid verschilt"],
     ctaLabel: "Plaats je isolatieaanvraag",
     localAngles: ["bouwperiode", "dak/spouw/vloer", "vocht", "renovatiecombinaties"],
     subservices: {
@@ -197,7 +197,7 @@ const serviceProfiles: Record<LocalServiceSlug, ServiceProfile> = {
     housingFocus: "Bestaande indeling en constructie bepalen wat efficiënt en haalbaar is.",
     accessibilityFocus: "Logistiek, afvoer en werkvensters zijn belangrijk in bewoonde woningen.",
     pricingFactors: ["Constructieve ingrepen", "Omvang van disciplines", "Logistiek op locatie", "Fasering en doorlooptijd"],
-    processSteps: ["Omschrijf verbouwdoel", "Noem huidige situatie en randvoorwaarden", "VakConnect matcht op relevante disciplines", "Stem volgorde en planning af"],
+    processSteps: ["Omschrijf verbouwdoel", "Noem huidige situatie en randvoorwaarden", "VakConnect zoekt naar vakmannen met passende diensten en werkgebied", "Stem volgorde en planning af; beschikbaarheid verschilt"],
     ctaLabel: "Plaats je verbouwaanvraag",
     localAngles: ["aanbouw/uitbouw", "vergunning/constructie", "logistiek", "disciplinecoördinatie"],
     subservices: {
@@ -229,7 +229,7 @@ function buildFaq(profile: ServiceProfile, cityName: string, subserviceName?: st
   return [
     {
       question: `Hoe vind ik via VakConnect een ${intent}?`,
-      answer: `Start met een duidelijke aanvraag op VakConnect en beschrijf de situatie, planning en bereikbaarheid in ${cityName}.`,
+      answer: `Start met een duidelijke aanvraag op VakConnect en beschrijf de situatie, planning en bereikbaarheid in ${cityName}. We zoeken op basis van dienst en regio; beschikbaarheid verschilt.`,
     },
     {
       question: "Kan ik spoed of fasering aangeven?",
@@ -241,7 +241,7 @@ function buildFaq(profile: ServiceProfile, cityName: string, subserviceName?: st
     },
     {
       question: "Doet VakConnect de uitvoering zelf?",
-      answer: "Nee, VakConnect is een platform en koppelt je aanvraag aan passende vakmensen op basis van dienst en werkgebied.",
+      answer: "Nee. VakConnect is een platform dat op basis van dienst en werkgebied naar passende vakmannen zoekt. Een match garandeert geen beschikbaarheid of opdracht.",
     },
   ] satisfies ServiceFaq[];
 }
@@ -253,9 +253,9 @@ function buildLocalIntro(profile: ServiceProfile, citySlug: string, subserviceSl
   const subservice = subserviceSlug ? profile.subservices[subserviceSlug] : undefined;
   const introTopic = subservice ? subservice.name.toLowerCase() : profile.serviceName.toLowerCase();
   const introVariants = [
-    `Zoek je een ${introTopic} in ${location.name}? VakConnect helpt je klus en regio helder te beschrijven, zodat passende vakmensen de aanvraag kunnen beoordelen.`,
-    `Voor ${introTopic} in ${location.name} maakt een duidelijke omschrijving van de klus het verschil. VakConnect gebruikt de dienst en regio om passende vakmensen te zoeken.`,
-    `Een ${introTopic} nodig in ${location.name}? Deel wat er aan de hand is en welke planning past; VakConnect helpt de aanvraag bij vakmensen onder de aandacht te brengen.`,
+    `Zoek je een ${introTopic} in ${location.name}? VakConnect zoekt naar passende vakmannen die actief zijn in of rond ${location.name}; beschikbaarheid verschilt.`,
+    `Voor ${introTopic} in ${location.name} maakt een duidelijke omschrijving van de klus het verschil. VakConnect zoekt op basis van dienst en regio; een match is niet gegarandeerd.`,
+    `Een ${introTopic} nodig in ${location.name}? Deel wat er aan de hand is en welke planning past. VakConnect zoekt naar vakmannen die in of rond ${location.name} actief zijn.`,
   ];
   const introVariant = hash(`${profile.serviceSlug}-${citySlug}-${subserviceSlug ?? "main"}`) % introVariants.length;
   return [

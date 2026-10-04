@@ -20,11 +20,11 @@ const steps = [
   },
   {
     title: "We zoeken een passende aansluiting",
-    description: "De soort klus en je regio zijn het vertrekpunt. Ook specialisatie, beschikbaarheid en profielinformatie spelen mee.",
+    description: "We vergelijken de gekozen dienst en het werkgebied met actieve vakmannen die die dienst aanbieden.",
   },
   {
-    title: "Een vakman neemt contact op",
-    description: "Als een vakman de aanvraag oppakt, bespreek je rechtstreeks de situatie, planning en mogelijke aanpak.",
+    title: "Een vakman kan de aanvraag oppakken",
+    description: "Als een vakman je aanvraag ontvangt en oppakt, bespreek je rechtstreeks de situatie, planning en mogelijke aanpak.",
   },
   {
     title: "Jij kiest wat je doet",
@@ -36,6 +36,10 @@ const faqItems = [
   {
     question: "Krijgt iedere aanvraag een match?",
     answer: "Niet altijd. Dat hangt onder meer af van de dienst, de regio en de beschikbaarheid van passende vakmensen.",
+  },
+  {
+    question: "Wat houdt een profielbeoordeling in?",
+    answer: "VakConnect beoordeelt aangeleverde profielinformatie en relevante documenten waar die beschikbaar zijn. Dat is geen garantie voor de kwaliteit of uitvoering van een klus.",
   },
   {
     question: "Hoe snel hoor ik iets?",
@@ -61,7 +65,7 @@ export default function HowItWorksPage() {
         <p className="text-sm font-medium text-primary">Voor consumenten</p>
         <h1 className="max-w-3xl text-3xl font-semibold leading-tight tracking-tight text-balance sm:text-4xl">Zo vind je via VakConnect een vakman voor je klus</h1>
         <p className="max-w-prose text-base leading-7 text-muted-foreground sm:text-lg">
-          Je hoeft niet eerst zelf uit te zoeken welk bedrijf je moet bellen. Beschrijf je klus; VakConnect gebruikt je aanvraag om passende vakmensen in jouw regio te vinden.
+          Je hoeft niet eerst zelf uit te zoeken welk bedrijf je moet bellen. Beschrijf je klus; VakConnect zoekt op basis van dienst en regio naar vakmannen die mogelijk passen.
         </p>
         <Link href="/aanvraag" className={buttonClassName({ variant: "primary", size: "lg" })}>Plaats je klus</Link>
       </section>
@@ -76,8 +80,8 @@ export default function HowItWorksPage() {
           <h2 className="text-2xl font-semibold">Wat VakConnect doet</h2>
           <ul className="space-y-2 text-sm leading-7 text-muted-foreground">
             <li>• Je aanvraag structureren zodat de klus duidelijker is.</li>
-            <li>• De gekozen dienst en regio meenemen bij het zoeken.</li>
-            <li>• Aanvragen tonen aan vakmensen voor wie de klus relevant kan zijn.</li>
+            <li>• De gekozen dienst en het werkgebied meenemen bij het zoeken.</li>
+            <li>• Een aanvraag kunnen aanbieden aan vakmannen die mogelijk passen.</li>
             <li>• Vakmensen hun diensten, werkgebied en beschikbaarheid laten beheren.</li>
           </ul>
         </Card>
@@ -86,11 +90,11 @@ export default function HowItWorksPage() {
           <ul className="space-y-2 text-sm leading-7 text-muted-foreground">
             <li>• De klus zelf uitvoeren.</li>
             <li>• De uiteindelijke prijs of offerte voor je bepalen.</li>
-            <li>• Garanderen dat iedere aanvraag direct wordt opgepakt.</li>
+            <li>• Garanderen dat iedere aanvraag een match krijgt of wordt opgepakt.</li>
             <li>• In jouw plaats kiezen of afspraken maken met een vakman.</li>
           </ul>
           <p className="text-sm leading-7 text-muted-foreground">
-            Je bespreekt de uitvoering, planning en prijs rechtstreeks met de vakman. Lees ook ons <Link className="text-primary underline underline-offset-4" href="/privacy">privacybeleid</Link>.
+            Een match garandeert geen beschikbaarheid of opdracht; de reactietijd verschilt. Je bespreekt de uitvoering, planning en prijs rechtstreeks met de vakman. Lees ook ons <Link className="text-primary underline underline-offset-4" href="/privacy">privacybeleid</Link>.
           </p>
         </Card>
       </section>
