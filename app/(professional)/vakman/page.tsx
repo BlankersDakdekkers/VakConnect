@@ -8,72 +8,10 @@ import { getProfessionalWalletOverview } from "@/lib/commercial/queries";
 import { requireProfessionalUser } from "@/lib/auth/helpers";
 import { getProfessionalDashboardStats } from "@/lib/leads/queries";
 import { isDistributionPauseActive } from "@/lib/distribution/scoring";
+import { getProfessionalActivationChecklist, getProfessionalActivationStage, getProfessionalBlockerRecovery, getProfessionalNextBestAction, getProfessionalReviewFeedbackHref } from "@/lib/professionals/activation";
 import { getOwnProfessionalDetail } from "@/lib/professionals/queries";
-import { professionalAvailabilityStatusLabels, professionalOnboardingStatusLabels, professionalStatusDescriptions, professionalVerificationStatusLabels } from "@/lib/professionals/labels";
+import { professionalAvailabilityStatusLabels, professionalOnboardingStatusLabels, professionalVerificationStatusLabels } from "@/lib/professionals/labels";
 import { getProfessionalNotifications } from "@/lib/notifications/queries";
-import type { ProfessionalReviewSection } from "@/types/database";
-
-const reviewSectionStep: Record<ProfessionalReviewSection, string> = {
-  company: "company",
-  contact: "contact",
-  services: "services",
-  areas: "areas",
-  experience: "experience",
-  capacity: "capacity",
-  documents: "documents",
-  review: "review",
-  verification: "review",
-};
-
-function getNextAction(professional: NonNullable<Awaited<ReturnType<typeof getOwnProfessionalDetail>>>) {
-  const feedback = professional.reviewFeedback.find((item) => item.status === "open");
-  if (feedback && (professional.onboarding_status === "changes_requested" || professional.verification_status === "changes_requested")) {
-    const step = reviewSectionStep[feedback.section];
-    return { label: "Pas gevraagde wijzigingen aan", href: `/vakman/onboarding?step=${step}`, description: feedback.message };
-  }
-
-  const missingStep = professional.missingSteps[0];
-  if (missingStep) {
-    return {
-      label: "Rond je profiel af",
-      href: `/vakman/onboarding?step=${missingStep}`,
-      description: `Nog nodig: ${missingStep.replaceAll("_", " ")}.`,
-    };
-  }
-
-  const settings = professional.distributionSettings;
-  const capacityReached = professional.distributionReadiness.activeOffers >= professional.distributionReadiness.maxOpenOffers
-    || professional.distributionReadiness.activeAssignments >= professional.distributionReadiness.maxActiveAssignments;
-  if (isDistributionPauseActive(settings?.paused ?? false, settings?.pause_until ?? null) || settings?.availability_status !== "available" || capacityReached) {
-    return {
-      label: "Bekijk beschikbaarheid en capaciteit",
-      href: "/vakman/onboarding?step=capacity",
-      description: "Je instellingen kunnen bepalen of je nieuwe passende aanvragen ontvangt.",
-    };
-  }
-
-  if (professional.onboarding_status === "submitted" || professional.verification_status === "pending") {
-    return {
-      label: "Bekijk de beoordelingsstatus",
-      href: "/vakman/profiel",
-      description: professionalStatusDescriptions[professional.verification_status],
-    };
-  }
-
-  if (professional.distributionReadiness.eligible) {
-    return {
-      label: "Bekijk nieuwe aanvragen",
-      href: "/vakman/aanvragen",
-      description: "Een aanvraag is niet automatisch een opdracht; controleer de gegevens en credits vóór je reageert.",
-    };
-  }
-
-  return {
-    label: "Bekijk je profielstatus",
-    href: "/vakman/profiel",
-    description: professionalStatusDescriptions[professional.verification_status],
-  };
-}
 
 function notificationHref(eventType: string) {
   if (eventType.startsWith("lead_offer") || eventType === "lead_assignment_created") return "/vakman/aanvragen";
@@ -95,7 +33,9 @@ export default async function ProfessionalDashboardPage() {
     return null;
   }
 
-  const nextAction = getNextAction(professional);
+  const nextAction = getProfessionalNextBestAction(professional);
+  const activationStage = getProfessionalActivationStage(professional);
+  const activationChecklist = getProfessionalActivationChecklist(professional);
   const attentionNotifications = notificationPage.items.filter((notification) =>
     !notification.read_at && [
       "changes_requested",
@@ -119,7 +59,7 @@ export default async function ProfessionalDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Overzicht" description="Je profiel, beschikbaarheid en aanvragen op één plek." />
+      <PageHeader title="Overzicht" description={`Je profiel, beschikbaarheid en aanvragen op één plek. Activatiefase: ${activationStage.label}.`} />
 
       <Card className="border-primary/20 bg-primary/[0.03]">
         <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
@@ -146,7 +86,7 @@ export default async function ProfessionalDashboardPage() {
           {professional.reviewFeedback.filter((item) => item.status === "open").map((item) => (
             <div key={item.id} className="mt-3 flex flex-wrap items-start justify-between gap-3 border-t border-amber-200 pt-3">
               <p className="min-w-0 flex-1 text-sm"><strong>{item.section.replaceAll("_", " ")}:</strong> {item.message}</p>
-              <Link href={`/vakman/onboarding?step=${reviewSectionStep[item.section]}`} className="text-sm font-medium text-primary underline underline-offset-4">Aanpassen</Link>
+              <Link href={getProfessionalReviewFeedbackHref(item.section)} className="text-sm font-medium text-primary underline underline-offset-4">Aanpassen</Link>
             </div>
           ))}
         </Card>
@@ -176,6 +116,58 @@ export default async function ProfessionalDashboardPage() {
         </Card>
       ) : null}
 
+      {!professional.distributionReadiness.eligible ? (
+        <Card className="space-y-3 border-amber-300 bg-amber-50">
+          <h2 className="text-lg font-semibold tracking-tight">Waarom ontvang ik nog geen aanvragen?</h2>
+          <ul className="space-y-2 text-sm">
+            {professional.distributionReadiness.reasons.map((reason) => {
+              const recovery = getProfessionalBlockerRecovery(reason);
+              return (
+                <li key={reason} className="flex flex-wrap items-start justify-between gap-2">
+                  <span className="min-w-0 flex-1">{reason}</span>
+                  <Link href={recovery.href} className="shrink-0 font-medium text-primary underline underline-offset-4">{recovery.label}</Link>
+                </li>
+              );
+            })}
+          </ul>
+        </Card>
+      ) : (
+        <Card className="space-y-2">
+          <h2 className="font-semibold">Je profiel is gereed voor passende aanvragen</h2>
+          <p className="text-sm text-muted-foreground">
+            {professional.distributionReadiness.activeOffers > 0
+              ? `Er staan ${professional.distributionReadiness.activeOffers} open aanbieding(en) voor je klaar.`
+              : "Er staat nu geen open aanbod voor je klaar. Aanbod hangt af van dienst, regio, beschikbaarheid, capaciteit en bestaande distributieregels."}
+            {" "}Een passende aanvraag is geen garantie op een opdracht.
+          </p>
+        </Card>
+      )}
+
+      <Card className="space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 className="text-lg font-semibold tracking-tight">Je activatiechecklist</h2>
+            <p className="text-sm text-muted-foreground">Gebaseerd op je huidige profiel-, verificatie- en beschikbaarheidsstatus.</p>
+          </div>
+          <Link href="/vakman/profiel" className="text-sm font-medium text-primary underline underline-offset-4">Profielstatus bekijken</Link>
+        </div>
+        <ul className="divide-y">
+          {activationChecklist.map((item) => (
+            <li key={item.label} className="flex flex-wrap items-start justify-between gap-3 py-3 first:pt-0 last:pb-0">
+              <div className="min-w-0">
+                <p className="font-medium">
+                  {item.label} <span className="text-xs font-normal text-muted-foreground">
+                    {item.status === "complete" ? "· Afgerond" : item.status === "action" ? "· Actie nodig" : item.status === "blocked" ? "· In behandeling" : "· Optioneel"}
+                  </span>
+                </p>
+                <p className="text-sm text-muted-foreground">{item.description}</p>
+              </div>
+              {item.href ? <Link href={item.href} className="shrink-0 text-sm font-medium text-primary underline underline-offset-4">Bekijk actie</Link> : null}
+            </li>
+          ))}
+        </ul>
+      </Card>
+
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="space-y-3">
           <h2 className="text-lg font-semibold tracking-tight">Beschikbaarheid en capaciteit</h2>
@@ -194,12 +186,7 @@ export default async function ProfessionalDashboardPage() {
         <Card className="space-y-3">
           <h2 className="text-lg font-semibold tracking-tight">Nieuwe passende aanvragen</h2>
           <StatusBadge value={professional.distributionReadiness.eligible ? "available" : "limited"} label={professional.distributionReadiness.eligible ? "Profiel gereed" : "Voorwaarden nog niet vervuld"} />
-          <p className="text-sm text-muted-foreground">Of je een specifieke aanvraag ontvangt, hangt ook af van de actieve dienst, het werkgebied en de beschikbare capaciteit.</p>
-          {professional.distributionReadiness.reasons.length ? (
-            <ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
-              {professional.distributionReadiness.reasons.map((reason) => <li key={reason}>{reason}</li>)}
-            </ul>
-          ) : <p className="text-sm text-success">Je profiel voldoet aan de huidige profiel- en beschikbaarheidsvoorwaarden.</p>}
+          <p className="text-sm text-muted-foreground">Of je een specifieke aanvraag ontvangt, hangt ook af van de actieve dienst, het werkgebied en de beschikbare capaciteit. Bestaande distributieregels zijn eveneens van toepassing; er wordt geen aantal aanvragen gegarandeerd.</p>
         </Card>
       </div>
 

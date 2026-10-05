@@ -208,6 +208,12 @@ export default async function ProfessionalLeadDetailPage({
             <p>Saldo na aankoop: <strong>{formatCredits(Math.max(0, marketLead.commercial.balanceAfterPurchase))}</strong></p>
             <p>Resterende plekken: <strong>{marketLead.commercial.commercialType === "exclusive" ? marketLead.state === "available" ? "1" : "0" : marketLead.commercial.remainingSlots}</strong></p>
           </div>
+          <p className="text-sm text-muted-foreground">
+            {marketLead.commercial.commercialType === "exclusive"
+              ? "Exclusief: volgens de huidige regels is er maximaal één koperslot. Dat garandeert geen opdracht."
+              : "Shared: meerdere vakmannen kunnen volgens de resterende plekken toegang krijgen."}
+          </p>
+          <p className="text-sm text-muted-foreground">Credits gebruik je om geselecteerde aanvragen te ontgrendelen. Een aankoop is geen garantie op een opdracht.</p>
 
           {marketLead.mode === "preview" ? (
             <>
@@ -225,7 +231,7 @@ export default async function ProfessionalLeadDetailPage({
               <input type="hidden" name="idempotency_key" value={confirmationToken} />
               <input type="hidden" name="redirect_to" value={`/vakman/aanvragen/${marketLead.preview.leadId}`} />
               <p id="purchase-guidance" className="rounded-2xl bg-surface-muted px-4 py-3 text-sm text-muted-foreground">
-                Controleer de aanvraag, prijs, saldo en aanbodstatus. De prijs wordt bij bevestiging opnieuw server-side berekend.
+                Controleer wat je ontgrendelt, de getoonde prijs en je saldo. Na geldige aankoop worden contactgegevens vrijgegeven; de aankoop garandeert geen opdracht. De prijs en je aankooprecht worden bij bevestiging opnieuw server-side gecontroleerd.
               </p>
               <SubmitButton className="w-full" aria-describedby="purchase-guidance purchase-block-reason" disabled={marketLead.state !== "available" || marketLead.commercial.balanceAfterPurchase < 0 || !canPurchaseFromOffer} pendingLabel="Aankoop wordt verwerkt...">
                 Bevestig aankoop
@@ -234,7 +240,7 @@ export default async function ProfessionalLeadDetailPage({
                 <div id="purchase-block-reason" className="space-y-1 text-sm">
                   {marketLead.state !== "available" ? <p className="text-muted-foreground">Deze aanvraag is niet meer beschikbaar voor aankoop.</p> : null}
                   {!canPurchaseFromOffer ? <p className="text-muted-foreground">Dit aanbod kan niet meer worden gekocht. Controleer de actuele status.</p> : null}
-                  {marketLead.commercial.balanceAfterPurchase < 0 ? <p className="text-danger">Je creditsaldo is onvoldoende. Benodigd: {formatCredits(marketLead.commercial.priceCredits)}, huidig: {formatCredits(marketLead.commercial.currentBalance)}. Bekijk je saldo en transacties bij <Link href="/vakman/credits" className="underline">Credits</Link>.</p> : null}
+                  {marketLead.commercial.balanceAfterPurchase < 0 ? <p className="text-danger">Je hebt {formatCredits(marketLead.commercial.currentBalance)}. Voor deze aanvraag zijn {formatCredits(marketLead.commercial.priceCredits)} nodig; je komt {formatCredits(marketLead.commercial.priceCredits - marketLead.commercial.currentBalance)} tekort. Credits kopen is op dit moment niet beschikbaar. Bekijk je saldo en transacties bij <Link href="/vakman/credits" className="underline">Credits</Link>.</p> : null}
                 </div>
               ) : null}
             </form>

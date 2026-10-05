@@ -44,7 +44,7 @@ export async function purchaseLeadAction(formData: FormData) {
 
   if (error) {
     const message = error.message.includes("INSUFFICIENT_BALANCE")
-      ? "Onvoldoende credits. Credits kopen wordt binnenkort beschikbaar."
+      ? "Onvoldoende credits. Credits kopen is op dit moment niet beschikbaar."
         : error.message.includes("IDEMPOTENCY_KEY_CONFLICT")
           ? "Deze aankoopbevestiging hoort bij een andere lead. Vernieuw de pagina en probeer opnieuw."
           : error.message.includes("LEAD_PURCHASE_REFUNDED")
@@ -66,7 +66,7 @@ export async function purchaseLeadAction(formData: FormData) {
   revalidatePath("/admin");
   revalidatePath("/admin/distributie");
   revalidatePath(`/admin/leads/${payload.data.leadId}`);
-  redirectWithMessage(`/vakman/aanvragen/${payload.data.leadId}`, "success", "Lead succesvol gekocht en contactgegevens zijn vrijgegeven.");
+  redirectWithMessage(`/vakman/aanvragen/${payload.data.leadId}`, "success", "Aankoop bevestigd. Credits zijn verwerkt en de contactgegevens zijn vrijgegeven. Bekijk de gegevens bij de aanvraag en neem contact op als je deze wilt bespreken.");
 }
 
 export async function applyAdminWalletMutationAction(formData: FormData) {

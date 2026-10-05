@@ -4,6 +4,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { markAllNotificationsReadAction, markNotificationReadAction } from "@/lib/notifications/actions";
 import { getProfessionalNotifications, getProfessionalUnreadNotificationCount } from "@/lib/notifications/queries";
+import { getProfessionalNotificationPriority, highPriorityNotificationTypes } from "@/lib/professionals/activation";
 import { requireProfessionalUser } from "@/lib/auth/helpers";
 import { formatDate } from "@/lib/utils";
 import type { ProfessionalNotificationEventType } from "@/types/database";
@@ -56,10 +57,19 @@ function categoryLabel(eventType: ProfessionalNotificationEventType) {
 
 function fallbackHref(notification: Awaited<ReturnType<typeof getProfessionalNotifications>>["items"][number]) {
   if (notification.lead_id && notification.event_type.startsWith("lead_")) return `/vakman/aanvragen/${notification.lead_id}`;
+  if (notification.event_type.startsWith("lead_") || ["stale_lead", "unmatched_lead", "no_purchase_lead"].includes(notification.event_type)) return "/vakman/aanvragen";
   if (notification.event_type.startsWith("document")) return "/vakman/onboarding?step=documents";
   if (notification.event_type === "changes_requested" || notification.event_type.startsWith("verification")) return "/vakman/onboarding?step=review";
   if (notification.event_type === "onboarding_submitted") return "/vakman/profiel";
-  return null;
+  return "/vakman";
+}
+
+function actionLabel(eventType: ProfessionalNotificationEventType) {
+  if (eventType === "lead_progress_reminder") return "Werk voortgang bij";
+  if (eventType.startsWith("lead_") || ["stale_lead", "unmatched_lead", "no_purchase_lead"].includes(eventType)) return "Bekijk aanvraag";
+  if (eventType.startsWith("document")) return "Documenten beheren";
+  if (eventType === "changes_requested" || eventType.startsWith("verification") || eventType === "onboarding_submitted") return "Bekijk profielstatus";
+  return "Bekijk overzicht";
 }
 
 export default async function ProfessionalNotificationsPage({
@@ -74,7 +84,12 @@ export default async function ProfessionalNotificationsPage({
     getProfessionalNotifications(user.professional.id, requestedPage),
     getProfessionalUnreadNotificationCount(user.professional.id),
   ]);
-  const notifications = notificationPage.items;
+  const notifications = [...notificationPage.items].sort((left, right) => {
+    const priorityDifference = Number(highPriorityNotificationTypes.has(right.event_type)) - Number(highPriorityNotificationTypes.has(left.event_type));
+    if (priorityDifference !== 0) return priorityDifference;
+    const unreadDifference = Number(!right.read_at) - Number(!left.read_at);
+    return unreadDifference || right.created_at.localeCompare(left.created_at);
+  });
 
   return (
     <div className="space-y-6">
@@ -101,11 +116,12 @@ export default async function ProfessionalNotificationsPage({
                   <div className="flex items-center gap-2">
                   <span className="rounded-full bg-surface-muted px-2 py-0.5 text-xs text-muted-foreground">{categoryLabel(notification.event_type)}</span>
                   <h2 className="font-semibold">{title}</h2>
+                  <span className="rounded-full border px-2 py-0.5 text-xs">{getProfessionalNotificationPriority(notification.event_type)} prioriteit</span>
                   {!notification.read_at ? <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">Ongelezen</span> : null}
                   </div>
                   <p className="text-sm text-muted-foreground">{description}</p>
                   <time className="block text-xs text-muted-foreground" dateTime={notification.created_at}>{formatDate(notification.created_at)}</time>
-                  {href ? <Link href={href} className="inline-block min-h-11 py-2 text-sm font-medium text-primary underline underline-offset-4">{notification.lead_id ? "Bekijk aanvraag" : "Bekijk details"}</Link> : null}
+                  <Link href={href ?? "/vakman"} className="inline-block min-h-11 py-2 text-sm font-medium text-primary underline underline-offset-4">{actionLabel(notification.event_type)}</Link>
                 </div>
                 {!notification.read_at ? (
                   <form action={markNotificationReadAction}>

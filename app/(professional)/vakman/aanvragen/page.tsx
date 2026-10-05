@@ -6,6 +6,8 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { formatCredits, getCommercialTypeLabel } from "@/lib/commercial/labels";
 import { requireProfessionalUser } from "@/lib/auth/helpers";
 import { getProfessionalLeadMarketplace } from "@/lib/commercial/queries";
+import { getProfessionalBlockerRecovery } from "@/lib/professionals/activation";
+import { getOwnProfessionalDetail } from "@/lib/professionals/queries";
 import { formatDate } from "@/lib/utils";
 
 const offerStateLabels: Record<string, string> = {
@@ -48,7 +50,12 @@ function expiryTime(value: string) {
 
 export default async function ProfessionalAssignmentsPage() {
   const user = await requireProfessionalUser();
-  const leads = await getProfessionalLeadMarketplace(user.professional.id);
+  const [leads, professional] = await Promise.all([
+    getProfessionalLeadMarketplace(user.professional.id),
+    getOwnProfessionalDetail(user.professional.id),
+  ]);
+  const firstBlocker = professional?.distributionReadiness.reasons[0];
+  const blockerRecovery = firstBlocker ? getProfessionalBlockerRecovery(firstBlocker) : null;
   const groups = ["Nieuw aanbod", "Verloopt binnenkort", "Gekocht of toegewezen", "Afgewezen", "Verlopen", "Gesloten of verlopen"]
     .map((title) => ({ title, items: leads.filter((lead) => offerGroup(lead) === title) }))
     .filter((group) => group.items.length);
@@ -101,7 +108,22 @@ export default async function ProfessionalAssignmentsPage() {
           </ul>
         </section>
       )) : (
-        <EmptyState title="Er zijn nu geen passende aanvragen beschikbaar." description="Nieuwe aanbiedingen verschijnen hier wanneer ze passen bij je diensten, werkgebied en beschikbaarheid." />
+        firstBlocker ? (
+          <EmptyState
+            title="Je ontvangt nog geen passende aanvragen"
+            description={`${firstBlocker} Los deze stap op om te voldoen aan de huidige voorwaarden voor distributie.`}
+            action={blockerRecovery ? (
+              <Link href={blockerRecovery.href} className="inline-flex min-h-11 items-center justify-center rounded-full border border-primary px-4 py-2 text-sm font-semibold text-primary hover:bg-primary/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                {blockerRecovery.label}
+              </Link>
+            ) : undefined}
+          />
+        ) : (
+          <EmptyState
+            title="Er zijn nu geen passende aanvragen beschikbaar."
+            description="Je profiel is actief. Aanbod hangt af van dienst, regio, beschikbaarheid, capaciteit en bestaande distributieregels. Er wordt geen volume gegarandeerd."
+          />
+        )
       )}
       <p className="text-sm text-muted-foreground">Niet elke aanvraag leidt tot een opdracht. Contactgegevens blijven verborgen totdat de bestaande aankoop- of toewijzingsvoorwaarden zijn vervuld.</p>
     </div>
