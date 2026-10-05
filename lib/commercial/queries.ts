@@ -3,7 +3,8 @@ import "server-only";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getLeadMarketState } from "@/lib/commercial/market";
-import { canProfessionalViewLeadContact, summarizeLeadDescription } from "@/lib/commercial/privacy";
+import { canProfessionalViewLeadContact, getSafeLeadPreview, getSafeIntakeAnswers } from "@/lib/commercial/privacy";
+import { getMatchExplanation } from "@/lib/commercial/presentation";
 import { resolveLeadPrice } from "@/lib/commercial/pricing";
 import { getProfessionalLeadDetail } from "@/lib/leads/queries";
 import type {
@@ -64,10 +65,14 @@ export interface ProfessionalLeadMarketListItem {
   serviceName: string;
   serviceSlug: string;
   city: string | null;
-  postalCodePrefix: string;
+  postalCodePrefix: string | null;
   urgency: string;
   leadScore: number | null;
   summary: string;
+  planning: string;
+  hasDescription: boolean;
+  imageCount: number;
+  matchExplanation: string[];
   commercialType: LeadCommercialType;
   priceCredits: number;
   salesStatus: LeadSalesStatus;
@@ -98,6 +103,7 @@ export interface ProfessionalLeadMarketDetail {
     currentBalance: number;
     balanceAfterPurchase: number;
     isPurchased: boolean;
+    paidCredits: number | null;
   };
   preview: {
     leadId: string;
@@ -105,10 +111,15 @@ export interface ProfessionalLeadMarketDetail {
     serviceName: string;
     serviceSlug: string;
     city: string | null;
-    postalCodePrefix: string;
+    postalCodePrefix: string | null;
     urgency: string;
     leadScore: number | null;
     summary: string;
+    planning: string;
+    hasDescription: boolean;
+    imageCount: number;
+    matchExplanation: string[];
+    intakeAnswers: Array<{ question: string; answer: string }>;
     createdAt: string;
   };
   assignment: {
@@ -270,7 +281,7 @@ export async function getProfessionalLeadMarketplace(professionalId: string) {
   const supabase = createAdminSupabaseClient();
   const rules = await getActivePricingRules();
   const [{ data: matchRows, error: matchError }, { data: assignmentRows, error: assignmentError }, { data: purchaseRows, error: purchaseError }, { data: candidateRows, error: candidateError }] = await Promise.all([
-    supabase.from("lead_matches").select("lead_id").eq("professional_id", professionalId),
+    supabase.from("lead_matches").select("lead_id, reasons").eq("professional_id", professionalId),
     supabase.from("lead_assignments").select("id, lead_id, status, lead_purchase_id").eq("professional_id", professionalId),
     supabase.from("lead_purchases").select("id, lead_id, status, purchased_at").eq("professional_id", professionalId),
     supabase.from("lead_distribution_candidates").select("id, lead_id, status, offer_expires_at, created_at").eq("professional_id", professionalId).order("created_at", { ascending: false }),
@@ -293,7 +304,7 @@ export async function getProfessionalLeadMarketplace(professionalId: string) {
 
   const { data: leadRows, error: leadError } = await supabase
     .from("leads")
-    .select("id, public_reference, description, urgency, lead_score, city, postal_code, service_id, subservice_slug, created_at, commercial_type, price_credits, max_buyers, buyers_count, sales_status, service:services(name, slug)")
+    .select("id, public_reference, description, preferred_timing, urgency, lead_score, postal_code, service_id, subservice_slug, created_at, commercial_type, price_credits, max_buyers, buyers_count, sales_status, service:services(name, slug), lead_images(id)")
     .in("id", leadIds)
     .order("created_at", { ascending: false });
 
@@ -303,7 +314,11 @@ export async function getProfessionalLeadMarketplace(professionalId: string) {
 
   const assignmentMap = new Map(((assignmentRows ?? []) as Array<Record<string, unknown>>).map((row) => [String(row.lead_id), row]));
   const purchaseMap = new Map(((purchaseRows ?? []) as Array<Record<string, unknown>>).map((row) => [String(row.lead_id), row]));
-  const candidateMap = new Map(((candidateRows ?? []) as Array<Record<string, unknown>>).map((row) => [String(row.lead_id), row]));
+  const candidateMap = new Map<string, Record<string, unknown>>();
+  for (const row of (candidateRows ?? []) as Array<Record<string, unknown>>) {
+    if (!candidateMap.has(String(row.lead_id))) candidateMap.set(String(row.lead_id), row);
+  }
+  const matchMap = new Map(((matchRows ?? []) as Array<Record<string, unknown>>).map((row) => [String(row.lead_id), row]));
 
   return ((leadRows ?? []) as Array<Record<string, unknown>>).map((row) => {
     const service = firstOf(row.service as Pick<Service, "name" | "slug"> | Array<Pick<Service, "name" | "slug">>);
@@ -339,11 +354,11 @@ export async function getProfessionalLeadMarketplace(professionalId: string) {
       publicReference: String(row.public_reference),
       serviceName: service?.name ?? "Onbekend",
       serviceSlug: service?.slug ?? "onbekend",
-      city: (row.city as string | null) ?? null,
-      postalCodePrefix: String(row.postal_code).slice(0, 4),
+      city: null,
+      ...getSafeLeadPreview({ description: row.description, postalCode: row.postal_code, preferredTiming: row.preferred_timing, images: row.lead_images }),
+      matchExplanation: getMatchExplanation(matchMap.get(String(row.id))?.reasons),
       urgency: String(row.urgency),
       leadScore: typeof row.lead_score === "number" ? row.lead_score : row.lead_score === null ? null : Number(row.lead_score),
-      summary: summarizeLeadDescription(String(row.description)),
       commercialType: row.commercial_type as LeadCommercialType,
       priceCredits: resolvedPrice.priceCredits,
       salesStatus: row.sales_status as LeadSalesStatus,
@@ -375,11 +390,11 @@ export async function getProfessionalLeadMarketDetail(leadId: string, profession
   const [{ data: leadRow, error: leadError }, { data: assignment }, { data: purchase }, { data: wallet }, { data: offer }] = await Promise.all([
     supabase
       .from("leads")
-      .select("id, public_reference, description, urgency, lead_score, city, postal_code, service_id, subservice_slug, created_at, commercial_type, price_credits, max_buyers, buyers_count, sales_status, service:services(name, slug)")
+      .select("id, public_reference, description, preferred_timing, urgency, lead_score, postal_code, service_id, subservice_slug, created_at, commercial_type, price_credits, max_buyers, buyers_count, sales_status, service:services(name, slug), lead_images(id), lead_answers(answer_text, answer_json, question:service_questions(question, type, service_question_options(label, value)))")
       .eq("id", leadId)
       .maybeSingle(),
     supabase.from("lead_assignments").select("id, status, lead_purchase_id").eq("lead_id", leadId).eq("professional_id", professionalId).maybeSingle(),
-    supabase.from("lead_purchases").select("id, status, purchased_at").eq("lead_id", leadId).eq("professional_id", professionalId).maybeSingle(),
+    supabase.from("lead_purchases").select("id, status, price_credits, purchased_at").eq("lead_id", leadId).eq("professional_id", professionalId).maybeSingle(),
     supabase.from("professional_wallets").select("cached_balance").eq("professional_id", professionalId).maybeSingle(),
     supabase.from("lead_distribution_candidates").select("id, status, offered_at, offer_expires_at, viewed_at").eq("lead_id", leadId).eq("professional_id", professionalId).order("created_at", { ascending: false }).limit(1).maybeSingle(),
   ]);
@@ -392,7 +407,8 @@ export async function getProfessionalLeadMarketDetail(leadId: string, profession
     return null;
   }
 
-  const { data: match } = await supabase.from("lead_matches").select("id").eq("lead_id", leadId).eq("professional_id", professionalId).maybeSingle();
+  const { data: match, error: matchError } = await supabase.from("lead_matches").select("id, reasons").eq("lead_id", leadId).eq("professional_id", professionalId).maybeSingle();
+  if (matchError) throw new Error("Matchgegevens konden niet worden geladen.");
   if (!match && !assignment && !purchase && !offer) {
     return null;
   }
@@ -442,17 +458,19 @@ export async function getProfessionalLeadMarketDetail(leadId: string, profession
       currentBalance: wallet?.cached_balance ?? 0,
       balanceAfterPurchase: (wallet?.cached_balance ?? 0) - resolvedPrice.priceCredits,
       isPurchased: purchase?.status === "purchased",
+      paidCredits: purchase?.status === "purchased" ? toNumber(purchase.price_credits) : null,
     },
     preview: {
       leadId: String(leadRow.id),
       publicReference: String(leadRow.public_reference),
       serviceName: service?.name ?? "Onbekend",
       serviceSlug: service?.slug ?? "onbekend",
-      city: (leadRow.city as string | null) ?? null,
-      postalCodePrefix: String(leadRow.postal_code).slice(0, 4),
+      city: null,
+      ...getSafeLeadPreview({ description: leadRow.description, postalCode: leadRow.postal_code, preferredTiming: leadRow.preferred_timing, images: leadRow.lead_images }),
+      matchExplanation: getMatchExplanation(match?.reasons),
+      intakeAnswers: getSafeIntakeAnswers(leadRow.lead_answers),
       urgency: String(leadRow.urgency),
       leadScore: typeof leadRow.lead_score === "number" ? leadRow.lead_score : leadRow.lead_score === null ? null : Number(leadRow.lead_score),
-      summary: summarizeLeadDescription(String(leadRow.description), 260),
       createdAt: String(leadRow.created_at),
     },
     assignment: {

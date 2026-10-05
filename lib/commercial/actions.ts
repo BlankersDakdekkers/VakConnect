@@ -43,6 +43,9 @@ export async function purchaseLeadAction(formData: FormData) {
   });
 
   if (error) {
+    revalidatePath("/vakman/aanvragen");
+    revalidatePath(`/vakman/aanvragen/${payload.data.leadId}`);
+    revalidatePath("/vakman/credits");
     const message = error.message.includes("INSUFFICIENT_BALANCE")
       ? "Onvoldoende credits. Credits kopen is op dit moment niet beschikbaar."
         : error.message.includes("IDEMPOTENCY_KEY_CONFLICT")

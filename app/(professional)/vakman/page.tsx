@@ -13,7 +13,8 @@ import { getOwnProfessionalDetail } from "@/lib/professionals/queries";
 import { professionalAvailabilityStatusLabels, professionalOnboardingStatusLabels, professionalVerificationStatusLabels } from "@/lib/professionals/labels";
 import { getProfessionalNotifications } from "@/lib/notifications/queries";
 
-function notificationHref(eventType: string) {
+function notificationHref(eventType: string, leadId: string | null) {
+  if (eventType.startsWith("lead_") && leadId) return `/vakman/aanvragen/${leadId}`;
   if (eventType.startsWith("lead_offer") || eventType === "lead_assignment_created") return "/vakman/aanvragen";
   if (eventType.startsWith("document")) return "/vakman/onboarding?step=documents";
   if (eventType === "changes_requested" || eventType.startsWith("verification")) return "/vakman/onboarding?step=review";
@@ -108,7 +109,7 @@ export default async function ProfessionalDashboardPage() {
                     <p className="font-medium">{title} <span className="sr-only">(ongelezen)</span></p>
                     <p className="text-sm text-muted-foreground">{description}</p>
                   </div>
-                  <Link href={notificationHref(notification.event_type)} className="shrink-0 text-sm font-medium text-primary underline underline-offset-4">Bekijk actie</Link>
+                  <Link href={notificationHref(notification.event_type, notification.lead_id)} className="shrink-0 text-sm font-medium text-primary underline underline-offset-4">Bekijk actie</Link>
                 </li>
               );
             })}
