@@ -152,6 +152,15 @@ export interface ProfessionalLeadDetail {
   acceptedAt: string | null;
   rejectedAt: string | null;
   lossReason: string | null;
+  qualityUpdatedAt: string | null;
+  reachability: string | null;
+  appointmentStatus: string | null;
+  mismatchReason: string | null;
+  feedbackNote: string | null;
+  contactedAt: string | null;
+  reachedAt: string | null;
+  appointmentScheduledAt: string | null;
+  outcomeAt: string | null;
   lead: AdminLeadDetail;
 }
 
@@ -637,6 +646,15 @@ export async function getProfessionalLeadDetail(leadId: string, professionalId: 
         status,
         progress_status,
         loss_reason,
+        quality_updated_at,
+        reachability,
+        appointment_status,
+        mismatch_reason,
+        feedback_note,
+        contacted_at,
+        reached_at,
+        appointment_scheduled_at,
+        outcome_at,
         assigned_at,
         viewed_at,
         accepted_at,
@@ -743,6 +761,15 @@ export async function getProfessionalLeadDetail(leadId: string, professionalId: 
     acceptedAt: (data.accepted_at as string | null) ?? null,
     rejectedAt: (data.rejected_at as string | null) ?? null,
     lossReason: (data.loss_reason as string | null) ?? null,
+    qualityUpdatedAt: (data.quality_updated_at as string | null) ?? null,
+    reachability: (data.reachability as string | null) ?? null,
+    appointmentStatus: (data.appointment_status as string | null) ?? null,
+    mismatchReason: (data.mismatch_reason as string | null) ?? null,
+    feedbackNote: (data.feedback_note as string | null) ?? null,
+    contactedAt: (data.contacted_at as string | null) ?? null,
+    reachedAt: (data.reached_at as string | null) ?? null,
+    appointmentScheduledAt: (data.appointment_scheduled_at as string | null) ?? null,
+    outcomeAt: (data.outcome_at as string | null) ?? null,
     lead: {
       id: String(lead.id),
       public_reference: String(lead.public_reference),

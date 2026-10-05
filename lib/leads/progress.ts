@@ -3,8 +3,8 @@ import type { LeadProgressStatus } from "../../types/database.ts";
 
 export const leadProgressTransitions: Record<LeadProgressStatus, LeadProgressStatus[]> = {
   new: ["contacted"],
-  contacted: ["appointment_scheduled"],
-  appointment_scheduled: ["quote_sent"],
+  contacted: ["appointment_scheduled", "lost"],
+  appointment_scheduled: ["quote_sent", "lost"],
   quote_sent: ["won", "lost"],
   won: [],
   lost: [],

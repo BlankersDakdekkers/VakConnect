@@ -8,12 +8,12 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import {
   assignmentCreationSchema,
   assignmentDecisionSchema,
-  assignmentProgressUpdateSchema,
   leadStatusUpdateSchema,
 } from "@/lib/validation/leads";
 import { addLeadActivity } from "@/lib/leads/activity";
 import { isProfessionalOwner } from "@/lib/auth/ownership";
-import { isValidLeadProgressTransition, normalizeLeadLossReason } from "@/lib/leads/progress";
+import { isValidLeadProgressTransition } from "@/lib/leads/progress";
+import { assignmentQualityUpdateSchema, assignmentRejectionFeedbackSchema } from "@/lib/leads/quality-taxonomy";
 
 function redirectWithMessage(path: string, key: "error" | "success", message: string): never {
   const search = new URLSearchParams({ [key]: message });
@@ -131,17 +131,28 @@ export async function respondToAssignmentAction(formData: FormData) {
   const supabase = await createServerSupabaseClient();
   const { data: assignment, error: assignmentError } = await supabase
     .from("lead_assignments")
-    .select("id, lead_id, professional_id")
+    .select("id, lead_id, professional_id, status, progress_status, quality_updated_at")
     .eq("lead_id", payload.data.leadId)
     .eq("professional_id", user.professional.id)
     .maybeSingle();
 
-  if (assignmentError || !assignment || !isProfessionalOwner(user.professional.id, assignment.professional_id)) {
+  if (assignmentError || !assignment || !isProfessionalOwner(user.professional.id, assignment.professional_id)
+    || !["pending", "viewed"].includes(assignment.status) || ["won", "lost"].includes(assignment.progress_status)) {
     redirectWithMessage(payload.data.redirectTo, "error", "Deze aanvraag is niet beschikbaar voor jouw account.");
   }
 
   const now = new Date().toISOString();
   const nextStatus = payload.data.decision;
+  const feedback = assignmentRejectionFeedbackSchema.safeParse({
+    mismatchReason: formData.get("mismatch_reason"),
+    feedbackNote: formData.get("feedback_note"),
+  });
+  const hasFeedback = Boolean(formData.get("mismatch_reason") || formData.get("feedback_note"));
+  const expectedUpdatedAt = formData.get("expected_quality_updated_at");
+  if (!feedback.success || (hasFeedback && (nextStatus !== "rejected"
+    || typeof expectedUpdatedAt !== "string" || !expectedUpdatedAt))) {
+    redirectWithMessage(payload.data.redirectTo, "error", "Kies een geldige reden en vernieuw de aanvraag voordat je feedback opslaat.");
+  }
   const { error } = await supabase
     .from("lead_assignments")
     .update({
@@ -149,19 +160,22 @@ export async function respondToAssignmentAction(formData: FormData) {
       accepted_at: nextStatus === "accepted" ? now : null,
       rejected_at: nextStatus === "rejected" ? now : null,
       viewed_at: now,
-      progress_status: "new",
-      progress_updated_at: nextStatus === "accepted" ? now : null,
-      loss_reason: null,
+      ...(hasFeedback ? {
+        mismatch_reason: feedback.data.mismatchReason,
+        feedback_note: feedback.data.feedbackNote,
+      } : {}),
     })
     .eq("id", assignment.id)
-    .eq("professional_id", user.professional.id);
+    .eq("professional_id", user.professional.id)
+    .eq("status", assignment.status)
+    .eq("quality_updated_at", hasFeedback ? expectedUpdatedAt as string : assignment.quality_updated_at)
+    .select("id")
+    .single();
 
   if (error) {
     redirectWithMessage(payload.data.redirectTo, "error", "De aanvraag kon niet worden bijgewerkt.");
   }
 
-  const admin = createAdminSupabaseClient();
-  await admin.from("leads").update({ status: nextStatus, updated_at: now }).eq("id", payload.data.leadId);
   await addLeadActivity({
     leadId: payload.data.leadId,
     professionalId: user.professional.id,
@@ -178,10 +192,15 @@ export async function respondToAssignmentAction(formData: FormData) {
 
 export async function updateLeadProgressAction(formData: FormData) {
   const user = await requireProfessionalUser();
-  const payload = assignmentProgressUpdateSchema.safeParse({
+  const payload = assignmentQualityUpdateSchema.safeParse({
     leadId: formData.get("lead_id"),
     progressStatus: formData.get("progress_status"),
     lossReason: formData.get("loss_reason"),
+    expectedUpdatedAt: formData.get("expected_quality_updated_at"),
+    reachability: formData.get("reachability"),
+    appointmentStatus: formData.get("appointment_status"),
+    mismatchReason: formData.get("mismatch_reason"),
+    feedbackNote: formData.get("feedback_note"),
     redirectTo: formData.get("redirect_to"),
   });
 
@@ -207,47 +226,21 @@ export async function updateLeadProgressAction(formData: FormData) {
     redirectWithMessage(payload.data.redirectTo, "error", `Ongeldige statuswijziging van ${fromStatus} naar ${toStatus}.`);
   }
 
-  const normalizedLossReason = toStatus === "lost" ? normalizeLeadLossReason(payload.data.lossReason) : null;
-  const now = new Date().toISOString();
-  const { error } = await supabase
-    .from("lead_assignments")
-    .update({
-      progress_status: toStatus,
-      progress_updated_at: now,
-      loss_reason: normalizedLossReason,
-    })
-    .eq("id", assignment.id)
-    .eq("professional_id", user.professional.id)
-    .eq("status", "accepted");
-
-  if (error) {
-    redirectWithMessage(payload.data.redirectTo, "error", "Status kon niet worden bijgewerkt.");
-  }
-
-  if (toStatus === "won" || toStatus === "lost") {
-    const admin = createAdminSupabaseClient();
-    await admin.from("leads").update({ status: toStatus, updated_at: now }).eq("id", payload.data.leadId);
-  }
-
-  await addLeadActivity({
-    leadId: payload.data.leadId,
-    professionalId: user.professional.id,
-    actorUserId: user.id,
-    activityType: "progress_updated",
-    fromStatus,
-    toStatus,
+  const { error } = await supabase.rpc("update_assignment_quality", {
+    p_assignment_id: assignment.id,
+    p_expected_updated_at: payload.data.expectedUpdatedAt,
+    p_progress_status: toStatus,
+    p_reachability: payload.data.reachability,
+    p_appointment_status: payload.data.appointmentStatus,
+    p_loss_reason: payload.data.lossReason,
+    p_mismatch_reason: payload.data.mismatchReason,
+    p_feedback_note: payload.data.feedbackNote,
   });
 
-  if (normalizedLossReason) {
-    await addLeadActivity({
-      leadId: payload.data.leadId,
-      professionalId: user.professional.id,
-      actorUserId: user.id,
-      activityType: "loss_reason_recorded",
-      fromStatus,
-      toStatus,
-      metadata: { reason: normalizedLossReason },
-    });
+  if (error) {
+    redirectWithMessage(payload.data.redirectTo, "error", error.message.includes("QUALITY_STALE_WRITE")
+      ? "Deze aanvraag is intussen gewijzigd. Vernieuw de pagina en probeer opnieuw."
+      : "Status kon niet worden bijgewerkt.");
   }
 
   revalidatePath("/vakman");
