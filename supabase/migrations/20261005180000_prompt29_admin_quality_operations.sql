@@ -10,16 +10,20 @@ create table public.lead_quality_reviews (
   updated_by uuid not null references auth.users(id),
   created_at timestamptz not null,
   updated_at timestamptz not null,
-  check ((status in ('resolved','dismissed')) = (resolution is not null))
+  resolved_at timestamptz,
+  check ((status in ('resolved','dismissed')) = (resolution is not null)),
+  check ((status in ('resolved','dismissed')) = (resolved_at is not null))
 );
 
 create table public.lead_quality_review_events (
   id uuid primary key default gen_random_uuid(),
   review_id uuid not null references public.lead_quality_reviews(id) on delete restrict,
   action text not null check (action in ('created','status_changed','reopened','note_added')),
-  from_status text,
-  to_status text not null,
-  resolution text,
+  from_status text check (from_status in ('open','in_review','resolved','dismissed')),
+  to_status text not null check (to_status in ('open','in_review','resolved','dismissed')),
+  resolution text check (resolution in ('valid_lead','incorrect_contact','duplicate','wrong_service',
+    'wrong_region','already_completed','refund_approved','refund_not_applicable',
+    'insufficient_evidence','data_issue','other')),
   body text check (body is null or char_length(btrim(body)) between 1 and 2000),
   actor_user_id uuid not null references auth.users(id),
   created_at timestamptz not null
@@ -49,13 +53,14 @@ revoke all on function public.guard_lead_quality_review_event() from public, ano
 create function public.admin_lead_quality_items(p_days integer default null, p_lead_id uuid default null)
 returns table (
   lead_id uuid, reference text, service_id uuid, service_name text, source text, type text,
-  created_at timestamptz, status text, review_id uuid, updated_at timestamptz, resolution text,
+  created_at timestamptz, status text, review_id uuid, updated_at timestamptz, resolution text, resolved_at timestamptz,
   priority text, signals jsonb, signal_count integer
 )
 language sql stable security definer set search_path = public, pg_temp as $$
   with scoped as (
     select l.* from public.leads l
-    where (p_days is null or l.created_at >= now() - make_interval(days => p_days))
+    where auth.role() = 'authenticated' and auth.uid() is not null and public.is_admin()
+      and (p_days is null or l.created_at >= now() - make_interval(days => p_days))
       and (p_lead_id is null or l.id = p_lead_id)
   ), a as (
     select la.* from public.lead_assignments la join scoped l on l.id = la.lead_id
@@ -68,6 +73,9 @@ language sql stable security definer set search_path = public, pg_temp as $$
       bool_or(mismatch_reason = 'already_completed' or loss_reason = 'already_completed') as already_completed,
       bool_or(mismatch_reason = 'wrong_service' or loss_reason = 'wrong_service') as wrong_service,
       bool_or(mismatch_reason = 'wrong_region' or loss_reason = 'wrong_region') as wrong_region,
+      bool_or(mismatch_reason = 'incorrect_information') as incorrect_information,
+      bool_or(mismatch_reason = 'profile_mismatch') as profile_mismatch,
+      bool_or(mismatch_reason = 'other') as other,
       bool_or(progress_status = 'lost') as lost,
       bool_or(progress_status = 'won') as won,
       bool_or(status = 'accepted' and progress_status not in ('won','lost') and quality_updated_at < now() - interval '14 days') as stale,
@@ -80,7 +88,8 @@ language sql stable security definer set search_path = public, pg_temp as $$
       union
       select lead_id, professional_id,
         case loss_reason when 'klant_niet_bereikbaar' then 'unreachable' else loss_reason end
-      from a where loss_reason in ('duplicate','already_completed','wrong_service','wrong_region','invalid_contact','klant_niet_bereikbaar')
+      from a where loss_reason in ('prijs','klant_niet_bereikbaar','klant_koos_andere_partij','klus_uitgesteld','buiten_scope','anders',
+        'duplicate','already_completed','wrong_service','wrong_region','invalid_contact')
       union
       select lead_id, professional_id,
         case when reachability in ('invalid_phone','invalid_email') then 'invalid_contact' else 'unreachable' end
@@ -95,6 +104,9 @@ language sql stable security definer set search_path = public, pg_temp as $$
       count(*) filter (where already_completed)::integer as already_completed,
       count(*) filter (where wrong_service)::integer as wrong_service,
       count(*) filter (where wrong_region)::integer as wrong_region,
+      count(*) filter (where incorrect_information)::integer as incorrect_information,
+      count(*) filter (where profile_mismatch)::integer as profile_mismatch,
+      count(*) filter (where other)::integer as other,
       case when count(*) filter (where lost) >= 3 then count(*) filter (where lost)::integer else 0 end as negative_outcomes,
       count(*) filter (where stale)::integer as stale_open,
       count(*) filter (where data_issue)::integer as data_issue
@@ -134,12 +146,14 @@ language sql stable security definer set search_path = public, pg_temp as $$
         when lower(btrim(l.utm_source)) in ('referral','partner') then 'Verwijzing'
         else 'Onbekend / overig' end as source,
       l.commercial_type::text as type, l.created_at,
-      coalesce(r.status,'open') as status, r.id as review_id, r.updated_at, r.resolution,
+      coalesce(r.status,'open') as status, r.id as review_id, r.updated_at, r.resolution, r.resolved_at,
       jsonb_build_object(
         'mismatch',coalesce(af.mismatch,0),'invalid_contact',coalesce(af.invalid_contact,0),
         'unreachable',coalesce(af.unreachable,0),'duplicate',coalesce(af.duplicate,0),
         'already_completed',coalesce(af.already_completed,0),'wrong_service',coalesce(af.wrong_service,0),
         'wrong_region',coalesce(af.wrong_region,0),'refund',coalesce(pf.refund,0),
+        'incorrect_information',coalesce(af.incorrect_information,0),
+        'profile_mismatch',coalesce(af.profile_mismatch,0),'other',coalesce(af.other,0),
         'correction',coalesce(cf.correction,0),
         'repeated_complaint',coalesce((select max(n)::integer from complaints c where c.lead_id = l.id and n >= 2),0),
         'negative_outcomes',coalesce(af.negative_outcomes,0),'stale_open',coalesce(af.stale_open,0),
@@ -154,11 +168,12 @@ language sql stable security definer set search_path = public, pg_temp as $$
     select raw.*, coalesce((select jsonb_object_agg(key,value) from jsonb_each(all_signals) where value::integer > 0),'{}'::jsonb) as signals
     from raw
   )
-  select lead_id, reference, service_id, service_name, source, type, created_at, status, review_id, updated_at, resolution,
+  select lead_id, reference, service_id, service_name, source, type, created_at, status, review_id, updated_at, resolution, resolved_at,
     case when (all_signals->>'invalid_contact')::integer >= 2
       or (all_signals->>'financial_conflict')::integer > 0
       or ((all_signals->>'refund')::integer > 0 and (all_signals->>'duplicate')::integer > 0 and (all_signals->>'unreachable')::integer > 0) then 'high'
       when signals - 'refund' - 'correction' <> '{}'::jsonb then 'medium' else 'low' end,
+    -- Indicator counts overlap; this is not a count of independent reporters.
     signals, (select coalesce(sum(value::integer),0)::integer from jsonb_each(signals))
   from shaped where signals <> '{}'::jsonb or review_id is not null;
 $$;
@@ -176,9 +191,9 @@ begin
   end if;
   if p_days is null or p_days < 1 or p_days > 365 or p_page is null or p_page < 1 or p_page > 10000
     or p_status is null or p_status not in ('','all','open','in_review','resolved','dismissed')
-    or p_sort is null or p_sort not in ('priority','newest','oldest')
+    or p_sort is null or p_sort not in ('priority','newest','oldest','most_signals','refund')
     or p_signal is null or p_signal not in ('','mismatch','invalid_contact','unreachable','duplicate','already_completed',
-      'wrong_service','wrong_region','refund','correction','repeated_complaint','negative_outcomes','stale_open','conflicting_feedback','financial_conflict','data_issue')
+      'wrong_service','wrong_region','incorrect_information','profile_mismatch','other','refund','correction','repeated_complaint','negative_outcomes','stale_open','conflicting_feedback','financial_conflict','data_issue')
     or p_source is null or p_source not in ('','Zoekmachines','Social','E-mail','Direct','Verwijzing','Onbekend / overig')
     or p_type is null or p_type not in ('','shared','exclusive') or p_refund is null
     or p_search is null or char_length(p_search) > 100 then
@@ -199,7 +214,9 @@ begin
   ), paged as (
     select * from status_filtered order by
       case when p_sort = 'priority' then case priority when 'high' then 0 when 'medium' then 1 else 2 end end,
-      case when p_sort in ('priority','newest') then created_at end desc,
+      case when p_sort = 'most_signals' then signal_count end desc,
+      case when p_sort = 'refund' then coalesce((signals->>'refund')::integer,0) end desc,
+      case when p_sort in ('priority','newest','most_signals','refund') then created_at end desc,
       case when p_sort = 'oldest' then created_at end asc, lead_id
     limit 25 offset (p_page - 1) * 25
   )
@@ -238,6 +255,22 @@ begin
       join public.lead_quality_reviews r on r.id = e.review_id where r.lead_id = p_lead_id limit 1001) x) > 1000 then
     raise exception 'QUALITY_REVIEW_DETAIL_TOO_LARGE';
   end if;
+  if (select count(*) from (
+    select 1 from public.wallet_transactions w where w.lead_id = p_lead_id
+      or exists (select 1 from public.lead_purchases p where p.lead_id = p_lead_id
+        and w.id in (p.wallet_transaction_id,p.refund_transaction_id)) limit 501
+  ) x) > 500 then raise exception 'QUALITY_REVIEW_DETAIL_TOO_LARGE'; end if;
+  if (select count(*) from (
+    select 1 from public.commercial_audit_log c where
+      (c.entity_type = 'lead' and c.entity_id = p_lead_id)
+      or (c.entity_type = 'lead_purchase' and exists (
+        select 1 from public.lead_purchases p where p.lead_id = p_lead_id and p.id = c.entity_id))
+      or (c.entity_type = 'wallet_transaction' and exists (
+        select 1 from public.wallet_transactions w where w.id = c.entity_id and (w.lead_id = p_lead_id
+          or exists (select 1 from public.lead_purchases p where p.lead_id = p_lead_id
+            and w.id in (p.wallet_transaction_id,p.refund_transaction_id)))))
+    limit 1001
+  ) x) > 1000 then raise exception 'QUALITY_REVIEW_DETAIL_TOO_LARGE'; end if;
   select to_jsonb(i) into item from public.admin_lead_quality_items(null,p_lead_id) i;
   if item is null then return null; end if;
   with assignments as materialized (
@@ -253,6 +286,17 @@ begin
     select id,professional_id,amount,created_at,type from public.wallet_transactions where lead_id = p_lead_id and type = 'correction'
   ), events as materialized (
     select e.* from public.lead_quality_review_events e join public.lead_quality_reviews r on r.id = e.review_id where r.lead_id = p_lead_id
+  ), ledger as materialized (
+    select w.id,w.professional_id,w.lead_id,w.lead_assignment_id,w.type,w.amount,w.balance_after,w.created_at,w.created_by_admin_id
+    from public.wallet_transactions w where w.lead_id = p_lead_id
+      or exists (select 1 from public.lead_purchases p where p.lead_id = p_lead_id
+        and w.id in (p.wallet_transaction_id,p.refund_transaction_id))
+  ), financial_audit as materialized (
+    select c.id,c.entity_type,c.entity_id,c.action,c.actor_user_id,c.actor_professional_id,c.created_at
+    from public.commercial_audit_log c where
+      (c.entity_type = 'lead' and c.entity_id = p_lead_id)
+      or (c.entity_type = 'lead_purchase' and c.entity_id in (select id from purchases))
+      or (c.entity_type = 'wallet_transaction' and c.entity_id in (select id from ledger))
   ), timeline as (
     select item->>'created_at' as at,'Lead aangemaakt' as label,null::uuid as assignment_id,null::uuid as purchase_id
     union all
@@ -264,6 +308,8 @@ begin
     union all select refunded_at::text,'Terugbetaald',null::uuid,id from purchases where refunded_at is not null
     union all select created_at::text,'Walletcorrectie',null::uuid,null::uuid from corrections
     union all select created_at::text,'Review: ' || action,null::uuid,null::uuid from events
+    union all select created_at::text,'Financiële audit: ' || action,null::uuid,
+      case when entity_type = 'lead_purchase' then entity_id end from financial_audit
   )
   select jsonb_build_object(
     'item',item,'lead',jsonb_build_object('created_at',item->'created_at','reference',item->'reference',
@@ -271,6 +317,8 @@ begin
     'assignments',coalesce((select jsonb_agg(to_jsonb(a) order by assigned_at,id) from assignments a),'[]'::jsonb),
     'purchases',coalesce((select jsonb_agg(to_jsonb(p) order by purchased_at,id) from purchases p),'[]'::jsonb),
     'corrections',coalesce((select jsonb_agg(to_jsonb(c) order by created_at,id) from corrections c),'[]'::jsonb),
+    'ledger',coalesce((select jsonb_agg(to_jsonb(l) order by created_at,id) from ledger l),'[]'::jsonb),
+    'financial_audit',coalesce((select jsonb_agg(to_jsonb(a) order by created_at,id) from financial_audit a),'[]'::jsonb),
     'notes',coalesce((select jsonb_agg(jsonb_build_object('id',id,'body',body,'actor_user_id',actor_user_id,'created_at',created_at)
       order by created_at,id) from events where body is not null),'[]'::jsonb),
     'audit',coalesce((select jsonb_agg(jsonb_build_object('id',id,'action',action,'from_status',from_status,'to_status',to_status,
@@ -308,8 +356,9 @@ begin
     end if;
     event_time := clock_timestamp();
     begin
-      insert into public.lead_quality_reviews(lead_id,status,resolution,created_by,updated_by,created_at,updated_at)
-        values (p_lead_id,p_status,p_resolution,actor,actor,event_time,event_time) returning id into existing.id;
+      insert into public.lead_quality_reviews(lead_id,status,resolution,created_by,updated_by,created_at,updated_at,resolved_at)
+        values (p_lead_id,p_status,p_resolution,actor,actor,event_time,event_time,
+          case when p_status in ('resolved','dismissed') then event_time end) returning id into existing.id;
     exception when unique_violation then raise exception 'QUALITY_REVIEW_STALE_WRITE';
     end;
     action := 'created';
@@ -321,7 +370,10 @@ begin
     event_time := greatest(clock_timestamp(),existing.updated_at + interval '1 microsecond');
     action := case when existing.status in ('resolved','dismissed') and p_status in ('open','in_review') then 'reopened'
       when existing.status <> p_status then 'status_changed' else 'note_added' end;
-    update public.lead_quality_reviews set status = p_status,resolution = p_resolution,updated_by = actor,updated_at = event_time
+    update public.lead_quality_reviews set status = p_status,resolution = p_resolution,updated_by = actor,updated_at = event_time,
+      resolved_at = case when p_status not in ('resolved','dismissed') then null
+        when existing.status is distinct from p_status or existing.resolution is distinct from p_resolution then event_time
+        else existing.resolved_at end
       where id = existing.id;
   end if;
   insert into public.lead_quality_review_events(review_id,action,from_status,to_status,resolution,body,actor_user_id,created_at)

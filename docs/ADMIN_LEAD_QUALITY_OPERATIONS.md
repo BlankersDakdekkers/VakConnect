@@ -63,8 +63,11 @@ Signals use existing assignment, purchase and lead-linked ledger data:
   purchase with a won outcome, or a terminal outcome without a recorded
   outcome timestamp. Missing historical evidence is not backfilled.
 
-Counts summarize signals; they are not a risk score or a percentage.
-Independent-professional counts are not independent verification of truth.
+Counts summarize signal indicators; they are not a risk score or a percentage.
+Indicators overlap: generic mismatch, a specific reason and a repeated-complaint
+cluster can describe the same feedback. Their sum is not the number of unique
+complaints or people. Independent-professional counts are not independent
+verification of truth.
 
 ## Explainable priority
 
@@ -141,8 +144,10 @@ deliberately adds no assignment/lead-state repair backdoor.
 
 ## Privacy, RLS and audit
 
-One targeted migration adds references-only review tracking and append-only
-operational history/notes. No lead-data copy or guessed historical backfill.
+One targeted migration adds `lead_quality_reviews` (one reference per lead,
+status, resolution, actor/time fields including `resolved_at`) and
+`lead_quality_review_events` (append-only operational history and notes).
+No lead-data copy or guessed historical backfill.
 Reads require admin authorization in both the server layer and DB. New
 tables are RLS-protected, and authenticated clients cannot directly mutate
 review rows, actors, notes or audit. Professionals, consumers and anonymous
@@ -155,6 +160,8 @@ from stale writes. Creation races cannot create a second case. Notes are
 limited to 2,000 characters and cannot be silently edited or deleted. Review
 actions and their audit entry commit together.
 
+Detail also exposes existing financial audit identifiers, actions, actors and
+timestamps without copying free descriptions or raw audit metadata.
 Operational audit is separate from public analytics; neither notes nor
 sensitive details are sent to analytics. Structured timestamps form the
 timeline; null remains unknown. Source groups use an allowlist, not raw UTM
@@ -167,6 +174,9 @@ Aggregation, filtering, counts and pagination run server-side in SQL, not
 one query per list row. Queue pages contain 25 items with a deterministic
 lead-ID tiebreaker. Detail results are bounded. Dynamic server rendering and
 post-action revalidation avoid long-lived application caches.
+The unique lead reference on reviews supports case lookup/deduplication;
+the event index `(review_id, created_at, id)` supports ordered notes/audit
+retrieval for a single case. No materialized view or speculative indexing.
 
 The existing Prompt 28 descriptive trends retain the minimum sample n ≥ 10
 for percentages. Smaller samples show counts, and neither source comparisons

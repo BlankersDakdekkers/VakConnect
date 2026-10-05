@@ -24,6 +24,8 @@ export type ReviewDetail = {
   assignments: ReviewAssignment[];
   purchases: Array<{ id: string; professional_id: string; status: string; price_credits: number; purchased_at: string | null; refunded_at: string | null }>;
   corrections: Array<{ id: string; professional_id: string; amount: number; created_at: string; type: string }>;
+  ledger: Array<{ id: string; professional_id: string; lead_id: string | null; lead_assignment_id: string | null; type: string; amount: number; balance_after: number; created_at: string; created_by_admin_id: string | null }>;
+  financial_audit: Array<{ id: string; entity_type: string; entity_id: string; action: string; actor_user_id: string | null; actor_professional_id: string | null; created_at: string }>;
   notes: Array<{ id: string; body: string; actor_user_id: string; created_at: string }>;
   audit: Array<{ id: string; action: string; from_status: string | null; to_status: string; resolution: string | null; actor_user_id: string; created_at: string }>;
   timeline: Array<{ at: string; label: string; assignment_id?: string; purchase_id?: string }>;

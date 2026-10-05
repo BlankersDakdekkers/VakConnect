@@ -316,6 +316,8 @@ export async function refundLeadPurchaseAction(formData: FormData) {
   revalidatePath("/admin");
   revalidatePath("/admin/credits");
   revalidatePath(payload.data.redirectTo);
+  revalidatePath("/admin/leadkwaliteit");
+  revalidatePath("/admin/leadkwaliteit/review", "layout");
   revalidatePath("/vakman/aanvragen");
   revalidatePath("/vakman/credits");
   redirectWithMessage(payload.data.redirectTo, "success", "Refund als nieuwe ledgertransactie verwerkt.");

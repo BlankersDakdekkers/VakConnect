@@ -3,11 +3,12 @@ import { z } from "zod";
 export const reviewStatuses = ["open", "in_review", "resolved", "dismissed"] as const;
 export const reviewStatusLabels = { open: "Open", in_review: "In onderzoek", resolved: "Afgehandeld", dismissed: "Gesloten zonder vervolg" };
 export const reviewSignals = [
-  "wrong_service", "wrong_region", "incorrect_information", "already_completed", "duplicate", "unreachable",
+  "mismatch", "wrong_service", "wrong_region", "incorrect_information", "already_completed", "duplicate", "unreachable",
   "invalid_contact", "profile_mismatch", "other", "refund", "correction", "repeated_complaint",
   "negative_outcomes", "stale_open", "conflicting_feedback", "financial_conflict", "data_issue",
 ] as const;
 export const reviewSignalLabels: Record<string, string> = {
+  mismatch: "Mismatch gemeld",
   wrong_service: "Verkeerde dienst", wrong_region: "Verkeerde regio", incorrect_information: "Onjuiste informatie",
   already_completed: "Al uitgevoerd", duplicate: "Dubbel", unreachable: "Niet bereikbaar", invalid_contact: "Ongeldig contact",
   profile_mismatch: "Profielmismatch", other: "Overige mismatch", refund: "Refund", correction: "Walletcorrectie",
@@ -64,7 +65,7 @@ export function parseReviewFilters(input: Record<string, string | string[] | und
     source: choice("source", ["", ...reviewSources], ""), type: choice("type", ["", "shared", "exclusive"], ""),
     refund: single("refund") === "true",
     search: reviewUuidSchema.safeParse(search).success || /^VC-[A-Z0-9]{1,32}$/i.test(search) ? search : "",
-    sort: choice("sort", reviewSorts, "priority"), page: /^[1-9]\d{0,5}$/.test(page) ? Math.min(Number(page), 100000) : 1,
+    sort: choice("sort", reviewSorts, "priority"), page: /^[1-9]\d{0,5}$/.test(page) ? Math.min(Number(page), 10000) : 1,
   };
 }
 export function reviewPageHref(filters: ReviewFilters, page: number) {
@@ -73,5 +74,25 @@ export function reviewPageHref(filters: ReviewFilters, page: number) {
 export function reviewErrorMessage(message: string) {
   if (message.includes("QUALITY_REVIEW_STALE_WRITE")) return "Deze review is intussen gewijzigd. Vernieuw de pagina en controleer de nieuwste notities voordat je opnieuw opslaat.";
   if (message.includes("QUALITY_REVIEW_NOT_FOUND") || message.includes("LEAD_NOT_FOUND")) return "Deze lead is niet beschikbaar. Ga terug naar de werklijst.";
+  if (message.includes("QUALITY_REVIEW_NO_SIGNALS")) return "Deze lead heeft geen actuele onderzoekssignalen meer. Vernieuw het dossier of ga terug naar de werklijst.";
   return "De review kon niet worden opgeslagen. Controleer je invoer en probeer opnieuw.";
+}
+export function reviewPriorityExplanation(signals: Record<string, number>, priority: string) {
+  if (priority === "high") {
+    const reasons = [
+      signals.invalid_contact >= 2 ? "ongeldig contact minstens tweemaal gemeld" : "",
+      signals.financial_conflict > 0 ? "een financieel conflict" : "",
+      signals.refund > 0 && signals.duplicate > 0 && signals.unreachable > 0 ? "de combinatie refund, dubbele aanvraag en onbereikbaarheid" : "",
+    ].filter(Boolean);
+    return `Hoog door ${reasons.join("; ") || "een vastgelegde hoog-prioriteitsregel"}.`;
+  }
+  return priority === "medium"
+    ? "Middel: er is minstens één niet-financieel onderzoekssignaal, zonder hoog-prioriteitsregel."
+    : "Laag: uitsluitend financiële context (refund / correctie) of een bestaande review zonder actuele signalen.";
+}
+export function lastReviewResolutionAt(events: Array<{ action: string; from_status: string | null; to_status: string; created_at: string }>): string | null {
+  const resolutions = events.filter((event) => ["resolved", "dismissed"].includes(event.to_status)
+    && (event.action === "created" || event.from_status !== event.to_status)
+    && Number.isFinite(Date.parse(event.created_at)));
+  return resolutions.sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at))[0]?.created_at ?? null;
 }
