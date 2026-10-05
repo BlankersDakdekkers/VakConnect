@@ -26,6 +26,7 @@ export default async function QualityReviewDetailPage({ params, searchParams }: 
         <div><dt className="text-muted-foreground">Aangevraagde dienst</dt><dd>{detail.lead.service_name || "Onbekend"}</dd></div>
         <div><dt className="text-muted-foreground">Reviewstatus</dt><dd>{reviewStatusLabels[detail.item.status]}</dd></div>
         <div><dt className="text-muted-foreground">Aangemaakt</dt><dd>{reviewTimestamp(detail.lead.created_at)}</dd></div>
+        <div><dt className="text-muted-foreground">Huidige afhandeling vastgelegd op</dt><dd>{reviewTimestamp(detail.item.resolved_at)}</dd><p className="mt-1 text-xs text-muted-foreground">Opgeslagen bij de huidige afhandeling; latere notities veranderen dit niet. Bij heropenen vervalt de huidige afhandeling, maar de auditgeschiedenis blijft behouden.</p></div>
         <div><dt className="text-muted-foreground">Laatste administratieve afhandeling (audit)</dt><dd>{reviewTimestamp(lastReviewResolutionAt(detail.audit))}</dd><p className="mt-1 text-xs text-muted-foreground">Afgeleid uit de laatste vastgelegde overgang naar afgehandeld of gesloten. Latere notities verschuiven dit tijdstip niet; heropenen wist de historie niet.</p></div>
         <div><dt className="text-muted-foreground">Bron / type</dt><dd>{detail.lead.source} · {detail.lead.type === "exclusive" ? "Exclusief" : detail.lead.type === "shared" ? "Gedeeld" : "Onbekend"}</dd></div>
         <div><dt className="text-muted-foreground">Regio</dt><dd>Onbekend: onvoldoende betrouwbare locatieherkomst.</dd></div>

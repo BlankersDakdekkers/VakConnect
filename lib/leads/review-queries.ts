@@ -6,7 +6,7 @@ import { parseReviewFilters, reviewUuidSchema, type ReviewFilters } from "@/lib/
 export type ReviewItem = {
   lead_id: string; reference: string; service_id: string; service_name: string; source: string; type: string;
   created_at: string; status: "open" | "in_review" | "resolved" | "dismissed"; review_id: string | null;
-  updated_at: string | null; priority: "high" | "medium" | "low"; signals: Record<string, number>; signal_count: number;
+  updated_at: string | null; resolved_at: string | null; priority: "high" | "medium" | "low"; signals: Record<string, number>; signal_count: number;
 };
 export type ReviewQueue = {
   items: ReviewItem[]; total: number; page: number; pages: number;

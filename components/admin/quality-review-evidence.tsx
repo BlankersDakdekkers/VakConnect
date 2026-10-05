@@ -29,6 +29,7 @@ export function QualityReviewEvidence({ detail }: { detail: ReviewDetail }) {
       {!detail.assignments.length && <p className="mt-3 text-sm">Geen toewijzingen vastgelegd.</p>}
       <ul className="mt-4 space-y-3">{detail.assignments.map((assignment) => <li className="min-w-0 rounded-xl border p-3 text-sm" key={assignment.id}>
         <h3 className="break-all font-medium">Vakman-ID: {assignment.professional_id}</h3>
+        <p className="mt-1 break-all text-xs text-muted-foreground">Toewijzing-ID: {assignment.id}</p>
         <p className="mt-2">Toewijzing: {label(assignmentLabels, assignment.status)} · Uitkomst / voortgang: {label(progressLabels, assignment.progress_status)}</p>
         <dl className="mt-3 grid gap-3 sm:grid-cols-2">
           {[["Bereikbaarheid", label(leadReachabilityLabels, assignment.reachability)], ["Afspraakstatus", label(leadAppointmentStatusLabels, assignment.appointment_status)], ["Mismatchreden", label(leadMismatchReasonLabels, assignment.mismatch_reason)], ["Verliesreden", label(leadQualityLossReasonLabels, assignment.loss_reason)]].map(([key, value]) => <div key={key}><dt className="text-muted-foreground">{key}</dt><dd>{value}</dd></div>)}
@@ -40,7 +41,7 @@ export function QualityReviewEvidence({ detail }: { detail: ReviewDetail }) {
       <h2 className="text-lg font-semibold">Aankopen en financiële context</h2>
       <p className="mt-2 text-sm text-muted-foreground">Een refund of walletcorrectie is context, geen bewezen kwaliteitsfout. Reviewafhandeling voert geen financiële actie uit. Refunds worden uitsluitend via de bestaande aankoopworkflow uitgevoerd.</p>
       <ul className="mt-4 space-y-3">{detail.purchases.map((purchase) => <li className="rounded-xl border p-3 text-sm" key={purchase.id}>
-        <p className="break-all">Vakman-ID: {purchase.professional_id}</p><p className="mt-1">{label(purchaseLabels, purchase.status)} · {purchase.price_credits} credits</p>
+        <p className="break-all">Vakman-ID: {purchase.professional_id}</p><p className="mt-1 break-all text-xs text-muted-foreground">Aankoop-ID: {purchase.id}</p><p className="mt-1">{label(purchaseLabels, purchase.status)} · {purchase.price_credits} credits</p>
         <p>Gekocht: {reviewTimestamp(purchase.purchased_at)} · Refund: {reviewTimestamp(purchase.refunded_at)}</p>
         <Link className="mt-2 inline-block text-primary underline" href={`/admin/leads/${detail.item.lead_id}#purchase-${purchase.id}`}>Bekijk aankoop / refund (bevat klantgegevens)</Link>
       </li>)}</ul>
@@ -70,7 +71,7 @@ export function QualityReviewEvidence({ detail }: { detail: ReviewDetail }) {
     <section className="rounded-3xl border bg-surface p-5">
       <h2 className="text-lg font-semibold">Tijdlijn met vastgelegd bewijs</h2>
       <p className="mt-2 text-sm text-muted-foreground">Alleen geregistreerde gebeurtenissen; geen geschatte contactmomenten of aangevulde historische tijdstippen.</p>
-      <ol className="mt-3 space-y-2 text-sm">{detail.timeline.map((event, index) => <li key={`${event.at}-${index}`}><time>{reviewTimestamp(event.at)}</time> · {timelineLabel(event.label)}{event.assignment_id && <span className="block break-all text-xs text-muted-foreground">Toewijzing-ID: {event.assignment_id}</span>}{event.purchase_id && <span className="block break-all text-xs text-muted-foreground">Aankoop-ID: {event.purchase_id}</span>}</li>)}</ol>
+      <ol className="mt-3 space-y-2 text-sm">{detail.timeline.map((event, index) => <li key={`${event.at}-${index}`}><time dateTime={Number.isFinite(Date.parse(event.at)) ? event.at : undefined}>{reviewTimestamp(event.at)}</time> · {timelineLabel(event.label)}{event.assignment_id && <span className="block break-all text-xs text-muted-foreground">Toewijzing-ID: {event.assignment_id}</span>}{event.purchase_id && <span className="block break-all text-xs text-muted-foreground">Aankoop-ID: {event.purchase_id}</span>}</li>)}</ol>
       {!detail.timeline.length && <p className="mt-3 text-sm">Nog geen betrouwbare gebeurtenissen beschikbaar.</p>}
     </section>
     <section className="rounded-3xl border bg-surface p-5">

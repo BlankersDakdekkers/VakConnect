@@ -175,12 +175,16 @@ test("rendered dossier keeps independent outcomes, honest timestamps and intenti
     item: { lead_id: leadId },
     assignments: [assignment, { ...assignment, id: "assignment-2", professional_id: "professional-2", progress_status: "lost", loss_reason: "duplicate" }],
     purchases: [{ id: "purchase-1", professional_id: "professional-1", status: "refunded", price_credits: 15, purchased_at: updatedAt, refunded_at: null }],
-    corrections: [], notes: [], audit: [], timeline: [],
+    corrections: [], notes: [], audit: [], timeline: [{ at: updatedAt, label: "Gekocht", purchase_id: "purchase-1" }],
     ledger: [{ id: "ledger-1", professional_id: "professional-1", lead_id: leadId, lead_assignment_id: "assignment-1", type: "refund", amount: 15, balance_after: 40, created_at: updatedAt, created_by_admin_id: null, description: "private customer text" }],
     financial_audit: [{ id: "financial-1", entity_type: "lead_purchase", entity_id: "purchase-1", action: "refund", actor_user_id: "admin-1", actor_professional_id: null, created_at: updatedAt, metadata: { email: "private@example.com" } }],
   } }));
   assert.match(markup, /professional-1/);
   assert.match(markup, /professional-2/);
+  assert.match(markup, /Toewijzing-ID: assignment-1/);
+  assert.match(markup, /Toewijzing-ID: assignment-2/);
+  assert.match(markup, /Aankoop-ID: purchase-1/);
+  assert.match(markup, /<time dateTime="2026-10-05T12:34:56.123456\+00:00">/);
   assert.match(markup, /Gewonnen/);
   assert.match(markup, /Verloren/);
   assert.match(markup, /Niet vastgelegd \/ onbekend/);
@@ -227,6 +231,8 @@ test("operations source contracts preserve privacy, explain evidence and use exi
   const detail = source("app/(admin)/admin/leadkwaliteit/review/[id]/page.tsx");
   assert.match(detail, /onvoldoende betrouwbare locatieherkomst/);
   assert.match(detail, /Gematchte dienst/);
+  assert.match(detail, /reviewTimestamp\(detail\.item\.resolved_at\)/);
+  assert.match(detail, /Huidige afhandeling vastgelegd op/);
   assert.match(detail, /contactgegevens en intake/);
   assert.match(detail, /href=\{`\/admin\/leads\/\$\{id\}`\}/);
   const evidence = source("components/admin/quality-review-evidence.tsx");

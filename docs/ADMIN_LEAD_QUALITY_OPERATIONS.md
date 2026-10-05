@@ -193,12 +193,29 @@ to the pre-existing PII-bearing detail, not an in-place reveal.
 ## Validation
 
 - `npm ci` completed with the unchanged lockfile.
-- Initial `npm audit`: 0 critical, 5 high package entries from the existing
-  dev-only `braces` chain, matching Prompt 26. Dependencies are unchanged.
+- Initial and final `npm audit`: 0 critical, 5 high package entries from the
+  existing dev-only `braces` chain, matching Prompt 26. This is not a clean
+  full audit. Final `npm audit --omit=dev`: zero vulnerabilities.
+  Dependencies are unchanged.
 - Refund confirmation's four executable regression tests and targeted ESLint
   passed.
-- Final lint/typecheck/full suite/build, DB security results and automated
-  review results are recorded in the PR report after implementation.
+- Integrated lint, typecheck and production build passed (150 static pages;
+  queue/detail are dynamic). The full suite passed 297 tests with no failures
+  or skips, including the existing Prompt 20–28 regression coverage.
+- The real PostgreSQL commercial/security suite passed 36 tests, including
+  admin/professional/anonymous denial, RLS/grants, actor attribution,
+  append-only history, note limits, resolution/reopen, creation/write races,
+  filter/sort/search/pagination, shared conflicts and product immutability.
+  Ten focused DB tests also passed after strengthening privacy assertions.
+- Secret scanning found no secrets. Dependency manifests and lockfile are
+  unchanged; the Prompt 26 audit baseline is retained.
+- Automated Code Review **failed/unavailable**: its configured
+  `claude-sonnet-4.6` model is absent from the registry. The wrapper reports
+  “success/no comments”, but the underlying tool did not perform a valid
+  review. CodeQL JavaScript analysis **failed**; zero alerts is not a pass.
 - Supabase environment variables are absent locally. Authenticated admin
   interactions and 768/1024/1280 authenticated responsive QA cannot be claimed
-  as passed; the setup fallback is not evidence for the review UI.
+  as passed; the setup fallback is not evidence for the review UI. Playwright
+  navigation failed with `Transport closed`. Static rendering tests cover
+  labelled controls, confirmation, unknown timestamps and safe escaped text;
+  keyboard, screen-reader and viewport behavior still need authenticated QA.
