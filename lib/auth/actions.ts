@@ -2,7 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { isSupabaseConfigured } from "@/lib/env";
-import { getSafeRoleRedirect, getUserRole } from "@/lib/auth/helpers";
+import { getUserRole } from "@/lib/auth/helpers";
+import { getSafeLoginRedirect } from "@/lib/auth/redirects";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 function encodeMessage(message: string) {
@@ -33,9 +34,7 @@ export async function signInAction(formData: FormData) {
     redirect(`/login?error=${encodeMessage("Je account heeft nog geen geldige rol in VakConnect.")}`);
   }
 
-  const fallback = getSafeRoleRedirect(role);
-  const isSafeNext = nextPath.startsWith("/admin") || nextPath.startsWith("/vakman");
-  redirect(isSafeNext ? nextPath : fallback);
+  redirect(getSafeLoginRedirect(role, nextPath));
 }
 
 export async function signOutAction() {

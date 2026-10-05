@@ -8,7 +8,10 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "node --test tests/*.test.ts"
+    "test": "node --test tests/*.test.ts",
+    "admin:grant": "node --env-file-if-exists=.env.local scripts/admin-access.mjs grant",
+    "admin:revoke": "node --env-file-if-exists=.env.local scripts/admin-access.mjs revoke",
+    "admin:check": "node --env-file-if-exists=.env.local scripts/admin-access.mjs check"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
