@@ -43,6 +43,9 @@ export async function purchaseLeadAction(formData: FormData) {
   });
 
   if (error) {
+    revalidatePath("/vakman/aanvragen");
+    revalidatePath(`/vakman/aanvragen/${payload.data.leadId}`);
+    revalidatePath("/vakman/credits");
     const message = error.message.includes("INSUFFICIENT_BALANCE")
       ? "Onvoldoende credits. Credits kopen is op dit moment niet beschikbaar."
         : error.message.includes("IDEMPOTENCY_KEY_CONFLICT")
@@ -53,7 +56,7 @@ export async function purchaseLeadAction(formData: FormData) {
           ? "Deze lead is niet meer beschikbaar."
         : error.message.includes("LEAD_OFFER_NOT_ACTIVE")
           ? "Je offer is verlopen of nog niet actief. Wacht op een nieuw aanbod."
-        : error.message.includes("LEAD_MATCH_REQUIRED")
+        : error.message.includes("LEAD_MATCH_REQUIRED") || error.message.includes("PROFESSIONAL_NOT_ELIGIBLE")
           ? "Je account komt niet in aanmerking voor deze lead."
           : "De leadaankoop kon niet worden afgerond.";
     redirectWithMessage(payload.data.redirectTo, "error", message);

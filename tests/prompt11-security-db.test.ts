@@ -26,6 +26,7 @@ const migrationFiles = [
   "supabase/migrations/20261002100000_prompt12_followup_hardening.sql",
   "supabase/migrations/20261002210000_prompt19_analytics_hardening.sql",
   "supabase/migrations/20261002220000_prompt20_cro_experiments.sql",
+  "supabase/migrations/20261005150000_prompt27_marketplace_access_hardening.sql",
 ].map((file) => join(repoRoot, file));
 
 type AppRole = "admin" | "professional" | null;

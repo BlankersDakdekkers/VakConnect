@@ -515,3 +515,104 @@ Uitkomst wordt geclassificeerd als `onvoldoende`, `redelijk` of `goed` en gebrui
 - `/vakman`, `/vakman/profiel` en `/vakman/onboarding` tonen onboardingstatus, quality score, availability, documenten en feedback voor self-service binnen RLS-grenzen.
 - `/admin/verificatie` en `/admin/vakmannen/[id]` vormen samen de adminreviewlaag voor filters, checklist, documenten, audit en verificatieacties.
 - Distributie (Prompt 10) leest de Prompt 11-gates via gedeelde scoring/eligibility helpers: incomplete onboarding, rejected/suspended, paused/unavailable en lage quality blokkeren eligibility, terwijl verified professionals hun bonus behouden.
+
+## Prompt 27: marketplacekwaliteit en aankoopbeslissing
+
+### Baseline en audit vóór implementatie
+
+Actuele `origin/main` is opgehaald en gelijk aan de start-HEAD: `23f99be3f1e5b644336768af670f4210f04cf32c` (PR #30 / Prompt 26).
+De geschiedenis bevat PRs #24–#30: experimentinfra, UX-baseline, consumerfunnel, trust claims, professional UX, activation/retention en dependency hardening (Prompts 20–26).
+De runtimebranch is `copilot/lead-marketplace-quality-conversion`.
+
+| Onderdeel | Grootste frictie op de baseline |
+| --- | --- |
+| `/vakman/aanvragen` | Vrije omschrijving werd alleen ingekort, niet gemaskeerd. Dat kan naam, telefoon, e-mail of adres lekken. Matchcontext, planning en foto-indicator ontbraken. Slotcijfers en dubbele badges maakten kaarten druk. |
+| `/vakman/aanvragen/[id]` | Zelfde vrije-tekstlek; plaatsnaam is eveneens consumenteninvoer. Veilige intakekeuzes waren niet zichtbaar. Een verlopen offer kon tegelijk een badge “Beschikbaar” hebben. |
+| Purchase en wallet | Prijs stond al vóór aankoop, maar de CTA noemde deze niet. Tekort werd bij “saldo na aankoop” als nul gepresenteerd. Een gekochte aanvraag toonde opnieuw een hypothetische aankoopprijs/saldo in plaats van de werkelijk betaalde prijs. |
+| Contact en opvolging | Contact stond in één tekstregel zonder bel-/maillinks. De statuskeuze bood ook ongeldige vervolgstappen aan. Een expliciete primaire vervolgstap ontbrak. |
+| Notificaties/dashboard | De inbox had een detailfallback, maar de bestaande payloadlink naar het overzicht kreeg voorrang. Dashboardmeldingen verwezen eveneens naar het overzicht. |
+| Analytics | Prompt 19 meet de publieke consumerfunnel, niet marketplace-impressies, detailviews, purchase intent of purchase failure reasons. Purchase-audit, distribution candidates en lead activity bieden wel operationele brondata. |
+
+Technische leadscore stond al niet in de professionalpagina's en blijft verborgen. Prompt 24-cards en Prompt 25-gereed/geblokkeerd-empty states blijven behouden.
+Geen nieuwe filters of sorteerstrategie: er is geen bewezen aanbodvolume dat extra marketplace-search rechtvaardigt.
+
+### Veilige informatie vóór aankoop
+
+- Dienst, gevalideerd viercijferig postcodegebied, aanvraagdatum, echte offerstatus/eindtijd, shared/exclusive en actuele creditprijs.
+- Planning wordt uitsluitend uit bestaande enumwaarden vertaald; onbekende/ontbrekende waarden worden niet ge-echoot.
+- Alleen de aanwezigheid van een omschrijving en het aantal foto's worden getoond, niet de inhoud of bestandsmetadata.
+- Detail toont bestaande select/radio/multiselect-antwoorden alleen als **alle** waarden bij geconfigureerde opties passen. Labels en vragen komen uit beheerde intakeconfiguratie; er is geen fallback naar ingestuurde tekst.
+- Consumentennamen, telefoons, e-mails, volledig adres/postcode, vrije omschrijving, vrije intake-antwoorden en ongestructureerde plaatsnaam blijven verborgen.
+- Er is bewust geen regex/NLP-redaction-engine. Inkorten is geen privacymaatregel; de veilige grens is niet tonen. Dit vermindert de beschikbare kluscontext vóór aankoop en wordt expliciet uitgelegd.
+- Foto's blijven privé: alleen een indicator vóór unlock, bestaande signed-imageflow erna. Geen originele filenames of storage paths in de preview.
+
+De indicatoren zeggen alleen wat is ingevuld, niet dat de inhoud duidelijk/correct is of dat de opdrachtkans hoger is.
+Matchuitleg vertaalt uitsluitend geslaagde, opgeslagen `lead_matches.reasons`-codes voor actieve dienst, postcodegebied en actief profiel. Onbekende codes, vrije labels en scoregewichten worden niet getoond.
+Deze uitleg benoemt een historische selectie, niet actuele eligibility of een “perfecte match”; ontbreken van redenen wordt eerlijk getoond.
+
+### Prijs, beschikbaarheid en opvolging
+
+- Cards en detail gebruiken dezelfde bestaande `resolveLeadPrice`; `purchase_lead` blijft authoritative voor actuele prijs, saldo, eligibility en transactie.
+- Detail toont huidig saldo en, uitsluitend vóór aankoop met voldoende saldo, resterend saldo. Bij tekort staat het exacte tekort met de bestaande creditslink; er is geen actieve betaalprovider.
+- CTA: “Ontgrendel voor … credits”, met uitleg over de vrijgegeven informatie en het ontbreken van opdrachtgarantie. Geen vooraf aangevinkte bevestiging of automatische aankoop.
+- Bestaande `SubmitButton` houdt pending/disabled en loadingtekst; bestaande UUID-idempotency en databaseatomiciteit blijven behouden.
+- De server accepteert geen clientprijs. Na aankoop toont de pagina de werkelijk opgeslagen `lead_purchases.price_credits`, ook als de prijs tijdens het bekijken veranderde.
+- Aankoopfouten blijven menselijke meldingen voor saldo, beschikbaarheid, verlopen aanbod, eligibility en techniek; geen DB-codes. Detail/overzicht/credits worden ook op de fouttak gerevalideerd.
+- Mutabele professionalroutes blijven dynamisch via bestaande cookie-auth; geen gedeelde/user-overstijgende cache toegevoegd. Een offer dat tijdens bekijken verloopt wordt bij aankoop opnieuw door de server gecontroleerd.
+- Gedeeld betekent meerdere mogelijke kopers. Exclusief betekent maximaal één **koperslot binnen VakConnect**, niet de enige vakman/contactroute wereldwijd en niet een opdrachtgarantie.
+- Deadline komt uit `offer_expires_at`. Geen countdown, fake urgency, interesseclaims of “nog één plek”.
+- Na unlock: werkelijk afgeschreven credits, huidig saldo, primaire link naar contactgegevens, leesbare naam/adres, expliciete `tel:`/`mailto:`-links en korte eerste-contactuitleg. Geen automatische outreach.
+- Voortgang gebruikt uitsluitend bestaande toegestane transities: nieuw → contact → afspraak → offerte → gewonnen/niet gewonnen. De keuzelijst biedt alleen de huidige en toegestane volgende status.
+- Bestaande verliesredenen (o.a. buiten scope en niet bereikbaar) zijn vindbaar, maar dit is geen afzonderlijk mismatch-/refundverzoek. Er worden geen nieuwe CRM-statussen, refundregels of inference uit inactivity toegevoegd.
+- Notificaties met een lead-ID verwijzen nu vanuit inbox én dashboard naar die detailroute; historische verlopen aanbiedingen blijven een gesloten detailpagina in plaats van een onterechte 404.
+
+### Noodzakelijke, bewezen autorisatiereparatie
+
+Een uitsluitend frontendaanpassing bleek onvoldoende. PostgreSQL-regressietests faalden vóór de nieuwe migratie:
+
+1. Een professional kon op de eigen assignment de aankoopkoppeling wissen; de accepted/null-link-tak gold dan als directe toegang. De bestaande refundprocedure wist dezelfde koppeling en kon contacttoegang laten bestaan.
+2. `enforce_active_offer_for_purchase` liet aankopen door wanneer geen actieve/pending ronde bestond, ook als historische aanbiedingen waren verlopen en de ronde was uitgeput.
+
+Daarom bevat Prompt 27 **één gerichte migratie**: `20261005150000_prompt27_marketplace_access_hardening.sql`.
+Zij houdt assignment-ID, lead-ID, eigenaar en purchase-link immutable voor professionals; directe contacttoegang vereist geen historische aankoop; een lead met distributiehistorie vereist nog steeds een actieve, niet-verlopen aanbieding.
+De JS-accesshelper volgt dezelfde aankoopstatusregel en terugbetaalde aanvragen krijgen geen nieuwe acceptatieknop.
+Legacy niet-gedistribueerde aankopen en geaccepteerde directe assignments zonder aankoopgeschiedenis blijven werken.
+
+Geen wijzigingen aan ledger/refundprocedure, pricing, matching, scoring, ranking, distributiestrategie, capaciteit, verification, notificatieschedulers of RLS-policydefinities.
+Bestaande RLS-contactpolicies gebruiken de gerepareerde helper. Nieuwe signed-imageaanvragen verliezen toegang na refund; eerder verstrekte kortlopende URLs/downloads kunnen niet achteraf worden teruggehaald.
+
+### Analytics, mismatchfeedback en toekomstige experimenten
+
+Geen nieuwe clientevents, identifiers, PII of wijzigingen aan Prompt 19-taxonomie. De securitymigratie wordt niet uitgebreid met onnodige analytics-schemawijzigingen.
+De bestaande consumerfunnel/experimentinfra blijft ongewijzigd; alle experimenten blijven draft/inactive.
+
+| Mogelijke metric | Bron/beperking |
+| --- | --- |
+| Offer view rate | `viewed_at` versus aangeboden candidates; handmatig “bekeken” is geen betrouwbare schermimpressie. |
+| Detail view rate | Blind spot: geen marketplace-detailviewevent; niet claimen als gemeten. |
+| Purchase conversion | Aankopen versus aangeboden candidates met dezelfde cohort/periode; geen publieke benchmark. |
+| Insufficient balance rate | Blind spot: geen afzonderlijk failure-event met toegestane redenenum. |
+| Expired-before-purchase rate | Candidate-status/eindtijd versus purchase timestamps; onderscheid echte expiry en andere sluitredenen. |
+| Purchase failure reasons | Blind spot: UI-errors zijn geen duurzame analyticsdataset. |
+| Post-purchase status completion | Eigen assignmentprogress en `lead_activity`; uitsluitend expliciete updates. |
+| Mismatch report rate | Geen aparte mismatchflow. Bestaande decline/loss reason-data zijn slechts proxies, geen volledige report-rate. |
+
+Latere mismatchanalyse kan bestaande gestructureerde redenen per dienst/regio/cohort voor menselijke review gebruiken, zonder vrije tekst, contactdata of documentinfo te exporteren.
+Geen automatische refunds, scorewijzigingen, rankinghertraining of “self-learning”.
+Draft-testkandidaten: informatiedichtheid van cards, CTA-copy, positie van fituitleg, volledigheidsindicatoren en aankoopgeruststelling; geen test geactiveerd.
+
+### Validatie en beperkingen
+
+- `npm ci`, `npm run lint`, `npm run typecheck`, `npm run test` en `npm run build`: geslaagd; **221 tests, 0 failures, 0 skips**, inclusief echte lokale PostgreSQL-tests.
+- Nieuwe tests: veilige previewpayload/keuze-antwoorden, historisch onderbouwde matchcopy, prijs/availability/pending, IDOR voor leads/purchases/wallet/assignments, huidige serverprijs, ineligible professional zonder debit, actieve/verlopen/geweigerde/uitgeputte offers, refund/contact/answers/image-revocation, statusupdate en legacy/directe toegang.
+- Bestaande tests blijven groen: shared/exclusive concurrentie, exact één purchase/debit, rollback, immutable ledger/reconciliatie, distribution workers, private documenten, onboarding, notifications, analyticsprivacy en Prompts 20–25. Prompt 26 is gecontroleerd via onveranderde lockfile/frameworkversie en dependency-audit.
+- `npm audit`: 0 critical, 5 high package entries uit dezelfde dev-only `braces`-keten als Prompt 26; `npm audit --omit=dev`: 0 vulnerabilities. Next.js blijft 16.3.6; dependencies/lockfile niet gewijzigd.
+- HTTP-smoke voor dashboard, overzicht/detail, credits en notificaties: 200 op de bestaande configuratiefallback, **geen geauthenticeerde marketplace-QA**. Lokale Supabase-credentials ontbreken.
+- Playwright MCP kon niet verbinden (`Transport closed`). Browser-QA op 320/375/430/768/1024/1280, keyboardinteractie, echte low-balance/purchase/contactstates en console/hydration kunnen daarom niet als geslaagd worden geclaimd.
+- Statisch: responsive cards, `minmax(0, …)`-detailkolommen, wrapping/break-all voor contact, tekstuele status/expiry/prijs, gekoppelde labels, bestaande globale focusring en minimaal 44px contact-/CTA-targets. Geen horizontale tabel teruggebracht of zware clientlibrary toegevoegd.
+- Contrastcontrole van 11 gebruikte tekstkleurparen: alle ≥ 4,5:1; primaire CTA 5,23:1, muted tekst op muted surface 6,92:1. Dit is een tokenberekening, geen volledige browser-accessibilityaudit.
+- Securityspecialist bevestigt geen nieuwe kwetsbaarheden in de gerichte reparaties. Secret scan: geen secrets in alle gewijzigde bestanden.
+- Geautomatiseerde Code Review: tooling failure door niet-beschikbaar model (`claude-sonnet-4.6`), ondanks de “Success”-wrapper; geen geldige reviewpass. CodeQL JavaScript: **analysis failed**, 0 gerapporteerde alerts is geen securitypass. Deze beperkingen blijven expliciet open voor CI/staging.
+- Een afzonderlijke read-only review vond inconsistente grouping/badges na refund; dit is hersteld en met een grouping-regressietest gedekt. De vervolg-review vond geen significante issues. Een vermeende TypeScript-fout bleek een false positive: de werkelijke typecheck én build slagen.
+
+Aanbeveling voor Prompt 28: eerst geauthenticeerde staging-QA en migratie-uitrol verifiëren, daarna een minimale PII-vrije marketplace-eventtaxonomie en afzonderlijke mismatchrapportage ontwerpen op basis van werkelijk cohortvolume.

@@ -19,6 +19,7 @@ const migrationFiles = [
   "supabase/migrations/20260909152000_phase3_analytics_operations.sql",
   "supabase/migrations/20260909222000_phase5_commercial_lead_wallet.sql",
   "supabase/migrations/20260910160000_phase6_lead_distribution_engine.sql",
+  "supabase/migrations/20261005150000_prompt27_marketplace_access_hardening.sql",
 ].map((file) => join(repoRoot, file));
 
 type AppRole = "admin" | "professional" | null;
@@ -738,4 +739,136 @@ test("activate_lead_distribution_run is idempotent and respects slots/batch limi
     `)),
     2,
   );
+});
+
+test("Prompt 27 contact unlock and wallet/purchase/assignment reads enforce professional ownership", { concurrency: false }, async (t) => {
+  const isolated = await createIsolatedDatabase(t, "prompt27_idor");
+  if (!isolated) return;
+  const { harness, database } = isolated;
+  const fixture = insertFixture(harness, database, { commercialType: "shared", maxBuyers: 3, balances: [60, 60] });
+  const [buyer, other] = fixture.professionalContexts;
+  harness.run(database, "grant usage on schema public to authenticated; grant select, update on all tables in schema public to authenticated;");
+  assert.equal(harness.run(database, `select count(*) from public.leads where id = ${sqlLiteral(fixture.leadId)};`, buyer), "0");
+  assert.equal(harness.run(database, `select count(*) from public.leads where id = ${sqlLiteral(fixture.leadId)};`, other), "0");
+  const purchase = harness.queryRowJson<{ purchase_id: string }>(
+    database, `select * from public.purchase_lead(${sqlLiteral(fixture.leadId)}, 'prompt27-owner')`, buyer,
+  );
+  assert.equal(harness.run(database, `select count(*) from public.leads where id = ${sqlLiteral(fixture.leadId)} and phone = '0612345678';`, buyer), "1");
+  assert.equal(harness.run(database, `select count(*) from public.leads where id = ${sqlLiteral(fixture.leadId)};`, other), "0");
+  assert.equal(harness.run(database, `select count(*) from public.lead_purchases where id = ${sqlLiteral(purchase.purchase_id)};`, other), "0");
+  for (const table of ["professional_wallets", "wallet_transactions", "lead_assignments"]) {
+    assert.equal(harness.run(database, `select count(*) from public.${table} where professional_id = ${sqlLiteral(fixture.professionalIds[0])};`, other), "0");
+  }
+  harness.run(database, `update public.lead_assignments set progress_status = 'contacted' where lead_id = ${sqlLiteral(fixture.leadId)};`, buyer);
+  assert.equal(harness.run(database, `select progress_status from public.lead_assignments where lead_id = ${sqlLiteral(fixture.leadId)};`, buyer), "contacted");
+  harness.run(database, `update public.lead_assignments set progress_status = 'appointment_scheduled' where lead_id = ${sqlLiteral(fixture.leadId)};`, other);
+  assert.equal(harness.run(database, `select progress_status from public.lead_assignments where lead_id = ${sqlLiteral(fixture.leadId)};`, buyer), "contacted");
+});
+
+test("Prompt 27 expired and declined offers reject purchase without any debit", { concurrency: false }, async (t) => {
+  const isolated = await createIsolatedDatabase(t, "prompt27_expiry");
+  if (!isolated) return;
+  const { harness, database } = isolated;
+  const fixture = insertFixture(harness, database, { commercialType: "shared", maxBuyers: 3, balances: [60, 60] });
+  const runId = randomUUID();
+  harness.run(database, `
+    insert into public.lead_distribution_runs (id, lead_id, commercial_type, status, strategy_version)
+    values (${sqlLiteral(runId)}, ${sqlLiteral(fixture.leadId)}, 'shared', 'active', 'v1');
+    insert into public.lead_distribution_candidates (distribution_run_id, lead_id, professional_id, rank_position, ranking_score, status, offered_at, offer_expires_at, score_breakdown, eligibility_reason)
+    values
+      (${sqlLiteral(runId)}, ${sqlLiteral(fixture.leadId)}, ${sqlLiteral(fixture.professionalIds[0])}, 1, 90, 'offered', now() - interval '1 hour', now() - interval '1 minute', '{}', '{}'),
+      (${sqlLiteral(runId)}, ${sqlLiteral(fixture.leadId)}, ${sqlLiteral(fixture.professionalIds[1])}, 2, 80, 'declined', now(), now() + interval '1 hour', '{}', '{}');
+  `);
+  for (const [index, context] of fixture.professionalContexts.entries()) {
+    assert.match(harness.expectError(database, `select * from public.purchase_lead(${sqlLiteral(fixture.leadId)}, 'prompt27-expired-${index}');`, context), /LEAD_OFFER_NOT_ACTIVE/);
+  }
+  assert.equal(harness.run(database, `select count(*) from public.wallet_transactions where lead_id = ${sqlLiteral(fixture.leadId)} and type = 'lead_purchase';`), "0");
+  assert.equal(harness.run(database, `select count(*) from public.lead_purchases where lead_id = ${sqlLiteral(fixture.leadId)};`), "0");
+});
+
+test("Prompt 27 server charges the current price and does not debit ineligible professionals", { concurrency: false }, async (t) => {
+  const isolated = await createIsolatedDatabase(t, "prompt27_price");
+  if (!isolated) return;
+  const { harness, database } = isolated;
+  const fixture = insertFixture(harness, database, { commercialType: "shared", maxBuyers: 3, balances: [60, 60] });
+  harness.run(database, "grant usage on schema public to authenticated; grant select, update on all tables in schema public to authenticated;");
+  harness.run(database, `
+    update public.leads set price_credits = 18 where id = ${sqlLiteral(fixture.leadId)};
+    update public.professionals set status = 'paused' where id = ${sqlLiteral(fixture.professionalIds[1])};
+  `, harness.adminContext);
+  assert.match(harness.expectError(database, `select * from public.purchase_lead(${sqlLiteral(fixture.leadId)}, 'prompt27-ineligible');`, fixture.professionalContexts[1]), /PROFESSIONAL_NOT_ELIGIBLE/);
+  assert.equal(harness.run(database, `select count(*) from public.wallet_transactions where professional_id = ${sqlLiteral(fixture.professionalIds[1])} and type = 'lead_purchase';`), "0");
+  harness.run(database, `select * from public.purchase_lead(${sqlLiteral(fixture.leadId)}, 'prompt27-price');`, fixture.professionalContexts[0]);
+  assert.equal(harness.run(database, `select price_credits from public.lead_purchases where lead_id = ${sqlLiteral(fixture.leadId)};`), "18");
+  assert.equal(harness.run(database, `select cached_balance from public.professional_wallets where professional_id = ${sqlLiteral(fixture.professionalIds[0])};`), "42");
+});
+
+test("Prompt 27 refunds revoke contact access without permitting purchase-link tampering", { concurrency: false }, async (t) => {
+  const isolated = await createIsolatedDatabase(t, "prompt27_refund_privacy");
+  if (!isolated) return;
+  const { harness, database } = isolated;
+  const fixture = insertFixture(harness, database, { commercialType: "shared", maxBuyers: 3, balances: [60] });
+  const context = fixture.professionalContexts[0];
+  const questionId = randomUUID();
+  harness.run(database, `
+    insert into public.lead_images (lead_id, storage_path) values (${sqlLiteral(fixture.leadId)}, 'private/example.jpg');
+    insert into public.service_questions (id, service_id, question, slug, type)
+    values (${sqlLiteral(questionId)}, ${sqlLiteral(fixture.serviceId)}, 'Omschrijving', 'privacy-test', 'textarea');
+    insert into public.lead_answers (lead_id, question_id, answer_text)
+    values (${sqlLiteral(fixture.leadId)}, ${sqlLiteral(questionId)}, 'Contactgegevens in vrije tekst');
+  `);
+  harness.run(database, "grant usage on schema public to authenticated; grant select, update on all tables in schema public to authenticated;");
+  const purchase = harness.queryRowJson<{ purchase_id: string }>(
+    database, `select * from public.purchase_lead(${sqlLiteral(fixture.leadId)}, 'prompt27-refund')`, context,
+  );
+  assert.equal(harness.run(database, `select count(*) from public.lead_images where lead_id = ${sqlLiteral(fixture.leadId)};`, context), "1");
+  assert.equal(harness.run(database, `select count(*) from public.lead_answers where lead_id = ${sqlLiteral(fixture.leadId)};`, context), "1");
+  assert.match(harness.expectError(database, `update public.lead_assignments set lead_purchase_id = null where lead_id = ${sqlLiteral(fixture.leadId)};`, context), /ASSIGNMENT_ACCESS_IMMUTABLE/);
+  harness.run(database, `select * from public.refund_lead_purchase(${sqlLiteral(purchase.purchase_id)}, 'Privacy regression');`, harness.adminContext);
+  assert.equal(harness.run(database, `select public.can_professional_view_lead_contact(${sqlLiteral(fixture.leadId)});`, context), "f");
+  assert.equal(harness.run(database, `select count(*) from public.leads where id = ${sqlLiteral(fixture.leadId)};`, context), "0");
+  assert.equal(harness.run(database, `select count(*) from public.lead_images where lead_id = ${sqlLiteral(fixture.leadId)};`, context), "0");
+  assert.equal(harness.run(database, `select count(*) from public.lead_answers where lead_id = ${sqlLiteral(fixture.leadId)};`, context), "0");
+});
+
+test("Prompt 27 live offer purchase syncs availability and legacy direct assignments still unlock", { concurrency: false }, async (t) => {
+  const isolated = await createIsolatedDatabase(t, "prompt27_live");
+  if (!isolated) return;
+  const { harness, database } = isolated;
+  const fixture = insertFixture(harness, database, { commercialType: "exclusive", maxBuyers: 1, balances: [60, 60] });
+  const runId = randomUUID();
+  harness.run(database, `
+    insert into public.lead_distribution_runs (id, lead_id, commercial_type, status, strategy_version)
+    values (${sqlLiteral(runId)}, ${sqlLiteral(fixture.leadId)}, 'exclusive', 'active', 'v1');
+    insert into public.lead_distribution_candidates (distribution_run_id, lead_id, professional_id, rank_position, ranking_score, status, offered_at, offer_expires_at, score_breakdown, eligibility_reason)
+    values (${sqlLiteral(runId)}, ${sqlLiteral(fixture.leadId)}, ${sqlLiteral(fixture.professionalIds[0])}, 1, 90, 'viewed', now(), now() + interval '1 hour', '{}', '{}');
+  `);
+  harness.run(database, `select * from public.purchase_lead(${sqlLiteral(fixture.leadId)}, 'prompt27-live');`, fixture.professionalContexts[0]);
+  assert.equal(harness.run(database, `select status from public.lead_distribution_candidates where distribution_run_id = ${sqlLiteral(runId)};`), "purchased");
+  assert.equal(harness.run(database, `select count(*) from public.wallet_transactions where lead_id = ${sqlLiteral(fixture.leadId)} and type = 'lead_purchase';`), "1");
+  const directLeadId = insertSecondaryLead(harness, database, fixture.serviceId, fixture.professionalIds[1]);
+  harness.run(database, `
+    insert into public.lead_assignments (lead_id, professional_id, status)
+    values (${sqlLiteral(directLeadId)}, ${sqlLiteral(fixture.professionalIds[1])}, 'accepted');
+    grant usage on schema public to authenticated;
+    grant select on all tables in schema public to authenticated;
+  `);
+  assert.equal(harness.run(database, `select public.can_professional_view_lead_contact(${sqlLiteral(directLeadId)});`, fixture.professionalContexts[1]), "t");
+  assert.equal(harness.run(database, `select count(*) from public.leads where id = ${sqlLiteral(directLeadId)};`, fixture.professionalContexts[1]), "1");
+});
+
+test("Prompt 27 exhausted historical offers cannot bypass their deadline through direct RPC", { concurrency: false }, async (t) => {
+  const isolated = await createIsolatedDatabase(t, "prompt27_exhausted");
+  if (!isolated) return;
+  const { harness, database } = isolated;
+  const fixture = insertFixture(harness, database, { commercialType: "exclusive", maxBuyers: 1, balances: [60] });
+  const runId = randomUUID();
+  harness.run(database, `
+    insert into public.lead_distribution_runs (id, lead_id, commercial_type, status, strategy_version)
+    values (${sqlLiteral(runId)}, ${sqlLiteral(fixture.leadId)}, 'exclusive', 'exhausted', 'v1');
+    insert into public.lead_distribution_candidates (distribution_run_id, lead_id, professional_id, rank_position, ranking_score, status, offered_at, offer_expires_at, score_breakdown, eligibility_reason)
+    values (${sqlLiteral(runId)}, ${sqlLiteral(fixture.leadId)}, ${sqlLiteral(fixture.professionalIds[0])}, 1, 90, 'expired', now() - interval '1 hour', now() - interval '1 minute', '{}', '{}');
+  `);
+  assert.match(harness.expectError(database, `select * from public.purchase_lead(${sqlLiteral(fixture.leadId)}, 'prompt27-exhausted');`, fixture.professionalContexts[0]), /LEAD_OFFER_NOT_ACTIVE/);
+  assert.equal(harness.run(database, `select count(*) from public.wallet_transactions where lead_id = ${sqlLiteral(fixture.leadId)} and type = 'lead_purchase';`), "0");
 });
