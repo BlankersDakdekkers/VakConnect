@@ -18,12 +18,6 @@ alter table public.lead_assignments
   add constraint assignment_appointment_values check (
     appointment_status in ('not_scheduled', 'scheduled', 'completed', 'cancelled')
   ),
-  add constraint assignment_loss_values check (
-    loss_reason is null or loss_reason in (
-      'prijs', 'klant_niet_bereikbaar', 'klant_koos_andere_partij', 'klus_uitgesteld', 'buiten_scope', 'anders',
-      'duplicate', 'already_completed', 'wrong_service', 'wrong_region', 'invalid_contact'
-    )
-  ) not valid,
   add constraint assignment_mismatch_values check (
     mismatch_reason is null or mismatch_reason in (
       'wrong_service', 'wrong_region', 'incorrect_information', 'already_completed', 'duplicate',
@@ -98,6 +92,16 @@ begin
     return new;
   end if;
 
+  -- Validate changed loss values without blocking refunds of legacy free-text rows.
+  if new.loss_reason is distinct from old.loss_reason and new.loss_reason is not null
+    and new.loss_reason not in (
+      'prijs', 'klant_niet_bereikbaar', 'klant_koos_andere_partij', 'klus_uitgesteld', 'buiten_scope', 'anders',
+      'duplicate', 'already_completed', 'wrong_service', 'wrong_region', 'invalid_contact'
+    )
+  then
+    raise exception 'QUALITY_INVALID_LOSS_REASON';
+  end if;
+
   if auth.uid() is null or (not public.is_admin()
     and old.professional_id is distinct from public.current_professional_id())
     or new.professional_id is distinct from old.professional_id
@@ -133,10 +137,8 @@ begin
   if not public.is_valid_lead_progress_transition(old.progress_status, new.progress_status) then
     raise exception 'QUALITY_INVALID_PROGRESS';
   end if;
-  if (new.progress_status = 'lost' and new.loss_reason is null)
-    or (new.progress_status <> 'lost' and new.loss_reason is not null)
-  then
-    raise exception 'QUALITY_LOSS_REASON_REQUIRED';
+  if new.progress_status <> 'lost' and new.loss_reason is not null then
+    raise exception 'QUALITY_LOSS_REASON_NOT_APPLICABLE';
   end if;
   if (new.appointment_status in ('scheduled', 'completed') and new.reachability is distinct from 'reached')
     or (new.progress_status in ('quote_sent', 'won') and new.reachability is distinct from 'reached')
@@ -151,17 +153,17 @@ begin
   new.quality_updated_by := auth.uid();
   if new.progress_status is distinct from old.progress_status then
     new.progress_updated_at := now();
-    if new.progress_status <> 'new' then
+    if old.progress_status = 'new' and new.progress_status = 'contacted' then
       new.contacted_at := coalesce(old.contacted_at, event_time);
     end if;
     if new.progress_status in ('won', 'lost') then
       new.outcome_at := coalesce(old.outcome_at, event_time);
     end if;
   end if;
-  if new.reachability = 'reached' then
+  if new.reachability = 'reached' and old.reachability is distinct from 'reached' then
     new.reached_at := coalesce(old.reached_at, event_time);
   end if;
-  if new.appointment_status in ('scheduled', 'completed') then
+  if new.appointment_status = 'scheduled' and old.appointment_status is distinct from 'scheduled' then
     new.appointment_scheduled_at := coalesce(old.appointment_scheduled_at, event_time);
   end if;
   return new;

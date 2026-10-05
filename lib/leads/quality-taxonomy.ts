@@ -44,7 +44,7 @@ export const assignmentQualityUpdateSchema = z.object({
   feedbackNote: z.preprocess((value) => typeof value === "string" ? value.trim() || null : value ?? null, z.string().max(500).nullable()),
   redirectTo: z.string().regex(/^\/vakman(?:\/|$)/).refine((value) => !value.includes("\\") && !value.includes("//")),
 }).superRefine((value, context) => {
-  if ((value.progressStatus === "lost") !== (value.lossReason !== null)) {
+  if (value.progressStatus !== "lost" && value.lossReason !== null) {
     context.addIssue({ code: "custom", path: ["lossReason"], message: "Kies een verliesreden alleen bij een verloren aanvraag." });
   }
   if (value.feedbackNote && value.lossReason !== "anders" && value.mismatchReason !== "other") {

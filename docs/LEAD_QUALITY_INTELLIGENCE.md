@@ -239,3 +239,24 @@ geen kwetsbaarheden; volledige `npm audit` rapporteert nog vijf high
 packagevermeldingen van dezelfde dev-only `braces`-keten als beschreven in
 `docs/SECURITY_HARDENING.md`. Geen nieuwe dependencies of lockfilewijziging.
 Dit is geen schone volledige npm-audit.
+
+De beschikbare geautomatiseerde parallel-validatie is aangeroepen:
+CodeQL JavaScript-analyse faalde (nul alerts is **geen pass**);
+automatische code review kon zijn geconfigureerde model niet starten.
+Een afzonderlijke read-only securityreview vond geen kwetsbaarheden in de
+beoordeelde wijzigingen. Deze review vervangt geen geslaagde CodeQL-scan.
+
+Na integratie en correcties: lint, typecheck, **267 tests (0 failures,
+0 skips)** en production build geslaagd. Dit omvat PostgreSQL-backed
+ownership/IDOR, actor- en timestampbescherming, stale writes, terminale
+uitkomsten, gedeelde leads, feedbackwaarden, optionele verliesreden,
+historische datagaten en legacy refunds; daarnaast Prompt 20–27-regressies,
+rapportnoemers/steekproeven/privacy en daadwerkelijk gerenderde formulierpayloads.
+Deze tests gebruiken de bestaande PostgreSQL-harness met gesimuleerde Authclaims,
+niet een geauthenticeerde browser of een volledige Supabase-installatie.
+
+Prompt 29 kan zich richten op dataverzamelkwaliteit en een gecontroleerde,
+geauthenticeerde pilot: valideer mobiele/adminflows, herstel de beschikbare
+securitytooling en beoordeel voldoende volwassen cohorten voordat er nieuwe
+productregels of experimenten worden overwogen. Regio-attributie blijft een
+expliciet datagat; geen automatische georegels of optimalisatie toevoegen.

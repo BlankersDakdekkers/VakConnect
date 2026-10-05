@@ -47,9 +47,10 @@ test("Prompt 28 validates expected version, structured reasons and safe redirect
     { expectedUpdatedAt: null }, { expectedUpdatedAt: "yesterday" }, { reachability: "unknown" },
     { appointmentStatus: "unknown" }, { lossReason: "other" }, { mismatchReason: "unknown" },
     { redirectTo: "//example.org" }, { redirectTo: "/vakman//example.org" }, { redirectTo: "/vakman\\example.org" },
-    { redirectTo: "/vakman-evil" }, { progressStatus: "lost" },
+    { redirectTo: "/vakman-evil" },
   ]) assert.equal(assignmentQualityUpdateSchema.safeParse({ ...valid, ...change }).success, false);
   assert.ok(assignmentQualityUpdateSchema.safeParse({ ...valid, progressStatus: "lost", lossReason: "wrong_region" }).success);
+  assert.ok(assignmentQualityUpdateSchema.safeParse({ ...valid, progressStatus: "lost", lossReason: null }).success);
 });
 
 test("Prompt 28 free text is short and only accompanies Anders", () => {

@@ -78,7 +78,7 @@ export function QualityFeedbackForm({
   const showMismatch = mode === "rejection" || showContact;
   const showNote = showMismatch && (mismatch === "other" || (showLoss && loss === "anders"));
   const noteAllowed = mismatch === "other" || (showLoss && loss === "anders");
-  const needsReached = showContact && (["appointment_scheduled", "quote_sent"].includes(progress) || ["scheduled", "completed"].includes(appointment));
+  const needsReached = mode === "progress" && (["appointment_scheduled", "quote_sent", "won"].includes(progress) || (showContact && ["scheduled", "completed"].includes(appointment)));
   const contactMissing = needsReached && contact !== "reached";
 
   if (terminal) {
@@ -114,6 +114,7 @@ export function QualityFeedbackForm({
           {contactMissing ? <p id="contact-needed" className="mt-2 text-sm text-muted-foreground">Leg eerst vast dat je de klant daadwerkelijk hebt bereikt voordat je een afspraak of offerte opslaat. Er wordt niets automatisch ingevuld.</p> : null}
         </details>
       ) : null}
+      {progress === "won" && contactMissing ? <p id="contact-needed" className="text-sm text-muted-foreground">Bereikbaarheid ontbreekt. Kies eerst Offerte verstuurd en leg vast of je de klant daadwerkelijk hebt bereikt. Kies daarna Opdracht gewonnen. Er wordt niets automatisch ingevuld.</p> : null}
       {showAppointment ? (
         <details className="min-w-0 rounded-2xl border p-3">
           <summary className="min-h-11 cursor-pointer text-sm font-medium">Afspraak bijwerken (optioneel)</summary>

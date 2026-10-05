@@ -131,6 +131,25 @@ test("appointment saving requires an explicit reached answer rather than silentl
   assert.equal(assignmentQualityUpdateSchema.safeParse(qualityPayload(complete)).success, true);
 });
 
+test("legacy quotes cannot silently become reached on winning and have an explicit repair path", () => {
+  const markup = renderForm({ currentProgress: "quote_sent", reachability: null, appointmentStatus: "not_scheduled" }, "won");
+  assert.match(markup, /Bereikbaarheid ontbreekt/);
+  assert.match(markup, /Kies eerst Offerte verstuurd/);
+  assert.match(markup, /disabled=""/);
+  assert.doesNotMatch(markup, /<fieldset|<textarea|<details/);
+  assert.equal(renderedFields(markup).get("reachability"), "");
+});
+
+test("rendered early loss can be saved without optional reason or reachability feedback", () => {
+  const fields = renderedFields(renderForm({
+    currentProgress: "contacted",
+    lossReasonField: createElement("select", { name: "loss_reason", defaultValue: "" }, createElement("option", { value: "" }, "Geen verliesreden")),
+  }, "lost"));
+  assert.equal(fields.get("loss_reason"), "");
+  assert.equal(fields.get("reachability"), "");
+  assert.equal(assignmentQualityUpdateSchema.safeParse(qualityPayload(fields)).success, true);
+});
+
 test("declining an offer never requires or invents a quality reason", () => {
   const input = { candidateId: "11111111-1111-4111-8111-111111111111", redirectTo: "/vakman/aanvragen/lead" };
   for (const reason of [undefined, "", null]) {
