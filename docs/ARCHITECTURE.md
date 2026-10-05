@@ -603,7 +603,7 @@ Draft-testkandidaten: informatiedichtheid van cards, CTA-copy, positie van fitui
 
 ### Validatie en beperkingen
 
-- `npm ci`, `npm run lint`, `npm run typecheck`, `npm run test` en `npm run build`: geslaagd; **220 tests, 0 failures, 0 skips**, inclusief echte lokale PostgreSQL-tests.
+- `npm ci`, `npm run lint`, `npm run typecheck`, `npm run test` en `npm run build`: geslaagd; **221 tests, 0 failures, 0 skips**, inclusief echte lokale PostgreSQL-tests.
 - Nieuwe tests: veilige previewpayload/keuze-antwoorden, historisch onderbouwde matchcopy, prijs/availability/pending, IDOR voor leads/purchases/wallet/assignments, huidige serverprijs, ineligible professional zonder debit, actieve/verlopen/geweigerde/uitgeputte offers, refund/contact/answers/image-revocation, statusupdate en legacy/directe toegang.
 - Bestaande tests blijven groen: shared/exclusive concurrentie, exact één purchase/debit, rollback, immutable ledger/reconciliatie, distribution workers, private documenten, onboarding, notifications, analyticsprivacy en Prompts 20–25. Prompt 26 is gecontroleerd via onveranderde lockfile/frameworkversie en dependency-audit.
 - `npm audit`: 0 critical, 5 high package entries uit dezelfde dev-only `braces`-keten als Prompt 26; `npm audit --omit=dev`: 0 vulnerabilities. Next.js blijft 16.3.6; dependencies/lockfile niet gewijzigd.
@@ -611,6 +611,8 @@ Draft-testkandidaten: informatiedichtheid van cards, CTA-copy, positie van fitui
 - Playwright MCP kon niet verbinden (`Transport closed`). Browser-QA op 320/375/430/768/1024/1280, keyboardinteractie, echte low-balance/purchase/contactstates en console/hydration kunnen daarom niet als geslaagd worden geclaimd.
 - Statisch: responsive cards, `minmax(0, …)`-detailkolommen, wrapping/break-all voor contact, tekstuele status/expiry/prijs, gekoppelde labels, bestaande globale focusring en minimaal 44px contact-/CTA-targets. Geen horizontale tabel teruggebracht of zware clientlibrary toegevoegd.
 - Contrastcontrole van 11 gebruikte tekstkleurparen: alle ≥ 4,5:1; primaire CTA 5,23:1, muted tekst op muted surface 6,92:1. Dit is een tokenberekening, geen volledige browser-accessibilityaudit.
-- Securityspecialist bevestigt geen nieuwe kwetsbaarheden in de gerichte reparaties. Secret scan en geautomatiseerde Code Review/CodeQL worden afzonderlijk gerapporteerd; een tooling failure geldt niet als pass.
+- Securityspecialist bevestigt geen nieuwe kwetsbaarheden in de gerichte reparaties. Secret scan: geen secrets in alle gewijzigde bestanden.
+- Geautomatiseerde Code Review: tooling failure door niet-beschikbaar model (`claude-sonnet-4.6`), ondanks de “Success”-wrapper; geen geldige reviewpass. CodeQL JavaScript: **analysis failed**, 0 gerapporteerde alerts is geen securitypass. Deze beperkingen blijven expliciet open voor CI/staging.
+- Een afzonderlijke read-only review vond inconsistente grouping/badges na refund; dit is hersteld en met een grouping-regressietest gedekt. De vervolg-review vond geen significante issues. Een vermeende TypeScript-fout bleek een false positive: de werkelijke typecheck én build slagen.
 
 Aanbeveling voor Prompt 28: eerst geauthenticeerde staging-QA en migratie-uitrol verifiëren, daarna een minimale PII-vrije marketplace-eventtaxonomie en afzonderlijke mismatchrapportage ontwerpen op basis van werkelijk cohortvolume.

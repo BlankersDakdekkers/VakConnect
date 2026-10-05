@@ -16,3 +16,19 @@ export function getCommercialExplanation(type: string) {
     ? "Exclusief: binnen VakConnect is er maximaal één koperslot. Dit garandeert geen opdracht en zegt niets over aanvragen buiten dit platform."
     : "Gedeeld: deze aanvraag kan aan meerdere passende vakmannen worden aangeboden en door meerdere vakmannen worden gekocht.";
 }
+
+export function getMarketplaceGroup(lead: {
+  purchaseStatus: string | null;
+  assignmentStatus: string | null;
+  offerStatus: string | null;
+  offerState: string;
+  offerTermExpired: boolean;
+}) {
+  if (lead.purchaseStatus === "refunded" || lead.purchaseStatus === "cancelled") return "Gesloten of verlopen";
+  if (lead.purchaseStatus === "purchased" || (lead.assignmentStatus === "accepted" && !lead.purchaseStatus)) return "Gekocht of toegewezen";
+  if (lead.offerStatus === "declined") return "Afgewezen";
+  if (lead.offerStatus === "expired") return "Verlopen";
+  if (lead.offerTermExpired || lead.offerState === "gesloten") return "Gesloten of verlopen";
+  if (lead.offerState === "verloopt_bijna") return "Verloopt binnenkort";
+  return "Nieuw aanbod";
+}

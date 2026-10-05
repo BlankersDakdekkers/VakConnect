@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import { canProfessionalViewLeadContact, getSafeIntakeAnswers, getSafeLeadPreview } from "../lib/commercial/privacy.ts";
-import { getCommercialExplanation, getMatchExplanation } from "../lib/commercial/presentation.ts";
+import { getCommercialExplanation, getMatchExplanation, getMarketplaceGroup } from "../lib/commercial/presentation.ts";
 import { isValidLeadProgressTransition } from "../lib/leads/progress.ts";
 
 const source = (path: string) => readFileSync(new URL(`../${path}`, import.meta.url), "utf8");
@@ -77,6 +77,15 @@ test("shared/exclusive copy explains enforced buyer slots without promising sole
   assert.match(getCommercialExplanation("exclusive"), /geen opdracht/);
   assert.match(getCommercialExplanation("shared"), /meerdere passende vakmannen/);
   assert.doesNotMatch(getCommercialExplanation("exclusive"), /Jij bent de enige/);
+});
+
+test("refunded/cancelled purchases cannot appear as accepted direct access in request groups", () => {
+  const lead = { assignmentStatus: "accepted", offerStatus: "purchased", offerState: "gesloten", offerTermExpired: true };
+  assert.equal(getMarketplaceGroup({ ...lead, purchaseStatus: "refunded" }), "Gesloten of verlopen");
+  assert.equal(getMarketplaceGroup({ ...lead, purchaseStatus: "cancelled" }), "Gesloten of verlopen");
+  assert.equal(getMarketplaceGroup({ ...lead, purchaseStatus: "purchased" }), "Gekocht of toegewezen");
+  assert.equal(getMarketplaceGroup({ ...lead, purchaseStatus: null }), "Gekocht of toegewezen");
+  assert.equal(getMarketplaceGroup({ ...lead, assignmentStatus: null, purchaseStatus: null, offerStatus: "expired" }), "Verlopen");
 });
 
 test("contact unlock still requires a purchase or accepted direct assignment", () => {

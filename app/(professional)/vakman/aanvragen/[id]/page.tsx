@@ -113,8 +113,8 @@ export default async function ProfessionalLeadDetailPage({
               <StatusBadge value={marketLead.state} label={marketLead.mode === "unlocked" ? "Contact ontgrendeld" : marketLead.mode === "closed" ? marketLead.distributionOffer.offerTermExpired ? "Verlopen" : "Niet meer beschikbaar" : statusLabels[marketLead.state] ?? "Status bijgewerkt"} />
               <StatusBadge value={marketLead.commercial.commercialType} label={getCommercialTypeLabel(marketLead.commercial.commercialType)} />
               <StatusBadge value={marketLead.preview.urgency} label={`Opgegeven urgentie: ${statusLabels[marketLead.preview.urgency] ?? "niet bekend"}`} />
-              {marketLead.assignment.status ? <StatusBadge value={marketLead.assignment.status} label={statusLabels[marketLead.assignment.status] ?? "Toewijzing bijgewerkt"} /> : null}
-              {marketLead.distributionOffer.status ? <StatusBadge value={marketLead.distributionOffer.status} label={statusLabels[marketLead.distributionOffer.status] ?? "Aanbod bijgewerkt"} /> : null}
+              {marketLead.assignment.status && marketLead.mode !== "closed" ? <StatusBadge value={marketLead.assignment.status} label={statusLabels[marketLead.assignment.status] ?? "Toewijzing bijgewerkt"} /> : null}
+              {marketLead.distributionOffer.status && marketLead.mode === "preview" ? <StatusBadge value={marketLead.distributionOffer.status} label={statusLabels[marketLead.distributionOffer.status] ?? "Aanbod bijgewerkt"} /> : null}
             </div>
             <div className="grid gap-4 md:grid-cols-2">
               <div>
