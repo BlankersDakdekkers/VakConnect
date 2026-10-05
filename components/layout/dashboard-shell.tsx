@@ -39,7 +39,7 @@ export function DashboardShell({
             ))}
           </nav>
         </aside>
-        <main className="space-y-6">{children}</main>
+        <main className="min-w-0 space-y-6">{children}</main>
       </div>
     </div>
   );

@@ -3,6 +3,9 @@ import { PageHeader } from "@/components/ui/page-header";
 import { requireAdminUser } from "@/lib/auth/helpers";
 import { getAdminLeadQualityReport } from "@/lib/leads/quality-queries";
 import { parseQualityFilters, mismatchReasons, type QualityMetric, type QualityFilters } from "@/lib/leads/quality-reporting";
+import { QualityReviewSummary } from "@/components/admin/quality-review-summary";
+import { getAdminLeadQualityQueue } from "@/lib/leads/review-queries";
+import { parseReviewFilters } from "@/lib/leads/review-taxonomy";
 
 export const dynamic = "force-dynamic";
 
@@ -46,8 +49,10 @@ export default async function LeadQualityPage({ searchParams }: { searchParams: 
   await requireAdminUser();
   const filters = parseQualityFilters(await searchParams);
   const report = await getAdminLeadQualityReport(filters);
+  const operations = await getAdminLeadQualityQueue(parseReviewFilters({ status: "all" }));
   return (
     <div className="min-w-0 space-y-6 [contain:inline-size]">
+      <QualityReviewSummary counts={operations.counts} />
       <section className="rounded-3xl border bg-surface p-5">
         <PageHeader title="Leadkwaliteit en uitkomsten" description={`Aankoopcohort van de laatste ${filters.days} dagen. Uitkomsten horen bij iedere afzonderlijke aankoop, niet bij de lead als geheel. Geen ranglijst van vakmannen.`} />
         <form method="get" className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
