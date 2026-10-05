@@ -669,12 +669,23 @@ test("Prompt 28 migration does not infer historical milestones or block legacy r
     from public.lead_assignments where id = ${sqlLiteral(ids[1])};`), "t");
   const legacyVersion = qualityVersion(harness, database, ids[2]);
   const purchase = harness.run(database, `select id from public.lead_purchases where lead_assignment_id = ${sqlLiteral(ids[2])};`);
+  const balanceBeforeRefund = Number(harness.run(database, `select cached_balance from public.professional_wallets
+    where professional_id = ${sqlLiteral(fixture.professionalIds[2])};`));
+  const purchasePrice = Number(harness.run(database, `select price_credits from public.lead_purchases where id = ${sqlLiteral(purchase)};`));
   harness.run(database, `select * from public.refund_lead_purchase(${sqlLiteral(purchase)}, 'Historische kwaliteitscontrole');`, harness.adminContext);
   harness.run(database, `update public.lead_assignments set status = 'rejected', accepted_at = null,
     rejected_at = now() where id = ${sqlLiteral(ids[2])};`, harness.adminContext);
   assert.equal(harness.run(database, `select loss_reason from public.lead_assignments where id = ${sqlLiteral(ids[2])};`), "Historische vrije verliesreden");
   assert.equal(qualityVersion(harness, database, ids[2]), legacyVersion);
   assert.equal(harness.run(database, `select status from public.lead_purchases where id = ${sqlLiteral(purchase)};`), "refunded");
+  const balanceAfterRefund = Number(harness.run(database, `select cached_balance from public.professional_wallets
+    where professional_id = ${sqlLiteral(fixture.professionalIds[2])};`));
+  assert.equal(balanceAfterRefund, balanceBeforeRefund + purchasePrice);
+  assert.equal(balanceAfterRefund, 100);
+  assert.equal(Number(harness.run(database, `select sum(amount) from public.wallet_transactions
+    where professional_id = ${sqlLiteral(fixture.professionalIds[2])};`)), balanceAfterRefund);
+  assert.equal(harness.run(database, `select count(*) from public.wallet_transactions where type = 'refund'
+    and professional_id = ${sqlLiteral(fixture.professionalIds[2])} and lead_id = ${sqlLiteral(fixture.leadId)};`), "1");
 });
 
 test("Prompt 28 early loss accepts absent optional feedback without inventing a reason", async (t) => {
