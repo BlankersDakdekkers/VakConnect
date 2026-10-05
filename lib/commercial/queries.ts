@@ -80,6 +80,7 @@ export interface ProfessionalLeadMarketListItem {
   purchasedAt: string | null;
   offerStatus: string | null;
   offerExpiresAt: string | null;
+  offerTermExpired: boolean;
   offerState: "nieuw_aanbod" | "bekeken" | "verloopt_bijna" | "gesloten" | "gekocht";
   createdAt: string;
 }
@@ -118,6 +119,7 @@ export interface ProfessionalLeadMarketDetail {
     id: string | null;
     status: string | null;
     offerExpiresAt: string | null;
+    offerTermExpired: boolean;
   };
   detail: Awaited<ReturnType<typeof getProfessionalLeadDetail>> | null;
 }
@@ -360,6 +362,7 @@ export async function getProfessionalLeadMarketplace(professionalId: string) {
       purchasedAt: (purchase?.purchased_at as string | undefined) ?? null,
       offerStatus,
       offerExpiresAt,
+      offerTermExpired: Boolean(offerExpiresAt && new Date(offerExpiresAt).getTime() <= Date.now()),
       offerState,
       createdAt: String(row.created_at),
     };
@@ -460,6 +463,7 @@ export async function getProfessionalLeadMarketDetail(leadId: string, profession
       id: offer?.id ?? null,
       status: offer?.status ?? null,
       offerExpiresAt: (offer?.offer_expires_at as string | undefined) ?? null,
+      offerTermExpired: Boolean(offer?.offer_expires_at && new Date(String(offer.offer_expires_at)).getTime() <= Date.now()),
     },
     detail,
   } satisfies ProfessionalLeadMarketDetail;

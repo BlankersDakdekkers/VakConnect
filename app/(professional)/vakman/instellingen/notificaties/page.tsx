@@ -29,16 +29,16 @@ export default async function ProfessionalNotificationPreferencesPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Notificatie-instellingen" description="Kies welke in-app berichten je ontvangt." />
+      <PageHeader title="Notificatie-instellingen" description="Kies welke in-app berichten je wilt ontvangen." />
       <Card>
         <form action={saveNotificationPreferencesAction} className="space-y-5">
-          <label className="flex items-start gap-3">
+          <label className="flex min-h-11 items-start gap-3">
             <input type="checkbox" name="in_app_enabled" defaultChecked={preferences.in_app_enabled} className="mt-1" />
             <span><span className="block font-medium">In-app notificaties</span><span className="text-sm text-muted-foreground">Schakel niet-kritieke berichten in of uit.</span></span>
           </label>
           <div className="space-y-3 border-t pt-5">
             {preferenceOptions.map((option) => (
-              <label key={option.name} className="flex items-center gap-3">
+              <label key={option.name} className="flex min-h-11 items-center gap-3">
                 <input type="checkbox" name={option.name} defaultChecked={preferences[option.name]} />
                 <span>{option.label}</span>
               </label>
@@ -46,11 +46,9 @@ export default async function ProfessionalNotificationPreferencesPage() {
           </div>
           <div className="space-y-2 border-t pt-5">
             <p className="font-medium">Externe kanalen</p>
-            <p className="text-sm text-muted-foreground">E-mail, sms en WhatsApp zijn nog niet beschikbaar. Er worden geen externe berichten verstuurd.</p>
-            <div className="flex gap-4 text-sm text-muted-foreground">
-              <label><input type="checkbox" disabled /> E-mail</label>
-              <label><input type="checkbox" disabled /> Sms</label>
-              <label><input type="checkbox" disabled /> WhatsApp</label>
+            <p className="text-sm text-muted-foreground">Alleen in-app notificaties zijn actief. Externe berichten worden niet verstuurd.</p>
+            <div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
+              {["E-mail", "Sms", "WhatsApp"].map((channel) => <span key={channel} className="rounded-full border px-3 py-1.5">{channel} · niet beschikbaar</span>)}
             </div>
           </div>
           <button className="rounded-full bg-primary px-5 py-3 text-sm font-medium text-white hover:bg-primary/90">Instellingen opslaan</button>
