@@ -64,6 +64,31 @@ test("login return URL is normalized, internal and constrained to the authentica
   }
   assert.equal(getSafeLoginRedirect("professional", "/admin?isAdmin=true"), "/vakman");
 });
+test("existing password login preserves professional/admin routing, rejects unassigned roles and logout clears session", async () => {
+  for (const role of ["professional", "admin", null]) {
+    let signIns = 0;
+    let signOuts = 0;
+    const actions = load("lib/auth/actions.ts", {
+      "@/lib/env": { isSupabaseConfigured: () => true },
+      "@/lib/auth/helpers": { getUserRole: () => role },
+      "@/lib/auth/redirects": { getSafeLoginRedirect },
+      "next/navigation": { redirect: (path: string) => { throw new Error(`REDIRECT:${path}`); } },
+      "@/lib/supabase/server": { createServerSupabaseClient: async () => ({ auth: {
+        signInWithPassword: async () => { signIns++; return { error: null }; },
+        getUser: async () => ({ data: { user: { id: userId, app_metadata: { role } } } }),
+        signOut: async () => { signOuts++; },
+      } }) },
+    });
+    const form = new FormData();
+    form.set("next", "/admin/leadkwaliteit/review");
+    await assert.rejects((actions.signInAction as (form: FormData) => Promise<void>)(form),
+      role === "admin" ? /REDIRECT:\/admin\/leadkwaliteit\/review/ : role === "professional" ? /REDIRECT:\/vakman$/ : /REDIRECT:\/login\?error=/);
+    assert.equal(signIns, 1);
+    assert.equal(signOuts, role === null ? 1 : 0);
+    await assert.rejects((actions.signOutAction as () => Promise<void>)(), /REDIRECT:\/$/);
+    assert.equal(signOuts, role === null ? 2 : 1);
+  }
+});
 test("proxy denies every admin route before rendering, including details, spoofed cookies/URL/state and POST", async () => {
   const routes = ["/admin", "/admin/analytics", "/admin/experimenten", "/admin/experimenten/id", "/admin/leadkwaliteit",
     "/admin/leadkwaliteit/review", "/admin/leadkwaliteit/review/id", "/admin/leads/id", "/admin/vakmannen/id",
@@ -92,17 +117,20 @@ test("proxy denies every admin route before rendering, including details, spoofe
   }
 });
 type AdminCommand = (args: string[], env: Record<string, string>, factory: unknown, output: (message: string) => void) => Promise<void>;
-function cliHarness(role: unknown = "professional", failure?: "get" | "update") {
-  const user = { id: userId, app_metadata: { role, provider: "email", preserved: true } };
+function cliHarness(role: unknown = "professional", failure?: "get" | "update" | "audit") {
+  const user = { id: userId, app_metadata: { role, provider: "email", preserved: true } as Record<string, unknown> };
   const updates: unknown[] = [];
   const logs: string[] = [];
   const run = load("scripts/admin-access.mjs", { "@supabase/supabase-js": { createClient: () => {} } }).runAdminCommand as AdminCommand;
-  const client = () => ({ auth: { admin: {
+  const client = () => ({
+    from: () => ({ select: () => ({ limit: async () => ({ error: failure === "audit" ? new Error("sensitive-token") : null }) }) }),
+    auth: { admin: {
     getUserById: async () => failure === "get" ? { data: {}, error: { message: "sensitive-token" } } : { data: { user }, error: null },
     updateUserById: async (_id: string, attributes: { app_metadata: typeof user.app_metadata }) => {
       updates.push(attributes);
       if (failure === "update") return { data: {}, error: { message: "sensitive-token" } };
       user.app_metadata = attributes.app_metadata;
+      if (user.app_metadata.role === null) delete user.app_metadata.role;
       return { data: { user }, error: null };
     },
   } } });
@@ -124,7 +152,7 @@ test("CLI grant/revoke are UUID-only, idempotent, preserve metadata and never de
   await h.run(["revoke", userId]);
   await h.run(["revoke", userId]);
   assert.equal(h.updates.length, 2);
-  assert.equal(h.user.app_metadata.role, null);
+  assert.equal(h.user.app_metadata.role, undefined);
   await h.run(["check", userId]);
   assert.ok(h.logs.includes("user exists: yes; admin: no"));
   assert.ok(h.logs.every((line) => !/test-only-placeholder|sensitive-token|provider|email/.test(line)));
@@ -137,10 +165,11 @@ test("CLI rejects invalid/unknown users, credentials arguments, missing config a
   for (const url of ["http://remote.example.com", "ftp://example.com", "invalid"]) {
     await assert.rejects(cliHarness().run(["grant", userId], { NEXT_PUBLIC_SUPABASE_URL: url, SUPABASE_SERVICE_ROLE_KEY: "test-only-placeholder" }));
   }
-  for (const failure of ["get", "update"] as const) {
+  for (const failure of ["get", "update", "audit"] as const) {
     const h = cliHarness("professional", failure);
     await assert.rejects(h.run(["grant", userId]), (error: Error) => !error.message.includes("sensitive-token") && error.message.includes("Adminbeheer mislukt"));
     assert.equal(h.logs.length, 0);
+    if (failure !== "update") assert.equal(h.updates.length, 0);
   }
   assert.throws(() => execFileSync(process.execPath, ["scripts/admin-access.mjs", "grant", "invalid"], {
     cwd: new URL("..", import.meta.url), stdio: "pipe",

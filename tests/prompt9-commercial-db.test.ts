@@ -39,6 +39,7 @@ type Harness = {
   createDatabase: (name: string, legacy?: boolean) => string;
   dropDatabase: (name: string) => void;
   run: (database: string, sql: string, context?: SessionContext) => string;
+  runFile: (database: string, file: string) => void;
   queryRowJson: <T>(database: string, selectSql: string, context?: SessionContext) => T;
   queryArrayJson: <T>(database: string, selectSql: string, context?: SessionContext) => T[];
   expectError: (database: string, sql: string, context?: SessionContext) => string;
@@ -219,6 +220,7 @@ function startHarness(): Harness | null {
       execProgram(dropdbPath, ["-h", "127.0.0.1", "-p", port, "-U", "postgres", "--if-exists", name], env);
     },
     run,
+    runFile: (database, file) => { execProgram(psqlPath, [...connectionArgs(database), "-X", "-v", "ON_ERROR_STOP=1", "-f", file], env); },
     queryRowJson,
     queryArrayJson,
     expectError,
@@ -271,19 +273,21 @@ test("Prompt29B live Auth metadata denies revoked JWTs, spoofing, IDOR and worke
   if (!isolated) return;
   const { harness, database, fixture, assignmentIds } = isolated;
   harness.run(database, qualityRpc(assignmentIds[0], qualityVersion(harness, database, assignmentIds[0]), { mismatch: "wrong_service" }), fixture.professionalContexts[0]);
-  // This harness omits SEO migrations; install their exact audit policy dependency.
+  // Install the real SEO dependency migrations omitted by the commercial harness.
+  for (const file of ["20260909190000_phase4_local_seo_cms.sql", "20260909211000_prompt8_local_seo_scaling.sql"]) {
+    harness.runFile(database, join(repoRoot, "supabase/migrations", file));
+  }
   harness.run(database, `
-    create table public.seo_audit_log (id uuid primary key default gen_random_uuid());
-    alter table public.seo_audit_log enable row level security;
-    create policy "admins manage seo audit log" on public.seo_audit_log for all
-      using ((auth.jwt()->'app_metadata'->>'role') = 'admin')
-      with check ((auth.jwt()->'app_metadata'->>'role') = 'admin');
     grant all on public.seo_audit_log to authenticated;
   `);
   harness.run(database, readFileSync(join(repoRoot, "supabase/migrations/20261005190000_prompt29b_admin_access.sql"), "utf8"));
   const adminId = harness.adminContext.userId!;
   harness.run(database, `update auth.users set raw_app_meta_data = '{"role":"admin"}' where id = ${sqlLiteral(adminId)};`);
   assert.equal(harness.run(database, "select public.is_admin()", harness.adminContext), "t");
+  const seoPageId = harness.run(database, "select id from public.seo_local_pages limit 1");
+  const seoInsert = `insert into public.seo_audit_log (seo_local_page_id, actor, action, previous_status, new_status)
+    values (${sqlLiteral(seoPageId)}, 'admin-test', 'publish', 'draft', 'published')`;
+  harness.run(database, seoInsert, harness.adminContext);
   const secondAdmin = randomUUID();
   harness.run(database, `insert into auth.users (id, raw_app_meta_data) values (${sqlLiteral(secondAdmin)}, '{"role":"admin"}');`);
   assert.equal(harness.run(database, "select public.is_admin()", buildUserContext(secondAdmin, null)), "t");
@@ -305,14 +309,14 @@ test("Prompt29B live Auth metadata denies revoked JWTs, spoofing, IDOR and worke
   assert.equal(harness.run(database, "select has_function_privilege('service_role', 'public.claim_expired_distribution_candidates(integer)', 'execute')"), "t");
   harness.run(database, `update auth.users set raw_app_meta_data = '{"role":"admin"}' where id = ${sqlLiteral(adminId)};`);
   assert.equal(harness.run(database, `select count(*) from public.admin_role_audit where target_user_id = ${sqlLiteral(adminId)}`), "1");
-  harness.run(database, `update auth.users set raw_app_meta_data = '{"role":null}' where id = ${sqlLiteral(adminId)};`);
+  harness.run(database, `update auth.users set raw_app_meta_data = '{}' where id = ${sqlLiteral(adminId)};`);
   // Keep the original JWT's admin claim: a direct REST/RPC caller must lose access too.
   assert.equal(harness.run(database, "select public.is_admin()", harness.adminContext), "f");
   assert.match(harness.expectError(database, review, harness.adminContext), /QUALITY_REVIEW_NOT_AUTHORIZED/);
   assert.equal(harness.run(database, "select count(*) from public.seo_audit_log", harness.adminContext), "0");
-  assert.match(harness.expectError(database, "insert into public.seo_audit_log default values", harness.adminContext), /row-level security/);
+  assert.match(harness.expectError(database, seoInsert, harness.adminContext), /row-level security/);
   assert.equal(harness.run(database, "select count(*) from public.admin_role_audit", harness.adminContext), "0");
-  harness.run(database, `update auth.users set raw_app_meta_data = '{"role":null}' where id = ${sqlLiteral(adminId)};`);
+  harness.run(database, `update auth.users set raw_app_meta_data = '{}' where id = ${sqlLiteral(adminId)};`);
   const events = harness.queryArrayJson<{ action: string; actor: string; created_at: string }>(database,
     `select action, actor, created_at from public.admin_role_audit where target_user_id = ${sqlLiteral(adminId)} order by created_at`);
   assert.deepEqual(events.map((row) => row.action), ["admin_granted", "admin_revoked"]);
