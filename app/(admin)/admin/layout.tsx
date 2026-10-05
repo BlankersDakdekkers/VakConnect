@@ -41,7 +41,7 @@ const navigation = [
 export default async function AdminLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   if (!isSupabaseConfigured()) {
     return (
-      <DashboardShell title="Admin dashboard" subtitle="Supabase configuratie vereist" navigation={navigation}>
+      <DashboardShell title="Admin dashboard" subtitle="Supabase configuratie vereist" navigation={[]}>
         <SetupRequired
           title="Supabase configuratie ontbreekt"
           description="Stel eerst de omgeving in voordat het admin-dashboard met echte authenticatie en data gebruikt kan worden."

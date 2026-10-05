@@ -266,6 +266,64 @@ function buildUserContext(userId: string, appRole: AppRole): SessionContext {
   };
 }
 
+test("Prompt29B live Auth metadata denies revoked JWTs, spoofing, IDOR and worker RPCs; role audit is append-only", { concurrency: false }, async (t) => {
+  const isolated = await qualityFixture(t);
+  if (!isolated) return;
+  const { harness, database, fixture, assignmentIds } = isolated;
+  harness.run(database, qualityRpc(assignmentIds[0], qualityVersion(harness, database, assignmentIds[0]), { mismatch: "wrong_service" }), fixture.professionalContexts[0]);
+  // This harness omits SEO migrations; install their exact audit policy dependency.
+  harness.run(database, `
+    create table public.seo_audit_log (id uuid primary key default gen_random_uuid());
+    alter table public.seo_audit_log enable row level security;
+    create policy "admins manage seo audit log" on public.seo_audit_log for all
+      using ((auth.jwt()->'app_metadata'->>'role') = 'admin')
+      with check ((auth.jwt()->'app_metadata'->>'role') = 'admin');
+    grant all on public.seo_audit_log to authenticated;
+  `);
+  harness.run(database, readFileSync(join(repoRoot, "supabase/migrations/20261005190000_prompt29b_admin_access.sql"), "utf8"));
+  const adminId = harness.adminContext.userId!;
+  harness.run(database, `update auth.users set raw_app_meta_data = '{"role":"admin"}' where id = ${sqlLiteral(adminId)};`);
+  assert.equal(harness.run(database, "select public.is_admin()", harness.adminContext), "t");
+  const secondAdmin = randomUUID();
+  harness.run(database, `insert into auth.users (id, raw_app_meta_data) values (${sqlLiteral(secondAdmin)}, '{"role":"admin"}');`);
+  assert.equal(harness.run(database, "select public.is_admin()", buildUserContext(secondAdmin, null)), "t");
+  const review = `select public.admin_update_lead_quality_review(${sqlLiteral(fixture.leadId)}, null, 'in_review', null, 'Controle')`;
+  harness.run(database, review, harness.adminContext);
+  assert.equal(harness.run(database, `select count(*) from public.lead_quality_reviews where lead_id = ${sqlLiteral(fixture.leadId)}`, harness.adminContext), "1");
+  const professional = fixture.professionalContexts[0];
+  for (const context of [professional, { ...professional, appRole: "admin" as const }, buildUserContext(randomUUID(), "admin"),
+    { ...harness.adminContext, userId: null }, { ...harness.adminContext, requestRole: "anon" as const }]) {
+    assert.equal(harness.run(database, "select public.is_admin()", context), "f");
+    assert.match(harness.expectError(database, review, context), /QUALITY_REVIEW_NOT_AUTHORIZED/);
+    assert.equal(harness.run(database, `select count(*) from public.lead_quality_reviews where lead_id = ${sqlLiteral(fixture.leadId)}`, context), "0");
+    assert.match(harness.expectError(database, `select * from public.admin_lead_quality_detail(${sqlLiteral(fixture.leadId)})`, context), /QUALITY_REVIEW_NOT_AUTHORIZED/);
+  }
+  for (const context of [professional, { dbRole: "authenticated" as const, requestRole: "anon" as const }]) {
+    assert.match(harness.expectError(database, "select * from public.claim_expired_distribution_candidates(1)", context), /permission denied/);
+    assert.match(harness.expectError(database, `select * from public.activate_lead_distribution_run(${sqlLiteral(randomUUID())})`, context), /permission denied/);
+  }
+  assert.equal(harness.run(database, "select has_function_privilege('service_role', 'public.claim_expired_distribution_candidates(integer)', 'execute')"), "t");
+  harness.run(database, `update auth.users set raw_app_meta_data = '{"role":"admin"}' where id = ${sqlLiteral(adminId)};`);
+  assert.equal(harness.run(database, `select count(*) from public.admin_role_audit where target_user_id = ${sqlLiteral(adminId)}`), "1");
+  harness.run(database, `update auth.users set raw_app_meta_data = '{"role":null}' where id = ${sqlLiteral(adminId)};`);
+  // Keep the original JWT's admin claim: a direct REST/RPC caller must lose access too.
+  assert.equal(harness.run(database, "select public.is_admin()", harness.adminContext), "f");
+  assert.match(harness.expectError(database, review, harness.adminContext), /QUALITY_REVIEW_NOT_AUTHORIZED/);
+  assert.equal(harness.run(database, "select count(*) from public.seo_audit_log", harness.adminContext), "0");
+  assert.match(harness.expectError(database, "insert into public.seo_audit_log default values", harness.adminContext), /row-level security/);
+  assert.equal(harness.run(database, "select count(*) from public.admin_role_audit", harness.adminContext), "0");
+  harness.run(database, `update auth.users set raw_app_meta_data = '{"role":null}' where id = ${sqlLiteral(adminId)};`);
+  const events = harness.queryArrayJson<{ action: string; actor: string; created_at: string }>(database,
+    `select action, actor, created_at from public.admin_role_audit where target_user_id = ${sqlLiteral(adminId)} order by created_at`);
+  assert.deepEqual(events.map((row) => row.action), ["admin_granted", "admin_revoked"]);
+  assert.ok(events.every((row) => row.actor.startsWith("system:") && row.created_at));
+  for (const context of [buildUserContext(secondAdmin, "admin"), professional, { dbRole: "service_role" as const }]) {
+    assert.match(harness.expectError(database, "delete from public.admin_role_audit", context), /permission denied/);
+    assert.match(harness.expectError(database, `insert into public.admin_role_audit (target_user_id, actor, action) values (${sqlLiteral(adminId)}, 'forged', 'admin_granted')`, context), /permission denied/);
+    assert.match(harness.expectError(database, "select public.audit_admin_role_change()", context), /permission denied/);
+  }
+});
+
 function insertFixture(harness: Harness, database: string, options: { commercialType: "exclusive" | "shared"; maxBuyers: number; balances: number[] }) {
   const serviceId = harness.run(database, "select id from public.services where slug = 'dakdekker' limit 1;");
   const leadId = randomUUID();
