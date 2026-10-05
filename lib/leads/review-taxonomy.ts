@@ -90,9 +90,3 @@ export function reviewPriorityExplanation(signals: Record<string, number>, prior
     ? "Middel: er is minstens één niet-financieel onderzoekssignaal, zonder hoog-prioriteitsregel."
     : "Laag: uitsluitend financiële context (refund / correctie) of een bestaande review zonder actuele signalen.";
 }
-export function lastReviewResolutionAt(events: Array<{ action: string; from_status: string | null; to_status: string; created_at: string }>): string | null {
-  const resolutions = events.filter((event) => ["resolved", "dismissed"].includes(event.to_status)
-    && (event.action === "created" || event.from_status !== event.to_status)
-    && Number.isFinite(Date.parse(event.created_at)));
-  return resolutions.sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at))[0]?.created_at ?? null;
-}

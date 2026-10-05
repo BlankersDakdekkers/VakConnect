@@ -76,16 +76,36 @@ test("closure requires reason, appended note and explicit administrative confirm
   assert.equal(taxonomy.reviewMutationSchema.safeParse({ ...base, status: "open", resolution: null, note: null, expectedUpdatedAt: null, confirmed: false }).success, true);
   assert.equal(taxonomy.reviewMutationSchema.safeParse({ ...base, status: "open" }).success, false);
 });
-test("resolution timestamp derives only from audited closing transitions, not later notes or updated_at", () => {
-  assert.equal(taxonomy.lastReviewResolutionAt([]), null);
-  const resolved = { action: "status_changed", from_status: "in_review", to_status: "resolved", created_at: "2026-10-05T10:00:00Z" };
-  const note = { action: "note_added", from_status: "resolved", to_status: "resolved", created_at: "2026-10-05T11:00:00Z" };
-  const reopened = { action: "reopened", from_status: "resolved", to_status: "open", created_at: "2026-10-05T12:00:00Z" };
-  assert.equal(taxonomy.lastReviewResolutionAt([note, reopened, resolved]), resolved.created_at);
-  const dismissed = { action: "status_changed", from_status: "open", to_status: "dismissed", created_at: "2026-10-05T13:00:00Z" };
-  assert.equal(taxonomy.lastReviewResolutionAt([dismissed, note, resolved]), dismissed.created_at);
-  assert.equal(taxonomy.lastReviewResolutionAt([{ ...resolved, created_at: "unknown" }, note]), null);
-  assert.equal(taxonomy.lastReviewResolutionAt([{ ...resolved, action: "created", from_status: null }]), resolved.created_at);
+test("rendered resolution timestamp uses authoritative database time for same-status reason changes and safe unknowns", async () => {
+  const timestamp = load("components/admin/quality-review-evidence.tsx").reviewTimestamp as (value: string | null) => string;
+  const previousClosure = "2026-10-05T10:00:00Z";
+  const changedResolution = "2026-10-05T11:00:00Z";
+  const laterNote = "2026-10-05T12:00:00Z";
+  for (const resolvedAt of [changedResolution, null, "invalid"]) {
+    const detail = {
+      item: { status: "resolved", resolved_at: resolvedAt, updated_at: laterNote },
+      lead: { reference: "VC-ABC12345", service_name: "Dakdekker", created_at: "2026-10-01T09:00:00Z", source: "Direct", type: "shared" },
+      audit: [
+        { action: "status_changed", from_status: "in_review", to_status: "resolved", created_at: previousClosure },
+        { action: "note_added", from_status: "resolved", to_status: "resolved", resolution: "duplicate", created_at: changedResolution },
+        { action: "note_added", from_status: "resolved", to_status: "resolved", resolution: "duplicate", created_at: laterNote },
+      ],
+    };
+    const Page = load("app/(admin)/admin/leadkwaliteit/review/[id]/page.tsx", {
+      "next/navigation": { notFound: () => { throw new Error("Not found"); } },
+      "@/components/ui/page-header": { PageHeader: () => null },
+      "@/components/admin/quality-review-signals": { QualityReviewSignals: () => null },
+      "@/components/admin/quality-review-form": { QualityReviewForm: () => null },
+      "@/components/admin/quality-review-evidence": { QualityReviewEvidence: () => null, reviewTimestamp: timestamp },
+      "@/lib/leads/review-queries": { getAdminLeadQualityDetail: async () => detail },
+      "@/lib/leads/review-actions": { updateLeadQualityReviewAction: async () => {} },
+    }).default as (props: { params: Promise<{ id: string }>; searchParams: Promise<Record<string, string>> }) => Promise<React.ReactNode>;
+    const markup = renderToStaticMarkup(await Page({ params: Promise.resolve({ id: leadId }), searchParams: Promise.resolve({}) }));
+    assert.match(markup, /Het door de database vastgelegde afhandeltijdstip is leidend/);
+    assert.ok(markup.includes(timestamp(resolvedAt)));
+    assert.ok(!markup.includes(timestamp(previousClosure)));
+    assert.ok(!markup.includes(timestamp(laterNote)));
+  }
 });
 test("action denies unauthenticated/non-admin requests before RPC and invalid IDs never reach SQL", async () => {
   const denied = actionHarness({ unauthorized: true });
