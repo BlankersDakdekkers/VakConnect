@@ -125,6 +125,7 @@ export interface ProfessionalLeadMarketDetail {
   assignment: {
     id: string | null;
     status: string | null;
+    qualityUpdatedAt: string | null;
   };
   distributionOffer: {
     id: string | null;
@@ -393,7 +394,7 @@ export async function getProfessionalLeadMarketDetail(leadId: string, profession
       .select("id, public_reference, description, preferred_timing, urgency, lead_score, postal_code, service_id, subservice_slug, created_at, commercial_type, price_credits, max_buyers, buyers_count, sales_status, service:services(name, slug), lead_images(id), lead_answers(answer_text, answer_json, question:service_questions(question, type, service_question_options(label, value)))")
       .eq("id", leadId)
       .maybeSingle(),
-    supabase.from("lead_assignments").select("id, status, lead_purchase_id").eq("lead_id", leadId).eq("professional_id", professionalId).maybeSingle(),
+    supabase.from("lead_assignments").select("id, status, lead_purchase_id, quality_updated_at").eq("lead_id", leadId).eq("professional_id", professionalId).maybeSingle(),
     supabase.from("lead_purchases").select("id, status, price_credits, purchased_at").eq("lead_id", leadId).eq("professional_id", professionalId).maybeSingle(),
     supabase.from("professional_wallets").select("cached_balance").eq("professional_id", professionalId).maybeSingle(),
     supabase.from("lead_distribution_candidates").select("id, status, offered_at, offer_expires_at, viewed_at").eq("lead_id", leadId).eq("professional_id", professionalId).order("created_at", { ascending: false }).limit(1).maybeSingle(),
@@ -480,6 +481,7 @@ export async function getProfessionalLeadMarketDetail(leadId: string, profession
     assignment: {
       id: assignment?.id ?? null,
       status: assignment?.status ?? null,
+      qualityUpdatedAt: ((assignment as Record<string, unknown> | null)?.quality_updated_at as string | null) ?? null,
     },
     distributionOffer: {
       id: offer?.id ?? null,

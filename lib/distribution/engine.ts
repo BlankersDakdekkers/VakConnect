@@ -516,7 +516,7 @@ export async function processDistributionExpirations() {
   return expired.length;
 }
 
-export async function declineDistributionOffer(candidateId: string, professionalId: string, reason: string) {
+export async function declineDistributionOffer(candidateId: string, professionalId: string, reason?: string) {
   const supabase = await createServerSupabaseClient();
   const now = new Date().toISOString();
   const { data: candidate } = await supabase
@@ -538,18 +538,20 @@ export async function declineDistributionOffer(candidateId: string, professional
     throw new Error("Offer is verlopen.");
   }
 
-  const { error } = await supabase
+  const { data: declined, error } = await supabase
     .from("lead_distribution_candidates")
-    .update({ status: "declined", decline_reason: reason, declined_at: now })
+    .update({ status: "declined", decline_reason: reason ?? null, declined_at: now })
     .eq("id", candidateId)
     .eq("professional_id", professionalId)
-    .in("status", ["offered", "viewed"]);
+    .eq("status", candidate.status)
+    .select("id")
+    .maybeSingle();
 
-  if (error) {
+  if (error || !declined) {
     throw new Error("Offer kon niet worden geweigerd.");
   }
 
-  await appendDistributionActivity(String(candidate.lead_id), "candidate_declined", professionalId, { candidate_id: candidateId, reason });
+  await appendDistributionActivity(String(candidate.lead_id), "candidate_declined", professionalId, { candidate_id: candidateId, reason: reason ?? null });
   await activateOffersForRun(String(candidate.distribution_run_id));
 }
 

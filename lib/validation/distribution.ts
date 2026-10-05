@@ -28,11 +28,19 @@ export const declineReasonValues = [
   "prijs_te_hoog",
   "timing_past_niet",
   "anders",
+  "wrong_service",
+  "wrong_region",
+  "incorrect_information",
+  "already_completed",
+  "duplicate",
+  "unreachable",
+  "invalid_contact",
+  "profile_mismatch",
 ] as const;
 
 export const professionalOfferDeclineSchema = z.object({
   candidateId: z.string().uuid(),
-  reason: z.enum(declineReasonValues),
+  reason: z.preprocess((value) => value === "" || value == null ? undefined : value, z.enum(declineReasonValues).optional()),
   redirectTo: z.string().startsWith("/vakman"),
 });
 

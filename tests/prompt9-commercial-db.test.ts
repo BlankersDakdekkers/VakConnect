@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync, spawn } from "node:child_process";
-import { existsSync, mkdtempSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -20,6 +20,7 @@ const migrationFiles = [
   "supabase/migrations/20260909222000_phase5_commercial_lead_wallet.sql",
   "supabase/migrations/20260910160000_phase6_lead_distribution_engine.sql",
   "supabase/migrations/20261005150000_prompt27_marketplace_access_hardening.sql",
+  "supabase/migrations/20261005170000_prompt28_lead_quality.sql",
 ].map((file) => join(repoRoot, file));
 
 type AppRole = "admin" | "professional" | null;
@@ -34,7 +35,7 @@ type SessionContext = {
 
 type Harness = {
   adminContext: SessionContext;
-  createDatabase: (name: string) => string;
+  createDatabase: (name: string, legacy?: boolean) => string;
   dropDatabase: (name: string) => void;
   run: (database: string, sql: string, context?: SessionContext) => string;
   queryRowJson: <T>(database: string, selectSql: string, context?: SessionContext) => T;
@@ -96,6 +97,7 @@ function startHarness(): Harness | null {
   const port = String(5600 + Math.floor(Math.random() * 1000));
   const adminContext: SessionContext = { dbRole: "authenticated", requestRole: "authenticated", appRole: "admin", userId: randomUUID() };
   const templateDb = "vakconnect_template";
+  const legacyTemplateDb = "vakconnect_legacy_template";
   const env = { PATH: `${pgBinDir}:${process.env.PATH ?? ""}` };
 
   execProgram("mkdir", ["-p", socketDir], env);
@@ -189,6 +191,9 @@ function startHarness(): Harness | null {
   execProgram(createdbPath, ["-h", "127.0.0.1", "-p", port, "-U", "postgres", templateDb], env);
   execProgram(psqlPath, [...connectionArgs(templateDb), "-X", "-v", "ON_ERROR_STOP=1", "-c", bootstrapSql], env);
   for (const file of migrationFiles) {
+    if (file.endsWith("20261005170000_prompt28_lead_quality.sql")) {
+      execProgram(createdbPath, ["-h", "127.0.0.1", "-p", port, "-U", "postgres", "-T", templateDb, legacyTemplateDb], env);
+    }
     execProgram(psqlPath, [...connectionArgs(templateDb), "-X", "-v", "ON_ERROR_STOP=1", "-f", file], env);
   }
 
@@ -205,8 +210,8 @@ function startHarness(): Harness | null {
 
   return {
     adminContext,
-    createDatabase(name: string) {
-      execProgram(createdbPath, ["-h", "127.0.0.1", "-p", port, "-U", "postgres", "-T", templateDb, name], env);
+    createDatabase(name: string, legacy = false) {
+      execProgram(createdbPath, ["-h", "127.0.0.1", "-p", port, "-U", "postgres", "-T", legacy ? legacyTemplateDb : templateDb, name], env);
       return name;
     },
     dropDatabase(name: string) {
@@ -366,6 +371,334 @@ function insertFixture(harness: Harness, database: string, options: { commercial
     professionalContexts: authUserIds.map((userId) => buildUserContext(userId, "professional")),
   } satisfies Fixture;
 }
+
+function qualityVersion(harness: Harness, database: string, assignmentId: string) {
+  return harness.run(database, `select quality_updated_at from public.lead_assignments where id = ${sqlLiteral(assignmentId)};`);
+}
+
+function qualityRpc(assignmentId: string, version: string, values: {
+      progress?: string; reachability?: string | null; appointment?: string; loss?: string | null;
+      mismatch?: string | null; note?: string | null;
+    } = {}) {
+  const nullable = (value: string | null | undefined) => value == null ? "null" : sqlLiteral(value);
+  return `select public.update_assignment_quality(
+        ${sqlLiteral(assignmentId)}, ${sqlLiteral(version)}::timestamptz,
+        ${sqlLiteral(values.progress ?? "contacted")}, ${nullable(values.reachability)},
+        ${sqlLiteral(values.appointment ?? "not_scheduled")}, ${nullable(values.loss)},
+        ${nullable(values.mismatch)}, ${nullable(values.note)}
+      );`;
+}
+
+async function qualityFixture(t: Parameters<typeof createIsolatedDatabase>[0], count = 1) {
+  const isolated = await createIsolatedDatabase(t, "prompt28_quality");
+  if (!isolated) return null;
+  const { harness, database } = isolated;
+  harness.run(database, "grant usage on schema public to authenticated; grant select, insert, update, delete on all tables in schema public to authenticated;");
+  const fixture = insertFixture(harness, database, {
+    commercialType: "shared", maxBuyers: Math.max(count, 2), balances: Array(count).fill(100),
+  });
+  const assignmentIds = fixture.professionalContexts.map((context, index) => {
+    harness.run(database, `select * from public.purchase_lead(${sqlLiteral(fixture.leadId)}, 'quality-buy-${index}');`, context);
+    return harness.run(database, `select id from public.lead_assignments
+          where lead_id = ${sqlLiteral(fixture.leadId)} and professional_id = ${sqlLiteral(fixture.professionalIds[index])};`);
+  });
+  return { ...isolated, fixture, assignmentIds };
+}
+
+test("Prompt 28 assignment-owned timestamps and exact duplicate updates are idempotent", async (t) => {
+  const state = await qualityFixture(t);
+  if (!state) return;
+  const { harness, database, fixture, assignmentIds: [id] } = state;
+  const owner = fixture.professionalContexts[0];
+  const walletBefore = harness.run(database, `select json_build_object(
+        'wallets', (select json_agg(w) from public.professional_wallets w),
+        'transactions', (select count(*) from public.wallet_transactions),
+        'purchases', (select count(*) from public.lead_purchases));`);
+  const initial = qualityVersion(harness, database, id);
+  harness.run(database, qualityRpc(id, initial, { reachability: "no_answer" }), owner);
+  const first = harness.queryRowJson<{ contacted_at: string; reached_at: null; quality_updated_by: string; quality_updated_at: string }>(
+    database, `select contacted_at, reached_at, quality_updated_by, quality_updated_at from public.lead_assignments where id = ${sqlLiteral(id)}`);
+  assert.ok(first.contacted_at);
+  assert.equal(first.reached_at, null);
+  assert.equal(first.quality_updated_by, owner.userId);
+  assert.notEqual(qualityVersion(harness, database, id), initial);
+  const firstVersion = qualityVersion(harness, database, id);
+  const activityCount = harness.run(database, `select count(*) from public.lead_activity;`);
+  harness.run(database, qualityRpc(id, firstVersion, { reachability: "no_answer" }), owner);
+  assert.equal(qualityVersion(harness, database, id), firstVersion);
+  assert.equal(harness.run(database, `select count(*) from public.lead_activity;`), activityCount);
+  harness.run(database, qualityRpc(id, firstVersion, { reachability: "reached" }), owner);
+  const reached = harness.run(database, `select reached_at from public.lead_assignments where id = ${sqlLiteral(id)};`);
+  harness.run(database, qualityRpc(id, qualityVersion(harness, database, id), {
+    progress: "appointment_scheduled", reachability: "reached", appointment: "scheduled",
+  }), owner);
+  const scheduled = harness.run(database, `select appointment_scheduled_at from public.lead_assignments where id = ${sqlLiteral(id)};`);
+  harness.run(database, qualityRpc(id, qualityVersion(harness, database, id), {
+    progress: "quote_sent", reachability: "reached", appointment: "completed",
+  }), owner);
+  harness.run(database, qualityRpc(id, qualityVersion(harness, database, id), {
+    progress: "won", reachability: "reached", appointment: "completed",
+  }), owner);
+  const timestamps = harness.queryRowJson<{ contacted_at: string; reached_at: string; appointment_scheduled_at: string; outcome_at: string }>(
+    database, `select contacted_at, reached_at, appointment_scheduled_at, outcome_at from public.lead_assignments where id = ${sqlLiteral(id)}`);
+  assert.equal(timestamps.contacted_at, first.contacted_at);
+  assert.equal(harness.run(database, `select reached_at from public.lead_assignments where id = ${sqlLiteral(id)};`), reached);
+  assert.equal(harness.run(database, `select appointment_scheduled_at from public.lead_assignments where id = ${sqlLiteral(id)};`), scheduled);
+  assert.ok(timestamps.outcome_at);
+  harness.run(database, qualityRpc(id, qualityVersion(harness, database, id), {
+    progress: "won", reachability: "reached", appointment: "completed",
+  }), owner);
+  assert.match(harness.expectError(database, qualityRpc(id, qualityVersion(harness, database, id), {
+    progress: "won", reachability: "reached", appointment: "cancelled",
+  }), owner), /QUALITY_TERMINAL/);
+  assert.equal(harness.run(database, `select json_build_object(
+        'wallets', (select json_agg(w) from public.professional_wallets w),
+        'transactions', (select count(*) from public.wallet_transactions),
+        'purchases', (select count(*) from public.lead_purchases));`), walletBefore);
+});
+
+test("Prompt 28 shared outcomes and all professional activity reads stay isolated", async (t) => {
+  const state = await qualityFixture(t, 2);
+  if (!state) return;
+  const { harness, database, fixture, assignmentIds: [first, second] } = state;
+  const [one, two] = fixture.professionalContexts;
+  for (const [id, context] of [[first, one], [second, two]] as const) {
+    harness.run(database, qualityRpc(id, qualityVersion(harness, database, id)), context);
+  }
+  harness.run(database, qualityRpc(first, qualityVersion(harness, database, first), {
+    progress: "lost", loss: "wrong_region", mismatch: "wrong_region",
+  }), one);
+  for (const [progress, appointment] of [
+    ["appointment_scheduled", "scheduled"], ["quote_sent", "completed"], ["won", "completed"],
+  ]) harness.run(database, qualityRpc(second, qualityVersion(harness, database, second), {
+    progress, reachability: "reached", appointment,
+  }), two);
+  assert.equal(harness.run(database, `select progress_status from public.lead_assignments where id = ${sqlLiteral(first)};`), "lost");
+  assert.equal(harness.run(database, `select progress_status from public.lead_assignments where id = ${sqlLiteral(second)};`), "won");
+  assert.equal(harness.run(database, `select status from public.leads where id = ${sqlLiteral(fixture.leadId)};`), "accepted");
+  assert.equal(harness.run(database, `select count(*) from public.lead_assignments where id = ${sqlLiteral(second)};`, one), "0");
+  assert.equal(harness.run(database, `select count(*) from public.lead_activity where professional_id <> ${sqlLiteral(fixture.professionalIds[0])} or professional_id is null;`, one), "0");
+  assert.equal(harness.run(database, `select count(*) from public.lead_activity where professional_id <> ${sqlLiteral(fixture.professionalIds[1])} or professional_id is null;`, two), "0");
+  assert.match(harness.expectError(database, qualityRpc(second, qualityVersion(harness, database, second)), one), /QUALITY_NOT_AUTHORIZED/);
+  harness.run(database, `update public.lead_assignments set mismatch_reason = 'duplicate' where id = ${sqlLiteral(second)};`, one);
+  assert.equal(harness.run(database, `select mismatch_reason is null from public.lead_assignments where id = ${sqlLiteral(second)};`), "t");
+});
+
+test("Prompt 28 stale RPC, invalid enums, note limits and contradictions fail atomically", async (t) => {
+  const state = await qualityFixture(t);
+  if (!state) return;
+  const { harness, database, fixture, assignmentIds: [id] } = state;
+  const owner = fixture.professionalContexts[0];
+  const initial = qualityVersion(harness, database, id);
+  assert.match(harness.expectError(database, qualityRpc(id, initial, { progress: "won", reachability: "reached" }), owner), /QUALITY_INVALID_PROGRESS/);
+  assert.match(harness.expectError(database, qualityRpc(id, initial, { progress: "lost", loss: "duplicate" }), owner), /QUALITY_INVALID_PROGRESS/);
+  harness.run(database, qualityRpc(id, initial, { reachability: "no_answer" }), owner);
+  const version = qualityVersion(harness, database, id);
+  assert.match(harness.expectError(database, qualityRpc(id, initial), owner), /QUALITY_STALE_WRITE/);
+  assert.match(harness.expectError(database, qualityRpc(id, version).replace(`${sqlLiteral(version)}::timestamptz`, "null"), owner), /QUALITY_STALE_WRITE/);
+  for (const values of [
+    { reachability: "unknown" }, { appointment: "unknown" }, { mismatch: "unknown" },
+    { progress: "unknown" }, { progress: "lost", loss: "other" },
+    { mismatch: "other", note: "x".repeat(501) }, { note: "text" },
+    { loss: "prijs" },
+    { appointment: "scheduled", reachability: "no_answer" },
+    { appointment: "completed", reachability: "invalid_email" },
+    { progress: "appointment_scheduled", reachability: "reached" },
+  ]) assert.ok(harness.expectError(database, qualityRpc(id, version, values), owner).includes("ERROR:"));
+  assert.equal(qualityVersion(harness, database, id), version);
+  harness.run(database, qualityRpc(id, version, { mismatch: "other", note: "x".repeat(500) }), owner);
+  const activity = harness.queryRowJson<{ metadata: Record<string, unknown>; actor_user_id: string; professional_id: string }>(
+    database, `select metadata, actor_user_id, professional_id from public.lead_activity where metadata->>'source' = 'assignment_quality' order by created_at desc limit 1`);
+  assert.equal(activity.actor_user_id, owner.userId);
+  assert.equal(activity.professional_id, fixture.professionalIds[0]);
+  assert.equal(activity.metadata.mismatch_reason, "other");
+  assert.equal(JSON.stringify(activity.metadata).includes("x".repeat(50)), false);
+  assert.equal(Object.hasOwn(activity.metadata, "feedback_note"), false);
+});
+
+test("Prompt 28 direct writes cannot forge timestamps, actors or audit events even as admin", async (t) => {
+  const state = await qualityFixture(t, 2);
+  if (!state) return;
+  const { harness, database, fixture, assignmentIds: [id] } = state;
+  const owner = fixture.professionalContexts[0];
+  assert.match(harness.expectError(database, `insert into public.lead_assignments
+        (lead_id, professional_id, reached_at) values
+        (${sqlLiteral(fixture.leadId)}, ${sqlLiteral(fixture.professionalIds[0])}, '2001-01-01');`,
+  harness.adminContext), /QUALITY_INSERT_FORBIDDEN/);
+  for (const context of [owner, harness.adminContext]) {
+    for (const column of ["contacted_at", "reached_at", "appointment_scheduled_at", "outcome_at", "quality_updated_at"]) {
+      assert.match(harness.expectError(database, `update public.lead_assignments set ${column} = '2001-01-01' where id = ${sqlLiteral(id)};`, context), /QUALITY_SERVER_FIELDS_IMMUTABLE/);
+    }
+    assert.match(harness.expectError(database, `update public.lead_assignments set quality_updated_by = ${sqlLiteral(fixture.professionalContexts[1].userId!)} where id = ${sqlLiteral(id)};`, context), /QUALITY_SERVER_FIELDS_IMMUTABLE/);
+    assert.match(harness.expectError(database, `insert into public.lead_activity (lead_id, professional_id, actor_user_id, activity_type, metadata)
+          values (${sqlLiteral(fixture.leadId)}, ${sqlLiteral(fixture.professionalIds[0])}, ${sqlLiteral(owner.userId!)}, 'progress_updated',
+          '{"source":"assignment_quality"}');`, context), /QUALITY_AUDIT_TRIGGER_ONLY/);
+  }
+  assert.match(harness.expectError(database, `update public.lead_assignments set mismatch_reason = 'other' where id = ${sqlLiteral(id)};`), /QUALITY_NOT_AUTHORIZED/);
+  harness.run(database, `update public.lead_assignments set progress_status = 'contacted', reachability = 'no_answer' where id = ${sqlLiteral(id)};`, owner);
+  harness.run(database, `update public.lead_assignments set mismatch_reason = 'wrong_service' where id = ${sqlLiteral(id)};`, harness.adminContext);
+  assert.equal(harness.run(database, `select quality_updated_by from public.lead_assignments where id = ${sqlLiteral(id)};`), harness.adminContext.userId);
+  assert.match(harness.expectError(database, `update public.lead_activity set actor_user_id = ${sqlLiteral(owner.userId!)} where metadata->>'source' = 'assignment_quality';`, harness.adminContext), /QUALITY_AUDIT_IMMUTABLE/);
+  assert.match(harness.expectError(database, `delete from public.lead_activity where metadata->>'source' = 'assignment_quality';`, harness.adminContext), /QUALITY_AUDIT_IMMUTABLE/);
+  assert.match(harness.expectError(database, `update public.lead_assignments set reachability = 'unknown' where id = ${sqlLiteral(id)};`, owner), /assignment_reachability_values/);
+  assert.match(harness.expectError(database, `update public.lead_assignments set feedback_note = 'text', mismatch_reason = null where id = ${sqlLiteral(id)};`, owner), /assignment_feedback_note/);
+  assert.equal(harness.run(database, `select has_function_privilege('anon', 'public.update_assignment_quality(uuid,timestamptz,text,text,text,text,text,text)', 'EXECUTE');`), "f");
+  assert.equal(harness.run(database, `select has_function_privilege('authenticated', 'public.audit_assignment_quality()', 'EXECUTE');`), "f");
+});
+
+test("Prompt 28 early loss remains terminal while financial refunds still work", async (t) => {
+  const state = await qualityFixture(t);
+  if (!state) return;
+  const { harness, database, fixture, assignmentIds: [id] } = state;
+  const owner = fixture.professionalContexts[0];
+  harness.run(database, qualityRpc(id, qualityVersion(harness, database, id)), owner);
+  harness.run(database, qualityRpc(id, qualityVersion(harness, database, id), {
+    progress: "lost", loss: "anders", note: "Klant annuleerde",
+  }), owner);
+  for (const sql of [
+    qualityRpc(id, qualityVersion(harness, database, id)),
+    `update public.lead_assignments set loss_reason = 'prijs' where id = ${sqlLiteral(id)};`,
+    `update public.lead_assignments set feedback_note = 'Aangepast' where id = ${sqlLiteral(id)};`,
+  ]) assert.match(harness.expectError(database, sql, owner), /QUALITY_TERMINAL/);
+  const version = qualityVersion(harness, database, id);
+  const purchaseId = harness.run(database, `select id from public.lead_purchases where lead_assignment_id = ${sqlLiteral(id)};`);
+  harness.run(database, `select * from public.refund_lead_purchase(${sqlLiteral(purchaseId)}, 'Kwaliteitstest');`, harness.adminContext);
+  assert.equal(qualityVersion(harness, database, id), version);
+  assert.equal(harness.run(database, `select progress_status from public.lead_assignments where id = ${sqlLiteral(id)};`), "lost");
+  harness.run(database, `update public.lead_assignments set status = 'rejected', accepted_at = null, rejected_at = now() where id = ${sqlLiteral(id)};`, harness.adminContext);
+  assert.equal(harness.run(database, `select progress_status from public.lead_assignments where id = ${sqlLiteral(id)};`), "lost");
+  assert.match(harness.expectError(database, qualityRpc(id, version, { progress: "lost", loss: "anders", note: "Klant annuleerde" }), owner), /QUALITY_ASSIGNMENT_NOT_ACCEPTED/);
+});
+
+test("Prompt 28 refunded nonterminal assignments cannot edit quality through direct or RPC paths", async (t) => {
+  const state = await qualityFixture(t);
+  if (!state) return;
+  const { harness, database, fixture, assignmentIds: [id] } = state;
+  const owner = fixture.professionalContexts[0];
+  harness.run(database, qualityRpc(id, qualityVersion(harness, database, id)), owner);
+  const purchaseId = harness.run(database, `select id from public.lead_purchases where lead_assignment_id = ${sqlLiteral(id)};`);
+  harness.run(database, `select * from public.refund_lead_purchase(${sqlLiteral(purchaseId)}, 'Kwaliteitstest');`, harness.adminContext);
+  assert.match(harness.expectError(database, qualityRpc(id, qualityVersion(harness, database, id), { mismatch: "duplicate" }), owner), /QUALITY_ACCESS_REVOKED/);
+  assert.match(harness.expectError(database, `update public.lead_assignments set mismatch_reason = 'duplicate' where id = ${sqlLiteral(id)};`, owner), /QUALITY_ACCESS_REVOKED/);
+  assert.equal(harness.run(database, `select count(*) from public.lead_activity where metadata->>'source' = 'assignment_quality';`, owner), "0");
+});
+
+test("Prompt 28 pending assignments can reject with structured mismatch, not progress changes", async (t) => {
+  const isolated = await createIsolatedDatabase(t, "prompt28_reject");
+  if (!isolated) return;
+  const { harness, database } = isolated;
+  harness.run(database, "grant usage on schema public to authenticated; grant select, insert, update on all tables in schema public to authenticated;");
+  const fixture = insertFixture(harness, database, { commercialType: "shared", maxBuyers: 2, balances: [0, 0] });
+  const ids = [randomUUID(), randomUUID()];
+  for (const [index, id] of ids.entries()) harness.run(database, `insert into public.lead_assignments (id, lead_id, professional_id)
+        values (${sqlLiteral(id)}, ${sqlLiteral(fixture.leadId)}, ${sqlLiteral(fixture.professionalIds[index])});`, harness.adminContext);
+  const owner = fixture.professionalContexts[0];
+  assert.match(harness.expectError(database, `update public.lead_assignments set mismatch_reason = 'wrong_service' where id = ${sqlLiteral(ids[0])};`, owner), /QUALITY_ASSIGNMENT_NOT_ACCEPTED/);
+  assert.match(harness.expectError(database, `update public.lead_assignments set status = 'rejected', rejected_at = now(), mismatch_reason = 'other', feedback_note = repeat('x',501) where id = ${sqlLiteral(ids[0])};`, owner), /assignment_feedback_note/);
+  harness.run(database, `update public.lead_assignments set status = 'rejected', rejected_at = now(), mismatch_reason = 'other', feedback_note = 'Verkeerde klus'
+        where id = ${sqlLiteral(ids[0])};`, owner);
+  assert.equal(harness.run(database, `select progress_status from public.lead_assignments where id = ${sqlLiteral(ids[0])};`), "new");
+  assert.equal(harness.run(database, `select quality_updated_by from public.lead_assignments where id = ${sqlLiteral(ids[0])};`), owner.userId);
+  assert.equal(harness.run(database, `select contacted_at is null and outcome_at is null from public.lead_assignments where id = ${sqlLiteral(ids[0])};`), "t");
+  assert.match(harness.expectError(database, `update public.lead_assignments set progress_status = 'contacted', mismatch_reason = 'wrong_region'
+        where id = ${sqlLiteral(ids[1])};`, fixture.professionalContexts[1]), /QUALITY_ASSIGNMENT_NOT_ACCEPTED/);
+});
+
+test("Prompt 28 concurrent RPC updates require a fresh version after the row lock", async (t) => {
+  const state = await qualityFixture(t);
+  if (!state) return;
+  const { harness, database, fixture, assignmentIds: [id] } = state;
+  const version = qualityVersion(harness, database, id);
+  const results = await Promise.all([
+    harness.runConcurrent(database, qualityRpc(id, version, { reachability: "no_answer" }), fixture.professionalContexts[0]),
+    harness.runConcurrent(database, qualityRpc(id, version, { reachability: "reached" }), fixture.professionalContexts[0]),
+  ]);
+  assert.equal(results.filter((result) => result.ok).length, 1);
+  assert.match(results.find((result) => !result.ok)!.stderr, /QUALITY_STALE_WRITE/);
+  assert.equal(harness.run(database, `select count(*) from public.lead_activity where metadata->>'source' = 'assignment_quality';`), "1");
+});
+
+test("Prompt 28 logical loss after scheduling preserves first appointment timestamp", async (t) => {
+  const state = await qualityFixture(t);
+  if (!state) return;
+  const { harness, database, fixture, assignmentIds: [id] } = state;
+  const owner = fixture.professionalContexts[0];
+  harness.run(database, qualityRpc(id, qualityVersion(harness, database, id), { reachability: "reached" }), owner);
+  harness.run(database, qualityRpc(id, qualityVersion(harness, database, id), {
+    progress: "appointment_scheduled", reachability: "reached", appointment: "scheduled",
+  }), owner);
+  const scheduled = harness.run(database, `select appointment_scheduled_at from public.lead_assignments where id = ${sqlLiteral(id)};`);
+  harness.run(database, qualityRpc(id, qualityVersion(harness, database, id), {
+    progress: "lost", reachability: "reached", appointment: "cancelled", loss: "already_completed",
+  }), owner);
+  assert.equal(harness.run(database, `select appointment_scheduled_at from public.lead_assignments where id = ${sqlLiteral(id)};`), scheduled);
+  assert.equal(harness.run(database, `select outcome_at is not null from public.lead_assignments where id = ${sqlLiteral(id)};`), "t");
+});
+
+test("Prompt 28 migration does not infer historical milestones or block legacy refunds", async (t) => {
+  const harness = await getHarness(t);
+  if (!harness) return;
+  const database = harness.createDatabase(createDatabaseName("prompt28_legacy"), true);
+  t.after(() => harness.dropDatabase(database));
+  harness.run(database, "grant usage on schema public to authenticated; grant select, insert, update on all tables in schema public to authenticated;");
+  const fixture = insertFixture(harness, database, { commercialType: "shared", maxBuyers: 3, balances: [100, 100, 100] });
+  const ids = fixture.professionalContexts.map((context, index) => {
+    harness.run(database, `select * from public.purchase_lead(${sqlLiteral(fixture.leadId)}, 'legacy-quality-${index}');`, context);
+    return harness.run(database, `select id from public.lead_assignments where professional_id = ${sqlLiteral(fixture.professionalIds[index])};`);
+  });
+  for (const [index, id] of ids.entries()) {
+    harness.run(database, `update public.lead_assignments set progress_status = 'contacted' where id = ${sqlLiteral(id)};`);
+    if (index >= 1) harness.run(database, `update public.lead_assignments set progress_status = 'appointment_scheduled' where id = ${sqlLiteral(id)};`);
+    if (index === 2) {
+      harness.run(database, `update public.lead_assignments set progress_status = 'quote_sent' where id = ${sqlLiteral(id)};`);
+      harness.run(database, `update public.lead_assignments set progress_status = 'lost', loss_reason = 'Historische vrije verliesreden' where id = ${sqlLiteral(id)};`);
+    }
+  }
+  harness.run(database, readFileSync(join(repoRoot, "supabase/migrations/20261005170000_prompt28_lead_quality.sql"), "utf8"));
+  assert.equal(harness.run(database, `select count(*) from public.lead_assignments where contacted_at is not null
+    or reached_at is not null or appointment_scheduled_at is not null or outcome_at is not null;`), "0");
+  harness.run(database, qualityRpc(ids[0], qualityVersion(harness, database, ids[0]), {
+    progress: "appointment_scheduled", reachability: "reached", appointment: "scheduled",
+  }), fixture.professionalContexts[0]);
+  assert.equal(harness.run(database, `select contacted_at is null and appointment_scheduled_at is not null
+    from public.lead_assignments where id = ${sqlLiteral(ids[0])};`), "t");
+  harness.run(database, qualityRpc(ids[1], qualityVersion(harness, database, ids[1]), {
+    progress: "quote_sent", reachability: "reached", appointment: "completed",
+  }), fixture.professionalContexts[1]);
+  assert.equal(harness.run(database, `select contacted_at is null and appointment_scheduled_at is null
+    from public.lead_assignments where id = ${sqlLiteral(ids[1])};`), "t");
+  const legacyVersion = qualityVersion(harness, database, ids[2]);
+  const purchase = harness.run(database, `select id from public.lead_purchases where lead_assignment_id = ${sqlLiteral(ids[2])};`);
+  const balanceBeforeRefund = Number(harness.run(database, `select cached_balance from public.professional_wallets
+    where professional_id = ${sqlLiteral(fixture.professionalIds[2])};`));
+  const purchasePrice = Number(harness.run(database, `select price_credits from public.lead_purchases where id = ${sqlLiteral(purchase)};`));
+  harness.run(database, `select * from public.refund_lead_purchase(${sqlLiteral(purchase)}, 'Historische kwaliteitscontrole');`, harness.adminContext);
+  harness.run(database, `update public.lead_assignments set status = 'rejected', accepted_at = null,
+    rejected_at = now() where id = ${sqlLiteral(ids[2])};`, harness.adminContext);
+  assert.equal(harness.run(database, `select loss_reason from public.lead_assignments where id = ${sqlLiteral(ids[2])};`), "Historische vrije verliesreden");
+  assert.equal(qualityVersion(harness, database, ids[2]), legacyVersion);
+  assert.equal(harness.run(database, `select status from public.lead_purchases where id = ${sqlLiteral(purchase)};`), "refunded");
+  const balanceAfterRefund = Number(harness.run(database, `select cached_balance from public.professional_wallets
+    where professional_id = ${sqlLiteral(fixture.professionalIds[2])};`));
+  assert.equal(balanceAfterRefund, balanceBeforeRefund + purchasePrice);
+  assert.equal(balanceAfterRefund, 100);
+  assert.equal(Number(harness.run(database, `select sum(amount) from public.wallet_transactions
+    where professional_id = ${sqlLiteral(fixture.professionalIds[2])};`)), balanceAfterRefund);
+  assert.equal(harness.run(database, `select count(*) from public.wallet_transactions where type = 'refund'
+    and professional_id = ${sqlLiteral(fixture.professionalIds[2])} and lead_id = ${sqlLiteral(fixture.leadId)};`), "1");
+});
+
+test("Prompt 28 early loss accepts absent optional feedback without inventing a reason", async (t) => {
+  const state = await qualityFixture(t);
+  if (!state) return;
+  const { harness, database, fixture, assignmentIds: [id] } = state;
+  const owner = fixture.professionalContexts[0];
+  harness.run(database, qualityRpc(id, qualityVersion(harness, database, id)), owner);
+  harness.run(database, qualityRpc(id, qualityVersion(harness, database, id), { progress: "lost" }), owner);
+  assert.equal(harness.run(database, `select progress_status = 'lost' and loss_reason is null
+    and mismatch_reason is null and feedback_note is null and outcome_at is not null
+    from public.lead_assignments where id = ${sqlLiteral(id)};`), "t");
+});
 
 function insertSecondaryLead(harness: Harness, database: string, serviceId: string, professionalId: string) {
   const secondLeadId = randomUUID();

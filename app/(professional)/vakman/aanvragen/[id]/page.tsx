@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { SubmitButton } from "@/components/ui/submit-button";
+import { QualityFeedbackForm } from "@/components/leads/quality-feedback-form";
 import { formatCredits, getCommercialTypeLabel } from "@/lib/commercial/labels";
 import { getCommercialExplanation } from "@/lib/commercial/presentation";
 import { purchaseLeadAction } from "@/lib/commercial/actions";
@@ -15,8 +16,9 @@ import { getProfessionalLeadMarketDetail } from "@/lib/commercial/queries";
 import { requireProfessionalUser } from "@/lib/auth/helpers";
 import { respondToAssignmentAction, updateLeadProgressAction } from "@/lib/leads/actions";
 import { isValidLeadProgressTransition } from "@/lib/leads/progress";
+import { leadQualityLossReasonValues, leadQualityLossReasonLabels as lossReasonLabels } from "@/lib/leads/quality-taxonomy";
 import { formatDate, formatFileSize, formatPostalCode } from "@/lib/utils";
-import { declineReasonValues, leadLossReasonValues, leadProgressStatusValues } from "@/lib/validation";
+import { declineReasonValues, leadProgressStatusValues } from "@/lib/validation";
 
 const declineReasonLabels: Record<(typeof declineReasonValues)[number], string> = {
   te_ver: "Te ver",
@@ -25,6 +27,14 @@ const declineReasonLabels: Record<(typeof declineReasonValues)[number], string> 
   prijs_te_hoog: "Prijs te hoog",
   timing_past_niet: "Timing past niet",
   anders: "Anders",
+  wrong_service: "Verkeerde dienst",
+  wrong_region: "Verkeerde regio",
+  incorrect_information: "Informatie klopt niet",
+  already_completed: "Klus al uitgevoerd",
+  duplicate: "Dubbele aanvraag",
+  unreachable: "Klant niet bereikbaar",
+  invalid_contact: "Contactgegevens onjuist",
+  profile_mismatch: "Past niet bij mijn profiel",
 };
 
 const statusLabels: Record<string, string> = {
@@ -58,15 +68,6 @@ const progressLabels: Record<(typeof leadProgressStatusValues)[number], string> 
   quote_sent: "Offerte verstuurd",
   won: "Opdracht gewonnen",
   lost: "Opdracht niet gewonnen",
-};
-
-const lossReasonLabels: Record<(typeof leadLossReasonValues)[number], string> = {
-  prijs: "Prijs",
-  klant_niet_bereikbaar: "Klant niet bereikbaar",
-  klant_koos_andere_partij: "Klant koos een andere partij",
-  klus_uitgesteld: "Klus uitgesteld",
-  buiten_scope: "Buiten scope",
-  anders: "Anders",
 };
 
 function expiryTime(value: string) {
@@ -284,12 +285,14 @@ export default async function ProfessionalLeadDetailPage({
             <form action={declineDistributionOfferAction} className="space-y-3">
               <input type="hidden" name="candidate_id" value={marketLead.distributionOffer.id} />
               <input type="hidden" name="redirect_to" value={`/vakman/aanvragen/${marketLead.preview.leadId}`} />
-              <label className="block text-sm font-medium text-foreground" htmlFor="decline-reason">Reden van weigeren</label>
-              <Select id="decline-reason" name="reason" defaultValue="te_ver" aria-label="Kies weigerreden voor dit aanbod">
+              <label className="block text-sm font-medium text-foreground" htmlFor="decline-reason">Reden van weigeren (optioneel)</label>
+              <Select id="decline-reason" name="reason" defaultValue="" aria-label="Kies weigerreden voor dit aanbod">
+                <option value="">Geen reden opgeven</option>
                 {declineReasonValues.map((value) => (
                   <option key={value} value={value}>{declineReasonLabels[value]}</option>
                 ))}
               </Select>
+              <p className="text-sm text-muted-foreground">Feedback helpt ons de kwaliteit te beoordelen. Dit verandert niets aan je credits of aankooprecht.</p>
               <SubmitButton className="w-full" variant="secondary" pendingLabel="Aanbod wordt geweigerd...">
                 Aanbod weigeren
               </SubmitButton>
@@ -305,37 +308,72 @@ export default async function ProfessionalLeadDetailPage({
                 <input type="hidden" name="redirect_to" value={`/vakman/aanvragen/${marketLead.preview.leadId}`} />
                 <SubmitButton className="w-full" pendingLabel="Assignment wordt geaccepteerd...">Assignment accepteren</SubmitButton>
               </form>
-              <form action={respondToAssignmentAction}>
-                <input type="hidden" name="lead_id" value={marketLead.preview.leadId} />
+              <QualityFeedbackForm
+                action={respondToAssignmentAction}
+                mode="rejection"
+                leadId={marketLead.preview.leadId}
+                expectedUpdatedAt={marketLead.assignment.qualityUpdatedAt}
+              >
                 <input type="hidden" name="decision" value="rejected" />
-                <input type="hidden" name="redirect_to" value={`/vakman/aanvragen/${marketLead.preview.leadId}`} />
-                <SubmitButton className="w-full" variant="secondary" pendingLabel="Assignment wordt geweigerd...">Weigeren</SubmitButton>
-              </form>
+              </QualityFeedbackForm>
             </div>
           ) : null}
 
           {marketLead.mode === "unlocked" && marketLead.detail ? (
-            <form action={updateLeadProgressAction} className="space-y-3">
-              <input type="hidden" name="lead_id" value={marketLead.detail.lead.id} />
-              <input type="hidden" name="redirect_to" value={`/vakman/aanvragen/${marketLead.detail.lead.id}`} />
+            ["won", "lost"].includes(marketLead.detail.assignmentProgressStatus) ? (
+              <section className="space-y-3" aria-labelledby="outcome-heading">
+                <h3 id="outcome-heading" className="font-semibold">Voortgang afgerond</h3>
+                <p className="text-sm"><strong>{progressLabels[marketLead.detail.assignmentProgressStatus]}</strong></p>
+                {marketLead.detail.lossReason ? <p className="text-sm">Reden: {lossReasonLabels[marketLead.detail.lossReason as keyof typeof lossReasonLabels] ?? "Vastgelegd"}</p> : null}
+                <p className="text-sm text-muted-foreground">Deze uitkomst is definitief. Er zijn geen extra vragen. Feedback verandert niets aan je credits en is geen refundverzoek.</p>
+              </section>
+            ) : (
+            <QualityFeedbackForm
+              key={marketLead.detail.qualityUpdatedAt ?? marketLead.detail.assignmentId}
+              action={updateLeadProgressAction}
+              mode="progress"
+              leadId={marketLead.detail.lead.id}
+              expectedUpdatedAt={marketLead.detail.qualityUpdatedAt}
+              currentProgress={marketLead.detail.assignmentProgressStatus}
+              reachability={marketLead.detail.reachability}
+              appointmentStatus={marketLead.detail.appointmentStatus}
+              mismatchReason={marketLead.detail.mismatchReason}
+              feedbackNote={marketLead.detail.feedbackNote}
+              lossReason={marketLead.detail.lossReason}
+              lossReasonField={
+                <div className="space-y-2">
+                  <label htmlFor="loss-reason" className="block text-sm font-medium">Reden bij opdracht niet gewonnen (optioneel)</label>
+                  <Select id="loss-reason" name="loss_reason" aria-label="Reden waarom de opdracht niet is gewonnen" defaultValue={marketLead.detail.lossReason ?? ""}>
+                    <option value="">Geen verliesreden</option>
+                    {leadQualityLossReasonValues.map((value) => <option key={value} value={value}>{lossReasonLabels[value]}</option>)}
+                  </Select>
+                </div>
+              }
+            >
               <h3 className="font-semibold">Voortgang bijhouden</h3>
               <p className="text-sm">Huidige status: <strong>{progressLabels[marketLead.detail.assignmentProgressStatus]}</strong></p>
-              <p className="text-sm text-muted-foreground">Kies de volgende stap die daadwerkelijk is afgerond. De bestaande volgorde is contact, afspraak, offerte en daarna gewonnen of niet gewonnen. Bij een niet gewonnen opdracht kun je een reden vastleggen, zoals buiten scope of klant niet bereikbaar. Dit is geen refundverzoek.</p>
+              <p className="text-sm text-muted-foreground">Kies de stap die daadwerkelijk is afgerond. Contact opgenomen betekent nog niet dat je de klant hebt bereikt. Aanvullende feedback is optioneel.</p>
               <label htmlFor="progress-status" className="block text-sm font-medium">Nieuwe voortgang</label>
               <Select id="progress-status" name="progress_status" aria-label="Voortgangsstatus" defaultValue={marketLead.detail.assignmentProgressStatus}>
                 {leadProgressStatusValues.filter((value) => isValidLeadProgressTransition(marketLead.detail!.assignmentProgressStatus, value)).map((value) => (
                   <option key={value} value={value}>{progressLabels[value]}</option>
                 ))}
               </Select>
-              <label htmlFor="loss-reason" className="block text-sm font-medium">Reden bij opdracht niet gewonnen</label>
-              <Select id="loss-reason" name="loss_reason" aria-label="Reden waarom de opdracht niet is gewonnen" defaultValue={marketLead.detail.lossReason ?? ""}>
-                <option value="">Geen verliesreden</option>
-                {leadLossReasonValues.map((value) => (
-                  <option key={value} value={value}>{lossReasonLabels[value]}</option>
-                ))}
-              </Select>
-              <SubmitButton className="w-full" variant="secondary" pendingLabel="Voortgang wordt bijgewerkt...">Voortgang bijwerken</SubmitButton>
-            </form>
+            </QualityFeedbackForm>
+            )
+          ) : null}
+          {marketLead.mode === "unlocked" && marketLead.detail && [marketLead.detail.contactedAt, marketLead.detail.reachedAt, marketLead.detail.appointmentScheduledAt, marketLead.detail.outcomeAt].some(Boolean) ? (
+            <section className="space-y-2 text-sm" aria-labelledby="quality-milestones">
+              <h3 id="quality-milestones" className="font-semibold">Jouw opvolging</h3>
+              <dl className="space-y-2">
+                {[
+                  ["Contact opgenomen", marketLead.detail.contactedAt],
+                  ["Klant bereikt", marketLead.detail.reachedAt],
+                  ["Afspraak gepland", marketLead.detail.appointmentScheduledAt],
+                  ["Uitkomst vastgelegd", marketLead.detail.outcomeAt],
+                ].map(([label, value]) => value ? <div key={label}><dt className="text-muted-foreground">{label}</dt><dd>{formatDate(value)}</dd></div> : null)}
+              </dl>
+            </section>
           ) : null}
           {marketLead.mode === "closed" ? (
             <p className="rounded-2xl bg-surface-muted px-4 py-3 text-sm text-muted-foreground">

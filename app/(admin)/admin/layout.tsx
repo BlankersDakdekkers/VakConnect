@@ -21,6 +21,7 @@ export const metadata: Metadata = buildMetadata({
 const navigation = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/leads", label: "Leads" },
+  { href: "/admin/leadkwaliteit", label: "Leadkwaliteit" },
   { href: "/admin/distributie", label: "Distributie" },
   { href: "/admin/credits", label: "Credits" },
   { href: "/admin/lead-prijzen", label: "Lead prijzen" },

@@ -249,6 +249,16 @@ export interface LeadAssignment {
   status: LeadAssignmentStatus;
   progress_status: LeadProgressStatus;
   loss_reason: string | null;
+  contacted_at: string | null;
+  reached_at: string | null;
+  appointment_scheduled_at: string | null;
+  outcome_at: string | null;
+  reachability: "reached" | "no_answer" | "invalid_phone" | "invalid_email" | "unreachable_other" | null;
+  appointment_status: "not_scheduled" | "scheduled" | "completed" | "cancelled";
+  mismatch_reason: "wrong_service" | "wrong_region" | "incorrect_information" | "already_completed" | "duplicate" | "unreachable" | "invalid_contact" | "profile_mismatch" | "other" | null;
+  feedback_note: string | null;
+  quality_updated_at: string;
+  quality_updated_by: string | null;
   assigned_at: string;
   viewed_at: string | null;
   accepted_at: string | null;

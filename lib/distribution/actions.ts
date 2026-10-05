@@ -123,7 +123,7 @@ export async function declineDistributionOfferAction(formData: FormData) {
   const user = await requireProfessionalUser();
   const payload = professionalOfferDeclineSchema.safeParse({
     candidateId: formData.get("candidate_id"),
-    reason: formData.get("reason"),
+    reason: formData.get("reason") ?? undefined,
     redirectTo: formData.get("redirect_to"),
   });
 
