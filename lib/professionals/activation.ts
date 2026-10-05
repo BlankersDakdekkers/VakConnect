@@ -66,23 +66,25 @@ export function getProfessionalActivationStage(professional: ActivationProfile):
     return { key: "active_professional", label: "Actief professional" };
   }
   if (professional.stats.offersReceived > 0) {
-    return { key: "first_offer_seen", label: "Eerste aanvraag zichtbaar" };
+    return { key: "first_offer_seen", label: "Eerste aanvraag ontvangen" };
   }
   if (professional.distributionReadiness.eligible) {
     return { key: "distribution_ready", label: "Klaar voor passende aanvragen" };
   }
   if (professional.onboarding_status === "submitted"
-    || professional.verification_status === "pending"
-    || professional.verification_status === "verified") {
+    || professional.verification_status === "pending") {
     return { key: "verification_ready", label: "Profiel ter beoordeling" };
+  }
+  if (professional.verification_status === "verified") {
+    return { key: "verification_ready", label: "Verificatie afgerond" };
+  }
+  if (professional.onboarding_status === "not_started") {
+    return { key: "account_created", label: "Account aangemaakt" };
   }
   if (professional.canSubmit) {
     return { key: "profile_complete", label: "Profiel compleet" };
   }
-  if (professional.onboarding_status !== "not_started" || professional.missingSteps.length > 0) {
-    return { key: "profile_started", label: "Profiel gestart" };
-  }
-  return { key: "account_created", label: "Account aangemaakt" };
+  return { key: "profile_started", label: "Profiel gestart" };
 }
 
 export function getProfessionalBlockerRecovery(reason: string) {

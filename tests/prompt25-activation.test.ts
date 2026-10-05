@@ -37,6 +37,7 @@ const professional = {
 };
 
 test("new professionals get a profile completion action using existing onboarding data", () => {
+  assert.equal(getProfessionalActivationStage({ ...professional, onboarding_status: "not_started" }).key, "account_created");
   assert.equal(getProfessionalActivationStage(professional).key, "profile_started");
   assert.equal(getProfessionalNextBestAction(professional).href, "/vakman/onboarding?step=company");
   const profileStep = getProfessionalActivationChecklist(professional).find((item) => item.label === "Profiel");
