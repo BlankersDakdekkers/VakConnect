@@ -444,9 +444,13 @@ export async function getProfessionalLeadMarketDetail(leadId: string, profession
         && (!offer.offer_expires_at || new Date(String(offer.offer_expires_at)).getTime() > Date.now()))
   ));
   const detail = canViewContact ? await getProfessionalLeadDetail(leadId, professionalId, actorUserId) : null;
+  const hasPendingDirectAssignment = Boolean(assignment
+    && !assignment.lead_purchase_id
+    && !purchase
+    && ["pending", "viewed"].includes(String(assignment.status)));
 
   return {
-    mode: canViewContact ? "unlocked" : assignment ? "assigned-preview" : hasActiveOffer ? "preview" : "closed",
+    mode: canViewContact ? "unlocked" : hasPendingDirectAssignment ? "assigned-preview" : purchase ? "closed" : hasActiveOffer ? "preview" : "closed",
     state,
     commercial: {
       commercialType: leadRow.commercial_type as LeadCommercialType,

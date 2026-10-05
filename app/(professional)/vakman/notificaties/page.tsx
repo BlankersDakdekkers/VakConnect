@@ -109,7 +109,9 @@ export default async function ProfessionalNotificationsPage({
           {notifications.map((notification) => {
             const title = payloadText(notification.payload, "title", eventLabels[notification.event_type]);
             const description = payloadText(notification.payload, "description", "Er is een update voor je account.");
-            const href = safeInternalHref(notification.payload.href) ?? fallbackHref(notification);
+            const href = notification.lead_id && notification.event_type.startsWith("lead_")
+              ? fallbackHref(notification)
+              : safeInternalHref(notification.payload.href) ?? fallbackHref(notification);
             return (
             <Card key={notification.id} className={`flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between ${!notification.read_at ? "border-primary/30" : ""}`}>
                 <div className="space-y-1">

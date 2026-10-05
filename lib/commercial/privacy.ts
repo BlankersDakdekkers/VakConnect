@@ -11,6 +11,10 @@ export function canProfessionalViewLeadContact(input: {
     return true;
   }
 
+  if (input.purchaseStatus) {
+    return false;
+  }
+
   if (input.assignmentStatus !== "accepted") {
     return false;
   }

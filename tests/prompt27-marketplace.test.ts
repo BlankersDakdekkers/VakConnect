@@ -83,6 +83,9 @@ test("contact unlock still requires a purchase or accepted direct assignment", (
   for (const purchaseStatus of ["refunded", "cancelled", null] as const) {
     assert.equal(canProfessionalViewLeadContact({ purchaseStatus, assignmentStatus: "accepted", assignmentPurchaseLinked: true }), false);
   }
+  for (const purchaseStatus of ["refunded", "cancelled"] as const) {
+    assert.equal(canProfessionalViewLeadContact({ purchaseStatus, assignmentStatus: "accepted", assignmentPurchaseLinked: false }), false);
+  }
   assert.equal(canProfessionalViewLeadContact({ purchaseStatus: "purchased", assignmentPurchaseLinked: true }), true);
   assert.equal(canProfessionalViewLeadContact({ assignmentStatus: "pending" }), false);
   assert.equal(canProfessionalViewLeadContact({ assignmentStatus: "accepted", assignmentPurchaseLinked: false }), true);
@@ -128,6 +131,7 @@ test("post-purchase next step, contact links, labels and existing progress trans
 test("dashboard notifications link to the request and expired historical offers retain a closed page", () => {
   assert.match(source("app/(professional)/vakman/page.tsx"), /if \(eventType\.startsWith\("lead_"\) && leadId\) return `\/vakman\/aanvragen\/\$\{leadId\}`/);
   assert.match(source("app/(professional)/vakman/notificaties/page.tsx"), /notification\.lead_id.*\/vakman\/aanvragen\/\$\{notification\.lead_id\}/);
+  assert.match(source("app/(professional)/vakman/notificaties/page.tsx"), /notification\.lead_id && notification\.event_type\.startsWith\("lead_"\)\s*\? fallbackHref\(notification\)/);
   assert.match(queries, /hasActiveOffer \? "preview" : "closed"/);
   assert.match(detail, /Dit aanbod is gesloten of verlopen/);
 });

@@ -56,7 +56,7 @@ export async function purchaseLeadAction(formData: FormData) {
           ? "Deze lead is niet meer beschikbaar."
         : error.message.includes("LEAD_OFFER_NOT_ACTIVE")
           ? "Je offer is verlopen of nog niet actief. Wacht op een nieuw aanbod."
-        : error.message.includes("LEAD_MATCH_REQUIRED")
+        : error.message.includes("LEAD_MATCH_REQUIRED") || error.message.includes("PROFESSIONAL_NOT_ELIGIBLE")
           ? "Je account komt niet in aanmerking voor deze lead."
           : "De leadaankoop kon niet worden afgerond.";
     redirectWithMessage(payload.data.redirectTo, "error", message);
