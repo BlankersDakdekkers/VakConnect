@@ -291,6 +291,8 @@ export function buildQualityReport(
     breakdowns: { service: breakdown((purchase) => purchase.serviceName), region: breakdown((purchase) => safeRegion(purchase.region)), source: breakdown((purchase) => safeQualitySource(purchase.utmSource)), type: breakdown((purchase) => purchase.type === "exclusive" ? "Exclusief" : "Gedeeld") },
     mismatchReasons: mismatchReasons.map((reason) => ({ reason, ...metric(purchases.filter((purchase) => purchase.assignment?.mismatchReason === reason).length, denominator) })),
     lossReasons: leadQualityLossReasonValues.map((reason) => ({ reason, ...metric(purchases.filter((purchase) => outcome(purchase) === "lost" && purchase.assignment?.lossReason === reason).length, denominator) })),
+    unknownLossReason: metric(purchases.filter((purchase) => outcome(purchase) === "lost"
+      && !leadQualityLossReasonValues.includes(purchase.assignment?.lossReason as typeof leadQualityLossReasonValues[number])).length, denominator),
     distribution: {
       offers: offers.length, declined: metric(declined.length, offers.length),
       unknownReason: declined.length - validDeclines.length,

@@ -82,7 +82,7 @@ test("Prompt 28 progress action uses invoker RPC, not global lead outcomes or cl
   const source = readFileSync(new URL("../lib/leads/actions.ts", import.meta.url), "utf8")
     .split("export async function updateLeadProgressAction")[1];
   assert.ok(source.includes('rpc("update_assignment_quality"'));
-  assert.ok(source.includes('formData.get("expected_quality_updated_at")'));
+  assert.ok(source.includes('formData.get("expected_updated_at")'));
   assert.equal(source.includes('.from("leads")'), false);
   assert.equal(source.includes("addLeadActivity"), false);
   assert.equal(source.includes('.from("lead_assignments")\n    .update'), false);

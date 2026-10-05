@@ -105,6 +105,17 @@ test("loss reason reporting follows the extended backend taxonomy without interp
   assert.equal(result.metrics.lost.count, 5);
 });
 
+test("missing and arbitrary historic loss reasons use an unknown bucket without exposing their text", () => {
+  const result = report([
+    purchase("legacy", { assignment: { progressStatus: "lost", lossReason: "Jan@example.com bel 0612345678" } }),
+    purchase("empty", { assignment: { progressStatus: "lost", lossReason: null } }),
+    purchase("known", { assignment: { progressStatus: "lost", lossReason: "anders" } }),
+  ]);
+  assert.deepEqual(result.unknownLossReason, { count: 2, denominator: 3, percent: null });
+  assert.equal(result.lossReasons.find((row) => row.reason === "anders")?.count, 1);
+  assert.doesNotMatch(JSON.stringify(result), /Jan@example|0612345678/);
+});
+
 test("no arbitrary UTM, unreliable geography, notes, professional IDs or invalid references escape", () => {
   const row = {
     ...purchase("private-professional-id"), reference: "jan@example.com", region: "Kerkstraat 12",

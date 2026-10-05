@@ -148,7 +148,7 @@ export async function respondToAssignmentAction(formData: FormData) {
     feedbackNote: formData.get("feedback_note"),
   });
   const hasFeedback = Boolean(formData.get("mismatch_reason") || formData.get("feedback_note"));
-  const expectedUpdatedAt = formData.get("expected_quality_updated_at") ?? formData.get("expected_updated_at");
+  const expectedUpdatedAt = formData.get("expected_updated_at");
   if (!feedback.success || (hasFeedback && (nextStatus !== "rejected"
     || typeof expectedUpdatedAt !== "string" || !expectedUpdatedAt))) {
     redirectWithMessage(payload.data.redirectTo, "error", "Kies een geldige reden en vernieuw de aanvraag voordat je feedback opslaat.");
@@ -196,7 +196,7 @@ export async function updateLeadProgressAction(formData: FormData) {
     leadId: formData.get("lead_id"),
     progressStatus: formData.get("progress_status"),
     lossReason: formData.get("loss_reason"),
-    expectedUpdatedAt: formData.get("expected_quality_updated_at") ?? formData.get("expected_updated_at"),
+    expectedUpdatedAt: formData.get("expected_updated_at"),
     reachability: formData.get("reachability"),
     appointmentStatus: formData.get("appointment_status"),
     mismatchReason: formData.get("mismatch_reason"),

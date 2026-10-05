@@ -120,7 +120,8 @@ export default async function LeadQualityPage({ searchParams }: { searchParams: 
         <div className="mt-4 grid gap-5 md:grid-cols-2">
           {[{ title: "Mismatch", rows: report.mismatchReasons }, { title: "Verlies", rows: report.lossReasons }].map(({ title, rows }) => <div key={title}><h3 className="font-medium">{title}</h3><ul className="mt-2 space-y-1 text-sm">{rows.map((row) => <li key={row.reason}>{reasonLabels[row.reason]}: <Rate value={row} /></li>)}</ul></div>)}
         </div>
-        <p className="mt-3 text-sm text-muted-foreground">Redenen gebruiken dezelfde aankoopnoemer. Vrije tekst en feedbacknotities worden nooit gelezen of getoond.</p>
+        <p className="mt-3 text-sm">Verliesreden niet ingevuld of onbekend (inclusief historische waarden): <Rate value={report.unknownLossReason} />.</p>
+        <p className="mt-3 text-sm text-muted-foreground">Redenen gebruiken dezelfde aankoopnoemer. Vrije verliesredentekst wordt niet geïnterpreteerd of getoond; feedbacknotities worden niet opgehaald.</p>
         <h3 className="mt-5 font-medium">Afgewezen distributieaanbiedingen</h3>
         <p className="mt-2 text-sm">Apart aanbodcohort: aangeboden in dezelfde {filters.days} dagen, met dienst/regio/type-filters; uitkomst- en mismatchfilters zijn hier niet van toepassing. Noemer: {report.distribution.offers} unieke aanbiedingen, niet aankopen. Afgewezen: <Rate value={report.distribution.declined} />.</p>
         <ul className="mt-3 space-y-1 text-sm">{report.distribution.reasons.map((row) => <li key={row.reason}>{reasonLabels[row.reason]}: <Rate value={row} /></li>)}</ul>

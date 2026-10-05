@@ -75,6 +75,8 @@ Behoud `prijs`, `klant_niet_bereikbaar`, `klant_koos_andere_partij`,
 `already_completed`, `wrong_service`, `wrong_region`, `invalid_contact` toe.
 Een reden bij verlies is optioneel. Er is geen automatische classificatie van
 historische vrije tekst en geen tweede synoniem voor “anders”.
+Ontbrekende en onbekende historische verliesredenen worden als aparte
+onbekend-bucket geteld, zonder hun tekst aan het rapport door te geven.
 
 ### Vrije tekst
 
@@ -180,7 +182,12 @@ Eén migration: `20261005170000_prompt28_lead_quality.sql`.
 - Assignmentguard en atomische audittrigger beschermen servervelden en
   schrijven naar bestaand `lead_activity`; auditguard voorkomt losse
   gefabriceerde outcome-auditrijen.
-- Bestaande professional read-policy op `lead_activity` wordt versmald naar
+- Nieuwe functies/triggers: `enforce_assignment_quality`,
+  `audit_assignment_quality`, `guard_assignment_quality_audit`.
+  Bestaande `is_valid_lead_progress_transition` wordt vervangen.
+- Bestaande professional read-policies op `lead_activity`
+  (“for assigned leads” en “for unlocked leads”) worden vervangen door één
+  policy “professionals can read lead activity for assigned leads”, met
   eigen professional en geldige contacttoegang. Adminpolicy blijft behouden.
 - Geen indexes toegevoegd zonder bewezen queryplanbehoefte; bestaande
   aankoop/assignment/lead/transactie-indexes blijven behouden.
@@ -246,7 +253,7 @@ automatische code review kon zijn geconfigureerde model niet starten.
 Een afzonderlijke read-only securityreview vond geen kwetsbaarheden in de
 beoordeelde wijzigingen. Deze review vervangt geen geslaagde CodeQL-scan.
 
-Na integratie en correcties: lint, typecheck, **267 tests (0 failures,
+Na integratie en correcties: lint, typecheck, **268 tests (0 failures,
 0 skips)** en production build geslaagd. Dit omvat PostgreSQL-backed
 ownership/IDOR, actor- en timestampbescherming, stale writes, terminale
 uitkomsten, gedeelde leads, feedbackwaarden, optionele verliesreden,
