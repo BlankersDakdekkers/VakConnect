@@ -110,10 +110,9 @@ export default async function ProfessionalLeadDetailPage({
         <div className="min-w-0 space-y-6">
           <Card className="space-y-4">
             <div className="flex flex-wrap gap-3">
-              <StatusBadge value={marketLead.state} label={statusLabels[marketLead.state] ?? "Status bijgewerkt"} />
+              <StatusBadge value={marketLead.state} label={marketLead.mode === "unlocked" ? "Contact ontgrendeld" : marketLead.mode === "closed" ? marketLead.distributionOffer.offerTermExpired ? "Verlopen" : "Niet meer beschikbaar" : statusLabels[marketLead.state] ?? "Status bijgewerkt"} />
               <StatusBadge value={marketLead.commercial.commercialType} label={getCommercialTypeLabel(marketLead.commercial.commercialType)} />
-              <StatusBadge value={marketLead.commercial.salesStatus} label={statusLabels[marketLead.commercial.salesStatus] ?? "Status bijgewerkt"} />
-              <StatusBadge value={marketLead.preview.urgency} label={statusLabels[marketLead.preview.urgency] ?? "Urgentie bijgewerkt"} />
+              <StatusBadge value={marketLead.preview.urgency} label={`Opgegeven urgentie: ${statusLabels[marketLead.preview.urgency] ?? "niet bekend"}`} />
               {marketLead.assignment.status ? <StatusBadge value={marketLead.assignment.status} label={statusLabels[marketLead.assignment.status] ?? "Toewijzing bijgewerkt"} /> : null}
               {marketLead.distributionOffer.status ? <StatusBadge value={marketLead.distributionOffer.status} label={statusLabels[marketLead.distributionOffer.status] ?? "Aanbod bijgewerkt"} /> : null}
             </div>
@@ -321,7 +320,7 @@ export default async function ProfessionalLeadDetailPage({
               <input type="hidden" name="redirect_to" value={`/vakman/aanvragen/${marketLead.detail.lead.id}`} />
               <h3 className="font-semibold">Voortgang bijhouden</h3>
               <p className="text-sm">Huidige status: <strong>{progressLabels[marketLead.detail.assignmentProgressStatus]}</strong></p>
-              <p className="text-sm text-muted-foreground">Kies wat er daadwerkelijk is gebeurd. Bij een niet gewonnen opdracht kun je een reden vastleggen, zoals buiten scope of klant niet bereikbaar. Dit is geen refundverzoek.</p>
+              <p className="text-sm text-muted-foreground">Kies de volgende stap die daadwerkelijk is afgerond. De bestaande volgorde is contact, afspraak, offerte en daarna gewonnen of niet gewonnen. Bij een niet gewonnen opdracht kun je een reden vastleggen, zoals buiten scope of klant niet bereikbaar. Dit is geen refundverzoek.</p>
               <label htmlFor="progress-status" className="block text-sm font-medium">Nieuwe voortgang</label>
               <Select id="progress-status" name="progress_status" aria-label="Voortgangsstatus" defaultValue={marketLead.detail.assignmentProgressStatus}>
                 {leadProgressStatusValues.filter((value) => isValidLeadProgressTransition(marketLead.detail!.assignmentProgressStatus, value)).map((value) => (
