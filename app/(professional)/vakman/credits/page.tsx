@@ -30,7 +30,8 @@ export default async function ProfessionalCreditsPage() {
         </Card>
         <Card className="space-y-2">
           <p className="text-sm text-muted-foreground">Credits kopen</p>
-          <p className="text-sm text-muted-foreground">Binnenkort beschikbaar.</p>
+          <p className="text-sm text-muted-foreground">Credits gebruik je om geselecteerde aanvragen te ontgrendelen. Er is op dit moment geen actieve betaalprovider; credits kopen of opwaarderen is daarom niet beschikbaar.</p>
+          <p className="text-sm text-muted-foreground">Een aankoop van een aanvraag garandeert geen opdracht.</p>
         </Card>
       </div>
       <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">

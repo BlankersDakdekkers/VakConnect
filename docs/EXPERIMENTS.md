@@ -68,3 +68,24 @@ Startvolgorde voor een latere handmatige activatie: homepage CTA-copy, progressc
 - Analytics-uitval laat de bestaande control/leadflow intact en maakt rapportage als niet-beschikbaar zichtbaar in plaats van een winnaar te suggereren.
 - Omdat localStorage niet in SSR beschikbaar is, is een expliciete privacy/productkeuze over een server-beschikbare sessie-identiteit nodig voordat een absolute no-flicker SSR-experimentgarantie kan worden geboden. Geen trackingcookie toevoegen zonder die keuze.
 - Vervolg: beslis eerst of actieve variantcopy na hydration is toegestaan of dat een consent-/privacybeoordeelde serverassignment nodig is; daarna eventueel verdere safe targets en page/device diagnostiek uitbreiden.
+
+## Prompt 25: professional activation en retentie
+
+De vakmanervaring gebruikt bestaande profiel-, verificatie-, document-, beschikbaarheids-, distributie-, aanbod- en aankoopdata voor activatiefase, checklist, blockers en vervolgstappen. Er is geen aparte lifecycle-status of activation-eventtaxonomie toegevoegd. Experimenten blijven `draft` of inactief; er is niets automatisch geactiveerd.
+
+### Metrics en databeschikbaarheid
+
+- Onboarding completion en doorlooptijd kunnen worden beoordeeld met bestaande onboarding completion- en tijdstempels.
+- Eerste aanbod en eerste aankoop zijn terug te leiden uit de bestaande distributie-aanbiedingen, aankopen en opdrachten.
+- Huidige blockers en laag saldo zijn alleen als actuele toestand zichtbaar; er wordt geen historische blocker- of low-balance telling bijgehouden.
+- De huidige analytics-events worden niet uitgebreid. Er worden geen namen, contactgegevens, adressen, documentinhoud of reviewvrije tekst aan analytics toegevoegd.
+
+### Latere handmatige experimentkandidaten
+
+- Positie van de activatiechecklist.
+- Copy van de volgende stap.
+- Uitleg vóór een eerste aankoop.
+- Tekst bij onvoldoende credits.
+- Lege status wanneer het profiel gereed is maar er geen aanbod klaarstaat.
+
+Dit zijn hypotheses, geen geactiveerde experimenten of gemeten conversiewinsten. Voor meten is eerst een privacy-beoordeelde, PII-vrije eventdefinitie nodig; bestaande experimenten en distributie-/walletregels blijven ongewijzigd.
