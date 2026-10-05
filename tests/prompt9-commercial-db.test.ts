@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync, spawn } from "node:child_process";
 import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
-import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { randomUUID } from "node:crypto";
@@ -21,6 +20,7 @@ const migrationFiles = [
   "supabase/migrations/20260910160000_phase6_lead_distribution_engine.sql",
   "supabase/migrations/20261005150000_prompt27_marketplace_access_hardening.sql",
   "supabase/migrations/20261005170000_prompt28_lead_quality.sql",
+  "supabase/migrations/20261005180000_prompt29_admin_quality_operations.sql",
 ].map((file) => join(repoRoot, file));
 
 type AppRole = "admin" | "professional" | null;
@@ -90,7 +90,7 @@ function startHarness(): Harness | null {
     return null;
   }
 
-  const baseDir = mkdtempSync(join(tmpdir(), "vakconnect-pg-"));
+  const baseDir = mkdtempSync(join(repoRoot, ".vakconnect-pg-"));
   const dataDir = join(baseDir, "data");
   const socketDir = join(baseDir, "socket");
   const logFile = join(baseDir, "postgres.log");

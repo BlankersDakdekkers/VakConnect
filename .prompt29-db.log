@@ -1,0 +1,535 @@
+TAP version 13
+# psql:/home/runner/work/VakConnect/VakConnect/supabase/migrations/20260910160000_phase6_lead_distribution_engine.sql:200: NOTICE:  trigger "enforce_active_offer_for_purchase" for relation "public.lead_purchases" does not exist, skipping
+# psql:/home/runner/work/VakConnect/VakConnect/supabase/migrations/20260910160000_phase6_lead_distribution_engine.sql:286: NOTICE:  trigger "sync_distribution_after_purchase" for relation "public.lead_purchases" does not exist, skipping
+# psql:/home/runner/work/VakConnect/VakConnect/supabase/migrations/20261005170000_prompt28_lead_quality.sql:230: NOTICE:  policy "professionals can read lead activity for assigned leads" for relation "public.lead_activity" does not exist, skipping
+# ERROR:  QUALITY_TERMINAL
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 58 at RAISE
+# SQL statement "update public.lead_assignments set
+#     progress_status = p_progress_status::public.lead_progress_status,
+#     reachability = p_reachability,
+#     appointment_status = p_appointment_status,
+#     loss_reason = p_loss_reason,
+#     mismatch_reason = p_mismatch_reason,
+#     feedback_note = nullif(btrim(p_feedback_note), '')
+#   where id = p_assignment_id
+#   returning quality_updated_at"
+# PL/pgSQL function update_assignment_quality(uuid,timestamp with time zone,text,text,text,text,text,text) line 27 at SQL statement
+# ERROR:  QUALITY_NOT_AUTHORIZED
+# CONTEXT:  PL/pgSQL function update_assignment_quality(uuid,timestamp with time zone,text,text,text,text,text,text) line 13 at RAISE
+# ERROR:  QUALITY_INVALID_PROGRESS
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 83 at RAISE
+# SQL statement "update public.lead_assignments set
+#     progress_status = p_progress_status::public.lead_progress_status,
+#     reachability = p_reachability,
+#     appointment_status = p_appointment_status,
+#     loss_reason = p_loss_reason,
+#     mismatch_reason = p_mismatch_reason,
+#     feedback_note = nullif(btrim(p_feedback_note), '')
+#   where id = p_assignment_id
+#   returning quality_updated_at"
+# PL/pgSQL function update_assignment_quality(uuid,timestamp with time zone,text,text,text,text,text,text) line 27 at SQL statement
+# ERROR:  QUALITY_INVALID_PROGRESS
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 83 at RAISE
+# SQL statement "update public.lead_assignments set
+#     progress_status = p_progress_status::public.lead_progress_status,
+#     reachability = p_reachability,
+#     appointment_status = p_appointment_status,
+#     loss_reason = p_loss_reason,
+#     mismatch_reason = p_mismatch_reason,
+#     feedback_note = nullif(btrim(p_feedback_note), '')
+#   where id = p_assignment_id
+#   returning quality_updated_at"
+# PL/pgSQL function update_assignment_quality(uuid,timestamp with time zone,text,text,text,text,text,text) line 27 at SQL statement
+# ERROR:  QUALITY_STALE_WRITE
+# CONTEXT:  PL/pgSQL function update_assignment_quality(uuid,timestamp with time zone,text,text,text,text,text,text) line 22 at RAISE
+# ERROR:  QUALITY_STALE_WRITE
+# CONTEXT:  PL/pgSQL function update_assignment_quality(uuid,timestamp with time zone,text,text,text,text,text,text) line 22 at RAISE
+# ERROR:  new row for relation "lead_assignments" violates check constraint "assignment_reachability_values"
+# CONTEXT:  SQL statement "update public.lead_assignments set
+#     progress_status = p_progress_status::public.lead_progress_status,
+#     reachability = p_reachability,
+#     appointment_status = p_appointment_status,
+#     loss_reason = p_loss_reason,
+#     mismatch_reason = p_mismatch_reason,
+#     feedback_note = nullif(btrim(p_feedback_note), '')
+#   where id = p_assignment_id
+#   returning quality_updated_at"
+# PL/pgSQL function update_assignment_quality(uuid,timestamp with time zone,text,text,text,text,text,text) line 27 at SQL statement
+# ERROR:  new row for relation "lead_assignments" violates check constraint "assignment_appointment_values"
+# CONTEXT:  SQL statement "update public.lead_assignments set
+#     progress_status = p_progress_status::public.lead_progress_status,
+#     reachability = p_reachability,
+#     appointment_status = p_appointment_status,
+#     loss_reason = p_loss_reason,
+#     mismatch_reason = p_mismatch_reason,
+#     feedback_note = nullif(btrim(p_feedback_note), '')
+#   where id = p_assignment_id
+#   returning quality_updated_at"
+# PL/pgSQL function update_assignment_quality(uuid,timestamp with time zone,text,text,text,text,text,text) line 27 at SQL statement
+# ERROR:  new row for relation "lead_assignments" violates check constraint "assignment_mismatch_values"
+# CONTEXT:  SQL statement "update public.lead_assignments set
+#     progress_status = p_progress_status::public.lead_progress_status,
+#     reachability = p_reachability,
+#     appointment_status = p_appointment_status,
+#     loss_reason = p_loss_reason,
+#     mismatch_reason = p_mismatch_reason,
+#     feedback_note = nullif(btrim(p_feedback_note), '')
+#   where id = p_assignment_id
+#   returning quality_updated_at"
+# PL/pgSQL function update_assignment_quality(uuid,timestamp with time zone,text,text,text,text,text,text) line 27 at SQL statement
+# ERROR:  invalid input value for enum lead_progress_status: "unknown"
+# CONTEXT:  SQL statement "update public.lead_assignments set
+#     progress_status = p_progress_status::public.lead_progress_status,
+#     reachability = p_reachability,
+#     appointment_status = p_appointment_status,
+#     loss_reason = p_loss_reason,
+#     mismatch_reason = p_mismatch_reason,
+#     feedback_note = nullif(btrim(p_feedback_note), '')
+#   where id = p_assignment_id
+#   returning quality_updated_at"
+# PL/pgSQL function update_assignment_quality(uuid,timestamp with time zone,text,text,text,text,text,text) line 27 at SQL statement
+# ERROR:  QUALITY_INVALID_LOSS_REASON
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 47 at RAISE
+# SQL statement "update public.lead_assignments set
+#     progress_status = p_progress_status::public.lead_progress_status,
+#     reachability = p_reachability,
+#     appointment_status = p_appointment_status,
+#     loss_reason = p_loss_reason,
+#     mismatch_reason = p_mismatch_reason,
+#     feedback_note = nullif(btrim(p_feedback_note), '')
+#   where id = p_assignment_id
+#   returning quality_updated_at"
+# PL/pgSQL function update_assignment_quality(uuid,timestamp with time zone,text,text,text,text,text,text) line 27 at SQL statement
+# ERROR:  new row for relation "lead_assignments" violates check constraint "assignment_feedback_note"
+# CONTEXT:  SQL statement "update public.lead_assignments set
+#     progress_status = p_progress_status::public.lead_progress_status,
+#     reachability = p_reachability,
+#     appointment_status = p_appointment_status,
+#     loss_reason = p_loss_reason,
+#     mismatch_reason = p_mismatch_reason,
+#     feedback_note = nullif(btrim(p_feedback_note), '')
+#   where id = p_assignment_id
+#   returning quality_updated_at"
+# PL/pgSQL function update_assignment_quality(uuid,timestamp with time zone,text,text,text,text,text,text) line 27 at SQL statement
+# ERROR:  new row for relation "lead_assignments" violates check constraint "assignment_feedback_note"
+# CONTEXT:  SQL statement "update public.lead_assignments set
+#     progress_status = p_progress_status::public.lead_progress_status,
+#     reachability = p_reachability,
+#     appointment_status = p_appointment_status,
+#     loss_reason = p_loss_reason,
+#     mismatch_reason = p_mismatch_reason,
+#     feedback_note = nullif(btrim(p_feedback_note), '')
+#   where id = p_assignment_id
+#   returning quality_updated_at"
+# PL/pgSQL function update_assignment_quality(uuid,timestamp with time zone,text,text,text,text,text,text) line 27 at SQL statement
+# ERROR:  QUALITY_LOSS_REASON_NOT_APPLICABLE
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 86 at RAISE
+# SQL statement "update public.lead_assignments set
+#     progress_status = p_progress_status::public.lead_progress_status,
+#     reachability = p_reachability,
+#     appointment_status = p_appointment_status,
+#     loss_reason = p_loss_reason,
+#     mismatch_reason = p_mismatch_reason,
+#     feedback_note = nullif(btrim(p_feedback_note), '')
+#   where id = p_assignment_id
+#   returning quality_updated_at"
+# PL/pgSQL function update_assignment_quality(uuid,timestamp with time zone,text,text,text,text,text,text) line 27 at SQL statement
+# ERROR:  QUALITY_CONTRADICTORY_CONTACT
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 93 at RAISE
+# SQL statement "update public.lead_assignments set
+#     progress_status = p_progress_status::public.lead_progress_status,
+#     reachability = p_reachability,
+#     appointment_status = p_appointment_status,
+#     loss_reason = p_loss_reason,
+#     mismatch_reason = p_mismatch_reason,
+#     feedback_note = nullif(btrim(p_feedback_note), '')
+#   where id = p_assignment_id
+#   returning quality_updated_at"
+# PL/pgSQL function update_assignment_quality(uuid,timestamp with time zone,text,text,text,text,text,text) line 27 at SQL statement
+# ERROR:  QUALITY_CONTRADICTORY_CONTACT
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 93 at RAISE
+# SQL statement "update public.lead_assignments set
+#     progress_status = p_progress_status::public.lead_progress_status,
+#     reachability = p_reachability,
+#     appointment_status = p_appointment_status,
+#     loss_reason = p_loss_reason,
+#     mismatch_reason = p_mismatch_reason,
+#     feedback_note = nullif(btrim(p_feedback_note), '')
+#   where id = p_assignment_id
+#   returning quality_updated_at"
+# PL/pgSQL function update_assignment_quality(uuid,timestamp with time zone,text,text,text,text,text,text) line 27 at SQL statement
+# ERROR:  QUALITY_CONTRADICTORY_CONTACT
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 93 at RAISE
+# SQL statement "update public.lead_assignments set
+#     progress_status = p_progress_status::public.lead_progress_status,
+#     reachability = p_reachability,
+#     appointment_status = p_appointment_status,
+#     loss_reason = p_loss_reason,
+#     mismatch_reason = p_mismatch_reason,
+#     feedback_note = nullif(btrim(p_feedback_note), '')
+#   where id = p_assignment_id
+#   returning quality_updated_at"
+# PL/pgSQL function update_assignment_quality(uuid,timestamp with time zone,text,text,text,text,text,text) line 27 at SQL statement
+# ERROR:  QUALITY_INSERT_FORBIDDEN
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 15 at RAISE
+# ERROR:  QUALITY_SERVER_FIELDS_IMMUTABLE
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 29 at RAISE
+# ERROR:  QUALITY_SERVER_FIELDS_IMMUTABLE
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 29 at RAISE
+# ERROR:  QUALITY_SERVER_FIELDS_IMMUTABLE
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 29 at RAISE
+# ERROR:  QUALITY_SERVER_FIELDS_IMMUTABLE
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 29 at RAISE
+# ERROR:  QUALITY_SERVER_FIELDS_IMMUTABLE
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 29 at RAISE
+# ERROR:  QUALITY_SERVER_FIELDS_IMMUTABLE
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 29 at RAISE
+# ERROR:  QUALITY_AUDIT_TRIGGER_ONLY
+# CONTEXT:  PL/pgSQL function guard_assignment_quality_audit() line 10 at RAISE
+# ERROR:  QUALITY_SERVER_FIELDS_IMMUTABLE
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 29 at RAISE
+# ERROR:  QUALITY_SERVER_FIELDS_IMMUTABLE
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 29 at RAISE
+# ERROR:  QUALITY_SERVER_FIELDS_IMMUTABLE
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 29 at RAISE
+# ERROR:  QUALITY_SERVER_FIELDS_IMMUTABLE
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 29 at RAISE
+# ERROR:  QUALITY_SERVER_FIELDS_IMMUTABLE
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 29 at RAISE
+# ERROR:  QUALITY_SERVER_FIELDS_IMMUTABLE
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 29 at RAISE
+# ERROR:  QUALITY_AUDIT_TRIGGER_ONLY
+# CONTEXT:  PL/pgSQL function guard_assignment_quality_audit() line 10 at RAISE
+# ERROR:  QUALITY_NOT_AUTHORIZED
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 55 at RAISE
+# ERROR:  QUALITY_AUDIT_IMMUTABLE
+# CONTEXT:  PL/pgSQL function guard_assignment_quality_audit() line 4 at RAISE
+# ERROR:  QUALITY_AUDIT_IMMUTABLE
+# CONTEXT:  PL/pgSQL function guard_assignment_quality_audit() line 4 at RAISE
+# ERROR:  new row for relation "lead_assignments" violates check constraint "assignment_reachability_values"
+# ERROR:  new row for relation "lead_assignments" violates check constraint "assignment_feedback_note"
+# ERROR:  QUALITY_TERMINAL
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 58 at RAISE
+# SQL statement "update public.lead_assignments set
+#     progress_status = p_progress_status::public.lead_progress_status,
+#     reachability = p_reachability,
+#     appointment_status = p_appointment_status,
+#     loss_reason = p_loss_reason,
+#     mismatch_reason = p_mismatch_reason,
+#     feedback_note = nullif(btrim(p_feedback_note), '')
+#   where id = p_assignment_id
+#   returning quality_updated_at"
+# PL/pgSQL function update_assignment_quality(uuid,timestamp with time zone,text,text,text,text,text,text) line 27 at SQL statement
+# ERROR:  QUALITY_TERMINAL
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 58 at RAISE
+# ERROR:  QUALITY_TERMINAL
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 58 at RAISE
+# ERROR:  QUALITY_ASSIGNMENT_NOT_ACCEPTED
+# CONTEXT:  PL/pgSQL function update_assignment_quality(uuid,timestamp with time zone,text,text,text,text,text,text) line 16 at RAISE
+# ERROR:  QUALITY_ACCESS_REVOKED
+# CONTEXT:  PL/pgSQL function update_assignment_quality(uuid,timestamp with time zone,text,text,text,text,text,text) line 19 at RAISE
+# ERROR:  QUALITY_ACCESS_REVOKED
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 67 at RAISE
+# ERROR:  QUALITY_ASSIGNMENT_NOT_ACCEPTED
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 76 at RAISE
+# ERROR:  new row for relation "lead_assignments" violates check constraint "assignment_feedback_note"
+# ERROR:  QUALITY_ASSIGNMENT_NOT_ACCEPTED
+# CONTEXT:  PL/pgSQL function enforce_assignment_quality() line 76 at RAISE
+# Subtest: Prompt 28 assignment-owned timestamps and exact duplicate updates are idempotent
+ok 1 - Prompt 28 assignment-owned timestamps and exact duplicate updates are idempotent
+  ---
+  duration_ms: 5208.009255
+  type: 'test'
+  ...
+# Subtest: Prompt 28 shared outcomes and all professional activity reads stay isolated
+ok 2 - Prompt 28 shared outcomes and all professional activity reads stay isolated
+  ---
+  duration_ms: 457.11316
+  type: 'test'
+  ...
+# Subtest: Prompt 28 stale RPC, invalid enums, note limits and contradictions fail atomically
+ok 3 - Prompt 28 stale RPC, invalid enums, note limits and contradictions fail atomically
+  ---
+  duration_ms: 546.663879
+  type: 'test'
+  ...
+# Subtest: Prompt 28 direct writes cannot forge timestamps, actors or audit events even as admin
+ok 4 - Prompt 28 direct writes cannot forge timestamps, actors or audit events even as admin
+  ---
+  duration_ms: 430.076235
+  type: 'test'
+  ...
+# Subtest: Prompt 28 early loss remains terminal while financial refunds still work
+ok 5 - Prompt 28 early loss remains terminal while financial refunds still work
+  ---
+  duration_ms: 291.739995
+  type: 'test'
+  ...
+# Subtest: Prompt 28 refunded nonterminal assignments cannot edit quality through direct or RPC paths
+ok 6 - Prompt 28 refunded nonterminal assignments cannot edit quality through direct or RPC paths
+  ---
+  duration_ms: 212.708395
+  type: 'test'
+  ...
+# Subtest: Prompt 28 pending assignments can reject with structured mismatch, not progress changes
+ok 7 - Prompt 28 pending assignments can reject with structured mismatch, not progress changes
+  ---
+  duration_ms: 175.638017
+  type: 'test'
+  ...
+# NOTICE:  policy "professionals can read lead activity for assigned leads" for relation "public.lead_activity" does not exist, skipping
+# ERROR:  permission denied for function refresh_lead_sales_state
+# ERROR:  permission denied for function append_commercial_audit_log
+# ERROR:  INVALID_TRANSACTION_AMOUNT_SIGN
+# CONTEXT:  PL/pgSQL function apply_wallet_transaction(uuid,wallet_transaction_type,integer,uuid,uuid,text,text,jsonb) line 13 at RAISE
+# Subtest: Prompt 28 concurrent RPC updates require a fresh version after the row lock
+ok 8 - Prompt 28 concurrent RPC updates require a fresh version after the row lock
+  ---
+  duration_ms: 167.278162
+  type: 'test'
+  ...
+# Subtest: Prompt 28 logical loss after scheduling preserves first appointment timestamp
+ok 9 - Prompt 28 logical loss after scheduling preserves first appointment timestamp
+  ---
+  duration_ms: 223.510249
+  type: 'test'
+  ...
+# Subtest: Prompt 28 migration does not infer historical milestones or block legacy refunds
+ok 10 - Prompt 28 migration does not infer historical milestones or block legacy refunds
+  ---
+  duration_ms: 469.888358
+  type: 'test'
+  ...
+# Subtest: Prompt 28 early loss accepts absent optional feedback without inventing a reason
+ok 11 - Prompt 28 early loss accepts absent optional feedback without inventing a reason
+  ---
+  duration_ms: 179.259324
+  type: 'test'
+  ...
+# Subtest: internal commercial helpers are not directly executable by authenticated professionals
+ok 12 - internal commercial helpers are not directly executable by authenticated professionals
+  ---
+  duration_ms: 109.938653
+  type: 'test'
+  ...
+# Subtest: exclusive lead concurrency allows exactly one successful purchase
+ok 13 - exclusive lead concurrency allows exactly one successful purchase
+  ---
+  duration_ms: 204.888332
+  type: 'test'
+  ...
+# ERROR:  INSUFFICIENT_BALANCE
+# CONTEXT:  PL/pgSQL function apply_wallet_transaction(uuid,wallet_transaction_type,integer,uuid,uuid,text,text,jsonb) line 37 at RAISE
+# SQL statement "select *
+#                          from public.apply_wallet_transaction(
+#     current_professional,
+#     'lead_purchase',
+#     -price_row.price_credits,
+#     target_lead_id,
+#     resolved_assignment_id,
+#     purchase_idempotency_key,
+#     'Lead aankoop',
+#     jsonb_build_object(
+#       'commercial_type', lead_row.commercial_type,
+#       'pricing_source', price_row.price_source,
+#       'pricing_rule_id', price_row.pricing_rule_id
+#     )::jsonb
+#   )"
+# PL/pgSQL function purchase_lead(uuid,text) line 218 at SQL statement
+# ERROR:  TEST_FORCE_ROLLBACK
+# CONTEXT:  PL/pgSQL function test_fail_lead_purchase_insert() line 3 at RAISE
+# SQL statement "insert into public.lead_purchases (
+#     lead_id,
+#     professional_id,
+#     lead_assignment_id,
+#     price_credits,
+#     commercial_type,
+#     wallet_transaction_id,
+#     status,
+#     idempotency_key,
+#     purchased_at
+#   ) values (
+#     target_lead_id,
+#     current_professional,
+#     resolved_assignment_id,
+#     price_row.price_credits,
+#     lead_row.commercial_type,
+#     transaction_row.transaction_id,
+#     'purchased',
+#     purchase_idempotency_key,
+#     now_utc
+#   )
+#   returning id"
+# PL/pgSQL function purchase_lead(uuid,text) line 235 at SQL statement
+# ERROR:  IDEMPOTENCY_KEY_CONFLICT
+# CONTEXT:  PL/pgSQL function purchase_lead(uuid,text) line 50 at RAISE
+# ERROR:  PURCHASE_ALREADY_REFUNDED
+# CONTEXT:  PL/pgSQL function refund_lead_purchase(uuid,text) line 23 at RAISE
+# ERROR:  LEAD_PURCHASE_REFUNDED
+# CONTEXT:  PL/pgSQL function purchase_lead(uuid,text) line 108 at RAISE
+# Subtest: shared leads never exceed the final available slot under concurrency
+ok 14 - shared leads never exceed the final available slot under concurrency
+  ---
+  duration_ms: 166.21091
+  type: 'test'
+  ...
+# Subtest: insufficient balance leaves wallet, purchase and assignment state untouched
+ok 15 - insufficient balance leaves wallet, purchase and assignment state untouched
+  ---
+  duration_ms: 115.115351
+  type: 'test'
+  ...
+# Subtest: purchase transaction rolls back when a downstream failure occurs after debit logic
+ok 16 - purchase transaction rolls back when a downstream failure occurs after debit logic
+  ---
+  duration_ms: 124.297514
+  type: 'test'
+  ...
+# Subtest: duplicate purchases are idempotent per professional and keys are bound to a single lead
+ok 17 - duplicate purchases are idempotent per professional and keys are bound to a single lead
+  ---
+  duration_ms: 150.373406
+  type: 'test'
+  ...
+# Subtest: refunds add counter-transactions, block double refunds, block repurchase and reconcile cleanly
+ok 18 - refunds add counter-transactions, block double refunds, block repurchase and reconcile cleanly
+  ---
+  duration_ms: 160.188895
+  type: 'test'
+  ...
+# ERROR:  LEAD_OFFER_NOT_ACTIVE
+# CONTEXT:  PL/pgSQL function enforce_active_offer_for_purchase() line 32 at RAISE
+# SQL statement "insert into public.lead_purchases (
+#     lead_id,
+#     professional_id,
+#     lead_assignment_id,
+#     price_credits,
+#     commercial_type,
+#     wallet_transaction_id,
+#     status,
+#     idempotency_key,
+#     purchased_at
+#   ) values (
+#     target_lead_id,
+#     current_professional,
+#     resolved_assignment_id,
+#     price_row.price_credits,
+#     lead_row.commercial_type,
+#     transaction_row.transaction_id,
+#     'purchased',
+#     purchase_idempotency_key,
+#     now_utc
+#   )
+#   returning id"
+# PL/pgSQL function purchase_lead(uuid,text) line 235 at SQL statement
+# ERROR:  LEAD_OFFER_NOT_ACTIVE
+# CONTEXT:  PL/pgSQL function enforce_active_offer_for_purchase() line 32 at RAISE
+# SQL statement "insert into public.lead_purchases (
+#     lead_id,
+#     professional_id,
+#     lead_assignment_id,
+#     price_credits,
+#     commercial_type,
+#     wallet_transaction_id,
+#     status,
+#     idempotency_key,
+#     purchased_at
+#   ) values (
+#     target_lead_id,
+#     current_professional,
+#     resolved_assignment_id,
+#     price_row.price_credits,
+#     lead_row.commercial_type,
+#     transaction_row.transaction_id,
+#     'purchased',
+#     purchase_idempotency_key,
+#     now_utc
+#   )
+#   returning id"
+# PL/pgSQL function purchase_lead(uuid,text) line 235 at SQL statement
+# ERROR:  PROFESSIONAL_NOT_ELIGIBLE
+# CONTEXT:  PL/pgSQL function purchase_lead(uuid,text) line 30 at RAISE
+# ERROR:  ASSIGNMENT_ACCESS_IMMUTABLE
+# CONTEXT:  PL/pgSQL function enforce_assignment_access_immutability() line 12 at RAISE
+# ERROR:  LEAD_OFFER_NOT_ACTIVE
+# CONTEXT:  PL/pgSQL function enforce_active_offer_for_purchase() line 16 at RAISE
+# SQL statement "insert into public.lead_purchases (
+#     lead_id,
+#     professional_id,
+#     lead_assignment_id,
+#     price_credits,
+#     commercial_type,
+#     wallet_transaction_id,
+#     status,
+#     idempotency_key,
+#     purchased_at
+#   ) values (
+#     target_lead_id,
+#     current_professional,
+#     resolved_assignment_id,
+#     price_row.price_credits,
+#     lead_row.commercial_type,
+#     transaction_row.transaction_id,
+#     'purchased',
+#     purchase_idempotency_key,
+#     now_utc
+#   )
+#   returning id"
+# PL/pgSQL function purchase_lead(uuid,text) line 235 at SQL statement
+# Subtest: concurrent expiry workers claim each expired offer once and trigger one fallback offer
+ok 19 - concurrent expiry workers claim each expired offer once and trigger one fallback offer
+  ---
+  duration_ms: 158.82344
+  type: 'test'
+  ...
+# Subtest: activate_lead_distribution_run is idempotent and respects slots/batch limits
+ok 20 - activate_lead_distribution_run is idempotent and respects slots/batch limits
+  ---
+  duration_ms: 150.6319
+  type: 'test'
+  ...
+# Subtest: Prompt 27 contact unlock and wallet/purchase/assignment reads enforce professional ownership
+ok 21 - Prompt 27 contact unlock and wallet/purchase/assignment reads enforce professional ownership
+  ---
+  duration_ms: 246.028639
+  type: 'test'
+  ...
+# Subtest: Prompt 27 expired and declined offers reject purchase without any debit
+ok 22 - Prompt 27 expired and declined offers reject purchase without any debit
+  ---
+  duration_ms: 158.734062
+  type: 'test'
+  ...
+# Subtest: Prompt 27 server charges the current price and does not debit ineligible professionals
+ok 23 - Prompt 27 server charges the current price and does not debit ineligible professionals
+  ---
+  duration_ms: 171.339911
+  type: 'test'
+  ...
+# Subtest: Prompt 27 refunds revoke contact access without permitting purchase-link tampering
+ok 24 - Prompt 27 refunds revoke contact access without permitting purchase-link tampering
+  ---
+  duration_ms: 208.242254
+  type: 'test'
+  ...
+# Subtest: Prompt 27 live offer purchase syncs availability and legacy direct assignments still unlock
+ok 25 - Prompt 27 live offer purchase syncs availability and legacy direct assignments still unlock
+  ---
+  duration_ms: 185.054972
+  type: 'test'
+  ...
+# Subtest: Prompt 27 exhausted historical offers cannot bypass their deadline through direct RPC
+ok 26 - Prompt 27 exhausted historical offers cannot bypass their deadline through direct RPC
+  ---
+  duration_ms: 119.291001
+  type: 'test'
+  ...
+1..26
+# tests 26
+# suites 0
+# pass 26
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 11137.94705

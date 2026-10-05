@@ -284,7 +284,23 @@ export async function refundLeadPurchaseAction(formData: FormData) {
     redirectWithMessage("/admin/leads", "error", payload.error.issues[0]?.message ?? "Refund kon niet worden verwerkt.");
   }
 
+  if (formData.get("confirm_purchase_id") !== payload.data.purchaseId) {
+    redirectWithMessage(payload.data.redirectTo, "error", "Bevestig de aankoop en het aantal credits voordat je de refund uitvoert.");
+  }
+
   const supabase = await createServerSupabaseClient();
+  const { data: purchase, error: purchaseError } = await supabase
+    .from("lead_purchases")
+    .select("id, price_credits, status")
+    .eq("id", payload.data.purchaseId)
+    .maybeSingle();
+  const expectedCredits = Number(formData.get("expected_price_credits"));
+  if (purchaseError || !purchase || purchase.status !== "purchased"
+    || !Number.isSafeInteger(expectedCredits) || expectedCredits <= 0
+    || purchase.price_credits !== expectedCredits) {
+    redirectWithMessage(payload.data.redirectTo, "error", "Deze aankoop is intussen gewijzigd of niet beschikbaar voor refund. Vernieuw de pagina.");
+  }
+
   const { error } = await supabase.rpc("refund_lead_purchase", {
     target_purchase_id: payload.data.purchaseId,
     refund_reason: payload.data.reason,

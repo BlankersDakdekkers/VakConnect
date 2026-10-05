@@ -301,7 +301,7 @@ export default async function AdminLeadDetailPage({
               {commercial.purchases.length ? (
                 <div className="space-y-4">
                   {commercial.purchases.map((purchase) => (
-                    <div key={purchase.id} className="rounded-3xl bg-surface-muted p-4">
+                    <div key={purchase.id} id={`purchase-${purchase.id}`} className="scroll-mt-6 rounded-3xl bg-surface-muted p-4">
                       <div className="flex flex-wrap items-center justify-between gap-3">
                         <div>
                           <p className="font-medium">{purchase.companyName}</p>
@@ -316,7 +316,14 @@ export default async function AdminLeadDetailPage({
                         <form action={refundLeadPurchaseAction} className="mt-3 space-y-3">
                           <input type="hidden" name="purchase_id" value={purchase.id} />
                           <input type="hidden" name="redirect_to" value={`/admin/leads/${lead.id}`} />
-                          <Input name="reason" placeholder="Refundreden" required />
+                          <input type="hidden" name="expected_price_credits" value={purchase.priceCredits} />
+                          <FormField id={`refund-reason-${purchase.id}`} label="Refundreden">
+                            <Input id={`refund-reason-${purchase.id}`} name="reason" maxLength={240} required />
+                          </FormField>
+                          <label className="flex items-start gap-3 text-sm">
+                            <input className="mt-1" type="checkbox" name="confirm_purchase_id" value={purchase.id} required />
+                            <span>Ik bevestig de volledige refund van {formatCredits(purchase.priceCredits)} voor aankoop {purchase.id}. De vakman krijgt deze credits terug en verliest de contacttoegang voor deze aankoop.</span>
+                          </label>
                           <SubmitButton variant="secondary" pendingLabel="Refund wordt verwerkt...">Volledige refund</SubmitButton>
                         </form>
                       ) : null}
