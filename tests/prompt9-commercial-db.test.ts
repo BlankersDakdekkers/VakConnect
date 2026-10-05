@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { execFileSync, spawn } from "node:child_process";
 import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { randomUUID } from "node:crypto";
@@ -89,7 +90,7 @@ function startHarness(): Harness | null {
     return null;
   }
 
-  const baseDir = mkdtempSync(join(repoRoot, ".vakconnect-pg-"));
+  const baseDir = mkdtempSync(join(tmpdir(), "vakconnect-pg-"));
   const dataDir = join(baseDir, "data");
   const socketDir = join(baseDir, "socket");
   const logFile = join(baseDir, "postgres.log");

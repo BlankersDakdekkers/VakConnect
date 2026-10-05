@@ -33,16 +33,19 @@ export const leadMismatchReasonLabels: Record<(typeof leadMismatchReasonValues)[
 const nullableSelection = <T extends readonly [string, ...string[]]>(values: T) =>
   z.preprocess((value) => value === "" || value === undefined ? null : value, z.enum(values).nullable());
 
-export const assignmentQualityUpdateSchema = z.object({
+export const assignmentQualityIdentitySchema = z.object({
   leadId: z.string().uuid(),
   progressStatus: z.enum(leadProgressStatusValues),
   expectedUpdatedAt: z.iso.datetime({ offset: true }),
+  redirectTo: z.string().regex(/^\/vakman(?:\/|$)/).refine((value) => !value.includes("\\") && !value.includes("//")),
+});
+
+export const assignmentQualityUpdateSchema = assignmentQualityIdentitySchema.extend({
   reachability: nullableSelection(leadReachabilityValues),
   appointmentStatus: z.enum(leadAppointmentStatusValues),
   lossReason: nullableSelection(leadQualityLossReasonValues),
   mismatchReason: nullableSelection(leadMismatchReasonValues),
   feedbackNote: z.preprocess((value) => typeof value === "string" ? value.trim() || null : value ?? null, z.string().max(500).nullable()),
-  redirectTo: z.string().regex(/^\/vakman(?:\/|$)/).refine((value) => !value.includes("\\") && !value.includes("//")),
 }).superRefine((value, context) => {
   if (value.progressStatus !== "lost" && value.lossReason !== null) {
     context.addIssue({ code: "custom", path: ["lossReason"], message: "Kies een verliesreden alleen bij een verloren aanvraag." });

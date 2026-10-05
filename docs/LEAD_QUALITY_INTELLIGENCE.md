@@ -253,7 +253,7 @@ automatische code review kon zijn geconfigureerde model niet starten.
 Een afzonderlijke read-only securityreview vond geen kwetsbaarheden in de
 beoordeelde wijzigingen. Deze review vervangt geen geslaagde CodeQL-scan.
 
-Na integratie en correcties: lint, typecheck, **268 tests (0 failures,
+Na integratie en correcties: lint, typecheck, **271 tests (0 failures,
 0 skips)** en production build geslaagd. Dit omvat PostgreSQL-backed
 ownership/IDOR, actor- en timestampbescherming, stale writes, terminale
 uitkomsten, gedeelde leads, feedbackwaarden, optionele verliesreden,

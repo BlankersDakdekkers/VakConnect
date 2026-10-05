@@ -13,7 +13,7 @@ import {
 import { addLeadActivity } from "@/lib/leads/activity";
 import { isProfessionalOwner } from "@/lib/auth/ownership";
 import { isValidLeadProgressTransition } from "@/lib/leads/progress";
-import { assignmentQualityUpdateSchema, assignmentRejectionFeedbackSchema } from "@/lib/leads/quality-taxonomy";
+import { assignmentQualityIdentitySchema, assignmentQualityUpdateSchema, assignmentRejectionFeedbackSchema } from "@/lib/leads/quality-taxonomy";
 
 function redirectWithMessage(path: string, key: "error" | "success", message: string): never {
   const search = new URLSearchParams({ [key]: message });
@@ -192,32 +192,39 @@ export async function respondToAssignmentAction(formData: FormData) {
 
 export async function updateLeadProgressAction(formData: FormData) {
   const user = await requireProfessionalUser();
-  const payload = assignmentQualityUpdateSchema.safeParse({
+  const identity = assignmentQualityIdentitySchema.safeParse({
     leadId: formData.get("lead_id"),
     progressStatus: formData.get("progress_status"),
-    lossReason: formData.get("loss_reason"),
     expectedUpdatedAt: formData.get("expected_updated_at"),
-    reachability: formData.get("reachability"),
-    appointmentStatus: formData.get("appointment_status"),
-    mismatchReason: formData.get("mismatch_reason"),
-    feedbackNote: formData.get("feedback_note"),
     redirectTo: formData.get("redirect_to"),
   });
 
-  if (!payload.success) {
-    redirectWithMessage("/vakman/aanvragen", "error", payload.error.issues[0]?.message ?? "Status kon niet worden bijgewerkt.");
+  if (!identity.success) {
+    redirectWithMessage("/vakman/aanvragen", "error", identity.error.issues[0]?.message ?? "Status kon niet worden bijgewerkt.");
   }
 
   const supabase = await createServerSupabaseClient();
   const { data: assignment, error: assignmentError } = await supabase
     .from("lead_assignments")
-    .select("id, status, progress_status, professional_id")
-    .eq("lead_id", payload.data.leadId)
+    .select("id, status, progress_status, professional_id, reachability, appointment_status, loss_reason, mismatch_reason, feedback_note")
+    .eq("lead_id", identity.data.leadId)
     .eq("professional_id", user.professional.id)
     .maybeSingle();
 
   if (assignmentError || !assignment || assignment.status !== "accepted" || !isProfessionalOwner(user.professional.id, assignment.professional_id)) {
-    redirectWithMessage(payload.data.redirectTo, "error", "Je kunt alleen geaccepteerde leads opvolgen.");
+    redirectWithMessage(identity.data.redirectTo, "error", "Je kunt alleen geaccepteerde leads opvolgen.");
+  }
+
+  const payload = assignmentQualityUpdateSchema.safeParse({
+    ...identity.data,
+    reachability: formData.has("reachability") ? formData.get("reachability") : assignment.reachability,
+    appointmentStatus: formData.has("appointment_status") ? formData.get("appointment_status") : assignment.appointment_status,
+    lossReason: formData.has("loss_reason") ? formData.get("loss_reason") : assignment.loss_reason,
+    mismatchReason: formData.has("mismatch_reason") ? formData.get("mismatch_reason") : assignment.mismatch_reason,
+    feedbackNote: formData.has("feedback_note") ? formData.get("feedback_note") : assignment.feedback_note,
+  });
+  if (!payload.success) {
+    redirectWithMessage(identity.data.redirectTo, "error", payload.error.issues[0]?.message ?? "Status kon niet worden bijgewerkt.");
   }
 
   const fromStatus = assignment.progress_status;
