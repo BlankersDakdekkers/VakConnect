@@ -57,7 +57,10 @@ formules en zuivere aggregatie voor UI en tests.
 `N` = aantal afzonderlijke aankopen met `purchased_at` in de laatste
 7, 28 of 90 × 24 uur, tot het serverrapportmoment (UTC), status
 `purchased` **of** `refunded`. Refunds blijven in N. Cancelled is geen
-voltooide aankoop; een cancelled record met debit wordt een inconsistentie.
+voltooide aankoop. Het schema vereist ook voor cancelled een immutable debit:
+die is alleen financieel neutraal indien expliciet gekoppelde correcties
+de debit volledig compenseren. Ontbrekende of niet-sluitende tegenboeking
+blokkeert financiële cijfers; het rapport verzint geen annulering/refund.
 Unieke leads = distinct lead-ID in die populatie; dat is een andere metric.
 
 | Metric | Definitie |
@@ -135,8 +138,8 @@ niet een aangenomen looptijd of uitsluitend status. Open expiry >
 rapportmoment zonder aankoop; ontbrekende expiry is geen bewezen expiry.
 
 Unsold = unieke aangeboden leads zonder **enige** purchase/refunded-aankoop
-tot rapportmoment, ook vóór het aanbodcohort gecontroleerd via batched
-existence-reads. Een refund wist eerdere verkoop niet uit.
+tot rapportmoment, ook vóór het aanbodcohort gecontroleerd via de bestaande
+globale purchase-projectie voor reconciliatie. Een refund wist eerdere verkoop niet uit.
 Een nog open aanbieding zonder aankoop is “nog niet verkocht”, geen mislukking.
 Legacy purchases zonder distributieaanbod vallen buiten offerconversie.
 
@@ -150,6 +153,8 @@ Lichte read-only controle:
   en transactioneel aankoopmoment;
 - refund-ID/status/timestamp en werkelijk bedrag/professional/lead/assignment;
 - extra ongekoppelde debits/refunds in de geselecteerde aankooppopulatie;
+- schema-backed cancelled aankopen vereisen een geldige debit en sluitende
+  gekoppelde correcties (netto nul); geen onverklaarde afboekingen weglaten;
 - globale debit-/refund-ID-koppelingen met een minimale projectie van alle
   aankopen, zodat orphan-ledgerboekingen buiten het cohort ook blokkeren;
 - geldige ledgerbedragen/signs/walletkoppelingen;
@@ -184,9 +189,9 @@ Bronnen zijn uitsluitend vaste kanaallabels, nooit URLs/querystrings.
 React rendert labels als tekst, geen HTML. Geen nieuwe databasetabel.
 
 Aggregatie gebeurt server-side; geen client-side raw datasets of queries per
-UI-rij. Vijf gepagineerde datasets (waarvan één minimale globale purchase-
-koppelingprojectie), plus batched purchase-existence reads
-van maximaal 100 aangeboden lead-ID's per query. Het volledige ledger is
+UI-rij. Vijf gepagineerde datasets, waarvan één minimale globale purchase-
+koppelingprojectie die ook historische unsold-existence controleert; geen
+extra existencequery per aangeboden lead. Het volledige ledger is
 nodig voor betrouwbare creditstock; capoverschrijding geeft een menselijke
 melding in plaats van een gedeeltelijk totaal. Geen nieuwe indexes zonder
 queryplanbewijs, materialized views of chartdependency.
@@ -221,11 +226,21 @@ slagen (0 production vulnerabilities). Volledige audit meldt de bestaande
 vijf high dev-only vermeldingen; geen dependencywijziging in Prompt 30.
 Gerichte tests dekken accounting, noemers, partial corrections, shared,
 exclusive, maturity, lege data, PII-grenzen, adminautorisatie en read-only queries.
+Finale validatie: **49 economics-tests**, **377 tests totaal** geslaagd,
+inclusief de bestaande PostgreSQL-regressies. Lint, typecheck en productiebuild
+slagen. Werkelijk gerenderde dashboard-/page-tests controleren lege data,
+financiële foutmaskering, autorisatie en menselijke foutmeldingen.
 De bestaande DB-regressies blijven de atomische purchase/refund-, grants-,
 29D-validator-, RLS-, quality- en distributiegrenzen bewaken.
 De finale lint/typecheck/test/build- en securitytoolresultaten staan in het
 PR/eindrapport; een toolfailure geldt nooit als pass.
+Secret scan vindt geen secrets; production audit blijft op nul kwetsbaarheden.
+CodeQL-analyse van JavaScript is uitgevoerd zonder alerts. De automatische
+reviewtool kon zijn geconfigureerde model niet laden; dat is **geen geslaagde
+review**, ondanks de success-header van het toolresultaat. Een onafhankelijke
+read-only review vond geen resterende significante issues.
 
 Geen Supabase-credentials/adminsessie beschikbaar in deze sandbox:
 authenticated browser-QA, echte productiecohorten en responsive interactie
-op 768/1024/1280 blijven deploymentchecks. Geen productieseeds.
+op 768/1024/1280 blijven deploymentchecks. De browsertool kon niet verbinden
+(transport gesloten); geen browser-/responsive pass geclaimd. Geen productieseeds.

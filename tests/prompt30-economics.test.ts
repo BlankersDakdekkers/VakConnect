@@ -1,12 +1,14 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import test from "node:test";
 import { runInNewContext } from "node:vm";
+import { createElement, type ComponentType, type ReactNode } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import ts from "typescript";
 import { collectQualityPages } from "../lib/leads/quality-reporting.ts";
 import {
-  buildEconomicsReport, parseEconomicsDays,
+  buildEconomicsReport, economicsDefinitions, parseEconomicsDays,
   type EconomicsInput, type EconomicsOffer, type EconomicsPurchase,
   type EconomicsReport, type EconomicsSummary, type EconomicsTransaction,
 } from "../lib/economics/metrics.ts";
@@ -133,6 +135,23 @@ test("positive partial corrections reduce net, negative corrections are separate
   assert.equal(result.all.finance?.net, 87);
   assert.deepEqual(result.all.partialCorrection, { count: 1, denominator: 1, percent: null });
   assert.equal(result.all.refund.count, 0);
+});
+
+test("signed corrections can return more than the original price when extra charges keep actual net nonnegative", () => {
+  const row = purchase("signed-mix");
+  const result = report(fixture([row], [
+    linked(row, "additional-charge", -10), linked(row, "returned-credits", 101),
+  ]));
+  assert.equal(result.reconciliation.consistent, true);
+  assert.deepEqual(result.reconciliation.issues, []);
+  assert.equal(result.all.finance?.gross, 100);
+  assert.equal(result.all.finance?.corrections, 101);
+  assert.equal(result.all.finance?.extraCharges, 10);
+  assert.equal(result.all.finance?.refunded, 0);
+  assert.equal(result.all.finance?.net, 9);
+  assert.equal(result.all.partialCorrection.count, 0);
+  assert.equal(result.all.refund.count, 0);
+  assert.equal(result.walletStock, 9991);
 });
 
 test("distinct corrections aggregate once per affected purchase; repeated ledger ID fails closed", () => {
@@ -449,13 +468,11 @@ test("global purchase links reconcile older purchased/refunded ledger without ad
   assert.equal(result.walletStock, 19900);
 });
 
-test("global link reconciliation permits legitimate older purchases and cancelled acquisitions with no financial booking", () => {
+test("global link reconciliation rejects schema-invalid cancelled acquisitions with no debit", () => {
   const input = fixture([purchase("old", { purchasedAt: ago(40) }), purchase("cancelled", { status: "cancelled" })]);
   input.purchaseLinks = input.purchases.map(({ id, debitId, refundId, price, status }) => ({ id, debitId, refundId, price, status }));
-  const result = report(input);
-  assert.equal(result.reconciliation.consistent, true);
+  const result = failClosed(input, /Geannuleerde aankoop zonder sluitende tegenboeking/);
   assert.equal(result.all.purchases, 0);
-  assert.equal(result.all.finance?.gross, 0);
 });
 
 test("refund status, actual refund value, links and exact timestamp must match without rewriting purchase status", () => {
@@ -504,12 +521,55 @@ test("corrections before acquisition or for another professional do not reduce c
   assert.equal(result.all.partialCorrection.count, 0);
 });
 
-test("cancelled acquisitions with no debit are excluded, but cancellation cannot hide a financial booking", () => {
+test("cancelled acquisitions require a debit and exact compensation while remaining outside purchase denominators", () => {
   const cancelled = purchase("cancelled", { status: "cancelled" });
-  assert.equal(report(fixture([cancelled])).all.purchases, 0);
-  failClosed(fixture([cancelled], [{ ...linked(cancelled, cancelled.debitId, -100, "lead_purchase"), createdAt: bought }]), /Geannuleerde aankoop/);
+  const missing = failClosed(fixture([cancelled]), /ledgerdebit|Geannuleerde aankoop zonder sluitende tegenboeking/);
+  assert.equal(missing.all.purchases, 0);
+  failClosed(fixture([cancelled], [{ ...linked(cancelled, cancelled.debitId, -100, "lead_purchase"), createdAt: bought }]), /Geannuleerde aankoop zonder sluitende tegenboeking/);
   failClosed(fixture([purchase("unknown", { status: "unexpected" })]), /Onbekende aankoopstatus/);
   failClosed(fixture([purchase("invalid-time", { purchasedAt: "invalid", status: "cancelled" })]), /geldig aankoopmoment/);
+});
+
+test("cancelled debit fully offset by explicit linked correction reconciles globally and in the purchase cohort", () => {
+  for (const purchasedAt of [bought, ago(40)]) {
+    for (const globalLinks of [false, true]) {
+      const cancelled = purchase("cancelled", { status: "cancelled", purchasedAt });
+      const input = fixture([cancelled], [
+        { ...linked(cancelled, cancelled.debitId, -100, "lead_purchase"), createdAt: purchasedAt },
+        linked(cancelled, "cancelled-credit-return", 100),
+      ]);
+      if (globalLinks) {
+        input.purchaseLinks = input.purchases.map(({ id, debitId, refundId, price, status }) => ({ id, debitId, refundId, price, status }));
+      }
+      const result = report(input);
+      assert.equal(result.reconciliation.consistent, true);
+      assert.deepEqual(result.reconciliation.issues, []);
+      assert.equal(result.all.purchases, 0);
+      assert.equal(result.all.uniqueLeads, 0);
+      assert.equal(result.all.refund.count, 0);
+      assert.equal(result.all.partialCorrection.count, 0);
+      assert.equal(result.all.finance?.gross, 0);
+      assert.equal(result.all.finance?.net, 0);
+      assert.equal(result.walletStock, 10000);
+      assert.equal(result.funnel[0].count, 0);
+    }
+  }
+});
+
+test("cancelled acquisitions with residual credits or ambiguous or pre-debit compensation fail closed", () => {
+  const cancelled = purchase("cancelled", { status: "cancelled" });
+  for (const correction of [
+    linked(cancelled, "incomplete-return", 99),
+    linked(cancelled, "excessive-return", 101),
+    { ...linked(cancelled, "ambiguous-return", 100), assignmentId: "other-assignment" },
+    { ...linked(cancelled, "early-return", 100), createdAt: after(bought, -1) },
+  ]) {
+    const input = fixture([cancelled], [
+      { ...linked(cancelled, cancelled.debitId, -100, "lead_purchase"), createdAt: bought }, correction,
+    ]);
+    input.purchaseLinks = input.purchases.map(({ id, debitId, refundId, price, status }) => ({ id, debitId, refundId, price, status }));
+    failClosed(input, /Geannuleerde aankoop zonder sluitende tegenboeking/);
+  }
 });
 
 function makeOffer(id: string, patch: Partial<EconomicsOffer> = {}): EconomicsOffer {
@@ -552,6 +612,16 @@ test("offer conversions require timestamps on or after offer and not beyond as-o
   ]));
   assert.equal(result.distribution.offers, 5);
   assert.deepEqual(result.distribution.converted, { count: 2, denominator: 5, percent: null });
+  assert.equal(result.distribution.open, 3);
+  assert.equal(result.distribution.expired, 0);
+  const expired = report(fixture([], [], [
+    makeOffer("before", { purchasedAt: after(bought, -1), expiresAt: now.toISOString() }),
+    makeOffer("future", { purchasedAt: after(now.toISOString(), 1), expiresAt: now.toISOString() }),
+    makeOffer("invalid", { purchasedAt: "invalid", expiresAt: now.toISOString() }),
+  ]));
+  assert.equal(expired.distribution.converted.count, 0);
+  assert.equal(expired.distribution.expired, 3);
+  assert.equal(expired.distribution.open, 0);
 });
 
 test("unsold distribution deduplicates offered leads and excludes historically sold and refunded leads", () => {
@@ -590,6 +660,8 @@ function loadQuery(mocks: Record<string, unknown>) {
 
 type QueryReply = { data: Record<string, unknown>[] | null; error: unknown; count: number | null };
 type QueryCall = { table: string; method: string; args: unknown[] };
+const globalPurchaseSelect = (value: unknown): value is string =>
+  typeof value === "string" && value.includes("wallet_transaction_id") && !value.includes("professional_id");
 function queryHarness(
   reply: (table: string, from: number, to: number, calls: QueryCall[]) => QueryReply = () => ({ data: [], count: 0, error: null }),
   denied?: string,
@@ -653,6 +725,7 @@ test("authorized query performs static read-only exact-count paged selects with 
   assert.equal(harness.captured.length, 1);
   assert.equal(harness.captured[0].days, 7);
   const tables = ["lead_purchases", "wallet_transactions", "professional_wallets", "lead_distribution_candidates"];
+  assert.equal(harness.calls.filter((call) => call.method === "select").length, 5);
   assert.deepEqual([...new Set(harness.calls.filter((call) => call.method === "select").map((call) => call.table))].sort(), tables.sort());
   for (const call of harness.calls.filter((call) => call.method === "select")) {
     assert.equal(typeof call.args[0], "string");
@@ -750,7 +823,7 @@ test("query maps exact ledger links and numeric fields without coercing null or 
   }
 });
 
-test("query checks historical sold offered leads using minimal paged existence reads including refunded status", async () => {
+test("query derives historical sold offered leads from minimal global purchase links including refunded but excluding cancelled", async () => {
   const harness = queryHarness((table, _from, _to, calls) => {
     if (table === "lead_distribution_candidates") return {
       data: [
@@ -761,21 +834,27 @@ test("query checks historical sold offered leads using minimal paged existence r
       ], count: 2, error: null,
     };
     const latestSelect = calls.filter((call) => call.table === table && call.method === "select").at(-1);
-    if (table === "lead_purchases" && latestSelect?.args[0] === "id,lead_id") {
-      return { data: [{ id: "historic-refunded", lead_id: "shared-lead" }], count: 1, error: null };
+    if (table === "lead_purchases" && globalPurchaseSelect(latestSelect?.args[0])) {
+      return { data: [
+        { id: "historic-refunded", lead_id: "shared-lead", status: "refunded", wallet_transaction_id: "historic-debit", refund_transaction_id: "historic-refund", price_credits: 100 },
+        { id: "historic-cancelled", lead_id: "cancelled-lead", status: "cancelled", wallet_transaction_id: "cancelled-debit", refund_transaction_id: null, price_credits: 100 },
+      ], count: 2, error: null };
     }
     return { data: [], count: 0, error: null };
   });
   await harness.run(28);
   assert.deepEqual(Array.from(harness.captured[0].input.distributedPurchasedLeadIds!), ["shared-lead"]);
   assert.equal(harness.captured[0].input.offers.length, 2);
-  const historySelect = harness.calls.find((call) => call.table === "lead_purchases" && call.method === "select" && call.args[0] === "id,lead_id");
+  const historySelect = harness.calls.find((call) => call.table === "lead_purchases" && call.method === "select" && globalPurchaseSelect(call.args[0]));
   assert.ok(historySelect);
   assert.equal((historySelect.args[1] as { count: string }).count, "exact");
-  const leadFilter = harness.calls.find((call) => call.table === "lead_purchases" && call.method === "in" && call.args[0] === "lead_id");
-  assert.deepEqual(Array.from(leadFilter!.args[1] as string[]), ["shared-lead"]);
-  const statuses = harness.calls.find((call) => call.table === "lead_purchases" && call.method === "in" && call.args[0] === "status");
-  assert.deepEqual(Array.from(statuses!.args[1] as string[]), ["purchased", "refunded"]);
+  assert.match(historySelect.args[0] as string, /\blead_id\b/);
+  assert.equal(harness.calls.filter((call) => call.method === "select").length, 5);
+  assert.ok(!harness.calls.some((call) => call.method === "select" && call.args[0] === "id,lead_id"));
+  const linkStart = harness.calls.indexOf(historySelect);
+  const linkCalls = harness.calls.slice(linkStart);
+  assert.ok(linkCalls.some((call) => call.method === "lte" && call.args[0] === "purchased_at"));
+  assert.ok(!linkCalls.some((call) => call.method === "gte"));
 });
 
 test("authorized query maps realistic Supabase nested rows into a balanced fully refunded economics report", async () => {
@@ -811,11 +890,9 @@ test("authorized query maps realistic Supabase nested rows into a balanced fully
   };
   const harness = queryHarness((table, from, to, calls) => {
     const selected = calls.filter((call) => call.table === table && call.method === "select").at(-1)?.args[0];
-    const rows = table === "lead_purchases" && selected === "id,lead_id"
-      ? [{ id: rawPurchase.id, lead_id: rawPurchase.lead_id }]
-      : table === "lead_purchases" && selected === "id,wallet_transaction_id,refund_transaction_id,price_credits,status"
+    const rows = table === "lead_purchases" && globalPurchaseSelect(selected)
         ? [{
-          id: rawPurchase.id, wallet_transaction_id: rawPurchase.wallet_transaction_id,
+          id: rawPurchase.id, lead_id: rawPurchase.lead_id, wallet_transaction_id: rawPurchase.wallet_transaction_id,
           refund_transaction_id: rawPurchase.refund_transaction_id, price_credits: rawPurchase.price_credits,
           status: rawPurchase.status,
         }]
@@ -848,4 +925,108 @@ test("authorized query maps realistic Supabase nested rows into a balanced fully
   assert.equal(input.offers[0].expiresAt, after(bought, 48));
   assert.equal(input.purchases[0].assignment?.outcomeAt, after(bought, 4));
   assert.equal(input.purchases[0].subservice, null);
+});
+
+function loadUi(path: string, mocks: Record<string, unknown> = {}): Record<string, unknown> {
+  const compiled = { exports: {} as Record<string, unknown> };
+  const require = createRequire(new URL(`../${path}`, import.meta.url));
+  runInNewContext(ts.transpileModule(source(path), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX, target: ts.ScriptTarget.ES2022 },
+    fileName: path,
+  }).outputText, {
+    module: compiled, exports: compiled.exports, Date,
+    require: (name: string): unknown => {
+      if (Object.hasOwn(mocks, name)) return mocks[name];
+      if (name === "next/link") return {
+        __esModule: true,
+        default: ({ children, ...props }: { children: ReactNode; href: string }) => createElement("a", props, children),
+      };
+      if (name === "@/lib/economics/metrics") return { economicsDefinitions, parseEconomicsDays };
+      if (!name.startsWith("@/")) return require(name);
+      const target = name.slice(2);
+      return loadUi(existsSync(new URL(`../${target}.tsx`, import.meta.url)) ? `${target}.tsx` : `${target}.ts`, mocks);
+    },
+  });
+  return compiled.exports;
+}
+
+const Dashboard = loadUi("components/admin/economics-dashboard.tsx").EconomicsDashboard as ComponentType<{ report: EconomicsReport }>;
+const renderDashboard = (result: EconomicsReport) => renderToStaticMarkup(createElement(Dashboard, { report: result }));
+
+test("actual economics dashboard SSR renders an empty database with zero credits, human empty states and no invented acquisitions", () => {
+  const markup = renderDashboard(report(fixture()));
+  assert.match(markup, /Lead-economie/);
+  assert.match(markup, /Reconciliatie geslaagd/);
+  assert.match(markup, /Geen aankopen in deze periode/);
+  assert.match(markup, /Geen aankopen in deze uitsplitsing/);
+  assert.match(markup, /Geen aankoopcohorten in deze periode/);
+  assert.match(markup, /Geen aanbiedingen in dit cohort/);
+  assert.match(markup, /Geen diensten voldoen aan deze beschrijvende selectie/);
+  assert.match(markup, />0 credits</);
+  assert.match(markup, /Bruto aankoopcredits<\/dt><dd[^>]*>0 credits</);
+  assert.match(markup, /Netto behouden credits<\/dt><dd[^>]*>0 credits</);
+  assert.match(markup, /Walletvoorraad \(verplichting\)<\/dt><dd[^>]*>0 credits</);
+  assert.doesNotMatch(markup, /<th[^>]*scope="row"[^>]*>Dakwerk|lead-one|professional-one|NaN|Infinity|undefined/);
+});
+
+test("actual dashboard SSR shows reconciliation alert and unavailable finance without displaying any credit amounts", () => {
+  const input = fixture([purchase("failed-render", { price: 987 })]);
+  input.transactions.find((row) => row.id === "debit-failed-render")!.amount = -986;
+  rebalance(input);
+  const result = report(input);
+  assert.equal(result.reconciliation.consistent, false);
+  const markup = renderDashboard(result);
+  assert.match(markup, /role="alert"/);
+  assert.match(markup, /Reconciliatie niet geslaagd/);
+  assert.match(markup, /Alle financiële cijfers zijn niet beschikbaar/);
+  assert.match(markup, /Niet beschikbaar/);
+  assert.match(markup, /Kandidaten niet beschikbaar zolang reconciliatie niet slaagt/);
+  assert.doesNotMatch(markup, /\b\d+(?:[.,]\d+)* credits\b|987 credits|986 credits|NaN|Infinity|undefined/);
+  assert.match(markup, /Bruto aankoopcredits<\/dt><dd[^>]*>Niet beschikbaar</);
+  assert.match(markup, /Walletvoorraad \(verplichting\)<\/dt><dd[^>]*>Niet beschikbaar</);
+});
+
+type EconomicsPage = (props: { searchParams: Promise<Record<string, string | string[] | undefined>> }) => Promise<ReactNode>;
+test("actual economics page denies public/professional users outside the report error catch and performs no reporting", async () => {
+  for (const role of ["public", "professional"]) {
+    let reports = 0;
+    const Page = loadUi("app/(admin)/admin/economie/page.tsx", {
+      "@/lib/auth/helpers": { requireAdminUser: async () => { throw new Error(`REDIRECT:/login?role=${role}`); } },
+      "@/lib/economics/queries": { getAdminEconomicsReport: async () => { reports++; return report(fixture()); } },
+    }).default as EconomicsPage;
+    await assert.rejects(Page({ searchParams: Promise.resolve({ days: "90" }) }), /REDIRECT:\/login/);
+    assert.equal(reports, 0);
+  }
+});
+
+test("actual authorized economics page SSR renders empty reports and uses human sanitized query failure state", async () => {
+  for (const fails of [false, true]) {
+    let guards = 0;
+    let reports = 0;
+    const Page = loadUi("app/(admin)/admin/economie/page.tsx", {
+      "@/lib/auth/helpers": { requireAdminUser: async () => { guards++; return { id: "admin" }; } },
+      "@/lib/economics/queries": { getAdminEconomicsReport: async (days: 7 | 28 | 90) => {
+        assert.equal(guards, 1);
+        assert.equal(days, 90);
+        reports++;
+        if (fails) throw new Error("private-db-details");
+        return report(fixture(), days);
+      } },
+    }).default as EconomicsPage;
+    const markup = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({ days: "90" }) }));
+    assert.equal(guards, 1);
+    assert.equal(reports, 1);
+    assert.match(markup, /Lead-economie/);
+    if (fails) {
+      assert.match(markup, /role="alert"/);
+      assert.match(markup, /Het economierapport is momenteel niet beschikbaar/);
+      assert.match(markup, /href="\/admin\/economie\?days=90"/);
+      assert.match(markup, /Opnieuw proberen/);
+      assert.doesNotMatch(markup, /private-db-details|0 credits/);
+    } else {
+      assert.match(markup, /Geen aankopen in deze periode/);
+      assert.match(markup, /0 credits/);
+      assert.match(markup, /90 dagen/);
+    }
+  }
 });

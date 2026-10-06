@@ -80,15 +80,30 @@ export function buildEconomicsReport(input: EconomicsInput, days: 7 | 28 | 90, a
   const rawPurchases = unique(input.purchases, "Dubbele of ontbrekende aankoopidentificatie");
   const offers = unique(input.offers, "Dubbele of ontbrekende aanbodidentificatie");
   const ledger = new Map(transactions.map((entry) => [entry.id, entry]));
+  const correctionsByPair = new Map<string, EconomicsTransaction[]>();
+  for (const entry of transactions) {
+    if (entry.type !== "correction" || !entry.leadId) continue;
+    const key = `${entry.leadId}:${entry.professionalId}`;
+    const rows = correctionsByPair.get(key) ?? [];
+    rows.push(entry);
+    correctionsByPair.set(key, rows);
+  }
+  function neutralCancellation(debit: EconomicsTransaction | undefined) {
+    if (!debit || !debit.leadId) return false;
+    const entries = (correctionsByPair.get(`${debit.leadId}:${debit.professionalId}`) ?? [])
+      .filter((entry) => time(entry.createdAt) >= time(debit.createdAt));
+    return !entries.some((entry) => entry.assignmentId && entry.assignmentId !== debit.assignmentId)
+      && debit.amount + entries.reduce((sum, entry) => sum + entry.amount, 0) === 0;
+  }
   if (input.purchaseLinks) {
     const links = unique(input.purchaseLinks, "Dubbele financiële aankoopkoppeling");
     const debits = new Map<string, string>();
     const refunds = new Set<string>();
     for (const link of links) {
       const debit = ledger.get(link.debitId);
-      if (link.status === "cancelled" && !debit && !link.refundId) continue;
       if (debits.has(link.debitId) || !debit || debit.type !== "lead_purchase"
-        || debit.amount !== -link.price || link.status === "cancelled") attention("Globale aankoop/debit-reconciliatie wijkt af");
+        || debit.amount !== -link.price) attention("Globale aankoop/debit-reconciliatie wijkt af");
+      if (link.status === "cancelled" && !neutralCancellation(debit)) attention("Geannuleerde aankoop zonder sluitende tegenboeking");
       debits.set(link.debitId, link.id);
       if (link.refundId) {
         const refund = ledger.get(link.refundId);
@@ -138,10 +153,6 @@ export function buildEconomicsReport(input: EconomicsInput, days: 7 | 28 | 90, a
   const purchases = cohort.filter((purchase) => ["purchased", "refunded"].includes(purchase.status));
   for (const purchase of cohort) {
     if (!["purchased", "refunded", "cancelled"].includes(purchase.status)) attention("Onbekende aankoopstatus");
-    if (purchase.status === "cancelled") {
-      if (ledger.has(purchase.debitId)) attention("Geannuleerde aankoop met financiële boeking");
-      continue;
-    }
     const key = `${purchase.leadId}:${purchase.professionalId}`;
     if (pairs.has(key)) attention("Meerdere aankopen voor dezelfde lead en professional");
     pairs.add(key);
@@ -157,6 +168,7 @@ export function buildEconomicsReport(input: EconomicsInput, days: 7 | 28 | 90, a
       || debit.assignmentId !== purchase.assignmentId || time(debit.createdAt) !== time(purchase.purchasedAt)
       || usedDebits.has(purchase.debitId)) attention("Aankoopprijs wijkt af van gekoppelde ledgerdebit");
     usedDebits.add(purchase.debitId);
+    if (purchase.status === "cancelled" && !neutralCancellation(debit)) attention("Geannuleerde aankoop zonder sluitende tegenboeking");
     if (purchase.status === "refunded") {
       const refund = purchase.refundId ? ledger.get(purchase.refundId) : null;
       if (!refund || refund.type !== "refund" || refund.amount !== purchase.price
@@ -175,14 +187,6 @@ export function buildEconomicsReport(input: EconomicsInput, days: 7 | 28 | 90, a
     if (entry.type === "refund" && pairs.has(`${entry.leadId}:${entry.professionalId}`) && !usedRefunds.has(entry.id)) {
       attention("Ongekoppelde refund bij cohortaankoop");
     }
-  }
-  const correctionsByPair = new Map<string, EconomicsTransaction[]>();
-  for (const entry of transactions) {
-    if (entry.type !== "correction" || !entry.leadId) continue;
-    const key = `${entry.leadId}:${entry.professionalId}`;
-    const rows = correctionsByPair.get(key) ?? [];
-    rows.push(entry);
-    correctionsByPair.set(key, rows);
   }
   const observations = purchases.map((purchase) => {
     const purchased = time(purchase.purchasedAt);

@@ -38,19 +38,11 @@ export async function getAdminEconomicsReport(days: 7 | 28 | 90) {
       { count: "exact" },
     ).gte("offered_at", since).lte("offered_at", until).order("id").range(from, to)),
     collectQualityPages<Row>((from, to) => supabase.from("lead_purchases").select(
-      "id,wallet_transaction_id,refund_transaction_id,price_credits,status", { count: "exact" },
+      "id,lead_id,wallet_transaction_id,refund_transaction_id,price_credits,status", { count: "exact" },
     ).lte("purchased_at", until).order("id").range(from, to)),
   ]);
-  const offeredLeadIds = [...new Set(offerRows.map((row) => text(row.lead_id)))];
-  const distributedPurchasedLeadIds = new Set<string>();
-  // Batched existence reads include purchases before this offer cohort, so a
-  // previously purchased shared lead is not mislabelled as unsold.
-  for (let offset = 0; offset < offeredLeadIds.length; offset += 100) {
-    const rows = await collectQualityPages<Row>((from, to) => supabase.from("lead_purchases")
-      .select("id,lead_id", { count: "exact" }).in("lead_id", offeredLeadIds.slice(offset, offset + 100))
-      .in("status", ["purchased", "refunded"]).lte("purchased_at", until).order("id").range(from, to));
-    for (const row of rows) distributedPurchasedLeadIds.add(text(row.lead_id));
-  }
+  const distributedPurchasedLeadIds = new Set(purchaseLinkRows
+    .filter((row) => ["purchased", "refunded"].includes(text(row.status))).map((row) => text(row.lead_id)));
   const input: EconomicsInput = {
     distributedPurchasedLeadIds: [...distributedPurchasedLeadIds],
     purchaseLinks: purchaseLinkRows.map((row) => ({
