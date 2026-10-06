@@ -642,3 +642,50 @@ test("Prompt29C granted contexts purchase idempotently and refund through RPCs b
   assert.equal(h.run(db, "select count(*) from public.leads", f.contexts[0]), "0");
   h.run(db, "select * from public.get_wallet_reconciliation(null)", service);
 });
+
+test("Prompt29C full-chain professional quality feedback persists its audit and reaches admin review", (t) => {
+  const isolated = database(t);
+  if (!isolated) return;
+  const { h, db } = isolated;
+  const f = fixture(h, db);
+  h.run(db, `select * from public.apply_wallet_transaction(${quote(f.professionals[0])}, 'admin_credit', 10000,
+    null, null, 'quality-seed', 'Test credit', '{}')`, f.admin);
+  h.run(db, `select * from public.purchase_lead(${quote(f.leads[0])}, 'quality-purchase')`, f.contexts[0]);
+  const version = h.run(db, `select quality_updated_at from public.lead_assignments
+    where id = ${quote(f.assignments[0])}`, f.contexts[0]);
+  h.run(db, `select public.update_assignment_quality(${quote(f.assignments[0])}, ${quote(version)},
+    'contacted', 'reached', 'not_scheduled', null, 'wrong_service', null)`, f.contexts[0]);
+  assert.deepEqual(h.json(db, `select progress_status, reachability, mismatch_reason from public.lead_assignments
+    where id = ${quote(f.assignments[0])}`, f.contexts[0]),
+  [{ progress_status: "contacted", reachability: "reached", mismatch_reason: "wrong_service" }]);
+  assert.equal(h.run(db, `select count(*) from public.lead_activity where lead_id = ${quote(f.leads[0])}
+    and metadata ->> 'source' = 'assignment_quality'`, f.contexts[0]), "1");
+  h.run(db, `select public.admin_lead_quality_detail(${quote(f.leads[0])})`, f.admin);
+  h.run(db, `select public.admin_update_lead_quality_review(${quote(f.leads[0])}, null,
+    'in_review', null, 'Professional quality feedback regression')`, f.admin);
+  assert.equal(h.run(db, `select count(*) from public.lead_quality_reviews
+    where lead_id = ${quote(f.leads[0])}`, f.admin), "1");
+});
+
+test("Prompt29C quality audit CHECK incompatibility also exists before the grant migration", (t) => {
+  const isolated = database(t, true);
+  if (!isolated) return;
+  const { h, db } = isolated;
+  h.run(db, `grant select on public.professionals, public.lead_assignments, public.lead_purchases to authenticated;
+    grant update on public.lead_assignments to authenticated`);
+  const f = fixture(h, db);
+  h.run(db, `select * from public.apply_wallet_transaction(${quote(f.professionals[0])}, 'admin_credit', 10000,
+    null, null, 'pre-grants-quality-seed', 'Test credit', '{}')`, f.admin);
+  h.run(db, `select * from public.purchase_lead(${quote(f.leads[0])}, 'pre-grants-quality-purchase')`, f.contexts[0]);
+  const version = h.run(db, `select quality_updated_at from public.lead_assignments
+    where id = ${quote(f.assignments[0])}`, f.contexts[0]);
+  assert.equal(h.run(db, `select public.analytics_metadata_is_safe(jsonb_build_object(
+    'source', 'assignment_quality', 'assignment_id', ${quote(f.assignments[0])}::uuid,
+    'reachability', 'reached', 'appointment_status', 'not_scheduled',
+    'loss_reason', null, 'mismatch_reason', 'wrong_service'))`), "f");
+  h.denied(db, `select public.update_assignment_quality(${quote(f.assignments[0])}, ${quote(version)},
+    'contacted', 'reached', 'not_scheduled', null, 'wrong_service', null)`, f.contexts[0],
+  /new row for relation "lead_activity" violates check constraint "lead_activity_metadata_check"/);
+  assert.equal(h.run(db, `select progress_status from public.lead_assignments
+    where id = ${quote(f.assignments[0])}`, f.contexts[0]), "new");
+});
