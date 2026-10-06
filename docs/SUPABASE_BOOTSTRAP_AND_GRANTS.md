@@ -305,6 +305,24 @@ PostgREST schema cache/configuratie, Storage HTTP-service of Vercel-runtime.
 De lokale database-tests zijn daarom geen hosted `supabase db push` of echte
 `/admin`-browser-pass. Verifieer die na deployment op het gekoppelde project.
 
+### Bestaande full-chain beperking buiten de grantfix
+
+De bestaande `lead_activity` CHECK gebruikt dezelfde
+`analytics_metadata_is_safe(jsonb)` als analytics-events. De Prompt 19/20
+allowlist staat operationele quality-auditkeys zoals `assignment_id` en
+`reachability` niet toe, terwijl de Prompt 28 audittrigger die juist schrijft.
+Daarom bewijst de RPC execute-grant geen geslaagde full-chain quality-update.
+Ook operationele metadata zoals de bestaande leadscore-activity moet afzonderlijk
+tegen die CHECK worden geverifieerd. De analytics-route-regex `{0,300}` uit
+dezelfde historische validator is bovendien niet PostgreSQL-compatibel
+(maximale bounded repetition is 255).
+
+29C verandert deze bestaande metadata-/analytics-businessregels niet en versoepelt
+geen CHECK om tests groen te maken. Bestaande geïsoleerde Prompt-regressies zijn
+dus geen bewijs dat al deze samengestelde runtimeflows werken. Een volledige
+product-runtime Definition of Done vereist een aparte, expliciet beoordeelde
+correctie van deze baselineproblemen plus hosted verificatie.
+
 ## Troubleshooting: verschillende foutklassen
 
 | Symptoom | Controle / betekenis |
