@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import test from "node:test";
 
 const migrationPath =
@@ -25,6 +25,15 @@ test("migration hardens professional assignment updates", () => {
   assert.match(sql, /with check \([\s\S]*status in \('viewed', 'accepted', 'rejected'\)/);
 });
 
-test("migration enforces RLS on storage.objects", () => {
-  assert.match(sql, /alter table storage\.objects enable row level security;/);
+test("migrations leave storage.objects RLS to the hosted Supabase platform", () => {
+  const directory = "/home/runner/work/VakConnect/VakConnect/supabase/migrations";
+  for (const file of readdirSync(directory).filter((name) => name.endsWith(".sql"))) {
+    assert.doesNotMatch(
+      readFileSync(`${directory}/${file}`, "utf8"),
+      /alter\s+table\s+(?:only\s+)?(?:"?storage"?\s*\.\s*"?objects"?)\s+(?:enable|disable|force|no\s+force)\s+row\s+level\s+security/i,
+      `${file} must not alter platform-managed storage RLS`,
+    );
+  }
+  assert.match(sql, /create policy "admins manage lead image storage"/);
+  assert.match(sql, /'lead-images',\s*'lead-images',\s*false/);
 });
