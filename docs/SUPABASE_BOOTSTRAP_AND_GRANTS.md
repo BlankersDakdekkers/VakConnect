@@ -305,23 +305,60 @@ PostgREST schema cache/configuratie, Storage HTTP-service of Vercel-runtime.
 De lokale database-tests zijn daarom geen hosted `supabase db push` of echte
 `/admin`-browser-pass. Verifieer die na deployment op het gekoppelde project.
 
-### Bestaande full-chain beperking buiten de grantfix
+### Prompt 29D: gescheiden metadata-validatie
 
-De bestaande `lead_activity` CHECK gebruikt dezelfde
-`analytics_metadata_is_safe(jsonb)` als analytics-events. De Prompt 19/20
-allowlist staat operationele quality-auditkeys zoals `assignment_id` en
-`reachability` niet toe, terwijl de Prompt 28 audittrigger die juist schrijft.
-Daarom bewijst de RPC execute-grant geen geslaagde full-chain quality-update.
-Ook operationele metadata zoals de bestaande leadscore-activity moet afzonderlijk
-tegen die CHECK worden geverifieerd. De analytics-route-regex `{0,300}` uit
-dezelfde historische validator is bovendien niet PostgreSQL-compatibel
-(maximale bounded repetition is 255).
+De eerdere full-chain blocker is opgelost in
+`20261006110000_prompt29d_activity_metadata_compatibility.sql`, na 29C.
+Historische Prompt 20/28-migrations blijven ongewijzigd.
 
-29C verandert deze bestaande metadata-/analytics-businessregels niet en versoepelt
-geen CHECK om tests groen te maken. Bestaande geïsoleerde Prompt-regressies zijn
-dus geen bewijs dat al deze samengestelde runtimeflows werken. Een volledige
-product-runtime Definition of Done vereist een aparte, expliciet beoordeelde
-correctie van deze baselineproblemen plus hosted verificatie.
+Oorzaak: `lead_activity_metadata_check` gebruikte de visitor-analyticsvalidator.
+De Prompt 28-trigger `audit_assignment_quality()` schrijft juist operationele
+`source`, `assignment_id`, `reachability`, `appointment_status`, `loss_reason` en
+`mismatch_reason`. De analytics-allowlist weigerde dit en draaide de hele
+feedbacktransactie terug. De bestaande success-regression blijft behouden.
+
+De CHECK gebruikt nu `lead_activity_metadata_is_safe(jsonb)`:
+
+- SQL NULL en een leeg object blijven toegestaan.
+- UUID-strings: `assignment_id`, `candidate_id`, `run_id`, nullable `actor_user_id`.
+- Gehele getallen: `score` (0–100), `candidate_count` (0–40),
+  `match_count` (0–1.000.000).
+- Vaste waarden: `source` (`assignment_quality`/`website`), `step` (`submitted`),
+  `strategy_version` (`v2`), `action` (`requeue`/`pause_run`/`manual_offer`).
+- `reachability`, `appointment_status`, `loss_reason` en `mismatch_reason`
+  gebruiken uitsluitend de bestaande Prompt 28-taxonomie; nullable waarden alleen
+  waar het bestaande datamodel dat toestaat.
+- `reason` accepteert uitsluitend bestaande decline-/mismatch-selecties en
+  `required_document_expired`, geen vrije toelichting.
+- Maximaal 24 keys, 4096 bytes; geen onbekende keys, nested objects of arrays in
+  operationele metadata. Vrije notes, namen, adressen, telefoon en email krijgen
+  geen nieuwe toegang. Actor-identifiers blijven intern, nooit analyticsdata.
+
+Historische analytics-shaped activity metadata blijft via de afzonderlijke
+analyticsvalidator toegestaan; analytics- en operationele keys worden niet
+samengevoegd tot een bredere whitelist. De visitor-analyticsallowlist is identiek
+aan Prompt 20 en krijgt **geen** operationele keys. Bestaande PII-filters blijven
+gelden. Nieuwe directe helper-EXECUTE geldt alleen voor service_role;
+quality-audit inserts gebruiken de bestaande SECURITY DEFINER-triggerowner.
+Geen bestaande table/RPC grants, RLS, Storage of productregels veranderen.
+
+De PostgreSQL-route-regex verandert van `^/[A-Za-z0-9_./-]{0,300}$` naar
+`^/[A-Za-z0-9_./-]*$` met een expliciete lengtecontrole. PostgreSQL begrenst
+bounded repetition op 255. De bestaande algemene SQL-limiet van **120
+tekens** blijft ook voor `route`/`source_route` gelden; querystrings, fragments,
+absolute URLs, dubbele slashes en telefoonachtige cijferreeksen blijven geweigerd.
+De reeds bestaande JS-sanitizer accepteert langere routes (301 tekens); die
+verschillende grens is niet verbreed of heringericht in deze databasefix.
+
+De replacement CHECK wordt `NOT VALID` toegevoegd: bestaande history wordt niet
+gescand, herschreven of verwijderd; nieuwe INSERT/UPDATE wordt wel gecontroleerd.
+Een latere `VALIDATE CONSTRAINT` kan na inspectie van historische metadata.
+Arbitraire historische free-text loss reasons worden niet als nieuwe auditmetadata
+toegelaten; er is geen legacy-PII-bypass.
+
+Fresh bootstrap en forward upgrade vereisen geen lokale SQL-patch of reset:
+dezelfde `git pull`, `npx supabase db push` en Vercel-redeploy passen nu zowel
+29C als 29D toe. Hosted runtimeverificatie blijft een afzonderlijke deploymentcheck.
 
 ## Troubleshooting: verschillende foutklassen
 
