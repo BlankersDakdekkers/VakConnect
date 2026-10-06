@@ -25,6 +25,7 @@ const navigation = [
   { href: "/admin/distributie", label: "Distributie" },
   { href: "/admin/credits", label: "Credits" },
   { href: "/admin/lead-prijzen", label: "Lead prijzen" },
+  { href: "/admin/economie", label: "Lead-economie" },
   { href: "/admin/contact", label: "Contact" },
   { href: "/admin/vakmannen", label: "Vakmannen" },
   { href: "/admin/verificatie", label: "Verificatie" },
