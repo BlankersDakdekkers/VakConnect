@@ -459,9 +459,9 @@ test("Prompt29C candidate UPDATE cannot self-allocate queued offers or unlock a 
   const f = fixture(h, db);
   h.run(db, `select * from public.apply_wallet_transaction(${quote(f.professionals[0])}, 'admin_credit', 10000,
     null, null, 'queued-seed', 'Test credit', '{}')`, f.admin);
-  h.run(db, `update public.lead_distribution_candidates set status = 'queued'
+  h.run(db, `update public.lead_distribution_candidates set status = 'queued', offered_at = null, offer_expires_at = null
     where professional_id = ${quote(f.professionals[0])}`);
-  for (const status of ["offered", "viewed", "declined"]) {
+  for (const status of ["offered", "viewed", "declined", "purchased"]) {
     assert.equal(h.run(db, `with updated as (update public.lead_distribution_candidates
       set status = ${quote(status)} where professional_id = ${quote(f.professionals[0])}
       returning id) select count(*) from updated`, f.contexts[0]), "0");
@@ -472,10 +472,21 @@ test("Prompt29C candidate UPDATE cannot self-allocate queued offers or unlock a 
   assert.equal(h.run(db, "select count(*) from public.lead_purchases", service), "0");
   assert.equal(h.run(db, `select cached_balance from public.professional_wallets
     where professional_id = ${quote(f.professionals[0])}`, f.contexts[0]), "10000");
-  assert.equal(h.run(db, `with updated as (update public.lead_distribution_candidates set status = 'offered'
+  assert.equal(h.run(db, `with updated as (update public.lead_distribution_candidates
+    set status = 'offered', offered_at = now(), offer_expires_at = now() + interval '1 day'
     where professional_id = ${quote(f.professionals[0])} returning id) select count(*) from updated`, f.admin), "1");
   h.run(db, `select * from public.purchase_lead(${quote(f.leads[0])}, 'allocated-purchase')`, f.contexts[0]);
   assert.equal(h.run(db, "select count(*) from public.lead_purchases", service), "1");
+  assert.equal(h.run(db, `with updated as (update public.lead_distribution_candidates
+    set status = 'declined', decline_reason = 'Niet beschikbaar'
+    where professional_id = ${quote(f.professionals[1])} returning id) select count(*) from updated`, f.contexts[1]), "1");
+  h.run(db, `update public.lead_distribution_candidates set status = 'offered', declined_at = null, decline_reason = null
+    where professional_id = ${quote(f.professionals[1])}`, service);
+  assert.equal(h.run(db, `with updated as (update public.lead_distribution_candidates set status = 'viewed'
+    where professional_id = ${quote(f.professionals[1])} returning id) select count(*) from updated`, f.contexts[1]), "1");
+  assert.equal(h.run(db, `with updated as (update public.lead_distribution_candidates
+    set status = 'declined', decline_reason = 'Niet beschikbaar'
+    where professional_id = ${quote(f.professionals[1])} returning id) select count(*) from updated`, f.contexts[1]), "1");
   assert.equal(h.run(db, `with updated as (update public.lead_distribution_candidates set status = 'queued'
     where professional_id = ${quote(f.professionals[1])} returning id) select count(*) from updated`, service), "1");
 });
