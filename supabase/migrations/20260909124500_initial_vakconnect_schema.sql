@@ -333,8 +333,6 @@ values (
 )
 on conflict (id) do nothing;
 
-alter table storage.objects enable row level security;
-
 create policy "admins manage lead image storage"
   on storage.objects
   for all
