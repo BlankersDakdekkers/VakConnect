@@ -283,13 +283,15 @@ test("Prompt29C table and column ACLs match the complete least-privilege role ma
     "experiment_assignments", "experiment_audit_log", "experiment_variants", "experiments",
     "lead_activity", "lead_answers", "lead_assignments", "lead_distribution_candidates", "lead_distribution_runs",
     "lead_images", "lead_matches", "lead_pricing_rules", "lead_purchases", "lead_quality_review_events",
-    "lead_quality_reviews", "leads", "operational_settings", "operational_worker_runs", "professional_audit_log",
+    "lead_quality_reviews", "leads", "operational_settings", "operational_worker_runs", "pricing_experiment_assignments",
+    "pricing_experiment_decisions", "professional_audit_log",
     "professional_distribution_settings", "professional_document_requirements", "professional_documents",
     "professional_notification_events", "professional_notification_preferences", "professional_review_feedback",
     "professional_service_areas", "professional_services", "professional_wallets", "professionals",
     "seo_audit_log", "seo_local_pages", "seo_locations", "service_question_options", "service_questions",
     "services", "wallet_transactions",
   ];
+  const pricingTables = new Set(["pricing_experiment_assignments", "pricing_experiment_decisions"]);
   const publicReads = ["services", "service_questions", "service_question_options"];
   const matrix: Record<Exclude<Role, "postgres">, Partial<Record<string, string[]>>> = {
     anon: { SELECT: publicReads },
@@ -300,7 +302,8 @@ test("Prompt29C table and column ACLs match the complete least-privilege role ma
         "lead_answers", "lead_activity", "lead_distribution_candidates", "professional_wallets", "wallet_transactions",
         "lead_purchases", "lead_pricing_rules", "professional_notification_events", "professional_notification_preferences",
         "operational_settings", "operational_worker_runs", "experiments", "experiment_variants", "experiment_assignments",
-        "experiment_audit_log", "lead_quality_reviews", "lead_quality_review_events", "admin_role_audit"],
+        "experiment_audit_log", "pricing_experiment_assignments", "pricing_experiment_decisions",
+        "lead_quality_reviews", "lead_quality_review_events", "admin_role_audit"],
       INSERT: ["professional_services", "professional_distribution_settings", "professional_documents",
         "lead_pricing_rules", "professional_notification_preferences", "professional_service_areas", "commercial_audit_log"],
       UPDATE: ["professionals", "lead_assignments", "lead_distribution_candidates", "leads", "professional_services",
@@ -359,7 +362,8 @@ test("Prompt29C table and column ACLs match the complete least-privilege role ma
     }
   };
   verify();
-  h.run(db, "grant all on all tables in schema public to public, anon, authenticated, service_role");
+  h.run(db, `grant all on ${tables.filter((name) => !pricingTables.has(name)).map((name) => `public.${name}`).join(", ")}
+    to public, anon, authenticated, service_role`);
   h.file(db, forwardName);
   verify();
   h.file(db, forwardName);
@@ -392,6 +396,16 @@ test("Prompt29C RPC ACLs are exact and every trigger/internal definer helper den
     ["admin_lead_quality_queue(integer,text,text,uuid,text,text,boolean,text,text,integer)", ["authenticated"]],
     ["admin_lead_quality_detail(uuid)", ["authenticated"]],
     ["admin_update_lead_quality_review(uuid,timestamptz,text,text,text)", ["authenticated"]],
+    ["create_pricing_experiment(text,text,jsonb,text,integer,integer,integer,uuid)", ["service_role"]],
+    ["is_valid_pricing_experiment_config(jsonb)", []],
+    ["guard_pricing_experiment_configuration()", []],
+    ["guard_pricing_experiment_variant()", []],
+    ["resolve_lead_price_baseline(uuid)", ["service_role"]],
+    ["resolve_pricing_experiment_assignment(uuid,uuid)", ["service_role"]],
+    ["resolve_pricing_experiment_assignments(uuid[],uuid)", ["service_role"]],
+    ["record_pricing_experiment_decision(uuid,text,text,uuid)", ["authenticated"]],
+    ["prevent_pricing_experiment_assignment_mutation()", []],
+    ["snapshot_pricing_experiment_on_purchase()", []],
     ["refresh_lead_sales_state(uuid)", ["service_role"]],
     ["claim_expired_distribution_candidates(integer)", ["service_role"]],
     ["activate_lead_distribution_run(uuid,integer,integer,integer)", ["service_role"]],
@@ -405,6 +419,18 @@ test("Prompt29C RPC ACLs are exact and every trigger/internal definer helper den
     ["enqueue_professional_notification(uuid,professional_notification_event_type,jsonb)", []],
     ["admin_lead_quality_items(integer,uuid)", []],
   ];
+  const pricingFunctions = new Set([
+    "create_pricing_experiment(text,text,jsonb,text,integer,integer,integer,uuid)",
+    "is_valid_pricing_experiment_config(jsonb)",
+    "guard_pricing_experiment_configuration()",
+    "guard_pricing_experiment_variant()",
+    "resolve_lead_price_baseline(uuid)",
+    "resolve_pricing_experiment_assignment(uuid,uuid)",
+    "resolve_pricing_experiment_assignments(uuid[],uuid)",
+    "record_pricing_experiment_decision(uuid,text,text,uuid)",
+    "prevent_pricing_experiment_assignment_mutation()",
+    "snapshot_pricing_experiment_on_purchase()",
+  ]);
   const verify = () => {
     const rows = h.json<{ signature: string; role: string; allowed: boolean }>(db, `
       select f.signature, r.role, has_function_privilege(r.role, 'public.' || f.signature, 'EXECUTE') as allowed
@@ -420,10 +446,17 @@ test("Prompt29C RPC ACLs are exact and every trigger/internal definer helper den
     for (const row of triggers) assert.equal(row.allowed, false, `${row.role} trigger helper ${row.signature}`);
   };
   verify();
-  h.run(db, `grant execute on function ${functions.map(([signature]) => `public.${signature}`).join(",")} to public, anon, authenticated, service_role;
+  h.run(db, `grant execute on function ${functions.filter(([signature]) => !pricingFunctions.has(signature))
+      .map(([signature]) => `public.${signature}`).join(",")} to public, anon, authenticated, service_role;
     do $$ declare fn regprocedure; begin
       for fn in select p.oid::regprocedure from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-        where n.nspname = 'public' and p.prorettype = 'trigger'::regtype loop
+        where n.nspname = 'public' and p.prorettype = 'trigger'::regtype
+          and p.oid::regprocedure::text not in (
+            'guard_pricing_experiment_configuration()',
+            'guard_pricing_experiment_variant()',
+            'snapshot_pricing_experiment_on_purchase()',
+            'prevent_pricing_experiment_assignment_mutation()'
+          ) loop
         execute format('grant execute on function %s to public, anon, authenticated, service_role', fn);
       end loop;
     end $$`);

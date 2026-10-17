@@ -28,6 +28,7 @@ export default async function AdminExperimentsPage({
   return (
     <div className="space-y-6">
       <PageHeader title="CRO-experimenten" description="Handmatig beheerde tests. Er is geen automatische winnaarselectie of uitrol." />
+      <p><Link href="/admin/experimenten/pricing" className="text-sm text-primary underline">Pricingexperimenten beheren</Link></p>
 
       <Card>
         <form method="get" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">

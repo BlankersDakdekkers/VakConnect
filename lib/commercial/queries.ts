@@ -313,6 +313,16 @@ export async function getProfessionalLeadMarketplace(professionalId: string) {
     throw new Error("Leads konden niet worden geladen.");
   }
 
+  const { data: pricingAssignments, error: pricingAssignmentError } = await supabase.rpc("resolve_pricing_experiment_assignments", {
+    target_lead_ids: leadIds,
+    target_professional_id: professionalId,
+  });
+  if (pricingAssignmentError) throw new Error("Leadprijzen konden niet veilig worden vastgesteld.");
+  const pricingAssignmentMap = new Map(
+    ((pricingAssignments ?? []) as Array<{ lead_id: string; price_credits: number }>)
+      .map((row) => [row.lead_id, row.price_credits]),
+  );
+
   const assignmentMap = new Map(((assignmentRows ?? []) as Array<Record<string, unknown>>).map((row) => [String(row.lead_id), row]));
   const purchaseMap = new Map(((purchaseRows ?? []) as Array<Record<string, unknown>>).map((row) => [String(row.lead_id), row]));
   const candidateMap = new Map<string, Record<string, unknown>>();
@@ -361,7 +371,7 @@ export async function getProfessionalLeadMarketplace(professionalId: string) {
       urgency: String(row.urgency),
       leadScore: typeof row.lead_score === "number" ? row.lead_score : row.lead_score === null ? null : Number(row.lead_score),
       commercialType: row.commercial_type as LeadCommercialType,
-      priceCredits: resolvedPrice.priceCredits,
+      priceCredits: pricingAssignmentMap.get(String(row.id)) ?? resolvedPrice.priceCredits,
       salesStatus: row.sales_status as LeadSalesStatus,
       buyersCount: toNumber(row.buyers_count),
       maxBuyers: resolvedPrice.maxBuyers,
@@ -426,6 +436,16 @@ export async function getProfessionalLeadMarketDetail(leadId: string, profession
     buyersCount: toNumber(leadRow.buyers_count),
     salesStatus: leadRow.sales_status as LeadSalesStatus,
   }, rules);
+  const { data: pricingAssignments, error: pricingAssignmentError } = await supabase.rpc("resolve_pricing_experiment_assignments", {
+    target_lead_ids: [leadId],
+    target_professional_id: professionalId,
+  });
+  if (pricingAssignmentError) throw new Error("Leadprijs kon niet veilig worden vastgesteld.");
+  const assignedPriceCredits = (pricingAssignments as Array<{ lead_id: string; price_credits: number }> | null)
+    ?.find((row) => row.lead_id === leadId)?.price_credits;
+  const effectivePrice = assignedPriceCredits === undefined
+    ? resolvedPrice
+    : { ...resolvedPrice, priceCredits: assignedPriceCredits };
   const canViewContact = canProfessionalViewLeadContact({
     purchaseStatus: (purchase?.status as LeadPurchaseStatus | undefined) ?? null,
     assignmentStatus: (assignment?.status as "pending" | "viewed" | "accepted" | "rejected" | undefined) ?? null,
@@ -436,9 +456,9 @@ export async function getProfessionalLeadMarketDetail(leadId: string, profession
     salesStatus: leadRow.sales_status as LeadSalesStatus,
     commercialType: leadRow.commercial_type as LeadCommercialType,
     buyersCount: toNumber(leadRow.buyers_count),
-    maxBuyers: resolvedPrice.maxBuyers,
+    maxBuyers: effectivePrice.maxBuyers,
   });
-  const remainingSlots = Math.max(0, resolvedPrice.maxBuyers - toNumber(leadRow.buyers_count));
+  const remainingSlots = Math.max(0, effectivePrice.maxBuyers - toNumber(leadRow.buyers_count));
   const hasActiveOffer = Boolean(offer && (
     String(offer.status) === "purchased"
       || (["offered", "viewed"].includes(String(offer.status))
@@ -455,13 +475,13 @@ export async function getProfessionalLeadMarketDetail(leadId: string, profession
     state,
     commercial: {
       commercialType: leadRow.commercial_type as LeadCommercialType,
-      priceCredits: resolvedPrice.priceCredits,
+      priceCredits: effectivePrice.priceCredits,
       salesStatus: leadRow.sales_status as LeadSalesStatus,
       buyersCount: toNumber(leadRow.buyers_count),
       maxBuyers: resolvedPrice.maxBuyers,
       remainingSlots,
       currentBalance: wallet?.cached_balance ?? 0,
-      balanceAfterPurchase: (wallet?.cached_balance ?? 0) - resolvedPrice.priceCredits,
+      balanceAfterPurchase: (wallet?.cached_balance ?? 0) - effectivePrice.priceCredits,
       isPurchased: purchase?.status === "purchased",
       paidCredits: purchase?.status === "purchased" ? toNumber(purchase.price_credits) : null,
     },

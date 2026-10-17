@@ -14,6 +14,7 @@ export function parseEconomicsDays(value: string | string[] | undefined): 7 | 28
 
 export type EconomicsPurchase = {
   id: string; leadId: string; professionalId: string; assignmentId: string | null;
+  pricingExperimentId?: string | null; pricingVariantId?: string | null;
   price: number; type: string; status: string; purchasedAt: string;
   debitId: string; refundId: string | null; refundedAt: string | null;
   serviceId: string; serviceName: string; subservice: string | null; source: string | null;
@@ -274,6 +275,17 @@ export function buildEconomicsReport(input: EconomicsInput, days: 7 | 28 | 90, a
     observations.filter((row) => row.funnelAppointment).length, observations.filter((row) => row.funnelWon).length];
   const shared = observations.filter((row) => row.purchase.type === "shared");
   const sharedLeads = new Set(shared.map((row) => row.purchase.leadId)).size;
+  const pricingVariants = [...new Set(observations.flatMap((row) =>
+    row.purchase.pricingExperimentId && row.purchase.pricingVariantId ? [row.purchase.pricingVariantId] : [],
+  ))].map((variantId) => {
+    const rows = observations.filter((row) => row.purchase.pricingVariantId === variantId);
+    return {
+      variantId,
+      all: summary(rows),
+      matured: summary(rows.filter((row) => row.matured)),
+      recent: summary(rows.filter((row) => !row.matured)),
+    };
+  });
   return {
     days, asOf: asOf.toISOString(), all,
     matured: summary(observations.filter((row) => row.matured)),
@@ -290,6 +302,7 @@ export function buildEconomicsReport(input: EconomicsInput, days: 7 | 28 | 90, a
     funnel: strict.map((count, index) => ({ label: ["Aankoop", "Bereikt", "Afspraak", "Gewonnen"][index],
       ...rate(count, purchases.length), creditsPerOutcome: consistent ? divide(all.finance!.net, count) : null })),
     priceDistribution, sharedPurchasesPerLead: divide(shared.length, sharedLeads),
+    pricingVariants,
     distribution: {
       offers: offered.length,
       converted: rate(offered.filter(offerPurchased).length, offered.length),

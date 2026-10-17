@@ -87,6 +87,7 @@ function rebalance(input: EconomicsInput) {
 const report = (input: EconomicsInput, days: 7 | 28 | 90 = 28) => buildEconomicsReport(input, days, now);
 const summaries = (result: EconomicsReport): EconomicsSummary[] => [
   result.all, result.matured, result.recent, ...Object.values(result.breakdowns).flat(), ...result.trend,
+  ...result.pricingVariants.flatMap((row) => [row.all, row.matured, row.recent]),
 ];
 function failClosed(input: EconomicsInput, reason: RegExp) {
   const result = report(input);
@@ -118,6 +119,32 @@ test("balanced immutable ledger reconciles gross, actual full refund and retaine
   assert.deepEqual(result.all.finance, {
     gross: 200, refunded: 80, corrections: 0, extraCharges: 0, net: 120,
     average: 100, creditsPerReached: null, creditsPerAppointment: null, creditsPerWon: null,
+  });
+
+  test("pricing experiment economics reuse ledger net, refund, maturity and outcome definitions by variant", () => {
+    const control = purchase("pricing-control", {
+      price: 12,
+      purchasedAt: ago(40),
+      pricingExperimentId: "pricing-experiment",
+      pricingVariantId: "pricing-control-variant",
+    });
+    control.assignment = evidence(control, { progressStatus: "won" });
+    const variant = purchase("pricing-variant", {
+      price: 15,
+      status: "refunded",
+      purchasedAt: ago(40),
+      pricingExperimentId: "pricing-experiment",
+      pricingVariantId: "pricing-test-variant",
+    });
+    const result = report(fixture([control, variant]), 90);
+    assert.equal(result.reconciliation.consistent, true);
+    const controlMetrics = result.pricingVariants.find((row) => row.variantId === "pricing-control-variant");
+    const variantMetrics = result.pricingVariants.find((row) => row.variantId === "pricing-test-variant");
+    assert.equal(controlMetrics?.all.finance?.net, 12);
+    assert.equal(controlMetrics?.matured.finance?.creditsPerWon, 12);
+    assert.equal(variantMetrics?.all.finance?.net, 0);
+    assert.equal(variantMetrics?.all.refund.count, 1);
+    assert.equal(variantMetrics?.matured.purchases, 1);
   });
   assert.deepEqual(result.all.refund, { count: 1, denominator: 2, percent: null });
   assert.equal(result.walletStock, 19880);
