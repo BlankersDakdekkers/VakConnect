@@ -856,10 +856,11 @@ grant select on public.pricing_experiment_assignments, public.pricing_experiment
 grant select on public.experiments, public.experiment_variants, public.experiment_audit_log to authenticated;
 grant select, insert, update on public.experiments, public.experiment_variants, public.experiment_audit_log to service_role;
 
-revoke all on function public.is_valid_pricing_experiment_config(jsonb) from public, anon, authenticated;
-revoke all on function public.guard_pricing_experiment_configuration() from public, anon, authenticated;
-revoke all on function public.guard_pricing_experiment_variant() from public, anon, authenticated;
-revoke all on function public.prevent_pricing_experiment_assignment_mutation() from public, anon, authenticated;
+revoke all on function public.is_valid_pricing_experiment_config(jsonb) from public, anon, authenticated, service_role;
+revoke all on function public.guard_pricing_experiment_configuration() from public, anon, authenticated, service_role;
+revoke all on function public.guard_pricing_experiment_variant() from public, anon, authenticated, service_role;
+revoke all on function public.prevent_pricing_experiment_assignment_mutation() from public, anon, authenticated, service_role;
+revoke all on function public.snapshot_pricing_experiment_on_purchase() from public, anon, authenticated, service_role;
 revoke all on function public.resolve_lead_price_baseline(uuid) from public, anon, authenticated;
 revoke all on function public.resolve_pricing_experiment_assignment(uuid, uuid) from public, anon, authenticated;
 revoke all on function public.resolve_pricing_experiment_assignments(uuid[], uuid) from public, anon, authenticated;

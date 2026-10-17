@@ -7,7 +7,7 @@ import {
   recordPricingExperimentDecisionAction,
   transitionPricingExperimentAction,
 } from "@/lib/experiments/pricing-actions";
-import { getAdminPricingExperiments } from "@/lib/experiments/pricing-report";
+import { getAdminPricingExperiments, pricingGuardrailThresholds } from "@/lib/experiments/pricing-report";
 import { requireAdminUser } from "@/lib/auth/helpers";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { pricingDecisionValues, pricingPrimaryMetrics } from "@/lib/validation";
@@ -95,7 +95,7 @@ export default async function AdminPricingExperimentsPage({
         {!data.reconciliation.checked
           ? <p className="text-sm text-muted-foreground">Er zijn nog geen pricingexperimenten om te reconciliëren.</p>
           : reconciliationOk
-          ? <p className="text-sm text-muted-foreground">Ledger, purchases en wallets sluiten op elkaar aan. Outcomepercentages zijn pas vanaf 10 aankopen zichtbaar; beslissteekproef: minimaal 30 toewijzingen én 30 aankopen per variant.</p>
+          ? <p className="text-sm text-muted-foreground">Ledger, purchases en wallets sluiten op elkaar aan. Outcomepercentages zijn pas vanaf 10 aankopen zichtbaar; beslissteekproef: minimaal 30 toewijzingen én 30 aankopen per variant. Waarschuwingsgrenzen: refund ≥{pricingGuardrailThresholds.refundWarningPercent}%, mismatch ≥{pricingGuardrailThresholds.mismatchWarningPercent}% of bereikbaarheid &lt;{pricingGuardrailThresholds.reachabilityWarningPercent}% (geen automatische actie).</p>
           : <p role="alert" className="text-sm text-amber-800">Reconciliatie wijkt af ({data.reconciliation.issues.reduce((sum, issue) => sum + issue.count, 0)} signalen). Toon alleen aantallen; trek geen pricingconclusies.</p>}
       </Card>
 

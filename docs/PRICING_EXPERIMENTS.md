@@ -31,6 +31,8 @@ Every experiment includes refund rate, mismatch rate, reachability, sample size,
 
 The admin view uses descriptive language only: higher/lower, low sample, or insufficient data. It does not select or badge a winner. Any economics/reconciliation failure hides metric conclusions and decision guidance. Guardrail comparisons are warnings for manual review, not automated stop/start actions.
 
+Once a variant has at least 10 purchases, explicit operational warnings are shown at refund rate ≥20%, mismatch rate ≥20%, or reachability <50%. These review thresholds are not statistical claims and never pause an experiment automatically.
+
 ## Purchase integrity and privacy
 
 The server resolves eligibility, the normal control, experiment/variant assignment, and final price. The professional's form submits only the lead ID and idempotency key; it cannot submit a trusted price, experiment ID, or variant. The database uses the assigned credit amount for the existing atomic wallet debit and immutable purchase snapshot. The purchase stores the experiment and variant IDs, and refunds continue to credit the actual immutable `price_credits`.
