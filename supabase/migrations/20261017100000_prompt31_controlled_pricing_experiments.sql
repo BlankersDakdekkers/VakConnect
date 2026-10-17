@@ -853,8 +853,9 @@ create policy "admins read pricing experiment decisions"
 revoke all on public.pricing_experiment_assignments, public.pricing_experiment_decisions from public, anon, authenticated, service_role;
 grant select on public.pricing_experiment_assignments, public.pricing_experiment_decisions to authenticated;
 grant select on public.pricing_experiment_assignments, public.pricing_experiment_decisions to service_role;
+revoke all on public.experiments, public.experiment_variants, public.experiment_audit_log from public, anon, authenticated, service_role;
 grant select on public.experiments, public.experiment_variants, public.experiment_audit_log to authenticated;
-grant select, insert, update on public.experiments, public.experiment_variants, public.experiment_audit_log to service_role;
+grant select on public.experiments, public.experiment_variants, public.experiment_audit_log to service_role;
 
 revoke all on function public.is_valid_pricing_experiment_config(jsonb) from public, anon, authenticated, service_role;
 revoke all on function public.guard_pricing_experiment_configuration() from public, anon, authenticated, service_role;
