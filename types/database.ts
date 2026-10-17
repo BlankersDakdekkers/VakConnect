@@ -96,6 +96,14 @@ export type ServiceQuestionType = "text" | "textarea" | "select" | "multiselect"
 export type ContactSubmissionStatus = "new" | "read" | "handled" | "spam";
 export type SeoContentStatus = "draft" | "review" | "approved" | "published";
 export type ExperimentStatus = "draft" | "active" | "paused" | "completed" | "archived";
+export type PricingExperimentMetric =
+  | "offer_to_purchase_rate"
+  | "purchase_to_reached_rate"
+  | "purchase_to_appointment_rate"
+  | "purchase_to_won_rate"
+  | "net_credits_per_offer"
+  | "net_credits_per_purchase"
+  | "matured_credits_per_won";
 
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
@@ -282,11 +290,16 @@ export interface Experiment {
   id: string;
   key: string;
   name: string;
+  description: string | null;
   status: ExperimentStatus;
+  experiment_type: "cro" | "pricing";
   target_type: "homepage" | "service_page" | "local_page" | "lead_funnel" | "cta" | "funnel_step";
   slot: string;
   target_rules: Json;
   goal_event: "public_cta_click" | "lead_funnel_started" | "lead_submitted";
+  pricing_config: Json | null;
+  primary_metric: PricingExperimentMetric | null;
+  guardrail_metrics: string[];
   started_at: string | null;
   ended_at: string | null;
   created_at: string;
@@ -300,6 +313,7 @@ export interface ExperimentVariant {
   label: string;
   weight: number;
   is_control: boolean;
+  price_credits: number | null;
   created_at: string;
 }
 
@@ -316,6 +330,29 @@ export interface ExperimentAuditLog {
   actor_user_id: string | null;
   previous_status: ExperimentStatus;
   next_status: ExperimentStatus;
+  action: "status_transition" | "created" | "config_changed" | "decision_recorded";
+  metadata: Json;
+  created_at: string;
+}
+
+export interface PricingExperimentAssignment {
+  id: string;
+  experiment_id: string;
+  variant_id: string;
+  lead_id: string;
+  professional_id: string;
+  control_price_credits: number;
+  assigned_price_credits: number;
+  context: Json;
+  assigned_at: string;
+}
+
+export interface PricingExperimentDecision {
+  id: string;
+  experiment_id: string;
+  decision: "keep_control" | "adopt_later" | "inconclusive" | "stop";
+  note: string;
+  actor_user_id: string;
   created_at: string;
 }
 
@@ -380,6 +417,8 @@ export interface LeadPurchase {
   price_credits: number;
   commercial_type: LeadCommercialType;
   wallet_transaction_id: string;
+  pricing_experiment_id: string | null;
+  pricing_variant_id: string | null;
   refund_transaction_id: string | null;
   status: LeadPurchaseStatus;
   idempotency_key: string | null;
@@ -710,6 +749,16 @@ export interface Database {
       experiment_audit_log: {
         Row: ExperimentAuditLog;
         Insert: Partial<ExperimentAuditLog> & Pick<ExperimentAuditLog, "experiment_id" | "actor_user_id" | "previous_status" | "next_status">;
+        Update: never;
+      };
+      pricing_experiment_assignments: {
+        Row: PricingExperimentAssignment;
+        Insert: never;
+        Update: never;
+      };
+      pricing_experiment_decisions: {
+        Row: PricingExperimentDecision;
+        Insert: never;
         Update: never;
       };
       lead_activity: {

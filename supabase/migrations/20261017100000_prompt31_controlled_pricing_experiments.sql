@@ -1,6 +1,7 @@
 alter table public.experiments
   add column experiment_type text not null default 'cro'
     check (experiment_type in ('cro', 'pricing')),
+  add column description text check (description is null or char_length(trim(description)) between 3 and 1000),
   add column pricing_config jsonb,
   add column primary_metric text
     check (primary_metric is null or primary_metric in (
@@ -15,7 +16,7 @@ alter table public.experiment_variants
 
 alter table public.experiment_audit_log
   add column action text not null default 'status_transition'
-    check (action in ('status_transition', 'created', 'config_changed')),
+    check (action in ('status_transition', 'created', 'config_changed', 'decision_recorded')),
   add column metadata jsonb not null default '{}'::jsonb
     check (jsonb_typeof(metadata) = 'object' and octet_length(metadata::text) <= 2048);
 
@@ -42,6 +43,13 @@ create table public.pricing_experiment_assignments (
   context jsonb not null check (
     jsonb_typeof(context) = 'object'
     and context - array['service_id', 'commercial_type', 'control_price_credits'] = '{}'::jsonb
+    and context ?& array['service_id', 'commercial_type', 'control_price_credits']
+    and jsonb_typeof(context->'service_id') = 'string'
+    and context->>'service_id' ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+    and context->>'commercial_type' in ('shared', 'exclusive')
+    and jsonb_typeof(context->'control_price_credits') = 'number'
+    and (context->>'control_price_credits')::integer between 1 and 100
+    and (context->>'control_price_credits')::integer = control_price_credits
   ),
   assigned_at timestamptz not null default timezone('utc', now()),
   foreign key (experiment_id, variant_id)
@@ -68,6 +76,75 @@ create table public.pricing_experiment_decisions (
 
 create index pricing_experiment_decisions_experiment_created_idx
   on public.pricing_experiment_decisions (experiment_id, created_at desc);
+
+create or replace function public.create_pricing_experiment(
+  input_name text,
+  input_description text,
+  input_config jsonb,
+  input_primary_metric text,
+  input_control_weight integer,
+  input_variant_price integer,
+  input_variant_weight integer,
+  input_actor_user_id uuid
+)
+returns uuid
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  new_experiment_id uuid;
+  new_key text := 'pricing_' || replace(gen_random_uuid()::text, '-', '');
+begin
+  if auth.role() <> 'service_role'
+    or input_actor_user_id is null
+    or input_name is null or char_length(trim(input_name)) not between 2 and 120
+    or input_description is null or char_length(trim(input_description)) not between 3 and 1000
+    or not public.is_valid_pricing_experiment_config(input_config)
+    or input_primary_metric not in (
+      'offer_to_purchase_rate', 'purchase_to_reached_rate', 'purchase_to_appointment_rate',
+      'purchase_to_won_rate', 'net_credits_per_offer', 'net_credits_per_purchase',
+      'matured_credits_per_won'
+    )
+    or input_control_weight not between 1 and 99
+    or input_variant_weight not between 1 and 99
+    or input_control_weight + input_variant_weight <> 100
+    or input_variant_price is null
+    or input_variant_price not between 1 and 100 then
+    raise exception 'PRICING_EXPERIMENT_CONFIGURATION_INVALID';
+  end if;
+  if exists (
+    select 1
+    from jsonb_array_elements_text(input_config->'segment'->'service_ids') as service_id(value)
+    left join public.services on services.id = service_id.value::uuid and services.active = true
+    where services.id is null
+  ) then
+    raise exception 'PRICING_EXPERIMENT_SERVICE_INVALID';
+  end if;
+
+  insert into public.experiments (
+    key, name, description, status, experiment_type, target_type, slot,
+    target_rules, goal_event, pricing_config, primary_metric, guardrail_metrics
+  ) values (
+    new_key, trim(input_name), trim(input_description), 'draft', 'pricing', 'lead_funnel',
+    'pricing.lead.offer', '{}'::jsonb, 'lead_submitted', input_config, input_primary_metric,
+    array['refund_rate', 'mismatch_rate', 'reachability', 'sample_size', 'purchase_volume']
+  ) returning id into new_experiment_id;
+
+  insert into public.experiment_variants (experiment_id, key, label, weight, is_control, price_credits)
+  values
+    (new_experiment_id, 'control', 'Normale prijs', input_control_weight, true, null),
+    (new_experiment_id, 'variant_a', 'Testprijs', input_variant_weight, false, input_variant_price);
+
+  insert into public.experiment_audit_log (
+    experiment_id, actor_user_id, previous_status, next_status, action, metadata
+  ) values (
+    new_experiment_id, input_actor_user_id, 'draft', 'draft', 'created',
+    jsonb_build_object('experiment_type', 'pricing', 'primary_metric', input_primary_metric)
+  );
+  return new_experiment_id;
+end;
+$$;
 
 create or replace function public.is_valid_pricing_experiment_config(input_config jsonb)
 returns boolean
@@ -438,6 +515,13 @@ begin
     return;
   end if;
 
+  if exists (
+    select 1 from public.lead_purchases
+    where lead_id = target_lead_id and professional_id = target_professional_id
+  ) then
+    return;
+  end if;
+
   select id, service_id, commercial_type, postal_code, sales_status
   into lead_row from public.leads where id = target_lead_id;
   if not found or lead_row.sales_status not in ('available', 'partially_sold') then return; end if;
@@ -533,6 +617,32 @@ begin
   if not found then return; end if;
   return query select stored_assignment.assigned_price_credits,
     stored_assignment.experiment_id, stored_assignment.variant_id;
+end;
+$$;
+
+create or replace function public.resolve_pricing_experiment_assignments(
+  target_lead_ids uuid[],
+  target_professional_id uuid
+)
+returns table (lead_id uuid, price_credits integer)
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  target_id uuid;
+  resolved record;
+begin
+  if auth.role() <> 'service_role' then
+    raise exception 'UNAUTHORIZED_PRICING_EXPERIMENT_ASSIGNMENT';
+  end if;
+  for target_id in select distinct unnest(coalesce(target_lead_ids, '{}'::uuid[])) loop
+    select * into resolved
+    from public.resolve_pricing_experiment_assignment(target_id, target_professional_id);
+    if found then
+      return query select target_id, resolved.price_credits;
+    end if;
+  end loop;
 end;
 $$;
 
@@ -665,12 +775,25 @@ begin
   insert into public.experiment_audit_log (
     experiment_id, actor_user_id, previous_status, next_status, action, metadata
   )
-  select id, input_actor_user_id, status, status, 'config_changed',
+  select id, input_actor_user_id, status, status, 'decision_recorded',
     jsonb_build_object('decision', input_decision)
   from public.experiments where id = target_experiment_id;
   return decision_id;
 end;
 $$;
+
+create or replace function public.prevent_pricing_experiment_assignment_mutation()
+returns trigger
+language plpgsql
+as $$
+begin
+  raise exception 'Pricingexperimenttoewijzingen zijn immutable.';
+end;
+$$;
+
+create trigger prevent_pricing_experiment_assignments_update
+before update or delete on public.pricing_experiment_assignments
+for each row execute function public.prevent_pricing_experiment_assignment_mutation();
 
 alter table public.pricing_experiment_assignments enable row level security;
 alter table public.pricing_experiment_decisions enable row level security;
@@ -688,12 +811,17 @@ grant select, insert, update on public.experiments, public.experiment_variants, 
 revoke all on function public.is_valid_pricing_experiment_config(jsonb) from public, anon, authenticated;
 revoke all on function public.guard_pricing_experiment_configuration() from public, anon, authenticated;
 revoke all on function public.guard_pricing_experiment_variant() from public, anon, authenticated;
+revoke all on function public.prevent_pricing_experiment_assignment_mutation() from public, anon, authenticated;
 revoke all on function public.resolve_lead_price_baseline(uuid) from public, anon, authenticated;
 revoke all on function public.resolve_pricing_experiment_assignment(uuid, uuid) from public, anon, authenticated;
+revoke all on function public.resolve_pricing_experiment_assignments(uuid[], uuid) from public, anon, authenticated;
 grant execute on function public.resolve_lead_price_baseline(uuid) to service_role;
 grant execute on function public.resolve_pricing_experiment_assignment(uuid, uuid) to service_role;
+grant execute on function public.resolve_pricing_experiment_assignments(uuid[], uuid) to service_role;
 
 revoke all on function public.transition_experiment_status(uuid, text, uuid) from public, anon, authenticated;
 grant execute on function public.transition_experiment_status(uuid, text, uuid) to service_role;
+revoke all on function public.create_pricing_experiment(text, text, jsonb, text, integer, integer, integer, uuid) from public, anon, authenticated;
+grant execute on function public.create_pricing_experiment(text, text, jsonb, text, integer, integer, integer, uuid) to service_role;
 revoke all on function public.record_pricing_experiment_decision(uuid, text, text, uuid) from public, anon, authenticated;
 grant execute on function public.record_pricing_experiment_decision(uuid, text, text, uuid) to authenticated;
