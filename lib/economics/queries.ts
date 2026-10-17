@@ -22,7 +22,7 @@ export async function getAdminEconomicsReport(days: 7 | 28 | 90) {
   const since = new Date(asOf.getTime() - days * 86400000).toISOString();
   const [purchaseRows, transactionRows, walletRows, offerRows, purchaseLinkRows] = await Promise.all([
     collectQualityPages<Row>((from, to) => supabase.from("lead_purchases").select(
-      "id,lead_id,professional_id,lead_assignment_id,price_credits,commercial_type,status,purchased_at,wallet_transaction_id,refund_transaction_id,refunded_at,lead:leads!lead_purchases_lead_id_fkey(id,service_id,utm_source,service:services(name)),professional:professionals!lead_purchases_professional_id_fkey(id),assignment:lead_assignments!lead_purchases_assignment_fk(id,lead_id,professional_id,progress_status,contacted_at,reached_at,appointment_scheduled_at,outcome_at,reachability,appointment_status,mismatch_reason)",
+      "id,lead_id,professional_id,lead_assignment_id,pricing_experiment_id,pricing_variant_id,price_credits,commercial_type,status,purchased_at,wallet_transaction_id,refund_transaction_id,refunded_at,lead:leads!lead_purchases_lead_id_fkey(id,service_id,utm_source,service:services(name)),professional:professionals!lead_purchases_professional_id_fkey(id),assignment:lead_assignments!lead_purchases_assignment_fk(id,lead_id,professional_id,progress_status,contacted_at,reached_at,appointment_scheduled_at,outcome_at,reachability,appointment_status,mismatch_reason)",
       { count: "exact" },
     ).gte("purchased_at", since).lte("purchased_at", until).order("id").range(from, to)),
     // Full ledger is needed for credit stock; corrections after the purchase period
@@ -55,6 +55,7 @@ export async function getAdminEconomicsReport(days: 7 | 28 | 90) {
       return {
         id: text(row.id), leadId: text(row.lead_id), professionalId: text(row.professional_id),
         assignmentId: nullable(row.lead_assignment_id), price: integer(row.price_credits),
+        pricingExperimentId: nullable(row.pricing_experiment_id), pricingVariantId: nullable(row.pricing_variant_id),
         type: text(row.commercial_type), status: text(row.status), purchasedAt: text(row.purchased_at),
         debitId: text(row.wallet_transaction_id), refundId: nullable(row.refund_transaction_id), refundedAt: nullable(row.refunded_at),
         serviceId: text(lead.service_id), serviceName: text(object(lead.service).name) || "Dienst onbekend",

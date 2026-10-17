@@ -291,6 +291,7 @@ export interface Experiment {
   key: string;
   name: string;
   description: string | null;
+  created_by: string | null;
   status: ExperimentStatus;
   experiment_type: "cro" | "pricing";
   target_type: "homepage" | "service_page" | "local_page" | "lead_funnel" | "cta" | "funnel_step";
@@ -337,8 +338,8 @@ export interface ExperimentAuditLog {
 
 export interface PricingExperimentAssignment {
   id: string;
-  experiment_id: string;
-  variant_id: string;
+  experiment_id: string | null;
+  variant_id: string | null;
   lead_id: string;
   professional_id: string;
   control_price_credits: number;

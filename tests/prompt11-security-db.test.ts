@@ -1034,3 +1034,163 @@ test("trigger-only helpers are not executable by authenticated users", { concurr
     authenticated_delete: true,
   });
 });
+
+test("pricing experiments stay draft, assign atomically per professional+lead and debit/refund the stored price", { concurrency: false }, async (t) => {
+  const isolated = await createIsolatedDatabase(t, "prompt31_pricing");
+  if (!isolated) return;
+
+  const { harness, database } = isolated;
+  const serviceId = randomUUID();
+  const professionalId = randomUUID();
+  const professionalUserId = randomUUID();
+  const leadId = randomUUID();
+  const concurrentLeadId = randomUUID();
+  const baselineLockedLeadId = randomUUID();
+  const actorId = harness.adminContext.userId ?? randomUUID();
+  const privilegedAdminContext = { ...harness.adminContext, dbRole: "postgres" as const };
+  const serviceRole = { dbRole: "service_role" as const, requestRole: "service_role" as const };
+  const privilegedServiceRole = { dbRole: "postgres" as const, requestRole: "service_role" as const };
+  const professionalContext = buildUserContext(professionalUserId, "professional");
+  const insertLead = (id: string) => `
+    insert into public.leads (
+      id, service_id, first_name, last_name, email, phone, postal_code, house_number,
+      description, status, commercial_type, max_buyers, buyers_count, sales_status
+    ) values (
+      ${sqlLiteral(id)}, ${sqlLiteral(serviceId)}, 'Test', 'Lead', 'lead-${id.slice(0, 8)}@example.com',
+      '0612345678', '1234AB', '10',
+      'Er is sprake van een dringende dakreparatie met voldoende details voor de aanvraag.',
+      'matched', 'shared', 3, 0, 'available'
+    );
+    insert into public.lead_matches (lead_id, professional_id, match_score)
+    values (${sqlLiteral(id)}, ${sqlLiteral(professionalId)}, 80);
+  `;
+  const config = JSON.stringify({
+    segment: { commercial_types: ["shared"] },
+    max_delta_percent: 25,
+    pilot_mode: false,
+    pilot_professional_ids: [],
+  });
+  seedProfessional(harness, database, professionalId, professionalUserId, "pricing-professional@example.com", "Dakbedrijf Pricing");
+  harness.run(database, `
+    insert into public.services (id, name, slug, category, active)
+    values (${sqlLiteral(serviceId)}, 'Dakreparatie', 'pricing-dakreparatie', 'Dakwerk', true);
+  `);
+
+  const experimentId = harness.run(database, `
+    select public.create_pricing_experiment(
+      'Gedeelde dakleads', 'Beperkte prijsproef voor gedeelde dakleads.',
+      ${sqlLiteral(config)}::jsonb, 'offer_to_purchase_rate', 50, 15, 50, ${sqlLiteral(actorId)}
+    );
+  `, serviceRole);
+  assert.equal(harness.run(database, `
+    select status || ':' || experiment_type from public.experiments where id = ${sqlLiteral(experimentId)};
+  `), "draft:pricing");
+  assert.equal(harness.run(database, `
+    select count(*) from public.experiment_audit_log where experiment_id = ${sqlLiteral(experimentId)} and action = 'created';
+  `), "1");
+
+  harness.run(database, insertLead(baselineLockedLeadId));
+  assert.equal(harness.run(database, `
+    select price_credits from public.resolve_pricing_experiment_assignment(
+      ${sqlLiteral(baselineLockedLeadId)}, ${sqlLiteral(professionalId)}
+    );
+  `, serviceRole), "12");
+
+  harness.run(database, `
+    select public.transition_experiment_status(${sqlLiteral(experimentId)}, 'active', ${sqlLiteral(actorId)});
+  `, serviceRole);
+  assert.equal(harness.run(database, `
+    select price_credits || ':' || coalesce(experiment_id::text, 'baseline')
+    from public.pricing_experiment_assignments where lead_id = ${sqlLiteral(baselineLockedLeadId)};
+  `), "12:baseline");
+  harness.run(database, `${insertLead(leadId)} ${insertLead(concurrentLeadId)}`);
+
+  const concurrentAssignmentSql = `
+    select price_credits from public.resolve_pricing_experiment_assignment(
+      ${sqlLiteral(concurrentLeadId)}, ${sqlLiteral(professionalId)}
+    );
+  `;
+  const [firstRace, secondRace] = await Promise.all([
+    harness.runConcurrent(database, concurrentAssignmentSql, serviceRole),
+    harness.runConcurrent(database, concurrentAssignmentSql, serviceRole),
+  ]);
+  assert.equal(firstRace.ok, true, firstRace.stderr);
+  assert.equal(secondRace.ok, true, secondRace.stderr);
+  assert.equal(firstRace.stdout, secondRace.stdout);
+  assert.match(firstRace.stdout, /^(12|15)$/);
+  assert.equal(harness.run(database, `
+    select count(*) from public.pricing_experiment_assignments
+    where lead_id = ${sqlLiteral(concurrentLeadId)} and professional_id = ${sqlLiteral(professionalId)};
+  `), "1");
+
+  const exposedConfig = harness.run(database, `
+    select count(*) from public.experiments where id = ${sqlLiteral(experimentId)};
+  `, professionalContext);
+  assert.equal(exposedConfig, "0");
+  const privateAssignmentRows = harness.run(database, `
+    select count(*) from public.pricing_experiment_assignments
+    where lead_id = ${sqlLiteral(concurrentLeadId)};
+  `, professionalContext);
+  assert.equal(privateAssignmentRows, "0");
+  const directAssignmentAccess = harness.expectError(database, `
+    select * from public.resolve_pricing_experiment_assignment(
+      ${sqlLiteral(concurrentLeadId)}, ${sqlLiteral(professionalId)}
+    );
+  `, professionalContext);
+  assert.match(directAssignmentAccess, /permission denied/i);
+
+  const walletId = harness.run(database, `
+    select wallet_id from public.apply_wallet_transaction(
+      ${sqlLiteral(professionalId)}, 'admin_credit', 100, null, null, null, 'pricing test funding', '{}'::jsonb
+    );
+  `, privilegedAdminContext);
+  const purchasePrice = harness.run(database, `
+    select price_credits from public.purchase_lead(${sqlLiteral(leadId)}, 'prompt31-price-snapshot');
+  `, professionalContext);
+  assert.match(purchasePrice, /^(12|15)$/);
+  const purchase = harness.queryRowJson<{ pricing_experiment_id: string; pricing_variant_id: string; price_credits: number; wallet_transaction_id: string }>(
+    database,
+    `select pricing_experiment_id, pricing_variant_id, price_credits, wallet_transaction_id
+     from public.lead_purchases where lead_id = ${sqlLiteral(leadId)} and professional_id = ${sqlLiteral(professionalId)};`,
+  );
+  assert.equal(purchase.price_credits, Number(purchasePrice));
+  assert.equal(purchase.pricing_experiment_id, experimentId);
+  assert.ok(purchase.pricing_variant_id);
+  assert.equal(harness.run(database, `
+    select amount from public.wallet_transactions where id = ${sqlLiteral(purchase.wallet_transaction_id)};
+  `), String(-Number(purchasePrice)));
+  assert.equal(harness.run(database, `
+    select cached_balance from public.professional_wallets where id = ${sqlLiteral(walletId)};
+  `), String(100 - Number(purchasePrice)));
+  assert.match(harness.expectError(database, `
+    select * from public.purchase_lead(${sqlLiteral(leadId)}, 'tamper', 1);
+  `, professionalContext), /function public\.purchase_lead\(.*integer.*\) does not exist/i);
+
+  const refund = harness.run(database, `
+    select balance_after from public.refund_lead_purchase(
+      (select id from public.lead_purchases where lead_id = ${sqlLiteral(leadId)}), 'price snapshot refund'
+    );
+  `, privilegedAdminContext);
+  assert.equal(refund, "100");
+  assert.equal(harness.run(database, `
+    select amount from public.wallet_transactions
+    where lead_id = ${sqlLiteral(leadId)} and type = 'refund';
+  `), purchasePrice);
+
+  const immutablePrice = harness.expectError(database, `
+    update public.experiment_variants set price_credits = 14
+    where experiment_id = ${sqlLiteral(experimentId)} and not is_control;
+  `, privilegedServiceRole);
+  assert.match(immutablePrice, /PRICING_EXPERIMENT_VARIANTS_IMMUTABLE/i);
+  harness.run(database, `
+    select public.transition_experiment_status(${sqlLiteral(experimentId)}, 'paused', ${sqlLiteral(actorId)});
+  `, serviceRole);
+  assert.equal(harness.run(database, `
+    select price_credits from public.resolve_pricing_experiment_assignment(
+      ${sqlLiteral(concurrentLeadId)}, ${sqlLiteral(professionalId)}
+    );
+  `, serviceRole), firstRace.stdout);
+  assert.equal(harness.run(database, `
+    select count(*) from public.pricing_experiment_assignments where lead_id = ${sqlLiteral(leadId)};
+  `), "1");
+});

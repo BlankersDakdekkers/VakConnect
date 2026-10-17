@@ -2,6 +2,7 @@ alter table public.experiments
   add column experiment_type text not null default 'cro'
     check (experiment_type in ('cro', 'pricing')),
   add column description text check (description is null or char_length(trim(description)) between 3 and 1000),
+  add column created_by uuid references auth.users(id) on delete set null,
   add column pricing_config jsonb,
   add column primary_metric text
     check (primary_metric is null or primary_metric in (
@@ -34,8 +35,8 @@ alter table public.lead_purchases
 
 create table public.pricing_experiment_assignments (
   id uuid primary key default gen_random_uuid(),
-  experiment_id uuid not null references public.experiments(id) on delete restrict,
-  variant_id uuid not null,
+  experiment_id uuid references public.experiments(id) on delete restrict,
+  variant_id uuid,
   lead_id uuid not null references public.leads(id) on delete restrict,
   professional_id uuid not null references public.professionals(id) on delete restrict,
   control_price_credits integer not null check (control_price_credits between 1 and 100),
@@ -55,6 +56,7 @@ create table public.pricing_experiment_assignments (
   foreign key (experiment_id, variant_id)
     references public.experiment_variants(experiment_id, id)
     on delete restrict,
+  check ((experiment_id is null) = (variant_id is null)),
   unique (lead_id, professional_id)
 );
 
@@ -124,11 +126,12 @@ begin
 
   insert into public.experiments (
     key, name, description, status, experiment_type, target_type, slot,
-    target_rules, goal_event, pricing_config, primary_metric, guardrail_metrics
+    target_rules, goal_event, pricing_config, primary_metric, guardrail_metrics, created_by
   ) values (
     new_key, trim(input_name), trim(input_description), 'draft', 'pricing', 'lead_funnel',
     'pricing.lead.offer', '{}'::jsonb, 'lead_submitted', input_config, input_primary_metric,
-    array['refund_rate', 'mismatch_rate', 'reachability', 'sample_size', 'purchase_volume']
+    array['refund_rate', 'mismatch_rate', 'reachability', 'sample_size', 'purchase_volume'],
+    input_actor_user_id
   ) returning id into new_experiment_id;
 
   insert into public.experiment_variants (experiment_id, key, label, weight, is_control, price_credits)
@@ -140,7 +143,17 @@ begin
     experiment_id, actor_user_id, previous_status, next_status, action, metadata
   ) values (
     new_experiment_id, input_actor_user_id, 'draft', 'draft', 'created',
-    jsonb_build_object('experiment_type', 'pricing', 'primary_metric', input_primary_metric)
+    jsonb_build_object(
+      'experiment_type', 'pricing',
+      'primary_metric', input_primary_metric,
+      'segment', input_config->'segment',
+      'max_delta_percent', 25,
+      'pilot_mode', (input_config->>'pilot_mode')::boolean,
+      'pilot_allowlist_count', jsonb_array_length(input_config->'pilot_professional_ids'),
+      'control_weight', input_control_weight,
+      'variant_weight', input_variant_weight,
+      'variant_price_credits', input_variant_price
+    )
   );
   return new_experiment_id;
 end;
@@ -500,6 +513,9 @@ declare
   cumulative integer := 0;
   candidate public.experiment_variants%rowtype;
   has_distribution_history boolean;
+  assigned_experiment_id uuid;
+  assigned_variant_id uuid;
+  assigned_price integer;
 begin
   if auth.role() <> 'service_role'
     and not (auth.role() = 'authenticated' and public.current_professional_id() = target_professional_id) then
@@ -562,50 +578,49 @@ begin
   from public.experiments
   where experiment_type = 'pricing' and status = 'active' and slot = 'pricing.lead.offer'
   limit 1;
-  if not found or not public.is_valid_pricing_experiment_config(active_experiment.pricing_config) then return; end if;
+  assigned_price := baseline_row.price_credits;
+  if found and public.is_valid_pricing_experiment_config(active_experiment.pricing_config) then
+    config_segment := active_experiment.pricing_config->'segment';
+    if (not (config_segment ? 'service_ids')
+        or config_segment->'service_ids' @> to_jsonb(array[lead_row.service_id::text]))
+      and (not (config_segment ? 'commercial_types')
+        or config_segment->'commercial_types' @> to_jsonb(array[lead_row.commercial_type::text]))
+      and (not (config_segment ? 'control_price_min')
+        or baseline_row.price_credits >= (config_segment->>'control_price_min')::integer)
+      and (not (config_segment ? 'control_price_max')
+        or baseline_row.price_credits <= (config_segment->>'control_price_max')::integer)
+      and (not (active_experiment.pricing_config->>'pilot_mode')::boolean
+        or active_experiment.pricing_config->'pilot_professional_ids' @> to_jsonb(array[target_professional_id::text])) then
+      bucket := mod(('x' || substr(md5(active_experiment.id::text || ':' || target_lead_id::text || ':' || target_professional_id::text), 1, 8))::bit(32)::bigint, 100)::integer;
+      for candidate in
+        select * from public.experiment_variants
+        where experiment_variants.experiment_id = active_experiment.id
+        order by key
+      loop
+        cumulative := cumulative + candidate.weight;
+        if bucket < cumulative then
+          selected_variant := candidate;
+          exit;
+        end if;
+      end loop;
 
-  config_segment := active_experiment.pricing_config->'segment';
-  if config_segment ? 'service_ids'
-    and not (config_segment->'service_ids' @> to_jsonb(array[lead_row.service_id::text])) then return; end if;
-  if config_segment ? 'commercial_types'
-    and not (config_segment->'commercial_types' @> to_jsonb(array[lead_row.commercial_type::text])) then return; end if;
-  if config_segment ? 'control_price_min'
-    and baseline_row.price_credits < (config_segment->>'control_price_min')::integer then return; end if;
-  if config_segment ? 'control_price_max'
-    and baseline_row.price_credits > (config_segment->>'control_price_max')::integer then return; end if;
-  if (active_experiment.pricing_config->>'pilot_mode')::boolean
-    and not (active_experiment.pricing_config->'pilot_professional_ids' @> to_jsonb(array[target_professional_id::text])) then return; end if;
-
-  bucket := mod(('x' || substr(md5(active_experiment.id::text || ':' || target_lead_id::text || ':' || target_professional_id::text), 1, 8))::bit(32)::bigint, 100)::integer;
-  for candidate in
-    select * from public.experiment_variants
-    where experiment_variants.experiment_id = active_experiment.id
-    order by key
-  loop
-    cumulative := cumulative + candidate.weight;
-    if bucket < cumulative then
-      selected_variant := candidate;
-      exit;
+      if selected_variant.id is not null
+        and (selected_variant.is_control
+          or (selected_variant.price_credits between 1 and 100
+            and abs(selected_variant.price_credits - baseline_row.price_credits) * 100 <= baseline_row.price_credits * 25)) then
+        assigned_experiment_id := active_experiment.id;
+        assigned_variant_id := selected_variant.id;
+        assigned_price := case when selected_variant.is_control then baseline_row.price_credits else selected_variant.price_credits end;
+      end if;
     end if;
-  end loop;
-  if selected_variant.id is null then return; end if;
-
-  if selected_variant.is_control then
-    bucket := baseline_row.price_credits;
-  else
-    if selected_variant.price_credits is null or selected_variant.price_credits not between 1 and 100
-      or abs(selected_variant.price_credits - baseline_row.price_credits) * 100 > baseline_row.price_credits * 25 then
-      return;
-    end if;
-    bucket := selected_variant.price_credits;
   end if;
 
   insert into public.pricing_experiment_assignments (
     experiment_id, variant_id, lead_id, professional_id, control_price_credits,
     assigned_price_credits, context
   ) values (
-    active_experiment.id, selected_variant.id, target_lead_id, target_professional_id,
-    baseline_row.price_credits, bucket,
+    assigned_experiment_id, assigned_variant_id, target_lead_id, target_professional_id,
+    baseline_row.price_credits, assigned_price,
     jsonb_build_object('service_id', lead_row.service_id, 'commercial_type', lead_row.commercial_type,
       'control_price_credits', baseline_row.price_credits)
   )
@@ -673,7 +688,8 @@ begin
       if found then
         return query select assigned_row.price_credits, baseline_row.commercial_type,
           baseline_row.max_buyers, baseline_row.buyers_count, baseline_row.sales_status,
-          baseline_row.pricing_rule_id, 'pricing_experiment'::text;
+          baseline_row.pricing_rule_id,
+          case when assigned_row.experiment_id is null then baseline_row.price_source else 'pricing_experiment' end;
         return;
       end if;
     exception when others then
@@ -736,6 +752,9 @@ begin
     end if;
     new.pricing_experiment_id := assignment_row.experiment_id;
     new.pricing_variant_id := assignment_row.variant_id;
+  else
+    new.pricing_experiment_id := null;
+    new.pricing_variant_id := null;
   end if;
   return new;
 end;
@@ -802,9 +821,9 @@ create policy "admins read pricing experiment assignments"
 create policy "admins read pricing experiment decisions"
   on public.pricing_experiment_decisions for select using (public.is_admin());
 
-revoke all on public.pricing_experiment_assignments, public.pricing_experiment_decisions from public, anon, authenticated;
+revoke all on public.pricing_experiment_assignments, public.pricing_experiment_decisions from public, anon, authenticated, service_role;
 grant select on public.pricing_experiment_assignments, public.pricing_experiment_decisions to authenticated;
-grant all on public.pricing_experiment_assignments, public.pricing_experiment_decisions to service_role;
+grant select on public.pricing_experiment_assignments, public.pricing_experiment_decisions to service_role;
 grant select on public.experiments, public.experiment_variants, public.experiment_audit_log to authenticated;
 grant select, insert, update on public.experiments, public.experiment_variants, public.experiment_audit_log to service_role;
 

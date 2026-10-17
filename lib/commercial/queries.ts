@@ -313,10 +313,11 @@ export async function getProfessionalLeadMarketplace(professionalId: string) {
     throw new Error("Leads konden niet worden geladen.");
   }
 
-  const { data: pricingAssignments } = await supabase.rpc("resolve_pricing_experiment_assignments", {
+  const { data: pricingAssignments, error: pricingAssignmentError } = await supabase.rpc("resolve_pricing_experiment_assignments", {
     target_lead_ids: leadIds,
     target_professional_id: professionalId,
   });
+  if (pricingAssignmentError) throw new Error("Leadprijzen konden niet veilig worden vastgesteld.");
   const pricingAssignmentMap = new Map(
     ((pricingAssignments ?? []) as Array<{ lead_id: string; price_credits: number }>)
       .map((row) => [row.lead_id, row.price_credits]),
@@ -435,10 +436,11 @@ export async function getProfessionalLeadMarketDetail(leadId: string, profession
     buyersCount: toNumber(leadRow.buyers_count),
     salesStatus: leadRow.sales_status as LeadSalesStatus,
   }, rules);
-  const { data: pricingAssignments } = await supabase.rpc("resolve_pricing_experiment_assignments", {
+  const { data: pricingAssignments, error: pricingAssignmentError } = await supabase.rpc("resolve_pricing_experiment_assignments", {
     target_lead_ids: [leadId],
     target_professional_id: professionalId,
   });
+  if (pricingAssignmentError) throw new Error("Leadprijs kon niet veilig worden vastgesteld.");
   const assignedPriceCredits = (pricingAssignments as Array<{ lead_id: string; price_credits: number }> | null)
     ?.find((row) => row.lead_id === leadId)?.price_credits;
   const effectivePrice = assignedPriceCredits === undefined
