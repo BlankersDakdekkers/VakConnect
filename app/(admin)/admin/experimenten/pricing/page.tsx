@@ -79,7 +79,7 @@ export default async function AdminPricingExperimentsPage({
   const success = typeof query.success === "string" ? query.success : null;
   const error = typeof query.error === "string" ? query.error : null;
   const serviceNames = new Map((servicesResult.data ?? []).map((service) => [service.id, service.name]));
-  const reconciliationOk = data.reconciliation.consistent;
+  const reconciliationOk = data.reconciliation.checked && data.reconciliation.consistent;
 
   return (
     <div className="space-y-6">
@@ -92,7 +92,9 @@ export default async function AdminPricingExperimentsPage({
       {error ? <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-danger">{error}</p> : null}
       <Card className="space-y-2">
         <h2 className="font-semibold">Financiële reconciliatie · laatste 90 dagen</h2>
-        {reconciliationOk
+        {!data.reconciliation.checked
+          ? <p className="text-sm text-muted-foreground">Er zijn nog geen pricingexperimenten om te reconciliëren.</p>
+          : reconciliationOk
           ? <p className="text-sm text-muted-foreground">Ledger, purchases en wallets sluiten op elkaar aan. Outcomepercentages zijn pas vanaf 10 aankopen zichtbaar; beslissteekproef: minimaal 30 toewijzingen én 30 aankopen per variant.</p>
           : <p role="alert" className="text-sm text-amber-800">Reconciliatie wijkt af ({data.reconciliation.issues.reduce((sum, issue) => sum + issue.count, 0)} signalen). Toon alleen aantallen; trek geen pricingconclusies.</p>}
       </Card>

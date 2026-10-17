@@ -210,6 +210,9 @@ begin
         return false;
       end if;
     end loop;
+    if (select count(distinct value) from jsonb_array_elements_text(segment->'service_ids')) <> jsonb_array_length(segment->'service_ids') then
+      return false;
+    end if;
   end if;
 
   if segment ? 'commercial_types' then
@@ -223,6 +226,9 @@ begin
         return false;
       end if;
     end loop;
+    if (select count(distinct value) from jsonb_array_elements_text(segment->'commercial_types')) <> jsonb_array_length(segment->'commercial_types') then
+      return false;
+    end if;
   end if;
 
   for key_name in select unnest(array['control_price_min', 'control_price_max']) loop
@@ -246,6 +252,10 @@ begin
       return false;
     end if;
   end loop;
+  if (select count(distinct value) from jsonb_array_elements_text(input_config->'pilot_professional_ids'))
+    <> jsonb_array_length(input_config->'pilot_professional_ids') then
+    return false;
+  end if;
 
   if (input_config->>'pilot_mode')::boolean <> (jsonb_array_length(input_config->'pilot_professional_ids') > 0) then
     return false;
@@ -275,6 +285,11 @@ begin
       or not (new.guardrail_metrics @> array[
         'refund_rate', 'mismatch_rate', 'reachability', 'sample_size', 'purchase_volume'
       ])
+      or cardinality(new.guardrail_metrics) <> 5
+      or exists (
+        select 1 from unnest(new.guardrail_metrics) as guardrail(metric)
+        where guardrail.metric not in ('refund_rate', 'mismatch_rate', 'reachability', 'sample_size', 'purchase_volume')
+      )
       or new.target_rules <> '{}'::jsonb then
       raise exception 'PRICING_EXPERIMENT_CONFIGURATION_INVALID';
     end if;
@@ -306,10 +321,19 @@ set search_path = public, pg_temp
 as $$
 declare
   target_experiment_id uuid;
+  old_experiment_type text;
+  old_experiment_status text;
   target_type text;
   target_status text;
 begin
   target_experiment_id := case when tg_op = 'DELETE' then old.experiment_id else new.experiment_id end;
+  if tg_op = 'UPDATE' and new.experiment_id is distinct from old.experiment_id then
+    select experiment_type, status into old_experiment_type, old_experiment_status
+    from public.experiments where id = old.experiment_id;
+    if old_experiment_type = 'pricing' and old_experiment_status <> 'draft' then
+      raise exception 'PRICING_EXPERIMENT_VARIANTS_IMMUTABLE';
+    end if;
+  end if;
   select experiment_type, status into target_type, target_status
   from public.experiments where id = target_experiment_id;
   if target_type = 'pricing' then
@@ -378,6 +402,11 @@ begin
       or not (current_experiment.guardrail_metrics @> array[
         'refund_rate', 'mismatch_rate', 'reachability', 'sample_size', 'purchase_volume'
       ])
+      or cardinality(current_experiment.guardrail_metrics) <> 5
+      or exists (
+        select 1 from unnest(current_experiment.guardrail_metrics) as guardrail(metric)
+        where guardrail.metric not in ('refund_rate', 'mismatch_rate', 'reachability', 'sample_size', 'purchase_volume')
+      )
       or variant_count < 2 or control_count <> 1 or total_weight <> 100
       or priced_variant_count <> variant_count - 1
     ) then

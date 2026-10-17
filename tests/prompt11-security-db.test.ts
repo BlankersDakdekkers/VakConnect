@@ -3,7 +3,7 @@ import { execFileSync, spawn } from "node:child_process";
 import { existsSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import test from "node:test";
 
 const repoRoot = "/home/runner/work/VakConnect/VakConnect";
@@ -1099,8 +1099,20 @@ test("pricing experiments stay draft, assign atomically per professional+lead an
   harness.run(database, `
     select public.transition_experiment_status(${sqlLiteral(experimentId)}, 'active', ${sqlLiteral(actorId)});
   `, serviceRole);
+  const conflictingExperimentId = harness.run(database, `
+    select public.create_pricing_experiment(
+      'Tweede prijsproef', 'Nog een prijsproef in hetzelfde pricing slot.',
+      ${sqlLiteral(config)}::jsonb, 'offer_to_purchase_rate', 50, 15, 50, ${sqlLiteral(actorId)}
+    );
+  `, serviceRole);
+  assert.match(harness.expectError(database, `
+    select public.transition_experiment_status(${sqlLiteral(conflictingExperimentId)}, 'active', ${sqlLiteral(actorId)});
+  `, serviceRole), /experiments_one_active_per_slot_idx/i);
   assert.equal(harness.run(database, `
-    select price_credits || ':' || coalesce(experiment_id::text, 'baseline')
+    select status from public.experiments where id = ${sqlLiteral(conflictingExperimentId)};
+  `), "draft");
+  assert.equal(harness.run(database, `
+    select assigned_price_credits || ':' || coalesce(experiment_id::text, 'baseline')
     from public.pricing_experiment_assignments where lead_id = ${sqlLiteral(baselineLockedLeadId)};
   `), "12:baseline");
   harness.run(database, `${insertLead(leadId)} ${insertLead(concurrentLeadId)}`);
@@ -1193,4 +1205,43 @@ test("pricing experiments stay draft, assign atomically per professional+lead an
   assert.equal(harness.run(database, `
     select count(*) from public.pricing_experiment_assignments where lead_id = ${sqlLiteral(leadId)};
   `), "1");
+  harness.run(database, `
+    select public.record_pricing_experiment_decision(
+      ${sqlLiteral(experimentId)}, 'keep_control', 'Behouden tot aparte besluitvorming.', ${sqlLiteral(actorId)}
+    );
+  `, harness.adminContext);
+  assert.equal(harness.run(database, `
+    select count(*) from public.pricing_experiment_decisions
+    where experiment_id = ${sqlLiteral(experimentId)} and decision = 'keep_control';
+  `, harness.adminContext), "1");
+  assert.equal(harness.run(database, `
+    select price_credits from public.resolve_lead_price_baseline(${sqlLiteral(leadId)});
+  `, serviceRole), "12");
+
+  const outOfDeltaExperimentId = harness.run(database, `
+    select public.create_pricing_experiment(
+      'Buiten prijsgrens', 'Test dat een te grote afwijking terugvalt op de control.',
+      ${sqlLiteral(config)}::jsonb, 'offer_to_purchase_rate', 1, 20, 99, ${sqlLiteral(actorId)}
+    );
+  `, serviceRole);
+  harness.run(database, `
+    select public.transition_experiment_status(${sqlLiteral(outOfDeltaExperimentId)}, 'active', ${sqlLiteral(actorId)});
+  `, serviceRole);
+  let outOfDeltaLeadId = randomUUID();
+  while (Number.parseInt(
+    createHash("md5").update(`${outOfDeltaExperimentId}:${outOfDeltaLeadId}:${professionalId}`).digest("hex").slice(0, 8),
+    16,
+  ) % 100 < 1) {
+    outOfDeltaLeadId = randomUUID();
+  }
+  harness.run(database, insertLead(outOfDeltaLeadId));
+  assert.equal(harness.run(database, `
+    select price_credits from public.resolve_pricing_experiment_assignment(
+      ${sqlLiteral(outOfDeltaLeadId)}, ${sqlLiteral(professionalId)}
+    );
+  `, serviceRole), "12");
+  assert.equal(harness.run(database, `
+    select coalesce(experiment_id::text, 'baseline')
+    from public.pricing_experiment_assignments where lead_id = ${sqlLiteral(outOfDeltaLeadId)};
+  `), "baseline");
 });

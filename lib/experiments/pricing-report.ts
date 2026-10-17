@@ -6,6 +6,13 @@ import { getAdminEconomicsReport } from "@/lib/economics/queries";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import type { PricingExperimentMetric } from "@/types/database";
 
+export const pricingGuardrailThresholds = {
+  minimumPurchases: 10,
+  refundWarningPercent: 20,
+  mismatchWarningPercent: 20,
+  reachabilityWarningPercent: 50,
+} as const;
+
 type PricingSummary = {
   purchases: number;
   refund: { count: number; denominator: number; percent: number | null };
@@ -38,17 +45,15 @@ export async function getAdminPricingExperiments() {
   const supabase = createAdminSupabaseClient();
   const asOf = new Date();
   const since = new Date(asOf.getTime() - 90 * 86400000).toISOString();
-  const [experimentResult, report] = await Promise.all([
-    supabase.from("experiments").select(
-      "id,key,name,description,status,slot,pricing_config,primary_metric,guardrail_metrics,started_at,created_at,updated_at",
-    ).eq("experiment_type", "pricing").order("updated_at", { ascending: false }),
-    getAdminEconomicsReport(90),
-  ]);
+  const experimentResult = await supabase.from("experiments").select(
+    "id,key,name,description,status,slot,pricing_config,primary_metric,guardrail_metrics,started_at,created_at,updated_at",
+  ).eq("experiment_type", "pricing").order("updated_at", { ascending: false });
   if (experimentResult.error) throw new Error("Pricingexperimenten konden niet worden geladen.");
   const experiments = experimentResult.data ?? [];
-  if (!experiments.length) return { experiments: [], reconciliation: report.reconciliation };
+  if (!experiments.length) return { experiments: [], reconciliation: { consistent: true, checked: false, issues: [] } };
   const ids = experiments.map((experiment) => experiment.id);
-  const [variantResult, assignmentResult, decisionResult] = await Promise.all([
+  const [report, variantResult, assignmentResult, decisionResult] = await Promise.all([
+    getAdminEconomicsReport(90),
     supabase.from("experiment_variants").select("id,experiment_id,key,label,weight,is_control,price_credits")
       .in("experiment_id", ids).order("created_at", { ascending: true }),
     supabase.from("pricing_experiment_assignments").select("experiment_id,variant_id,assigned_at")
@@ -61,7 +66,7 @@ export async function getAdminPricingExperiments() {
   }
 
   return {
-    reconciliation: report.reconciliation,
+    reconciliation: { ...report.reconciliation, checked: true },
     experiments: experiments.map((experiment) => {
       const variants = (variantResult.data ?? []).filter((variant) => variant.experiment_id === experiment.id);
       const decisions = (decisionResult.data ?? []).filter((decision) => decision.experiment_id === experiment.id);
@@ -83,14 +88,20 @@ export async function getAdminPricingExperiments() {
         }) as PricingSummary;
         const matured = (economics?.matured ?? all) as PricingSummary;
         const control = controlSummary?.all as PricingSummary | undefined;
-        const adequatePurchaseSample = all.purchases >= economicsDefinitions.minimumSample
-          && (control?.purchases ?? 0) >= economicsDefinitions.minimumSample;
+        const adequatePurchaseSample = all.purchases >= pricingGuardrailThresholds.minimumPurchases;
+        const adequateControlSample = (control?.purchases ?? 0) >= pricingGuardrailThresholds.minimumPurchases;
         const guardrailWarnings = report.reconciliation.consistent && adequatePurchaseSample ? [
-          ...(control && all.refund.percent !== null && control.refund.percent !== null && all.refund.percent > control.refund.percent
+          ...(all.refund.percent !== null && all.refund.percent >= pricingGuardrailThresholds.refundWarningPercent
+            ? [`Refundpercentage ≥ ${pricingGuardrailThresholds.refundWarningPercent}%`] : []),
+          ...(all.mismatch.percent !== null && all.mismatch.percent >= pricingGuardrailThresholds.mismatchWarningPercent
+            ? [`Mismatchpercentage ≥ ${pricingGuardrailThresholds.mismatchWarningPercent}%`] : []),
+          ...(all.reached.percent !== null && all.reached.percent < pricingGuardrailThresholds.reachabilityWarningPercent
+            ? [`Bereikbaarheid < ${pricingGuardrailThresholds.reachabilityWarningPercent}%`] : []),
+          ...(adequateControlSample && control && all.refund.percent !== null && control.refund.percent !== null && all.refund.percent > control.refund.percent
             ? ["Refundpercentage hoger dan control"] : []),
-          ...(control && all.mismatch.percent !== null && control.mismatch.percent !== null && all.mismatch.percent > control.mismatch.percent
+          ...(adequateControlSample && control && all.mismatch.percent !== null && control.mismatch.percent !== null && all.mismatch.percent > control.mismatch.percent
             ? ["Mismatchpercentage hoger dan control"] : []),
-          ...(control && all.reached.percent !== null && control.reached.percent !== null && all.reached.percent < control.reached.percent
+          ...(adequateControlSample && control && all.reached.percent !== null && control.reached.percent !== null && all.reached.percent < control.reached.percent
             ? ["Bereikbaarheid lager dan control"] : []),
         ] : [];
         return {

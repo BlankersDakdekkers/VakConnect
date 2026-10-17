@@ -71,3 +71,12 @@ test("Prompt 31 migration reuses Prompt 20 and preserves server-authoritative, d
   assert.match(migration, /'draft', 'pricing'/);
   assert.doesNotMatch(migration, /insert into public\.experiments[\s\S]{0,500}'active'/i);
 });
+
+test("professional purchase action accepts no client price or experiment identifiers", () => {
+  const actionSource = readFileSync(new URL("../lib/commercial/actions.ts", import.meta.url), "utf8");
+  const purchaseAction = actionSource.match(/export async function purchaseLeadAction[\s\S]*?(?=export async function applyAdminWalletMutationAction)/)?.[0];
+  assert.ok(purchaseAction);
+  assert.match(purchaseAction, /leadId: formData\.get\("lead_id"\)/);
+  assert.match(purchaseAction, /purchase_idempotency_key: payload\.data\.idempotencyKey/);
+  assert.doesNotMatch(purchaseAction, /price_credits|priceCredits|variant_id|experiment_id/);
+});
